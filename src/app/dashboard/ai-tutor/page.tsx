@@ -33,6 +33,7 @@ import { formatFileSize } from "@/lib/utils";
 import { toast } from "sonner";
 import { GeminiIcon, ClaudeIcon } from "@/components/ui/brand-logos";
 import { getActiveUserIdentifier } from "@/lib/bookmark-service";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 
 function getAIChatStorageKey(): string {
   const user = getActiveUserIdentifier();
@@ -538,9 +539,12 @@ export default function AITutorPage() {
       )}
 
       {/* Main Chat Interface */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden space-y-2">
+        {/* Sub Navigation */}
+        <SubNavTabs category="ai" className="shrink-0" />
+
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 sm:pb-3 border-b border-border gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 sm:pb-2.5 border-b border-border gap-2 sm:gap-3 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setShowSidebar(!showSidebar)}
@@ -555,16 +559,16 @@ export default function AITutorPage() {
               <span>{showSidebar ? "Tutup" : "Riwayat"}</span>
             </button>
 
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-600 text-white shadow-xs">
-              <Bot className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 bg-brand-600 text-white shadow-xs">
+              <Bot className="w-4.5 h-4.5 text-white" />
             </div>
 
             <div className="min-w-0">
-              <h1 className="text-base sm:text-lg font-bold text-text-primary tracking-tight font-display">
-                Teman diskusi saat mentok
+              <h1 className="text-sm sm:text-base font-bold text-text-primary tracking-tight font-display">
+                Velqora AI Tutor
               </h1>
-              <p className="text-[11px] sm:text-xs text-text-secondary truncate hidden xs:block">
-                Tanyakan konsep atau bahas logika kode langkah demi langkah.
+              <p className="text-[11px] text-text-secondary truncate hidden xs:block">
+                Tanya konsep, diskusikan silabus modul, atau debug kode secara interaktif.
               </p>
             </div>
           </div>

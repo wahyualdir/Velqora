@@ -660,8 +660,8 @@ export default function ModulDanProjectPage() {
       <PageHeader
         eyebrow="~/curriculum & code"
         technicalMark="< syllabus // repos />"
-        title="Materi dan project kamu"
-        description="Simpan bahan belajar dan bangun project langsung dari workspace ini."
+        title="Modul & Project Repositori"
+        description="Akses silabus kurikulum pembelajaran dan repositori source code project secara terstruktur."
         actions={
           <>
             <Button

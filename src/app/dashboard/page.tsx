@@ -648,69 +648,6 @@ export default function DashboardPage() {
           </section>
         </div>
       </div>
-
-      {/* ─── 4. Ekosistem & Kompatibilitas Format Berkas ─── */}
-      <section className="space-y-3.5 pt-4 border-t border-border/70">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold text-brand-500 uppercase tracking-wider">
-              <Cpu className="w-3.5 h-3.5" />
-              <span>Ekosistem & Kompatibilitas</span>
-            </div>
-            <h2 className="text-sm sm:text-base font-bold text-text-primary font-display tracking-tight">
-              Format Berkas & Engine yang Didukung
-            </h2>
-          </div>
-          <p className="text-xs text-text-secondary max-w-md">
-            Mendukung pembacaan, eksekusi kode, dan sinkronisasi berbagai format materi akademik secara native di browser.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {COMPATIBLE_ECOSYSTEM.map((item) => {
-            const IconComponent = item.icon;
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="group p-3.5 rounded-xl border border-border bg-surface hover:border-brand-500/40 hover:bg-surface-secondary/60 transition-all flex flex-col justify-between space-y-2.5 shadow-2xs cursor-pointer"
-              >
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 ${item.color}`}>
-                        <IconComponent className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-xs sm:text-sm font-bold text-text-primary group-hover:text-brand-500 transition-colors truncate font-display">
-                          {item.name}
-                        </h3>
-                        <span className="text-[10.5px] font-mono text-text-tertiary">
-                          {item.extension}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-semibold bg-surface-secondary border border-border text-text-secondary shrink-0">
-                      {item.badge}
-                    </span>
-                  </div>
-                  <p className="text-[11.5px] text-text-secondary leading-relaxed line-clamp-2">
-                    {item.desc}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px] font-semibold text-text-secondary group-hover:text-brand-500 transition-colors">
-                  <span className="text-[10px] font-mono uppercase text-text-tertiary">{item.category}</span>
-                  <div className="flex items-center gap-1">
-                    <span>Akses</span>
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
     </div>
   );
 }
