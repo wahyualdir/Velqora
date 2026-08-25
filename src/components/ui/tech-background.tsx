@@ -3,7 +3,7 @@
 import React from "react";
 import { useThemeAccent, BackgroundStyle } from "@/context/theme-accent-context";
 import { useTheme } from "next-themes";
-import { TechIcon } from "@/components/ui/tech-icon";
+import { TechIcon, TechIconKey } from "@/components/ui/tech-icon";
 
 /* ============================================================
    Hook to safely resolve theme on client side
@@ -20,95 +20,74 @@ function useResolvedTheme() {
 }
 
 /* ============================================================
-   72+ DENSE FLOATING TECH BRAND LOGO MATRIX
+   TECH BADGE ITEM DEFINITION
    ============================================================ */
-
-interface FloatingItem {
-  id: string;
-  name: string;
-  top?: string;
-  bottom?: string;
-  left?: string;
-  right?: string;
-  anim: string;
-  delay: string;
-  size: number;
+interface TechBadge {
+  name: TechIconKey;
+  label: string;
+  color?: string;
 }
 
-const FLOATING_BRAND_LOGOS: FloatingItem[] = [
-  // ─── Top Perimeter (Row 1 & 2) ───
-  { id: "py-1", name: "python", top: "3%", left: "3%", anim: "animate-float-icon-1", delay: "0s", size: 44 },
-  { id: "react-1", name: "react", top: "4%", left: "14%", anim: "animate-float-icon-2", delay: "0.8s", size: 46 },
-  { id: "ts-1", name: "typescript", top: "3%", left: "26%", anim: "animate-float-icon-3", delay: "0.3s", size: 42 },
-  { id: "next-1", name: "nextjs", top: "4%", left: "38%", anim: "animate-float-icon-1", delay: "1.1s", size: 42 },
-  { id: "node-1", name: "node", top: "3%", right: "38%", anim: "animate-float-icon-4", delay: "0.2s", size: 42 },
-  { id: "js-1", name: "javascript", top: "4%", right: "26%", anim: "animate-float-icon-2", delay: "0.7s", size: 42 },
-  { id: "tail-1", name: "tailwind", top: "3%", right: "14%", anim: "animate-float-icon-3", delay: "0.5s", size: 44 },
-  { id: "java-1", name: "java", top: "4%", right: "3%", anim: "animate-float-icon-4", delay: "0.4s", size: 44 },
+const LEFT_FLANK_LOGOS: TechBadge[] = [
+  { name: "python", label: "Python" },
+  { name: "react", label: "React" },
+  { name: "typescript", label: "TypeScript" },
+  { name: "docker", label: "Docker" },
+  { name: "rust", label: "Rust" },
+  { name: "golang", label: "GoLang" },
+  { name: "php", label: "PHP" },
+  { name: "linux", label: "Linux" },
+  { name: "vue", label: "Vue.js" },
+  { name: "angular", label: "Angular" },
+  { name: "laravel", label: "Laravel" },
+  { name: "django", label: "Django" },
+  { name: "svelte", label: "Svelte" },
+  { name: "github", label: "GitHub" },
+];
 
-  // ─── Upper Sub-Perimeter (Row 2 & 3) ───
-  { id: "doc-1", name: "docker", top: "12%", left: "7%", anim: "animate-float-icon-3", delay: "1.2s", size: 42 },
-  { id: "vue-1", name: "vue", top: "13%", left: "19%", anim: "animate-float-icon-4", delay: "0.6s", size: 40 },
-  { id: "fig-1", name: "figma", top: "11%", left: "31%", anim: "animate-float-icon-1", delay: "1.6s", size: 38 },
-  { id: "html-1", name: "html", top: "12%", right: "31%", anim: "animate-float-icon-2", delay: "0.9s", size: 40 },
-  { id: "css-1", name: "css", top: "13%", right: "19%", anim: "animate-float-icon-4", delay: "1.4s", size: 40 },
-  { id: "cpp-1", name: "cpp", top: "12%", right: "7%", anim: "animate-float-icon-1", delay: "1.0s", size: 44 },
+const RIGHT_FLANK_LOGOS: TechBadge[] = [
+  { name: "nextjs", label: "Next.js" },
+  { name: "node", label: "Node.js" },
+  { name: "css", label: "CSS3 / Tailwind" },
+  { name: "java", label: "Java" },
+  { name: "cpp", label: "C++" },
+  { name: "csharp", label: "C#" },
+  { name: "postgresql", label: "PostgreSQL" },
+  { name: "mysql", label: "MySQL" },
+  { name: "mongodb", label: "MongoDB" },
+  { name: "redis", label: "Redis" },
+  { name: "flutter", label: "Flutter" },
+  { name: "swift", label: "Swift" },
+  { name: "kotlin", label: "Kotlin" },
+  { name: "aws", label: "AWS" },
+];
 
-  // ─── Left Sector ───
-  { id: "php-1", name: "php", top: "22%", left: "2%", anim: "animate-float-icon-1", delay: "0.9s", size: 44 },
-  { id: "ang-1", name: "angular", top: "24%", left: "13%", anim: "animate-float-icon-2", delay: "1.4s", size: 40 },
-  { id: "git-1", name: "github", top: "33%", left: "4%", anim: "animate-float-icon-3", delay: "0.3s", size: 42 },
-  { id: "lar-1", name: "laravel", top: "35%", left: "15%", anim: "animate-float-icon-1", delay: "1.7s", size: 40 },
-  { id: "rust-1", name: "rust", top: "44%", left: "3%", anim: "animate-float-icon-2", delay: "1.0s", size: 42 },
-  { id: "dj-1", name: "django", top: "46%", left: "14%", anim: "animate-float-icon-4", delay: "0.5s", size: 40 },
-  { id: "go-1", name: "golang", top: "55%", left: "4%", anim: "animate-float-icon-1", delay: "0.7s", size: 42 },
-  { id: "rub-1", name: "ruby", top: "57%", left: "15%", anim: "animate-float-icon-3", delay: "1.3s", size: 40 },
-  { id: "sve-1", name: "svelte", top: "66%", left: "2%", anim: "animate-float-icon-4", delay: "1.5s", size: 42 },
-  { id: "dar-1", name: "dart", top: "68%", left: "13%", anim: "animate-float-icon-2", delay: "0.8s", size: 40 },
-  { id: "lin-1", name: "linux", top: "77%", left: "4%", anim: "animate-float-icon-1", delay: "1.4s", size: 44 },
-  { id: "kot-1", name: "kotlin", top: "79%", left: "15%", anim: "animate-float-icon-3", delay: "0.6s", size: 40 },
-  { id: "sqli-1", name: "sqlite", top: "87%", left: "3%", anim: "animate-float-icon-4", delay: "1.1s", size: 40 },
-  { id: "and-1", name: "android", top: "89%", left: "14%", anim: "animate-float-icon-2", delay: "0.4s", size: 42 },
+const MOBILE_TOP_LOGOS: TechBadge[] = [
+  { name: "python", label: "Python" },
+  { name: "react", label: "React" },
+  { name: "typescript", label: "TypeScript" },
+  { name: "nextjs", label: "Next.js" },
+  { name: "docker", label: "Docker" },
+  { name: "css", label: "Tailwind" },
+  { name: "java", label: "Java" },
+];
 
-  // ─── Right Sector ───
-  { id: "flt-1", name: "flutter", top: "22%", right: "3%", anim: "animate-float-icon-2", delay: "0.7s", size: 42 },
-  { id: "sw-1", name: "swift", top: "24%", right: "14%", anim: "animate-float-icon-3", delay: "0.2s", size: 42 },
-  { id: "cs-1", name: "csharp", top: "33%", right: "4%", anim: "animate-float-icon-4", delay: "1.2s", size: 42 },
-  { id: "c-1", name: "c", top: "35%", right: "15%", anim: "animate-float-icon-1", delay: "0.8s", size: 40 },
-  { id: "pg-1", name: "postgresql", top: "44%", right: "3%", anim: "animate-float-icon-2", delay: "0.4s", size: 44 },
-  { id: "sql-1", name: "mysql", top: "46%", right: "14%", anim: "animate-float-icon-3", delay: "1.5s", size: 42 },
-  { id: "red-1", name: "redis", top: "55%", right: "4%", anim: "animate-float-icon-1", delay: "0.8s", size: 40 },
-  { id: "mon-1", name: "mongodb", top: "57%", right: "15%", anim: "animate-float-icon-4", delay: "1.1s", size: 42 },
-  { id: "aws-1", name: "aws", top: "66%", right: "3%", anim: "animate-float-icon-3", delay: "1.3s", size: 44 },
-  { id: "k8s-1", name: "kubernetes", top: "68%", right: "14%", anim: "animate-float-icon-1", delay: "0.5s", size: 44 },
-  { id: "gcp-1", name: "gcp", top: "77%", right: "4%", anim: "animate-float-icon-2", delay: "0.9s", size: 42 },
-  { id: "azu-1", name: "azure", top: "79%", right: "15%", anim: "animate-float-icon-4", delay: "1.6s", size: 42 },
-  { id: "ng-1", name: "nginx", top: "87%", right: "3%", anim: "animate-float-icon-1", delay: "0.7s", size: 40 },
-  { id: "app-1", name: "apple", top: "89%", right: "14%", anim: "animate-float-icon-3", delay: "1.2s", size: 40 },
-
-  // ─── Center-Ambient Sector (Surrounding Auth Card) ───
-  { id: "gitl-1", name: "git", top: "25%", left: "25%", anim: "animate-float-icon-1", delay: "1.7s", size: 36 },
-  { id: "term-1", name: "terminal", top: "25%", right: "25%", anim: "animate-float-icon-3", delay: "0.5s", size: 36 },
-  { id: "code-1", name: "code", top: "40%", left: "23%", anim: "animate-float-icon-4", delay: "1.0s", size: 36 },
-  { id: "db-1", name: "database", top: "40%", right: "23%", anim: "animate-float-icon-2", delay: "0.8s", size: 36 },
-  { id: "srv-1", name: "server", top: "60%", left: "23%", anim: "animate-float-icon-3", delay: "0.4s", size: 36 },
-  { id: "sec-1", name: "security", top: "60%", right: "23%", anim: "animate-float-icon-1", delay: "1.3s", size: 36 },
-  { id: "cpu-1", name: "cpu", top: "74%", left: "25%", anim: "animate-float-icon-2", delay: "1.1s", size: 36 },
-  { id: "brn-1", name: "brain", top: "74%", right: "25%", anim: "animate-float-icon-4", delay: "0.6s", size: 36 },
-
-  // ─── Bottom Perimeter ───
-  { id: "ml-1", name: "machine_learning", bottom: "3%", left: "4%", anim: "animate-float-icon-1", delay: "0.5s", size: 42 },
-  { id: "dl-1", name: "deep_learning", bottom: "4%", left: "16%", anim: "animate-float-icon-3", delay: "1.2s", size: 42 },
-  { id: "gen-1", name: "generative_ai", bottom: "3%", left: "28%", anim: "animate-float-icon-2", delay: "0.8s", size: 42 },
-  { id: "nlp-1", name: "nlp", bottom: "4%", left: "40%", anim: "animate-float-icon-4", delay: "0.3s", size: 40 },
-  { id: "cv-1", name: "computer_vision", bottom: "4%", right: "40%", anim: "animate-float-icon-1", delay: "1.4s", size: 40 },
-  { id: "ds-1", name: "data_science", bottom: "3%", right: "28%", anim: "animate-float-icon-3", delay: "0.7s", size: 42 },
-  { id: "alg-1", name: "algorithm", bottom: "4%", right: "16%", anim: "animate-float-icon-2", delay: "1.0s", size: 42 },
-  { id: "bin-1", name: "binary", bottom: "3%", right: "4%", anim: "animate-float-icon-4", delay: "0.6s", size: 42 },
+const MOBILE_BOTTOM_LOGOS: TechBadge[] = [
+  { name: "postgresql", label: "PostgreSQL" },
+  { name: "golang", label: "GoLang" },
+  { name: "rust", label: "Rust" },
+  { name: "flutter", label: "Flutter" },
+  { name: "linux", label: "Linux" },
+  { name: "mongodb", label: "MongoDB" },
+  { name: "redis", label: "Redis" },
 ];
 
 /* ============================================================
    TECH BACKGROUND COMPONENT
+   - Device-Adaptive layout for Mobile, Tablet, Laptop, Desktop
+   - Clean obsidian black base (#000000)
+   - Micro-grid with radial mask
+   - Beautiful glass badge chips for each brand vector
    ============================================================ */
 
 interface TechBackgroundProps {
@@ -142,7 +121,7 @@ export const TechBackground = React.memo(function TechBackground({
         }`}
       />
 
-      {/* 2. Precision Micro-Grid */}
+      {/* 2. Precision Technical Micro-Grid */}
       {!isMinimal && (
         <div
           className={`absolute inset-0 transition-opacity duration-300 ${
@@ -153,32 +132,101 @@ export const TechBackground = React.memo(function TechBackground({
         />
       )}
 
-      {/* 3. 72+ Dense Floating Tech Brand Vectors */}
+      {/* 3. DEVICE-ADAPTIVE FLOATING TECH BRAND BADGES (For Login / Register) */}
       {showLogos && (
-        <div
-          className={`block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-opacity duration-300 ${
-            isLight ? "opacity-65 sm:opacity-75" : "opacity-80 sm:opacity-90"
-          }`}
-        >
-          {FLOATING_BRAND_LOGOS.map((item) => (
-            <div
-              key={item.id}
-              className={`absolute ${item.anim} filter drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]`}
-              style={{
-                top: item.top,
-                bottom: item.bottom,
-                left: item.left,
-                right: item.right,
-                animationDelay: item.delay,
-              }}
-            >
-              <TechIcon name={item.name} size={item.size} />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* ── A. DESKTOP & LAPTOP: LEFT FLANK (2 Columns on xl, 1 Column on md/lg) ── */}
+          <div className="hidden md:grid grid-cols-1 xl:grid-cols-2 gap-3.5 absolute top-1/2 -translate-y-1/2 left-4 lg:left-8 xl:left-14 w-auto max-w-[280px]">
+            {LEFT_FLANK_LOGOS.map((item, idx) => {
+              const animClass =
+                idx % 4 === 0
+                  ? "animate-float-icon-1"
+                  : idx % 4 === 1
+                  ? "animate-float-icon-2"
+                  : idx % 4 === 2
+                  ? "animate-float-icon-3"
+                  : "animate-float-icon-4";
+              const delay = `${(idx * 0.25).toFixed(2)}s`;
+
+              return (
+                <div
+                  key={`left-${item.name}-${idx}`}
+                  className={`${animClass} flex items-center gap-2.5 p-2 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md shadow-md hover:border-brand-500/40 transition-all duration-200`}
+                  style={{ animationDelay: delay }}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/[0.06] flex items-center justify-center shrink-0 p-1.5">
+                    <TechIcon name={item.name} size={20} />
+                  </div>
+                  <span className="text-xs font-mono font-medium text-slate-300 hidden xl:inline truncate max-w-[80px]">
+                    {item.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── B. DESKTOP & LAPTOP: RIGHT FLANK (2 Columns on xl, 1 Column on md/lg) ── */}
+          <div className="hidden md:grid grid-cols-1 xl:grid-cols-2 gap-3.5 absolute top-1/2 -translate-y-1/2 right-4 lg:right-8 xl:right-14 w-auto max-w-[280px]">
+            {RIGHT_FLANK_LOGOS.map((item, idx) => {
+              const animClass =
+                idx % 4 === 0
+                  ? "animate-float-icon-2"
+                  : idx % 4 === 1
+                  ? "animate-float-icon-3"
+                  : idx % 4 === 2
+                  ? "animate-float-icon-4"
+                  : "animate-float-icon-1";
+              const delay = `${(idx * 0.22).toFixed(2)}s`;
+
+              return (
+                <div
+                  key={`right-${item.name}-${idx}`}
+                  className={`${animClass} flex items-center gap-2.5 p-2 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md shadow-md hover:border-brand-500/40 transition-all duration-200`}
+                  style={{ animationDelay: delay }}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/[0.06] flex items-center justify-center shrink-0 p-1.5">
+                    <TechIcon name={item.name} size={20} />
+                  </div>
+                  <span className="text-xs font-mono font-medium text-slate-300 hidden xl:inline truncate max-w-[80px]">
+                    {item.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── C. MOBILE & SMALL TABLET: AMBIENT TOP & BOTTOM BANDS (< 768px) ── */}
+          <div className="md:hidden flex flex-col justify-between h-full py-4 px-2 pointer-events-none opacity-60">
+            {/* Top row */}
+            <div className="flex items-center justify-around gap-2 overflow-hidden">
+              {MOBILE_TOP_LOGOS.map((item, idx) => (
+                <div
+                  key={`mob-top-${item.name}`}
+                  className="w-8 h-8 rounded-lg border border-white/[0.08] bg-white/[0.03] backdrop-blur-md flex items-center justify-center p-1.5 animate-float-icon-1"
+                  style={{ animationDelay: `${idx * 0.3}s` }}
+                >
+                  <TechIcon name={item.name} size={18} />
+                </div>
+              ))}
             </div>
-          ))}
+
+            {/* Bottom row */}
+            <div className="flex items-center justify-around gap-2 overflow-hidden">
+              {MOBILE_BOTTOM_LOGOS.map((item, idx) => (
+                <div
+                  key={`mob-bot-${item.name}`}
+                  className="w-8 h-8 rounded-lg border border-white/[0.08] bg-white/[0.03] backdrop-blur-md flex items-center justify-center p-1.5 animate-float-icon-2"
+                  style={{ animationDelay: `${idx * 0.35}s` }}
+                >
+                  <TechIcon name={item.name} size={18} />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* 4. Edge Vignette */}
+      {/* 4. Subtle Edge Vignette */}
       <div
         className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${
           isLight
