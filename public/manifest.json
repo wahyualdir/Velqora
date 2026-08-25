@@ -1,0 +1,68 @@
+{
+  "name": "Velqora — Modern Learning Platform",
+  "short_name": "Velqora",
+  "description": "Platform Pembelajaran & Manajemen Materi Kuliah Modern Berbasis AI",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#090d16",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Modul Pembelajaran",
+      "short_name": "Modul",
+      "description": "Buka silabus dan materi modul pembelajaran",
+      "url": "/dashboard/modul",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Velqora AI Tutor",
+      "short_name": "AI Tutor",
+      "description": "Tanya dan diskusikan materi dengan AI",
+      "url": "/dashboard/ai-tutor",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Scanner & Konversi",
+      "short_name": "Scanner",
+      "description": "Pindai dokumen dan konversi format file",
+      "url": "/dashboard/konversi",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Tugas & Jadwal",
+      "short_name": "Tugas",
+      "description": "Kelola tenggat tugas dan jadwal harian",
+      "url": "/dashboard/tugas",
+      "icons": [{ "src": "/logo.svg", "sizes": "any" }]
+    }
+  ]
+}

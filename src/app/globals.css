@@ -1,0 +1,958 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ========================================
+   Velqora — Design System (Tailwind v4)
+   "The Academic Dossier & Field Binder"
+   ======================================== */
+
+@theme {
+  /* Unified Font Family Tokens */
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Brand Colors — Retaining the high quality dark & blue foundation */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+
+  /* Accent Colors */
+  --color-accent-green: #10b981;
+  --color-accent-amber: #f59e0b;
+  --color-accent-red: #ef4444;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-pink: #ec4899;
+  --color-accent-cyan: #06b6d4;
+
+  /* Default Surface Colors - Obsidian Dark Focused First */
+  --color-surface: #020409;
+  --color-surface-secondary: #000000;
+  --color-surface-tertiary: #060a14;
+  --color-surface-hover: #0b1120;
+
+  /* Border Tokens */
+  --color-border: #111a2c;
+  --color-border-hover: #1e2c45;
+
+  /* Text Hierarchy Tokens */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+
+  /* Sidebar Tokens */
+  --color-sidebar: #010206;
+  --color-sidebar-hover: #050812;
+  --color-sidebar-active: #1e3a8a;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-text-active: #ffffff;
+}
+
+/* ========================================
+   Base Styles & Variables
+   ======================================== */
+
+:root {
+  --color-surface: #020409;
+  --color-surface-secondary: #000000;
+  --color-surface-tertiary: #060a14;
+  --color-surface-hover: #0b1120;
+
+  --color-border: #111a2c;
+  --color-border-hover: #1e2c45;
+
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+
+  --color-sidebar: #010206;
+  --color-sidebar-hover: #050812;
+  --color-sidebar-active: #1e3a8a;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-text-active: #ffffff;
+
+  /* Density & Radius compact developer-grade tokens */
+  --density-card-p: 1rem;
+  --radius-card: 0.625rem;
+  --radius-btn: 0.375rem;
+}
+
+.dark {
+  --color-surface: #020409;
+  --color-surface-secondary: #000000;
+  --color-surface-tertiary: #060a14;
+  --color-surface-hover: #0b1120;
+
+  --color-border: #111a2c;
+  --color-border-hover: #1e2c45;
+
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+
+  --color-sidebar: #010206;
+  --color-sidebar-hover: #050812;
+  --color-sidebar-active: #1e3a8a;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-text-active: #ffffff;
+}
+
+/* ========================================
+   LIGHT MODE — Premium High-Contrast Tokens
+   ======================================== */
+
+.light {
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f8fafc;
+  --color-surface-tertiary: #f1f5f9;
+  --color-surface-hover: #e2e8f0;
+
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+
+  --color-sidebar: #ffffff;
+  --color-sidebar-hover: #f1f5f9;
+  --color-sidebar-active: #2563eb;
+  --color-sidebar-text: #334155;
+  --color-sidebar-text-active: #0f172a;
+}
+
+.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* High Contrast mode adjustments */
+html[data-contrast="high"].dark {
+  --color-surface: #000000;
+  --color-surface-secondary: #000000;
+  --color-border: #22324f;
+  --color-border-hover: #3b5074;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cbd5e1;
+}
+
+html[data-contrast="high"].light {
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f1f5f9;
+  --color-border: #94a3b8;
+  --color-border-hover: #64748b;
+  --color-text-primary: #000000;
+  --color-text-secondary: #1e293b;
+}
+
+/* UI Density */
+html[data-density="compact"] {
+  --density-card-p: 0.75rem;
+}
+html[data-density="comfortable"] {
+  --density-card-p: 1.25rem;
+}
+html[data-density="spacious"] {
+  --density-card-p: 1.75rem;
+}
+
+/* UI Corner Radius */
+html[data-radius="sharp"] {
+  --radius-card: 0.375rem;
+  --radius-btn: 0.25rem;
+}
+html[data-radius="sharp"] .rounded-2xl,
+html[data-radius="sharp"] .rounded-3xl {
+  border-radius: 6px !important;
+}
+html[data-radius="sharp"] .rounded-xl,
+html[data-radius="sharp"] .rounded-lg {
+  border-radius: 4px !important;
+}
+
+html[data-radius="soft"] {
+  --radius-card: 1.5rem;
+  --radius-btn: 0.875rem;
+}
+html[data-radius="soft"] .rounded-2xl {
+  border-radius: 20px !important;
+}
+html[data-radius="soft"] .rounded-3xl {
+  border-radius: 28px !important;
+}
+
+/* Motion controls */
+html[data-motion="reduced"] * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+html[data-motion="expressive"] {
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Typography Scales */
+html[data-font-size="compact"] {
+  font-size: 14.5px;
+}
+html[data-font-size="normal"] {
+  font-size: 16px;
+}
+html[data-font-size="large"] {
+  font-size: 17.5px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* ========================================
+   Dynamic Accent Color Themes
+   ======================================== */
+
+/* 1. Stealth Titanium (Default) */
+html[data-accent="platinum"],
+html[data-accent="titanium"],
+html:not([data-accent]) {
+  --color-brand-500: #94a3b8;
+  --color-brand-600: #64748b;
+  --color-brand-700: #475569;
+  --color-sidebar-active: #334155;
+}
+html[data-accent="platinum"] .bg-indigo-600,
+html[data-accent="titanium"] .bg-indigo-600,
+html:not([data-accent]) .bg-indigo-600,
+html[data-accent="platinum"] .bg-\[\#0071e3\],
+html[data-accent="titanium"] .bg-\[\#0071e3\],
+html:not([data-accent]) .bg-\[\#0071e3\],
+html[data-accent="platinum"] .bg-blue-600,
+html[data-accent="titanium"] .bg-blue-600,
+html:not([data-accent]) .bg-blue-600 {
+  background-color: #475569 !important;
+}
+html[data-accent="platinum"] .text-indigo-400,
+html[data-accent="titanium"] .text-indigo-400,
+html:not([data-accent]) .text-indigo-400,
+html[data-accent="platinum"] .text-\[\#2997ff\],
+html[data-accent="titanium"] .text-\[\#2997ff\],
+html:not([data-accent]) .text-\[\#2997ff\],
+html[data-accent="platinum"] .text-blue-400,
+html[data-accent="titanium"] .text-blue-400,
+html:not([data-accent]) .text-blue-400 {
+  color: #94a3b8 !important;
+}
+html[data-accent="platinum"] .border-indigo-500\/30,
+html[data-accent="titanium"] .border-indigo-500\/30,
+html:not([data-accent]) .border-indigo-500\/30,
+html[data-accent="platinum"] .border-blue-500\/30,
+html[data-accent="titanium"] .border-blue-500\/30,
+html:not([data-accent]) .border-blue-500\/30,
+html[data-accent="platinum"] .border-\[\#0071e3\]\/30,
+html[data-accent="titanium"] .border-\[\#0071e3\]\/30,
+html:not([data-accent]) .border-\[\#0071e3\]\/30 {
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+
+/* 2. Cyber Indigo */
+html[data-accent="indigo"] {
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-sidebar-active: #1e3a8a;
+}
+html[data-accent="indigo"] .bg-indigo-600,
+html[data-accent="indigo"] .bg-\[\#0071e3\],
+html[data-accent="indigo"] .bg-blue-600 {
+  background-color: #2563eb !important;
+}
+html[data-accent="indigo"] .text-indigo-400,
+html[data-accent="indigo"] .text-\[\#2997ff\],
+html[data-accent="indigo"] .text-blue-400 {
+  color: #60a5fa !important;
+}
+html[data-accent="indigo"] .border-indigo-500\/30,
+html[data-accent="indigo"] .border-blue-500\/30,
+html[data-accent="indigo"] .border-\[\#0071e3\]\/30 {
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+/* 3. Emerald Matrix */
+html[data-accent="emerald"] {
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-sidebar-active: #047857;
+}
+html[data-accent="emerald"] .bg-indigo-600,
+html[data-accent="emerald"] .bg-\[\#0071e3\],
+html[data-accent="emerald"] .bg-blue-600 {
+  background-color: #059669 !important;
+}
+html[data-accent="emerald"] .text-indigo-400,
+html[data-accent="emerald"] .text-\[\#2997ff\],
+html[data-accent="emerald"] .text-blue-400 {
+  color: #34d399 !important;
+}
+html[data-accent="emerald"] .border-indigo-500\/30,
+html[data-accent="emerald"] .border-blue-500\/30,
+html[data-accent="emerald"] .border-\[\#0071e3\]\/30 {
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+/* 4. Royal Violet */
+html[data-accent="violet"] {
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-sidebar-active: #5b21b6;
+}
+html[data-accent="violet"] .bg-indigo-600,
+html[data-accent="violet"] .bg-\[\#0071e3\],
+html[data-accent="violet"] .bg-blue-600 {
+  background-color: #7c3aed !important;
+}
+html[data-accent="violet"] .text-indigo-400,
+html[data-accent="violet"] .text-\[\#2997ff\],
+html[data-accent="violet"] .text-blue-400 {
+  color: #a78bfa !important;
+}
+html[data-accent="violet"] .border-indigo-500\/30,
+html[data-accent="violet"] .border-blue-500\/30,
+html[data-accent="violet"] .border-\[\#0071e3\]\/30 {
+  border-color: rgba(139, 92, 246, 0.4) !important;
+}
+
+/* 5. Solar Amber */
+html[data-accent="amber"] {
+  --color-brand-500: #f59e0b;
+  --color-brand-600: #d97706;
+  --color-brand-700: #b45309;
+  --color-sidebar-active: #92400e;
+}
+html[data-accent="amber"] .bg-indigo-600,
+html[data-accent="amber"] .bg-\[\#0071e3\],
+html[data-accent="amber"] .bg-blue-600 {
+  background-color: #d97706 !important;
+}
+html[data-accent="amber"] .text-indigo-400,
+html[data-accent="amber"] .text-\[\#2997ff\],
+html[data-accent="amber"] .text-blue-400 {
+  color: #fbbf24 !important;
+}
+html[data-accent="amber"] .border-indigo-500\/30,
+html[data-accent="amber"] .border-blue-500\/30,
+html[data-accent="amber"] .border-\[\#0071e3\]\/30 {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* 6. Rose Cyberpunk */
+html[data-accent="rose"] {
+  --color-brand-500: #ec4899;
+  --color-brand-600: #db2777;
+  --color-brand-700: #be185d;
+  --color-sidebar-active: #9d174d;
+}
+html[data-accent="rose"] .bg-indigo-600,
+html[data-accent="rose"] .bg-\[\#0071e3\],
+html[data-accent="rose"] .bg-blue-600 {
+  background-color: #db2777 !important;
+}
+html[data-accent="rose"] .text-indigo-400,
+html[data-accent="rose"] .text-\[\#2997ff\],
+html[data-accent="rose"] .text-blue-400 {
+  color: #f472b6 !important;
+}
+html[data-accent="rose"] .border-indigo-500\/30,
+html[data-accent="rose"] .border-blue-500\/30,
+html[data-accent="rose"] .border-\[\#0071e3\]\/30 {
+  border-color: rgba(236, 72, 153, 0.4) !important;
+}
+
+/* 7. Glacier Cyan */
+html[data-accent="cyan"] {
+  --color-brand-500: #06b6d4;
+  --color-brand-600: #0891b2;
+  --color-brand-700: #0e7490;
+  --color-sidebar-active: #155e75;
+}
+html[data-accent="cyan"] .bg-indigo-600,
+html[data-accent="cyan"] .bg-\[\#0071e3\],
+html[data-accent="cyan"] .bg-blue-600 {
+  background-color: #0891b2 !important;
+}
+html[data-accent="cyan"] .text-indigo-400,
+html[data-accent="cyan"] .text-\[\#2997ff\],
+html[data-accent="cyan"] .text-blue-400 {
+  color: #22d3ee !important;
+}
+html[data-accent="cyan"] .border-indigo-500\/30,
+html[data-accent="cyan"] .border-blue-500\/30,
+html[data-accent="cyan"] .border-\[\#0071e3\]\/30 {
+  border-color: rgba(6, 182, 212, 0.4) !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* ========================================
+   Animations (Preserved & Re-tuned)
+   ======================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Architectural Focal Desk Glow behind hero */
+@keyframes ambient-aura {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.04) translateY(-4px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+/* Background Ambient Floating Lighting */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.08);
+  }
+  66% {
+    transform: translate(-25px, 25px) scale(0.95);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(-35px, 30px) scale(1.1);
+  }
+  66% {
+    transform: translate(25px, -30px) scale(0.92);
+  }
+}
+
+/* Floating Tech Icon Movements */
+@keyframes float-icon-1 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-22px) rotate(6deg);
+  }
+}
+
+@keyframes float-icon-2 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(24px) rotate(-8deg);
+  }
+}
+
+@keyframes float-icon-3 {
+  0%, 100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  33% {
+    transform: translate(14px, -18px) rotate(5deg);
+  }
+  66% {
+    transform: translate(-14px, 14px) rotate(-5deg);
+  }
+}
+
+@keyframes float-icon-4 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-18px, -20px) scale(1.08);
+  }
+}
+
+/* Drifting Moving Grid Background */
+@keyframes grid-drift {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+/* Circuit Stream Pulse */
+@keyframes circuit-pulse {
+  0%, 100% {
+    opacity: 0.15;
+    stroke-dashoffset: 1000;
+  }
+  50% {
+    opacity: 0.6;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Dynamic Dot Matrix Scanning Wave */
+@keyframes matrix-scan {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee 32s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-ambient-aura {
+  animation: ambient-aura 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 14s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 16s ease-in-out infinite;
+}
+
+.animate-float-icon-1 {
+  animation: float-icon-1 7s ease-in-out infinite;
+}
+
+.animate-float-icon-2 {
+  animation: float-icon-2 8.5s ease-in-out infinite;
+}
+
+.animate-float-icon-3 {
+  animation: float-icon-3 9s ease-in-out infinite;
+}
+
+.animate-float-icon-4 {
+  animation: float-icon-4 11s ease-in-out infinite;
+}
+
+.animate-grid-drift {
+  animation: grid-drift 25s linear infinite;
+}
+
+.animate-circuit-pulse {
+  animation: circuit-pulse 8s ease-in-out infinite;
+}
+
+/* Subtle Shimmer for Skeleton UI */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-secondary) 25%,
+    var(--color-surface-tertiary) 50%,
+    var(--color-surface-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Custom Scrollbar for sidebar and specific content */
+.sidebar-nav-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-nav-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+.sidebar-nav-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* ========================================
+   GLOBAL UNIFIED LAYOUT & RESPONSIVE DESIGN SYSTEM
+   Professional Developer Productivity Standard
+   ======================================== */
+
+/* ── 1. Responsive Spacing Scale Tokens ── */
+:root {
+  --space-section: 1.75rem;
+  --space-card-gap: 1rem;
+  --space-card-pad: 1.125rem;
+}
+@media (min-width: 640px) {
+  :root {
+    --space-section: 2.25rem;
+    --space-card-gap: 1.125rem;
+    --space-card-pad: 1.25rem;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --space-section: 2.5rem;
+    --space-card-gap: 1.25rem;
+    --space-card-pad: 1.375rem;
+  }
+}
+@media (min-width: 1440px) {
+  :root {
+    --space-section: 2.75rem;
+    --space-card-gap: 1.25rem;
+    --space-card-pad: 1.5rem;
+  }
+}
+
+/* ── 2. Unified Master Page Container (Max 1560px for Wide Screens) ── */
+.page-container,
+.content-container {
+  width: 100%;
+  max-width: 97.5rem; /* 1560px */
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .page-container,
+  .content-container {
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .page-container,
+  .content-container {
+    padding-inline: 2rem;
+  }
+}
+@media (min-width: 1440px) {
+  .page-container,
+  .content-container {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* ── 3. Page Section Spacing Helper ── */
+.page-section {
+  margin-bottom: var(--space-section);
+}
+.page-section:last-child {
+  margin-bottom: 0;
+}
+
+/* ── 4. Unified Reusable Card Grid ── */
+.card-grid,
+.grid-responsive-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-card-gap);
+}
+@media (min-width: 640px) {
+  .card-grid,
+  .grid-responsive-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .card-grid,
+  .grid-responsive-cards {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+@media (min-width: 1440px) {
+  .card-grid,
+  .grid-responsive-cards {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+/* ── 5. KPI & Summary Metrics Grid (4-col Desktop, 3-col Laptop 1200, 2-col Laptop 1024 / Tablet, 1-col Mobile) ── */
+.card-grid-stats,
+.grid-responsive-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 480px) {
+  .card-grid-stats,
+  .grid-responsive-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .card-grid-stats,
+  .grid-responsive-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+@media (min-width: 1200px) {
+  .card-grid-stats,
+  .grid-responsive-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1367px) {
+  .card-grid-stats,
+  .grid-responsive-stats {
+    grid-template-columns: repeat(4, minmax(260px, 1fr));
+  }
+}
+
+/* ── 6. Settings Compact Options Grid ── */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .settings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.875rem;
+  }
+}
+@media (min-width: 1024px) {
+  .settings-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+@media (min-width: 1440px) {
+  .settings-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* ── 7. Reusable Form Grid ── */
+.form-grid,
+.grid-responsive-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .form-grid,
+  .grid-responsive-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* ── 8. Reusable Filter Toolbar Grid ── */
+.toolbar,
+.grid-responsive-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .toolbar,
+  .grid-responsive-filters {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+/* ── 9. Two-Column and Three-Column Grids ── */
+.grid-responsive-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-card-gap);
+}
+@media (min-width: 768px) {
+  .grid-responsive-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.grid-responsive-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-card-gap);
+}
+@media (min-width: 640px) {
+  .grid-responsive-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .grid-responsive-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ── 10. Isolated Table Container ── */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0.875rem;
+  border: 1px solid var(--color-border);
+}
+.table-responsive-container table {
+  min-width: 600px;
+  width: 100%;
+}
+
+/* ── 11. Fluid Typography System ── */
+.text-fluid-h1 {
+  font-size: clamp(1.35rem, 2vw + 0.5rem, 2.15rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.text-fluid-h2 {
+  font-size: clamp(1.1rem, 1.5vw + 0.4rem, 1.6rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.text-fluid-h3 {
+  font-size: clamp(0.95rem, 1vw + 0.35rem, 1.25rem);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+
+/* ── 12. Touch Target Helpers (Apple HIG & Material Standard) ── */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 640px) {
+  .touch-target {
+    min-height: 38px;
+    min-width: 38px;
+  }
+}
+
+/* ── 13. Section Spacing Helper ── */
+.section-gap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+}
+.section-gap-sm {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-section) * 0.6);
+}
+
+/* ── 14. Safe Area Support ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+

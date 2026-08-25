@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" shape-rendering="geometricPrecision">
+  <rect width="32" height="32" rx="8" fill="#0b0f19"/>
+  <!-- Left Foundation Pillar -->
+  <path d="M6 6.5C6 5.67 6.67 5 7.5 5H12.2C12.87 5 13.46 5.43 13.65 6.07L18.45 22.07C18.74 23.03 18.02 24 17.02 24H12.8C12.13 24 11.54 23.57 11.35 22.93L6.15 7.43C6.05 7.14 6 6.83 6 6.5Z" fill="#0071e3"/>
+  <!-- Right Ascending Wing -->
+  <path d="M26 6.5C26 5.67 25.33 5 24.5 5H19.8C19.13 5 18.54 5.43 18.35 6.07L13.55 22.07C13.26 23.03 13.98 24 14.98 24H19.2C19.87 24 20.46 23.57 20.65 22.93L25.85 7.43C25.95 7.14 26 6.83 26 6.5Z" fill="#2997ff"/>
+  <!-- Central Keystone Anchor -->
+  <polygon points="16,21.5 18.5,26 13.5,26" fill="#60a5fa"/>
+</svg>
