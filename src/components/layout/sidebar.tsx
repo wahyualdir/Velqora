@@ -26,6 +26,7 @@ import {
   Code2,
   FolderTree,
   FolderOpen,
+  FolderCode,
   Tags,
   Tag,
   Files,
@@ -39,6 +40,8 @@ import {
   Globe,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Calendar,
   X,
   Crown,
   Sliders,
@@ -70,6 +73,7 @@ const iconMap: Record<string, React.ElementType> = {
   Code2,
   FolderTree,
   FolderOpen,
+  FolderCode,
   Tags,
   Tag,
   Files,
@@ -82,6 +86,7 @@ const iconMap: Record<string, React.ElementType> = {
   MapPin,
   Globe,
   Sliders,
+  Calendar,
 };
 
 const categoryTitleMap: Record<string, TranslationKey> = {
@@ -111,6 +116,7 @@ const categoryTitleMap: Record<string, TranslationKey> = {
 const linkLabelMap: Record<string, TranslationKey> = {
   Dashboard: "navDashboard",
   "Ringkasan Pembelajaran": "navDashboard",
+  "Statistik Belajar": "navStatistik",
   "Semua Modul": "navModul",
   "Modul & Project": "navModul",
   "Modul dan Project": "navModul",
@@ -118,35 +124,31 @@ const linkLabelMap: Record<string, TranslationKey> = {
   "Koleksi Materi": "navMateri",
   "Materi Pembelajaran": "navMateri",
   "Bahan Ajar & Dokumen": "navMateri",
+  "Semua Tugas": "navTugas",
   "Tugas & Jadwal": "navTugas",
-  "Tugas dan Jadwal": "navTugas",
-  "Manajemen Tugas": "navTugas",
   "Tugas Pembelajaran": "navTugas",
-  "Kelas Belajar": "navKelas",
-  "Ruang Kelas": "navKelas",
-  "Bookmark Saya": "navBookmark",
   "Materi Tersimpan": "navBookmark",
   "Catatan Belajar": "navCatatan",
-  "Code Playground": "navPlayground",
-  "Ruang Praktik Kode": "navPlayground",
-  "Ruang Praktik & Alat": "navPlayground",
-  "Statistik Belajar": "navStatistik",
-  "Perkembangan Belajar": "navStatistik",
-  "Velqora AI Tutor": "navAiTutor",
-  "AI Tutor Cerdas": "navAiTutor",
+  "Asisten AI": "navAiTutor",
   "AI Assistant": "navAiTutor",
   "Tutor AI": "navAiTutor",
-  "Kuis AI Interaktif": "navKuisAi",
+  "AI Tutor Cerdas": "navAiTutor",
   "Latihan dan Kuis": "navKuisAi",
-  "Scanner & Konversi": "navKonversi",
+  "Latihan & Kuis AI": "navKuisAi",
   "Konversi Berkas": "navKonversi",
-  "Kategori Subjek": "navKategori",
+  "Konversi & OCR Berkas": "navKonversi",
+  "Ruang Praktik Kode": "navPlayground",
+  "Ruang Praktik & Alat": "navPlayground",
   "Kategori Pembelajaran": "navKategori",
-  "Label & Tag": "navTag",
+  "Kategori & Subjek": "navKategori",
   "Label dan Tag": "navTag",
-  "Berkas & Dokumen": "navFile",
+  "Label & Tag": "navTag",
   "Berkas Pembelajaran": "navFile",
-  "Panduan Aplikasi": "navPanduan",
+  "Semua Berkas": "navFile",
+  "Ruang Kelas": "navKelas",
+  "Jadwal & Reminder": "navJadwal",
+  "Jadwal Perkuliahan": "navJadwal",
+  "Statistik & Progres": "navStatistik",
   Panduan: "navPanduan",
   "Cadangkan Data": "navBackup",
   "Cadangan Data": "navBackup",
@@ -174,6 +176,44 @@ export function Sidebar({
   const { t } = useLanguage();
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+
+  // Auto-expand parent menu when current pathname matches any sub-item
+  useEffect(() => {
+    if (!pathname) return;
+    SIDEBAR_CATEGORIES.forEach((category) => {
+      category.links.forEach((link: any) => {
+        if (link.subItems && link.subItems.length > 0) {
+          const isChildActive = link.subItems.some((sub: any) => {
+            if (sub.href.includes("?")) {
+              return pathname === sub.href.split("?")[0];
+            }
+            return pathname === sub.href || pathname.startsWith(sub.href + "/");
+          });
+          const isParentActive =
+            link.href === "/dashboard"
+              ? pathname === "/dashboard"
+              : pathname === link.href || pathname.startsWith(link.href + "/");
+
+          if (isChildActive || isParentActive) {
+            setExpandedMenus((prev) => ({ ...prev, [link.href]: true }));
+          }
+        }
+      });
+    });
+  }, [pathname]);
+
+  // Toggle accordion item
+  const toggleMenu = (href: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setExpandedMenus((prev) => ({
+      ...prev,
+      [href]: !prev[href],
+    }));
+  };
 
   // Close drawer on Escape key press (Mobile)
   useEffect(() => {
@@ -222,18 +262,17 @@ export function Sidebar({
         />
       )}
 
-      {/* ─── 2. MOBILE DRAWER (For screens < 1024px) ─── */}
+      {/* ─── 2. MOBILE DRAWER SIDEBAR ─── */}
       <aside
-        aria-label="Sidebar Mobile"
+        aria-label="Sidebar Mobile Drawer"
         className={cn(
-          "lg:hidden fixed top-0 left-0 z-50 h-[100dvh] w-[min(86vw,280px)]",
-          "bg-surface border-r border-border flex flex-col select-none",
-          "transition-transform duration-200 ease-out shadow-2xl",
+          "fixed top-0 left-0 bottom-0 z-50 w-[min(88vw,290px)] bg-surface border-r border-border shadow-2xl lg:hidden",
+          "flex flex-col transition-transform duration-200 ease-out select-none",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Mobile Header */}
-        <div className="h-14 px-3.5 border-b border-border flex items-center justify-between shrink-0 bg-surface">
+        {/* Mobile Header: Brand & Close Button */}
+        <div className="h-14 px-4 border-b border-border flex items-center justify-between shrink-0 bg-surface">
           <Link
             href="/dashboard"
             onClick={onClose}
@@ -245,8 +284,8 @@ export function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
-            aria-label="Tutup Menu Navigasi"
+            aria-label="Tutup menu navigasi"
+            className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-surface-secondary active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -255,7 +294,7 @@ export function Sidebar({
         {/* Mobile Navigation List (Scrollable) */}
         <nav
           aria-label="Navigasi Utama Mobile"
-          className="flex-1 px-3 py-4 space-y-4 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-8"
+          className="flex-1 px-3 py-3.5 space-y-4 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-8"
         >
           {SIDEBAR_CATEGORIES.map((category) => {
             const catKey = categoryTitleMap[category.title];
@@ -268,53 +307,125 @@ export function Sidebar({
                   {translatedCatTitle}
                 </div>
 
-                <div className="space-y-0.5">
-                  {category.links.map((link) => {
+                <div className="space-y-1">
+                  {category.links.map((link: any) => {
                     const Icon = iconMap[link.icon];
-                    const isActive =
+                    const hasSubItems = link.subItems && link.subItems.length > 0;
+                    const isExpanded = !!expandedMenus[link.href];
+
+                    const isParentExact =
                       link.href === "/dashboard"
                         ? pathname === "/dashboard"
-                        : pathname.startsWith(link.href);
+                        : pathname === link.href;
+                    const isAnyChildActive =
+                      hasSubItems &&
+                      link.subItems.some((sub: any) => {
+                        if (sub.href.includes("?")) {
+                          return pathname === sub.href.split("?")[0];
+                        }
+                        return pathname === sub.href || pathname.startsWith(sub.href + "/");
+                      });
+                    const isActive = isParentExact || isAnyChildActive;
+
                     const linkKey = linkLabelMap[link.label];
                     const translatedLabel =
                       linkKey && t(linkKey) && t(linkKey) !== linkKey
                         ? t(linkKey)
                         : link.label;
-                    const isAiItem = (link as any).isAi;
+                    const isAiItem = link.isAi;
 
                     return (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        onClick={onClose}
-                        aria-current={isActive ? "page" : undefined}
-                        className={cn(
-                          "flex items-center gap-3 px-3 h-10.5 rounded-xl text-xs sm:text-sm font-medium transition-colors",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
-                          isActive
-                            ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
-                            : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
-                        )}
-                      >
-                        {Icon && (
-                          <Icon
+                      <div key={link.href} className="space-y-0.5">
+                        <div className="flex items-center gap-1">
+                          <Link
+                            href={link.href}
+                            onClick={onClose}
+                            aria-current={isParentExact ? "page" : undefined}
                             className={cn(
-                              "w-4 h-4 shrink-0",
+                              "flex items-center gap-3 px-3 h-10 rounded-xl text-xs sm:text-sm font-medium transition-colors flex-1 min-w-0",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                               isActive
-                                ? "text-brand-500 dark:text-brand-400"
-                                : isAiItem
-                                ? "text-brand-400"
-                                : "text-text-tertiary"
+                                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
+                                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
                             )}
-                          />
+                          >
+                            {Icon && (
+                              <Icon
+                                className={cn(
+                                  "w-4 h-4 shrink-0",
+                                  isActive
+                                    ? "text-brand-500 dark:text-brand-400"
+                                    : isAiItem
+                                    ? "text-brand-400"
+                                    : "text-text-tertiary"
+                                )}
+                              />
+                            )}
+                            <span className="truncate flex-1">{translatedLabel}</span>
+                            {isAiItem && !isActive && (
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                                AI
+                              </span>
+                            )}
+                          </Link>
+
+                          {hasSubItems && (
+                            <button
+                              type="button"
+                              onClick={(e) => toggleMenu(link.href, e)}
+                              aria-expanded={isExpanded}
+                              aria-label={`Buka submenu ${link.label}`}
+                              className="p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+                            >
+                              <ChevronDown
+                                className={cn(
+                                  "w-3.5 h-3.5 transition-transform duration-200",
+                                  isExpanded && "rotate-180 text-brand-500"
+                                )}
+                              />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Accordion Submenu Items */}
+                        {hasSubItems && isExpanded && (
+                          <div className="ml-5 pl-2.5 border-l border-border/70 space-y-0.5 py-0.5 animate-fade-in">
+                            {link.subItems.map((sub: any) => {
+                              const SubIcon = iconMap[sub.icon];
+                              const isSubActive = sub.href.includes("?")
+                                ? pathname === sub.href.split("?")[0]
+                                : pathname === sub.href;
+                              return (
+                                <Link
+                                  key={sub.href}
+                                  href={sub.href}
+                                  onClick={onClose}
+                                  aria-current={isSubActive ? "page" : undefined}
+                                  className={cn(
+                                    "flex items-center gap-2 px-2.5 h-8.5 rounded-lg text-[12px] font-medium transition-colors",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
+                                    isSubActive
+                                      ? "bg-brand-500/15 text-brand-600 dark:text-brand-400 font-semibold"
+                                      : "text-text-tertiary hover:text-text-primary hover:bg-surface-secondary"
+                                  )}
+                                >
+                                  {SubIcon && (
+                                    <SubIcon
+                                      className={cn(
+                                        "w-3.5 h-3.5 shrink-0",
+                                        isSubActive
+                                          ? "text-brand-500 dark:text-brand-400"
+                                          : "text-text-tertiary"
+                                      )}
+                                    />
+                                  )}
+                                  <span className="truncate">{sub.label}</span>
+                                </Link>
+                              );
+                            })}
+                          </div>
                         )}
-                        <span className="truncate flex-1">{translatedLabel}</span>
-                        {isAiItem && !isActive && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
-                            AI
-                          </span>
-                        )}
-                      </Link>
+                      </div>
                     );
                   })}
                 </div>
@@ -337,7 +448,7 @@ export function Sidebar({
                     onClick={onClose}
                     aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-3 px-3 h-10.5 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                      "flex items-center gap-3 px-3 h-10 rounded-xl text-xs sm:text-sm font-medium transition-colors",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                       pathname.startsWith("/dashboard/kelola-role")
                         ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
@@ -354,7 +465,7 @@ export function Sidebar({
                   onClick={onClose}
                   aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 px-3 h-10.5 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                    "flex items-center gap-3 px-3 h-10 rounded-xl text-xs sm:text-sm font-medium transition-colors",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                     pathname.startsWith("/dashboard/peta-pengguna")
                       ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
@@ -376,7 +487,7 @@ export function Sidebar({
         className={cn(
           "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-surface border-r border-border select-none",
           "flex-col transition-all duration-200 ease-out",
-          isCollapsed ? "w-[68px]" : "w-[240px]"
+          isCollapsed ? "w-[68px]" : "w-[245px]"
         )}
       >
         {/* Desktop Header: Brand + Toggle Button */}
@@ -453,65 +564,171 @@ export function Sidebar({
 
                 {/* Menu Items */}
                 <div className="space-y-0.5">
-                  {category.links.map((link) => {
+                  {category.links.map((link: any) => {
                     const Icon = iconMap[link.icon];
-                    const isActive =
+                    const hasSubItems = link.subItems && link.subItems.length > 0;
+                    const isExpanded = !!expandedMenus[link.href];
+
+                    const isParentExact =
                       link.href === "/dashboard"
                         ? pathname === "/dashboard"
-                        : pathname.startsWith(link.href);
+                        : pathname === link.href;
+                    const isAnyChildActive =
+                      hasSubItems &&
+                      link.subItems.some((sub: any) => {
+                        if (sub.href.includes("?")) {
+                          return pathname === sub.href.split("?")[0];
+                        }
+                        return pathname === sub.href || pathname.startsWith(sub.href + "/");
+                      });
+                    const isActive = isParentExact || isAnyChildActive;
+
                     const linkKey = linkLabelMap[link.label];
                     const translatedLabel =
                       linkKey && t(linkKey) && t(linkKey) !== linkKey
                         ? t(linkKey)
                         : link.label;
-                    const isAiItem = (link as any).isAi;
+                    const isAiItem = link.isAi;
 
                     return (
-                      <div key={link.href} className="relative group">
-                        <Link
-                          href={link.href}
-                          aria-current={isActive ? "page" : undefined}
-                          className={cn(
-                            "relative flex items-center rounded-xl transition-all duration-150 font-medium",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
-                            isCollapsed
-                              ? "justify-center w-10 h-10 mx-auto"
-                              : "gap-2.5 px-2.5 h-[34px] text-[13px]",
-                            isActive
-                              ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
-                              : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80 border border-transparent"
-                          )}
-                        >
-                          {Icon && (
-                            <Icon
-                              className={cn(
-                                "w-4 h-4 shrink-0 transition-colors",
-                                isActive
-                                  ? "text-brand-500 dark:text-brand-400"
-                                  : isAiItem
-                                  ? "text-brand-400"
-                                  : "text-text-tertiary group-hover:text-text-secondary"
-                              )}
-                            />
-                          )}
+                      <div key={link.href} className="relative group space-y-0.5">
+                        <div className="flex items-center">
+                          <Link
+                            href={link.href}
+                            aria-current={isParentExact ? "page" : undefined}
+                            className={cn(
+                              "relative flex items-center rounded-xl transition-all duration-150 font-medium flex-1 min-w-0",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
+                              isCollapsed
+                                ? "justify-center w-10 h-10 mx-auto"
+                                : "gap-2 px-2.5 h-[34px] text-[13px]",
+                              isActive
+                                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
+                                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80 border border-transparent"
+                            )}
+                          >
+                            {Icon && (
+                              <Icon
+                                className={cn(
+                                  "w-4 h-4 shrink-0 transition-colors",
+                                  isActive
+                                    ? "text-brand-500 dark:text-brand-400"
+                                    : isAiItem
+                                    ? "text-brand-400"
+                                    : "text-text-tertiary group-hover:text-text-secondary"
+                                )}
+                              />
+                            )}
 
-                          {!isCollapsed && (
-                            <span className="truncate flex-1 leading-snug">
-                              {translatedLabel}
-                            </span>
-                          )}
+                            {!isCollapsed && (
+                              <span className="truncate flex-1 leading-snug">
+                                {translatedLabel}
+                              </span>
+                            )}
 
-                          {isAiItem && !isActive && !isCollapsed && (
-                            <span className="px-1.5 py-0.5 rounded text-[8.5px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
-                              AI
-                            </span>
-                          )}
-                        </Link>
+                            {isAiItem && !isActive && !isCollapsed && (
+                              <span className="px-1.5 py-0.5 rounded text-[8.5px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                                AI
+                              </span>
+                            )}
+                          </Link>
 
-                        {/* Collapsed Tooltip on Hover */}
+                          {/* Expand/Collapse Chevron Button (Desktop Expanded) */}
+                          {hasSubItems && !isCollapsed && (
+                            <button
+                              type="button"
+                              onClick={(e) => toggleMenu(link.href, e)}
+                              aria-expanded={isExpanded}
+                              aria-label={`Toggle ${link.label}`}
+                              className="p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer ml-0.5"
+                            >
+                              <ChevronDown
+                                className={cn(
+                                  "w-3.5 h-3.5 transition-transform duration-200",
+                                  isExpanded && "rotate-180 text-brand-500"
+                                )}
+                              />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Accordion Sub-items (Desktop Expanded) */}
+                        {hasSubItems && !isCollapsed && isExpanded && (
+                          <div className="ml-4 pl-2 border-l border-border/70 space-y-0.5 py-0.5 animate-fade-in">
+                            {link.subItems.map((sub: any) => {
+                              const SubIcon = iconMap[sub.icon];
+                              const isSubActive = sub.href.includes("?")
+                                ? pathname === sub.href.split("?")[0]
+                                : pathname === sub.href;
+
+                              return (
+                                <Link
+                                  key={sub.href}
+                                  href={sub.href}
+                                  aria-current={isSubActive ? "page" : undefined}
+                                  className={cn(
+                                    "flex items-center gap-2 px-2 h-7 rounded-lg text-[12px] font-medium transition-colors",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
+                                    isSubActive
+                                      ? "bg-brand-500/15 text-brand-600 dark:text-brand-400 font-semibold"
+                                      : "text-text-tertiary hover:text-text-primary hover:bg-surface-secondary/70"
+                                  )}
+                                >
+                                  {SubIcon && (
+                                    <SubIcon
+                                      className={cn(
+                                        "w-3.5 h-3.5 shrink-0",
+                                        isSubActive
+                                          ? "text-brand-500 dark:text-brand-400"
+                                          : "text-text-tertiary"
+                                      )}
+                                    />
+                                  )}
+                                  <span className="truncate">{sub.label}</span>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Collapsed Tooltip / Flyout Menu on Hover (Desktop Collapsed) */}
                         {isCollapsed && (
-                          <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 px-2.5 py-1 rounded-lg bg-surface border border-border text-text-primary text-xs font-semibold whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                            {translatedLabel}
+                          <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 rounded-xl bg-surface border border-border text-text-primary text-xs font-semibold shadow-2xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 min-w-[180px] space-y-1.5">
+                            <div className="font-bold border-b border-border/60 pb-1 text-text-primary flex items-center justify-between">
+                              <span>{translatedLabel}</span>
+                              {isAiItem && (
+                                <span className="px-1 py-0.2 rounded text-[8px] font-mono bg-brand-500/10 text-brand-400">
+                                  AI
+                                </span>
+                              )}
+                            </div>
+
+                            {hasSubItems && (
+                              <div className="space-y-0.5 pt-0.5">
+                                {link.subItems.map((sub: any) => {
+                                  const SubIcon = iconMap[sub.icon];
+                                  const isSubActive = sub.href.includes("?")
+                                    ? pathname === sub.href.split("?")[0]
+                                    : pathname === sub.href;
+
+                                  return (
+                                    <Link
+                                      key={sub.href}
+                                      href={sub.href}
+                                      className={cn(
+                                        "flex items-center gap-2 px-2 py-1 rounded-md text-[11.5px] transition-colors",
+                                        isSubActive
+                                          ? "bg-brand-500/15 text-brand-500 font-semibold"
+                                          : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+                                      )}
+                                    >
+                                      {SubIcon && <SubIcon className="w-3 h-3 shrink-0" />}
+                                      <span className="truncate">{sub.label}</span>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>

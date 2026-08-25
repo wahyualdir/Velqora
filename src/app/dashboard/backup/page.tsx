@@ -16,6 +16,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { exportUserData, importUserData } from "@/actions/study-actions";
 import { toast } from "sonner";
 
@@ -85,9 +86,12 @@ export default function BackupPage() {
       <PageHeader
         eyebrow="~/backup-recovery"
         technicalMark="< json // snapshots />"
-        title="Jaga data tetap aman"
-        description="Ekspor dan pulihkan seluruh catatan dan riwayat belajarmu kapan saja."
+        title="Cadangan Data Lengkap"
+        description="Ekspor seluruh materi, tugas, modul, dan riwayat belajar ke berkas JSON atau pulihkan data kapan saja."
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 1. Export Card */}

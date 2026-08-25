@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getUserStudyStats } from "@/actions/study-actions";
 
 type PeriodFilter = "today" | "week" | "month" | "all";
@@ -183,8 +184,8 @@ export default function StatistikPage() {
       <PageHeader
         eyebrow="~/analytics"
         technicalMark="< metrics // velocity />"
-        title="Seberapa jauh kamu sudah belajar?"
-        description="Pantau konsistensi, penyelesaian materi, dan ritme belajarmu dari waktu ke waktu."
+        title="Statistik & Analitik Belajar"
+        description="Pantau konsistensi waktu belajar, penyelesaian bab modul, dan skor kuis dari waktu ke waktu."
         actions={
           <div
             role="tablist"
@@ -214,6 +215,9 @@ export default function StatistikPage() {
           </div>
         }
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
 
       {/* ─── SECTION 2: 4 KPI SUMMARY CARDS (DESKTOP/LAPTOP PROPORTION) ─── */}
       <div className="card-grid-stats">

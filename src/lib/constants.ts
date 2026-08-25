@@ -50,29 +50,88 @@ export const ALLOWED_FILE_EXTENSIONS = [
 // Nama bucket Supabase Storage
 export const STORAGE_BUCKET = "studyvault-files";
 
-// Navigasi sidebar terkelompok 8 kelompok utama (Clean Information Architecture)
+// Navigasi sidebar terkelompok 4 kategori bersih dengan sub-menu terstruktur
 export const SIDEBAR_CATEGORIES = [
   {
     title: "Utama",
     links: [
       { label: "Dashboard", href: "/dashboard", icon: "LayoutGrid" },
-      { label: "Modul & Project", href: "/dashboard/modul", icon: "Layers" },
-      { label: "Bahan Ajar & Dokumen", href: "/dashboard/materi", icon: "BookOpen" },
-      { label: "Tugas & Jadwal", href: "/dashboard/tugas", icon: "CheckSquare" },
+      { label: "Statistik Belajar", href: "/dashboard/statistik", icon: "BarChart3" },
+    ],
+  },
+  {
+    title: "Pembelajaran",
+    links: [
+      {
+        label: "Modul & Project",
+        href: "/dashboard/modul",
+        icon: "Layers",
+        subItems: [
+          { label: "Katalog Modul", href: "/dashboard/modul", icon: "Layers" },
+          { label: "Repositori Project", href: "/dashboard/modul?mode=project", icon: "FolderCode" },
+        ],
+      },
+      {
+        label: "Bahan Ajar & Dokumen",
+        href: "/dashboard/materi",
+        icon: "BookOpen",
+        subItems: [
+          { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: "BookOpen" },
+          { label: "Semua Berkas", href: "/dashboard/file", icon: "Files" },
+          { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: "Bookmark" },
+          { label: "Catatan Belajar", href: "/dashboard/catatan", icon: "PenLine" },
+        ],
+      },
+      {
+        label: "Tugas & Jadwal",
+        href: "/dashboard/tugas",
+        icon: "CheckSquare",
+        subItems: [
+          { label: "Daftar Tugas", href: "/dashboard/tugas", icon: "CheckSquare" },
+          { label: "Jadwal Perkuliahan", href: "/dashboard/tugas?tab=jadwal", icon: "Calendar" },
+        ],
+      },
       { label: "Ruang Kelas", href: "/dashboard/kelas", icon: "Users" },
     ],
   },
   {
     title: "Fitur & Alat",
     links: [
-      { label: "AI Assistant", href: "/dashboard/ai-tutor", icon: "Bot", isAi: true },
-      { label: "Ruang Praktik & Alat", href: "/dashboard/playground", icon: "Code2" },
+      {
+        label: "AI Assistant",
+        href: "/dashboard/ai-tutor",
+        icon: "Bot",
+        isAi: true,
+        subItems: [
+          { label: "AI Tutor Cerdas", href: "/dashboard/ai-tutor", icon: "Bot" },
+          { label: "Latihan & Kuis AI", href: "/dashboard/kuis-ai", icon: "BrainCircuit" },
+        ],
+      },
+      {
+        label: "Ruang Praktik & Alat",
+        href: "/dashboard/playground",
+        icon: "Code2",
+        subItems: [
+          { label: "Ruang Praktik Kode", href: "/dashboard/playground", icon: "Code2" },
+          { label: "Konversi & OCR Berkas", href: "/dashboard/konversi", icon: "ScanLine" },
+        ],
+      },
     ],
   },
   {
     title: "Pengaturan",
     links: [
-      { label: "Pengaturan Workspace", href: "/dashboard/pengaturan", icon: "Sliders" },
+      {
+        label: "Pengaturan Workspace",
+        href: "/dashboard/pengaturan",
+        icon: "Sliders",
+        subItems: [
+          { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: "Sliders" },
+          { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: "FolderOpen" },
+          { label: "Label & Tag", href: "/dashboard/tag", icon: "Tag" },
+          { label: "Cadangan Data", href: "/dashboard/backup", icon: "HardDriveDownload" },
+        ],
+      },
       { label: "Panduan", href: "/dashboard/panduan", icon: "Compass" },
     ],
   },

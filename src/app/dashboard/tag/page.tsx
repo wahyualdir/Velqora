@@ -7,6 +7,7 @@ import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getTags, createTag, deleteTag } from "@/actions/study-actions";
 import { toast } from "sonner";
 
@@ -99,9 +100,12 @@ export default function TagPage() {
       <PageHeader
         eyebrow="~/tags"
         technicalMark="< metadata // cross-topic />"
-        title="Kelompokkan materi secara fleksibel"
-        description="Buat label tematik untuk menghubungkan materi dan tugas lintas kategori."
+        title="Label & Tag Topik"
+        description="Buat label penanda topik untuk mengelompokkan materi dan tugas kuliah secara fleksibel."
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
 
       {/* Create Form */}
       <Card className="p-6 rounded-2xl bg-surface border-border space-y-4 shadow-sm">

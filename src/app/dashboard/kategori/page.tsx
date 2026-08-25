@@ -7,6 +7,7 @@ import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getCategories, createCategory, deleteCategory } from "@/actions/study-actions";
 import { TechIcon, TechIconPicker, TECH_ICONS, TechIconKey } from "@/components/ui/tech-icon";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
@@ -149,8 +150,8 @@ export default function KategoriPage() {
       <PageHeader
         eyebrow="~/taxonomies"
         technicalMark="< domains // stacks />"
-        title="Jelajahi bidang teknologi"
-        description="Atur alur dan struktur materi berdasarkan bahasa pemrograman atau topik keahlian."
+        title="Kategori & Subjek Pembelajaran"
+        description="Atur taksonomi modul dan materi berdasarkan bahasa pemrograman atau topik keahlian."
         actions={
           categories.length === 0 ? (
             <Button
@@ -164,6 +165,9 @@ export default function KategoriPage() {
           ) : undefined
         }
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
 
       {/* Form Tambah Kategori / Sub-Kategori */}
       <Card className="p-4 sm:p-5 rounded-2xl bg-surface border-border space-y-4">

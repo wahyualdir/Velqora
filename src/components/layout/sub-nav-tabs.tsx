@@ -15,6 +15,11 @@ import {
   ScanLine,
   CheckSquare,
   Calendar,
+  Sliders,
+  FolderOpen,
+  Tag,
+  HardDriveDownload,
+  BarChart3,
 } from "lucide-react";
 
 interface SubNavTabItem {
@@ -46,8 +51,16 @@ const TASK_TABS: SubNavTabItem[] = [
   { label: "Jadwal Perkuliahan", href: "/dashboard/tugas?tab=jadwal", icon: Calendar },
 ];
 
+const SETTINGS_TABS: SubNavTabItem[] = [
+  { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: Sliders },
+  { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: FolderOpen },
+  { label: "Label & Tag", href: "/dashboard/tag", icon: Tag },
+  { label: "Cadangan Data", href: "/dashboard/backup", icon: HardDriveDownload },
+  { label: "Statistik Belajar", href: "/dashboard/statistik", icon: BarChart3 },
+];
+
 interface SubNavTabsProps {
-  category: "documents" | "ai" | "tools" | "tasks";
+  category: "documents" | "ai" | "tools" | "tasks" | "settings";
   className?: string;
 }
 
@@ -61,7 +74,9 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
       ? AI_TABS
       : category === "tools"
       ? TOOL_TABS
-      : TASK_TABS;
+      : category === "tasks"
+      ? TASK_TABS
+      : SETTINGS_TABS;
 
   return (
     <nav

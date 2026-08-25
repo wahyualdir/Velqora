@@ -25,6 +25,7 @@ import {
   FileCode2,
   Terminal,
   ChevronRight,
+  BarChart3,
 } from "lucide-react";
 import { getDashboardStats } from "@/actions/study-actions";
 import { Skeleton, EmptyState } from "@/components/ui/card";
@@ -221,7 +222,12 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <Link href="/dashboard/statistik">
+              <Button size="sm" variant="ghost" className="gap-1.5 text-xs text-text-secondary hover:text-text-primary">
+                <BarChart3 className="w-3.5 h-3.5 text-brand-500" /> Statistik
+              </Button>
+            </Link>
             <Link href="/dashboard/modul/baru">
               <Button size="sm" className="gap-1.5 text-xs font-semibold shadow-xs">
                 <Plus className="w-3.5 h-3.5" /> Tambah Modul
@@ -643,6 +649,26 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-text-tertiary group-hover:text-cyan-400 shrink-0" />
+              </Link>
+
+              <Link
+                href="/dashboard/statistik"
+                className="group flex items-center justify-between p-3 hover:bg-surface-secondary/70 transition-colors"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <BarChart3 className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-bold text-text-primary group-hover:text-emerald-400 transition-colors truncate">
+                      Statistik & Analitik Belajar
+                    </h3>
+                    <p className="text-[11px] text-text-secondary truncate">
+                      Progres bab, ritme mingguan, & skor kuis
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-text-tertiary group-hover:text-emerald-400 shrink-0" />
               </Link>
             </div>
           </section>

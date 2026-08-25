@@ -29,6 +29,7 @@ import { Card } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { ConfirmDialog } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { useTheme } from "next-themes";
@@ -221,9 +222,12 @@ export default function PengaturanPage() {
       {/* 1. Header */}
       <PageHeader
         eyebrow="~/workspace / settings"
-        title="Pengaturan & Preferensi"
+        title="Pengaturan Workspace"
         description="Kelola tampilan workspace, tema warna, profil pengguna, dan konfigurasi akun Velqora kamu."
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
 
       {/* 2. Structured Settings Tab Navigation */}
       <div className="flex items-center gap-1.5 border-b border-border/70 overflow-x-auto py-1">
