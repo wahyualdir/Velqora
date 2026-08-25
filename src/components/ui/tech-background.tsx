@@ -520,13 +520,11 @@ export const TechBackground = React.memo(function TechBackground({ variant, styl
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none transform-gpu will-change-transform [contain:paint]"
     >
-      {/* 1. Base Layer */}
+      {/* 1. Base Layer (Deep Obsidian Black) */}
       <div
         className={`absolute inset-0 ${isLight
             ? "bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]"
-            : activeStyle === "super-dark"
-              ? "bg-[#000000]"
-              : "bg-[#070b14]"
+            : "bg-[#020408]"
           }`}
       />
 
@@ -871,42 +869,31 @@ export const TechBackground = React.memo(function TechBackground({ variant, styl
           ) : (
             <>
               <div
-                className={`absolute top-[-10%] left-[15%] rounded-full bg-blue-600 animate-float-slow transition-all duration-500 ${isBold
-                    ? "w-[650px] sm:w-[850px] h-[650px] sm:h-[850px] blur-[130px] opacity-45"
-                    : "w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] blur-[160px] opacity-18"
-                  }`}
+                className="absolute top-[-10%] left-[15%] rounded-full bg-blue-600/30 animate-float-slow transition-all duration-500 w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] blur-[150px]"
               />
               <div
-                className={`absolute top-[35%] right-[2%] rounded-full bg-indigo-600 animate-float-reverse transition-all duration-500 ${isBold
-                    ? "w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] blur-[140px] opacity-50"
-                    : "w-[400px] sm:w-[550px] h-[400px] sm:h-[550px] blur-[160px] opacity-18"
-                  }`}
+                className="absolute top-[35%] right-[2%] rounded-full bg-indigo-600/25 animate-float-reverse transition-all duration-500 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] blur-[160px]"
               />
               <div
-                className={`absolute bottom-[-10%] left-[30%] rounded-full bg-cyan-600 animate-float-slow transition-all duration-500 ${isBold
-                    ? "w-[700px] sm:w-[900px] h-[700px] sm:h-[900px] blur-[150px] opacity-45"
-                    : "w-[450px] sm:w-[650px] h-[450px] sm:h-[650px] blur-[180px] opacity-18"
-                  }`}
+                className="absolute bottom-[-10%] left-[30%] rounded-full bg-cyan-600/20 animate-float-slow transition-all duration-500 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] blur-[170px]"
               />
               {/* Animated Moving Tech Grid */}
               <div
-                className={`absolute inset-0 bg-tech-grid radial-mask-vignette animate-grid-drift transition-opacity duration-500 ${isBold ? "opacity-45" : "opacity-15 sm:opacity-20"
-                  }`}
+                className="absolute inset-0 bg-tech-grid radial-mask-vignette animate-grid-drift transition-opacity duration-500 opacity-20 sm:opacity-25"
               />
             </>
           )}
 
 
 
-          {/* 37 Floating Tech Brand Logos with Enhanced Radiance (GPU Accelerated & Zero-Delay) */}
+          {/* 37 Floating Tech Brand Logos with Subtle Radiance (Crystal-Clear Text Readability) */}
           {!isMinimal && (
             <div
-              className={`block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-all duration-500 ${isBold
-                  ? "opacity-90 sm:opacity-100"
-                  : isLight
-                    ? "opacity-40 sm:opacity-50 hover:opacity-60"
-                    : "opacity-45 sm:opacity-55 hover:opacity-75"
-                }`}
+              className={`block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-all duration-500 ${
+                isLight
+                  ? "opacity-25 sm:opacity-30 hover:opacity-45"
+                  : "opacity-28 sm:opacity-34 hover:opacity-50"
+              }`}
             >
               {/* Python */}
               <div className="absolute top-[8%] left-[6%] animate-float-icon-1" style={{ animationDelay: "0s" }}>
