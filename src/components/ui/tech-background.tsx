@@ -520,11 +520,11 @@ export const TechBackground = React.memo(function TechBackground({ variant, styl
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none transform-gpu will-change-transform [contain:paint]"
     >
-      {/* 1. Base Layer (Deep Obsidian Black) */}
+      {/* 1. Base Layer (Pure Pitch Black) */}
       <div
         className={`absolute inset-0 ${isLight
             ? "bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]"
-            : "bg-[#020408]"
+            : "bg-[#000000]"
           }`}
       />
 
@@ -868,16 +868,7 @@ export const TechBackground = React.memo(function TechBackground({ variant, styl
             </>
           ) : (
             <>
-              <div
-                className="absolute top-[-10%] left-[15%] rounded-full bg-blue-600/30 animate-float-slow transition-all duration-500 w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] blur-[150px]"
-              />
-              <div
-                className="absolute top-[35%] right-[2%] rounded-full bg-indigo-600/25 animate-float-reverse transition-all duration-500 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] blur-[160px]"
-              />
-              <div
-                className="absolute bottom-[-10%] left-[30%] rounded-full bg-cyan-600/20 animate-float-slow transition-all duration-500 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] blur-[170px]"
-              />
-              {/* Animated Moving Tech Grid */}
+              {/* Subtle Neutral Depth Grid (Pure Pitch Black) */}
               <div
                 className="absolute inset-0 bg-tech-grid radial-mask-vignette animate-grid-drift transition-opacity duration-500 opacity-20 sm:opacity-25"
               />
@@ -1033,9 +1024,7 @@ export const TechBackground = React.memo(function TechBackground({ variant, styl
       <div
         className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${isLight
             ? `bg-gradient-to-b from-white/40 via-transparent to-white/60 ${isBold ? "opacity-40" : "opacity-70"}`
-            : activeStyle === "super-dark"
-              ? `bg-gradient-to-b from-black/20 via-transparent to-black/60 ${isBold ? "opacity-40" : "opacity-60"}`
-              : `bg-gradient-to-b from-transparent via-transparent to-[#020409]/60 ${isBold ? "opacity-30" : "opacity-50"}`
+            : `bg-gradient-to-b from-black/30 via-transparent to-black/80 ${isBold ? "opacity-40" : "opacity-60"}`
           }`}
       />
     </div>
