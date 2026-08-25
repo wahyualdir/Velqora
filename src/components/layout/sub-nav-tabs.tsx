@@ -64,9 +64,10 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
       : TASK_TABS;
 
   return (
-    <div
+    <nav
+      aria-label="Navigasi Sub Kategori"
       className={cn(
-        "flex items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto no-scrollbar max-w-full",
+        "flex items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto scrollbar-none touch-pan-x max-w-full select-none",
         className
       )}
     >
@@ -84,23 +85,25 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
           <Link
             key={tab.href}
             href={tab.href}
+            aria-current={isActive ? "page" : undefined}
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 whitespace-nowrap",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
               isActive
-                ? "bg-brand-500/10 text-brand-400 border border-brand-500/20 shadow-xs font-semibold"
-                : "text-text-secondary hover:text-text-primary hover:bg-surface-elevated"
+                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 shadow-2xs font-semibold"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
             )}
           >
-            <Icon className="w-4 h-4 shrink-0" />
+            <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-brand-500 dark:text-brand-400" : "text-text-tertiary")} />
             <span>{tab.label}</span>
             {tab.badge !== undefined && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-elevated border border-border text-text-muted">
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-secondary border border-border text-text-muted">
                 {tab.badge}
               </span>
             )}
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }

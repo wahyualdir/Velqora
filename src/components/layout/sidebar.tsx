@@ -211,18 +211,6 @@ export function Sidebar({
     checkRole();
   }, []);
 
-  // ESC key handler for mobile drawer
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
   return (
     <>
       {/* ─── 1. MOBILE DRAWER BACKDROP OVERLAY ─── */}
@@ -236,19 +224,20 @@ export function Sidebar({
 
       {/* ─── 2. MOBILE DRAWER (For screens < 1024px) ─── */}
       <aside
+        aria-label="Sidebar Mobile"
         className={cn(
-          "lg:hidden fixed top-0 left-0 z-50 h-[100dvh] w-[min(86vw,300px)]",
+          "lg:hidden fixed top-0 left-0 z-50 h-[100dvh] w-[min(86vw,280px)]",
           "bg-surface border-r border-border flex flex-col select-none",
           "transition-transform duration-200 ease-out shadow-2xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Mobile Header */}
-        <div className="h-14 px-4 border-b border-border flex items-center justify-between shrink-0 bg-surface">
+        <div className="h-14 px-3.5 border-b border-border flex items-center justify-between shrink-0 bg-surface">
           <Link
             href="/dashboard"
             onClick={onClose}
-            className="flex items-center gap-2.5 focus:outline-none"
+            className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 rounded-lg p-0.5"
           >
             <Logo variant="sidebar" />
           </Link>
@@ -256,15 +245,18 @@ export function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors"
-            aria-label="Tutup Menu"
+            className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
+            aria-label="Tutup Menu Navigasi"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Mobile Navigation List (Scrollable) */}
-        <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto sidebar-nav-scroll overscroll-contain safe-area-bottom">
+        <nav
+          aria-label="Navigasi Utama Mobile"
+          className="flex-1 px-3 py-4 space-y-4 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-8"
+        >
           {SIDEBAR_CATEGORIES.map((category) => {
             const catKey = categoryTitleMap[category.title];
             const translatedCatTitle =
@@ -272,7 +264,7 @@ export function Sidebar({
 
             return (
               <div key={category.title} className="space-y-1">
-                <div className="px-2.5 pb-1 text-[11px] font-semibold text-text-tertiary">
+                <div className="px-2.5 pb-1 text-[11px] font-semibold text-text-tertiary uppercase tracking-wider">
                   {translatedCatTitle}
                 </div>
 
@@ -295,10 +287,12 @@ export function Sidebar({
                         key={link.href}
                         href={link.href}
                         onClick={onClose}
+                        aria-current={isActive ? "page" : undefined}
                         className={cn(
-                          "flex items-center gap-3 px-3 h-10 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                          "flex items-center gap-3 px-3 h-10.5 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                           isActive
-                            ? "bg-brand-500/12 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/25"
+                            ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
                             : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
                         )}
                       >
@@ -316,7 +310,7 @@ export function Sidebar({
                         )}
                         <span className="truncate flex-1">{translatedLabel}</span>
                         {isAiItem && !isActive && (
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
                             AI
                           </span>
                         )}
@@ -341,10 +335,12 @@ export function Sidebar({
                   <Link
                     href="/dashboard/kelola-role"
                     onClick={onClose}
+                    aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-3 px-3 h-10 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                      "flex items-center gap-3 px-3 h-10.5 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                       pathname.startsWith("/dashboard/kelola-role")
-                        ? "bg-brand-500/12 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/25"
+                        ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
                         : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
                     )}
                   >
@@ -356,10 +352,12 @@ export function Sidebar({
                 <Link
                   href="/dashboard/peta-pengguna"
                   onClick={onClose}
+                  aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 px-3 h-10 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                    "flex items-center gap-3 px-3 h-10.5 rounded-xl text-xs sm:text-sm font-medium transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                     pathname.startsWith("/dashboard/peta-pengguna")
-                      ? "bg-brand-500/12 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/25"
+                      ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20"
                       : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
                   )}
                 >
@@ -374,6 +372,7 @@ export function Sidebar({
 
       {/* ─── 3. DESKTOP FIXED SIDEBAR (EXPANDED ↔ COLLAPSED) ─── */}
       <aside
+        aria-label="Sidebar Desktop"
         className={cn(
           "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-surface border-r border-border select-none",
           "flex-col transition-all duration-200 ease-out",
@@ -390,7 +389,7 @@ export function Sidebar({
           <Link
             href="/dashboard"
             className={cn(
-              "flex items-center gap-2.5 focus:outline-none min-w-0 overflow-hidden",
+              "flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 rounded-lg p-0.5 min-w-0 overflow-hidden",
               isCollapsed && "justify-center"
             )}
             title="Velqora Dashboard"
@@ -406,8 +405,9 @@ export function Sidebar({
               aria-label="Toggle sidebar"
               aria-expanded={!isCollapsed}
               className={cn(
-                "p-1.5 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary border border-border/50 hover:border-border transition-colors",
-                isCollapsed && "hidden" // When collapsed, toggle is accessible or shown compactly
+                "p-1.5 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary border border-border/50 hover:border-border transition-colors cursor-pointer",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
+                isCollapsed && "hidden"
               )}
               title="Kecilkan Sidebar (Collapse)"
             >
@@ -424,7 +424,7 @@ export function Sidebar({
               onClick={onToggleCollapse}
               aria-label="Toggle sidebar"
               aria-expanded={!isCollapsed}
-              className="w-full flex items-center justify-center h-7 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary border border-border/60 transition-colors"
+              className="w-full flex items-center justify-center h-7 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary border border-border/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 cursor-pointer"
               title="Buka Penuh Sidebar (Expand)"
             >
               <ChevronRight className="w-3.5 h-3.5" />
@@ -432,18 +432,21 @@ export function Sidebar({
           </div>
         )}
 
-        {/* Desktop Navigation List (Flexible with Smooth Internal Scroll if needed) */}
-        <nav className="flex-1 px-2.5 py-3 space-y-4 overflow-y-auto sidebar-nav-scroll overscroll-contain">
+        {/* Desktop Navigation List */}
+        <nav
+          aria-label="Navigasi Utama Desktop"
+          className="flex-1 px-2.5 py-3 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain"
+        >
           {SIDEBAR_CATEGORIES.map((category) => {
             const catKey = categoryTitleMap[category.title];
             const translatedCatTitle =
               catKey && t(catKey) && t(catKey) !== catKey ? t(catKey) : category.title;
 
             return (
-              <div key={category.title} className="space-y-1">
-                {/* Category Header (Hidden in collapsed mode) */}
+              <div key={category.title} className="space-y-0.5">
+                {/* Category Header */}
                 {!isCollapsed && (
-                  <div className="px-2 pb-1 text-[11px] font-semibold text-text-tertiary">
+                  <div className="px-2 pb-1 text-[10.5px] font-semibold text-text-tertiary uppercase tracking-wider">
                     {translatedCatTitle}
                   </div>
                 )}
@@ -467,13 +470,15 @@ export function Sidebar({
                       <div key={link.href} className="relative group">
                         <Link
                           href={link.href}
+                          aria-current={isActive ? "page" : undefined}
                           className={cn(
                             "relative flex items-center rounded-xl transition-all duration-150 font-medium",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                             isCollapsed
                               ? "justify-center w-10 h-10 mx-auto"
                               : "gap-2.5 px-2.5 h-[34px] text-[13px]",
                             isActive
-                              ? "bg-brand-500/12 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/25 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
+                              ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
                               : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80 border border-transparent"
                           )}
                         >
@@ -497,7 +502,7 @@ export function Sidebar({
                           )}
 
                           {isAiItem && !isActive && !isCollapsed && (
-                            <span className="px-1.5 py-0.2 rounded text-[8.5px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                            <span className="px-1.5 py-0.5 rounded text-[8.5px] font-mono font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
                               AI
                             </span>
                           )}
@@ -521,7 +526,7 @@ export function Sidebar({
           {(isAdmin || isOwner) && (
             <div className="pt-2 border-t border-border/70 space-y-1">
               {!isCollapsed && (
-                <div className="px-2 pb-1 text-[11px] font-semibold text-brand-400 flex items-center justify-between">
+                <div className="px-2 pb-1 text-[10.5px] font-semibold text-brand-400 uppercase tracking-wider flex items-center justify-between">
                   <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
                   <Crown className="w-3 h-3 text-brand-400" />
                 </div>
@@ -532,13 +537,15 @@ export function Sidebar({
                   <div className="relative group">
                     <Link
                       href="/dashboard/kelola-role"
+                      aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                       className={cn(
                         "relative flex items-center rounded-xl transition-all duration-150 font-semibold",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                         isCollapsed
                           ? "justify-center w-10 h-10 mx-auto"
                           : "gap-2.5 px-2.5 h-[34px] text-[13px]",
                         pathname.startsWith("/dashboard/kelola-role")
-                          ? "bg-brand-500/12 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/25 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
+                          ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
                           : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80 border border-transparent"
                       )}
                     >
@@ -559,13 +566,15 @@ export function Sidebar({
                 <div className="relative group">
                   <Link
                     href="/dashboard/peta-pengguna"
+                    aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                     className={cn(
                       "relative flex items-center rounded-xl transition-all duration-150 font-semibold",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
                       isCollapsed
                         ? "justify-center w-10 h-10 mx-auto"
                         : "gap-2.5 px-2.5 h-[34px] text-[13px]",
                       pathname.startsWith("/dashboard/peta-pengguna")
-                        ? "bg-brand-500/12 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/25 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
+                        ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-semibold border border-brand-500/20 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-r before:bg-brand-500 shadow-2xs"
                         : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80 border border-transparent"
                     )}
                   >
