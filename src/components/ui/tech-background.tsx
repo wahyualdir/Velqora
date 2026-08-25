@@ -260,11 +260,7 @@ export const TechBackground = React.memo(function TechBackground({
       {/* 3. Floating Tech Brand Vectors (Enabled for Login / Auth screens) */}
       {showLogos && (
         <div
-          className={`block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-all duration-500 ${
-            isLight
-              ? "opacity-25 sm:opacity-30"
-              : "opacity-30 sm:opacity-35"
-          }`}
+          className="block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform opacity-60 sm:opacity-75 transition-opacity duration-300"
         >
           {/* Python */}
           <div className="absolute top-[8%] left-[6%] animate-float-icon-1" style={{ animationDelay: "0s" }}>

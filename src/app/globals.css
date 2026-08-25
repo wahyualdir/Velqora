@@ -1009,3 +1009,38 @@ button, a, input, select, textarea {
   }
 }
 
+/* ── 15. Floating Tech Icon Animations ── */
+@keyframes float-icon-1 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-16px) rotate(3deg); }
+}
+
+@keyframes float-icon-2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(14px) rotate(-3deg); }
+}
+
+@keyframes float-icon-3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-2deg); }
+}
+
+@keyframes float-icon-4 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(16px) rotate(2deg); }
+}
+
+.animate-float-icon-1 {
+  animation: float-icon-1 6s ease-in-out infinite;
+}
+.animate-float-icon-2 {
+  animation: float-icon-2 7s ease-in-out infinite;
+}
+.animate-float-icon-3 {
+  animation: float-icon-3 8s ease-in-out infinite;
+}
+.animate-float-icon-4 {
+  animation: float-icon-4 9s ease-in-out infinite;
+}
+
+
