@@ -234,11 +234,11 @@ interface ThemeAccentContextType {
 
 const ThemeAccentContext = createContext<ThemeAccentContextType>({
   settings: DEFAULT_THEME_SETTINGS,
-  accent: "platinum",
+  accent: "indigo",
   setAccent: () => {},
-  bgStyle: "super-dark",
+  bgStyle: "tech-canvas",
   setBgStyle: () => {},
-  bgIntensity: "subtle",
+  bgIntensity: "bold",
   setBgIntensity: () => {},
   contrast: "balanced",
   setContrast: () => {},

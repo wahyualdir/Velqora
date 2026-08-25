@@ -504,8 +504,8 @@ interface TechBackgroundProps {
 export const TechBackground = React.memo(function TechBackground({ variant, styleOverride }: TechBackgroundProps) {
   const { bgStyle: contextBgStyle, bgIntensity: contextIntensity } = useThemeAccent();
   const { resolvedTheme } = useResolvedTheme();
-  const activeStyle = styleOverride || contextBgStyle || "super-dark";
-  const activeIntensity = variant || contextIntensity || "subtle";
+  const activeStyle = styleOverride || contextBgStyle || "tech-canvas";
+  const activeIntensity = variant || contextIntensity || "bold";
 
   const isLight = resolvedTheme === "light";
   const isBold = activeIntensity === "bold" || activeIntensity === "vivid";
@@ -901,11 +901,11 @@ export const TechBackground = React.memo(function TechBackground({ variant, styl
           {/* 37 Floating Tech Brand Logos with Enhanced Radiance (GPU Accelerated & Zero-Delay) */}
           {!isMinimal && (
             <div
-              className={`hidden sm:block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-all duration-500 ${isBold
-                  ? "opacity-100"
+              className={`block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-all duration-500 ${isBold
+                  ? "opacity-90 sm:opacity-100"
                   : isLight
-                    ? "opacity-20 sm:opacity-25 hover:opacity-40"
-                    : "opacity-20 sm:opacity-25 hover:opacity-35"
+                    ? "opacity-40 sm:opacity-50 hover:opacity-60"
+                    : "opacity-45 sm:opacity-55 hover:opacity-75"
                 }`}
             >
               {/* Python */}
