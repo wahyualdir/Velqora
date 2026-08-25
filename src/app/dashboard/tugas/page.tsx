@@ -317,8 +317,8 @@ function TugasPageContent() {
       <PageHeader
         eyebrow="~/tasks & timeline"
         technicalMark="< backlog // queue />"
-        title="Apa yang perlu diselesaikan?"
-        description="Pantau tugas aktif dan prioritaskan mana yang harus selesai lebih dulu."
+        title="Tugas & Jadwal Perkuliahan"
+        description="Pantau tugas aktif, jadwal kuliah mingguan, dan prioritaskan tenggat waktu."
         badge={
           pendingTasksCount > 0 ? (
             <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 font-mono">

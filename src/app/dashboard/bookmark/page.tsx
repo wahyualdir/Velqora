@@ -24,6 +24,7 @@ import { Card, Badge, Skeleton, EmptyState } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import {
   getBookmarks,
   removeBookmark,
@@ -167,6 +168,9 @@ export default function BookmarkPage() {
           </>
         }
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="documents" />
 
       {/* Filter & Search Console */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-surface p-3.5 sm:p-4 rounded-2xl border border-border shadow-xs">

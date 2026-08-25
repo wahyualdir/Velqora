@@ -50,58 +50,30 @@ export const ALLOWED_FILE_EXTENSIONS = [
 // Nama bucket Supabase Storage
 export const STORAGE_BUCKET = "studyvault-files";
 
-// Navigasi sidebar terkelompok per kategori akademik
+// Navigasi sidebar terkelompok 8 kelompok utama (Clean Information Architecture)
 export const SIDEBAR_CATEGORIES = [
   {
     title: "Utama",
     links: [
       { label: "Dashboard", href: "/dashboard", icon: "LayoutGrid" },
-      { label: "Perkembangan Belajar", href: "/dashboard/statistik", icon: "BarChart3" },
-    ],
-  },
-  {
-    title: "Pembelajaran",
-    links: [
+      { label: "Modul & Project", href: "/dashboard/modul", icon: "Layers" },
+      { label: "Bahan Ajar & Dokumen", href: "/dashboard/materi", icon: "BookOpen" },
+      { label: "Tugas & Jadwal", href: "/dashboard/tugas", icon: "CheckSquare" },
       { label: "Ruang Kelas", href: "/dashboard/kelas", icon: "Users" },
-      { label: "Modul dan Project", href: "/dashboard/modul", icon: "Layers" },
-      { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: "BookOpen" },
-      { label: "Tugas Pembelajaran", href: "/dashboard/tugas", icon: "CheckSquare" },
-      { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: "Bookmark" },
-      { label: "Catatan Belajar", href: "/dashboard/catatan", icon: "PenLine" },
     ],
   },
   {
-    title: "Fitur AI",
+    title: "Fitur & Alat",
     links: [
-      { label: "Tutor AI", href: "/dashboard/ai-tutor", icon: "Bot", isAi: true },
-      { label: "Latihan dan Kuis", href: "/dashboard/kuis-ai", icon: "BrainCircuit", isAi: true },
+      { label: "AI Assistant", href: "/dashboard/ai-tutor", icon: "Bot", isAi: true },
+      { label: "Ruang Praktik & Alat", href: "/dashboard/playground", icon: "Code2" },
     ],
   },
   {
-    title: "Alat",
+    title: "Pengaturan",
     links: [
-      { label: "Konversi Berkas", href: "/dashboard/konversi", icon: "ScanLine" },
-      { label: "Ruang Praktik Kode", href: "/dashboard/playground", icon: "Code2" },
-    ],
-  },
-  {
-    title: "Organisasi",
-    links: [
-      { label: "Kategori Pembelajaran", href: "/dashboard/kategori", icon: "FolderTree" },
-      { label: "Label dan Tag", href: "/dashboard/tag", icon: "Tags" },
-      { label: "Berkas Pembelajaran", href: "/dashboard/file", icon: "Files" },
-    ],
-  },
-  {
-    title: "Bantuan",
-    links: [
+      { label: "Pengaturan Workspace", href: "/dashboard/pengaturan", icon: "Sliders" },
       { label: "Panduan", href: "/dashboard/panduan", icon: "Compass" },
-    ],
-  },
-  {
-    title: "Sistem",
-    links: [
-      { label: "Cadangan Data", href: "/dashboard/backup", icon: "HardDriveDownload" },
     ],
   },
 ] as const;

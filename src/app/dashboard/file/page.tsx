@@ -22,6 +22,7 @@ import {
 import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getFiles, deleteFile, uploadDirectFileAction } from "@/actions/study-actions";
 import { formatDate, formatFileSize } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
@@ -177,6 +178,9 @@ export default function FilePage() {
           </>
         }
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="documents" />
 
       {/* Filter & Search Bar */}
       <div className="flex flex-col sm:flex-row items-center gap-3 bg-surface p-3.5 rounded-xl border border-border">

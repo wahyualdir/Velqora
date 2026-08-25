@@ -7,6 +7,7 @@ import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getMaterials, getCategories, deleteMaterial } from "@/actions/study-actions";
 import { MATERIAL_TYPE_LABELS, MaterialType } from "@/types";
 import { formatDate } from "@/lib/utils";
@@ -66,8 +67,8 @@ export default function MateriPage() {
       <PageHeader
         eyebrow="~/library"
         technicalMark="< docs & slides />"
-        title="Temukan materi yang ingin dipelajari"
-        description="Bahan ajar, slide perkuliahan, dan catatan siap pakai untuk memperdalam konsep."
+        title="Bahan Ajar & Dokumen"
+        description="Bahan ajar, slide perkuliahan, berkas lampiran, dan catatan belajar siap pakai."
         actions={
           <Link href="/dashboard/materi/baru" className="w-full sm:w-auto">
             <Button className="w-full sm:w-auto min-h-[40px] gap-2 text-xs sm:text-sm font-semibold shadow-xs">
@@ -76,6 +77,9 @@ export default function MateriPage() {
           </Link>
         }
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="documents" />
 
       {/* Filter Bar */}
       <div className="toolbar bg-surface p-3.5 sm:p-4 rounded-xl border border-border shadow-2xs">

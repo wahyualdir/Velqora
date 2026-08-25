@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { generateAIQuizAction, QuizQuestion } from "@/actions/quiz-actions";
 import { addEXP } from "@/lib/gamification-service";
 import {
@@ -199,9 +200,12 @@ export default function AIQuizPage() {
       <PageHeader
         eyebrow="~/assessment"
         technicalMark="< adaptive // testing />"
-        title="Uji pemahamanmu"
+        title="Latihan & Kuis AI"
         description="Coba latihan soal adaptif untuk mengukur seberapa dalam pemahaman konsepmu."
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="ai" />
 
       {/* =========================================================
           MODE 1: SETUP KUIS

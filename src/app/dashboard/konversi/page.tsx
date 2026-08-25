@@ -69,6 +69,7 @@ import {
 import { formatFileSize } from "@/lib/utils";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 
 export default function FileConverterPage() {
   const [activeCategory, setActiveCategory] = useState<
@@ -917,10 +918,13 @@ export default function FileConverterPage() {
       <PageHeader
         eyebrow="~/utilities"
         technicalMark="< ffmpeg // magick // ocr />"
-        title="Utilitas dan konversi berkas"
+        title="Konversi & OCR Berkas"
         description="Pindai dokumen, ubah format, kompres berkas, dan rapikan aset belajarmu."
         border={false}
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="tools" />
 
       {/* ============================================================
           2. LANGKAH 1: PILIH KATEGORI & ALAT (RINGKAS & ERGONOMIS)

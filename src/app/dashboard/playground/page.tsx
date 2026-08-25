@@ -17,6 +17,7 @@ import {
 import { Card, Badge, Skeleton } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { executeJavaScript, executePython, ExecutionResult } from "@/lib/code-runner";
 import { toast } from "sonner";
 
@@ -147,7 +148,7 @@ export default function PlaygroundPage() {
       <PageHeader
         eyebrow="~/sandbox"
         technicalMark="< js // py // ts // html />"
-        title="Coba kodenya di sini"
+        title="Ruang Praktik & Alat"
         description="Tulis, eksperimen logika, dan jalankan kode langsung di browser."
         actions={
           <Button
@@ -160,6 +161,9 @@ export default function PlaygroundPage() {
           </Button>
         }
       />
+
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="tools" />
 
       {/* Control Bar: Language, Templates, Sandbox Badge */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-surface border border-border shadow-xs">

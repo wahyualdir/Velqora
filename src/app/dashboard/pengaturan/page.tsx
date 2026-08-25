@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   User,
   Sun,
@@ -529,6 +530,58 @@ export default function PengaturanPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Link
+              href="/dashboard/kategori"
+              className="p-3.5 rounded-xl border border-border bg-surface-secondary hover:bg-surface-tertiary text-left transition-all space-y-1 block"
+            >
+              <div className="flex items-center gap-2 text-text-primary font-semibold text-xs">
+                <Sliders className="w-4 h-4 text-brand-400" />
+                <span>Kategori Pembelajaran</span>
+              </div>
+              <p className="text-[11px] text-text-secondary">
+                Kelola hierarki subjek dan taksonomi modul materi.
+              </p>
+            </Link>
+
+            <Link
+              href="/dashboard/tag"
+              className="p-3.5 rounded-xl border border-border bg-surface-secondary hover:bg-surface-tertiary text-left transition-all space-y-1 block"
+            >
+              <div className="flex items-center gap-2 text-text-primary font-semibold text-xs">
+                <FileCode className="w-4 h-4 text-brand-400" />
+                <span>Label & Tag Topik</span>
+              </div>
+              <p className="text-[11px] text-text-secondary">
+                Kelola label penanda topik materi dan tugas kuliah.
+              </p>
+            </Link>
+
+            <Link
+              href="/dashboard/backup"
+              className="p-3.5 rounded-xl border border-border bg-surface-secondary hover:bg-surface-tertiary text-left transition-all space-y-1 block"
+            >
+              <div className="flex items-center gap-2 text-text-primary font-semibold text-xs">
+                <Download className="w-4 h-4 text-emerald-400" />
+                <span>Cadangan Data Lengkap</span>
+              </div>
+              <p className="text-[11px] text-text-secondary">
+                Ekspor seluruh data belajar, materi, dan riwayat ke arsip ZIP/JSON.
+              </p>
+            </Link>
+
+            <Link
+              href="/dashboard/statistik"
+              className="p-3.5 rounded-xl border border-border bg-surface-secondary hover:bg-surface-tertiary text-left transition-all space-y-1 block"
+            >
+              <div className="flex items-center gap-2 text-text-primary font-semibold text-xs">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span>Statistik & Analitik Belajar</span>
+              </div>
+              <p className="text-[11px] text-text-secondary">
+                Lihat rincian perkembangan jam belajar dan skor kuis.
+              </p>
+            </Link>
+
             <button
               type="button"
               onClick={handleCopyExportJson}
