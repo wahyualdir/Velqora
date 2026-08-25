@@ -274,8 +274,8 @@ export default function RegisterPage() {
   return (
     <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-[#0071e3] selection:text-white">
 
-      {/* Interactive Tech Canvas Background (Subtle Variant) */}
-      <TechBackground variant="subtle" />
+      {/* Interactive Tech Canvas Background with Floating Tech Brand Logos */}
+      <TechBackground showLogos={true} />
 
       {/* Floating Header */}
       <header className="sticky top-0 z-40 w-full pt-4 px-4 sm:px-8">

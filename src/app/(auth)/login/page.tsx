@@ -294,8 +294,8 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-[#0071e3] selection:text-white">
 
-      {/* Interactive Tech Canvas Background (Subtle Variant) */}
-      <TechBackground variant="subtle" />
+      {/* Interactive Tech Canvas Background with Floating Tech Brand Logos */}
+      <TechBackground showLogos={true} />
 
       {/* Main Login Card Section */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10 z-10 w-full">
