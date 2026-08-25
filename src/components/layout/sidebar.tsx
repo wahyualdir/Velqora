@@ -176,7 +176,17 @@ export function Sidebar({
   const { t } = useLanguage();
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    SIDEBAR_CATEGORIES.forEach((category) => {
+      category.links.forEach((link: any) => {
+        if (link.subItems && link.subItems.length > 0) {
+          initial[link.href] = true;
+        }
+      });
+    });
+    return initial;
+  });
 
   // Auto-expand parent menu when current pathname matches any sub-item
   useEffect(() => {
