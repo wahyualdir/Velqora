@@ -69,8 +69,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     settings: {
       mode: "dark",
       accent: "platinum",
-      bgStyle: "super-dark",
-      bgIntensity: "subtle",
+      bgStyle: "tech-canvas",
+      bgIntensity: "bold",
       contrast: "balanced",
       density: "comfortable",
       radius: "balanced",
@@ -194,9 +194,9 @@ export const THEME_PRESETS: ThemePreset[] = [
 
 export const DEFAULT_THEME_SETTINGS: ThemeSettings = {
   mode: "dark",
-  accent: "platinum",
-  bgStyle: "super-dark",
-  bgIntensity: "subtle",
+  accent: "indigo",
+  bgStyle: "tech-canvas",
+  bgIntensity: "bold",
   contrast: "balanced",
   density: "comfortable",
   radius: "balanced",

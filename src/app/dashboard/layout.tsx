@@ -92,11 +92,8 @@ export default function DashboardLayout({
 
   return (
     <div className="relative min-h-screen flex bg-transparent pb-6 overflow-x-hidden">
-      {/* Ambient moving dark tech background (Subtle Variant for high readability) */}
-      <TechBackground variant="subtle" />
-
-      {/* Subtle Ambient Scrim to subdue background and maximize dashboard text contrast */}
-      <div className="fixed inset-0 pointer-events-none dark:bg-black/35 bg-transparent backdrop-blur-[0.5px] -z-[5]" />
+      {/* Ambient dynamic tech background with 37 brand logos & tech grid */}
+      <TechBackground />
 
       {/* Global Spotlight Command Palette (Ctrl+K) */}
       <CommandPalette
