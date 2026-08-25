@@ -20,7 +20,7 @@ function useResolvedTheme() {
 }
 
 /* ============================================================
-   36+ FLOATING TECH BRAND VECTORS GRID
+   72+ DENSE FLOATING TECH BRAND LOGO MATRIX
    ============================================================ */
 
 interface FloatingItem {
@@ -36,49 +36,75 @@ interface FloatingItem {
 }
 
 const FLOATING_BRAND_LOGOS: FloatingItem[] = [
-  // ─── Top Perimeter ───
-  { id: "py-1", name: "python", top: "5%", left: "4%", anim: "animate-float-icon-1", delay: "0s", size: 44 },
-  { id: "react-1", name: "react", top: "6%", left: "18%", anim: "animate-float-icon-2", delay: "0.8s", size: 46 },
-  { id: "next-1", name: "nextjs", top: "4%", left: "34%", anim: "animate-float-icon-3", delay: "0.2s", size: 42 },
-  { id: "node-1", name: "node", top: "4%", right: "34%", anim: "animate-float-icon-1", delay: "1.2s", size: 42 },
-  { id: "tail-1", name: "tailwind", top: "6%", right: "18%", anim: "animate-float-icon-2", delay: "0.5s", size: 44 },
-  { id: "java-1", name: "java", top: "5%", right: "4%", anim: "animate-float-icon-4", delay: "0.4s", size: 44 },
+  // ─── Top Perimeter (Row 1 & 2) ───
+  { id: "py-1", name: "python", top: "3%", left: "3%", anim: "animate-float-icon-1", delay: "0s", size: 44 },
+  { id: "react-1", name: "react", top: "4%", left: "14%", anim: "animate-float-icon-2", delay: "0.8s", size: 46 },
+  { id: "ts-1", name: "typescript", top: "3%", left: "26%", anim: "animate-float-icon-3", delay: "0.3s", size: 42 },
+  { id: "next-1", name: "nextjs", top: "4%", left: "38%", anim: "animate-float-icon-1", delay: "1.1s", size: 42 },
+  { id: "node-1", name: "node", top: "3%", right: "38%", anim: "animate-float-icon-4", delay: "0.2s", size: 42 },
+  { id: "js-1", name: "javascript", top: "4%", right: "26%", anim: "animate-float-icon-2", delay: "0.7s", size: 42 },
+  { id: "tail-1", name: "tailwind", top: "3%", right: "14%", anim: "animate-float-icon-3", delay: "0.5s", size: 44 },
+  { id: "java-1", name: "java", top: "4%", right: "3%", anim: "animate-float-icon-4", delay: "0.4s", size: 44 },
 
-  // ─── Left Perimeter ───
-  { id: "doc-1", name: "docker", top: "18%", left: "5%", anim: "animate-float-icon-3", delay: "1.2s", size: 42 },
-  { id: "vue-1", name: "vue", top: "28%", left: "12%", anim: "animate-float-icon-4", delay: "0.6s", size: 40 },
-  { id: "php-1", name: "php", top: "38%", left: "3%", anim: "animate-float-icon-1", delay: "0.9s", size: 44 },
-  { id: "ang-1", name: "angular", top: "48%", left: "11%", anim: "animate-float-icon-2", delay: "1.4s", size: 40 },
-  { id: "git-1", name: "github", top: "58%", left: "4%", anim: "animate-float-icon-3", delay: "0.3s", size: 42 },
-  { id: "rust-1", name: "rust", top: "68%", left: "11%", anim: "animate-float-icon-1", delay: "1.0s", size: 42 },
-  { id: "go-1", name: "golang", top: "78%", left: "4%", anim: "animate-float-icon-2", delay: "0.7s", size: 42 },
-  { id: "sve-1", name: "svelte", top: "86%", left: "12%", anim: "animate-float-icon-4", delay: "1.5s", size: 40 },
-  { id: "lin-1", name: "linux", top: "92%", left: "3%", anim: "animate-float-icon-1", delay: "1.4s", size: 44 },
+  // ─── Upper Sub-Perimeter (Row 2 & 3) ───
+  { id: "doc-1", name: "docker", top: "12%", left: "7%", anim: "animate-float-icon-3", delay: "1.2s", size: 42 },
+  { id: "vue-1", name: "vue", top: "13%", left: "19%", anim: "animate-float-icon-4", delay: "0.6s", size: 40 },
+  { id: "fig-1", name: "figma", top: "11%", left: "31%", anim: "animate-float-icon-1", delay: "1.6s", size: 38 },
+  { id: "html-1", name: "html", top: "12%", right: "31%", anim: "animate-float-icon-2", delay: "0.9s", size: 40 },
+  { id: "css-1", name: "css", top: "13%", right: "19%", anim: "animate-float-icon-4", delay: "1.4s", size: 40 },
+  { id: "cpp-1", name: "cpp", top: "12%", right: "7%", anim: "animate-float-icon-1", delay: "1.0s", size: 44 },
 
-  // ─── Right Perimeter ───
-  { id: "cpp-1", name: "cpp", top: "18%", right: "5%", anim: "animate-float-icon-1", delay: "1.0s", size: 44 },
-  { id: "flt-1", name: "flutter", top: "28%", right: "12%", anim: "animate-float-icon-2", delay: "0.7s", size: 40 },
-  { id: "ts-1", name: "typescript", top: "38%", right: "3%", anim: "animate-float-icon-3", delay: "0.5s", size: 42 },
-  { id: "kot-1", name: "kotlin", top: "48%", right: "11%", anim: "animate-float-icon-4", delay: "1.3s", size: 40 },
-  { id: "js-1", name: "javascript", top: "58%", right: "4%", anim: "animate-float-icon-2", delay: "0.9s", size: 42 },
-  { id: "sw-1", name: "swift", top: "68%", right: "11%", anim: "animate-float-icon-3", delay: "0.2s", size: 42 },
-  { id: "cs-1", name: "csharp", top: "78%", right: "4%", anim: "animate-float-icon-4", delay: "1.2s", size: 42 },
-  { id: "red-1", name: "redis", top: "86%", right: "12%", anim: "animate-float-icon-1", delay: "0.8s", size: 40 },
-  { id: "pg-1", name: "postgresql", top: "92%", right: "3%", anim: "animate-float-icon-2", delay: "0.4s", size: 44 },
+  // ─── Left Sector ───
+  { id: "php-1", name: "php", top: "22%", left: "2%", anim: "animate-float-icon-1", delay: "0.9s", size: 44 },
+  { id: "ang-1", name: "angular", top: "24%", left: "13%", anim: "animate-float-icon-2", delay: "1.4s", size: 40 },
+  { id: "git-1", name: "github", top: "33%", left: "4%", anim: "animate-float-icon-3", delay: "0.3s", size: 42 },
+  { id: "lar-1", name: "laravel", top: "35%", left: "15%", anim: "animate-float-icon-1", delay: "1.7s", size: 40 },
+  { id: "rust-1", name: "rust", top: "44%", left: "3%", anim: "animate-float-icon-2", delay: "1.0s", size: 42 },
+  { id: "dj-1", name: "django", top: "46%", left: "14%", anim: "animate-float-icon-4", delay: "0.5s", size: 40 },
+  { id: "go-1", name: "golang", top: "55%", left: "4%", anim: "animate-float-icon-1", delay: "0.7s", size: 42 },
+  { id: "rub-1", name: "ruby", top: "57%", left: "15%", anim: "animate-float-icon-3", delay: "1.3s", size: 40 },
+  { id: "sve-1", name: "svelte", top: "66%", left: "2%", anim: "animate-float-icon-4", delay: "1.5s", size: 42 },
+  { id: "dar-1", name: "dart", top: "68%", left: "13%", anim: "animate-float-icon-2", delay: "0.8s", size: 40 },
+  { id: "lin-1", name: "linux", top: "77%", left: "4%", anim: "animate-float-icon-1", delay: "1.4s", size: 44 },
+  { id: "kot-1", name: "kotlin", top: "79%", left: "15%", anim: "animate-float-icon-3", delay: "0.6s", size: 40 },
+  { id: "sqli-1", name: "sqlite", top: "87%", left: "3%", anim: "animate-float-icon-4", delay: "1.1s", size: 40 },
+  { id: "and-1", name: "android", top: "89%", left: "14%", anim: "animate-float-icon-2", delay: "0.4s", size: 42 },
+
+  // ─── Right Sector ───
+  { id: "flt-1", name: "flutter", top: "22%", right: "3%", anim: "animate-float-icon-2", delay: "0.7s", size: 42 },
+  { id: "sw-1", name: "swift", top: "24%", right: "14%", anim: "animate-float-icon-3", delay: "0.2s", size: 42 },
+  { id: "cs-1", name: "csharp", top: "33%", right: "4%", anim: "animate-float-icon-4", delay: "1.2s", size: 42 },
+  { id: "c-1", name: "c", top: "35%", right: "15%", anim: "animate-float-icon-1", delay: "0.8s", size: 40 },
+  { id: "pg-1", name: "postgresql", top: "44%", right: "3%", anim: "animate-float-icon-2", delay: "0.4s", size: 44 },
+  { id: "sql-1", name: "mysql", top: "46%", right: "14%", anim: "animate-float-icon-3", delay: "1.5s", size: 42 },
+  { id: "red-1", name: "redis", top: "55%", right: "4%", anim: "animate-float-icon-1", delay: "0.8s", size: 40 },
+  { id: "mon-1", name: "mongodb", top: "57%", right: "15%", anim: "animate-float-icon-4", delay: "1.1s", size: 42 },
+  { id: "aws-1", name: "aws", top: "66%", right: "3%", anim: "animate-float-icon-3", delay: "1.3s", size: 44 },
+  { id: "k8s-1", name: "kubernetes", top: "68%", right: "14%", anim: "animate-float-icon-1", delay: "0.5s", size: 44 },
+  { id: "gcp-1", name: "gcp", top: "77%", right: "4%", anim: "animate-float-icon-2", delay: "0.9s", size: 42 },
+  { id: "azu-1", name: "azure", top: "79%", right: "15%", anim: "animate-float-icon-4", delay: "1.6s", size: 42 },
+  { id: "ng-1", name: "nginx", top: "87%", right: "3%", anim: "animate-float-icon-1", delay: "0.7s", size: 40 },
+  { id: "app-1", name: "apple", top: "89%", right: "14%", anim: "animate-float-icon-3", delay: "1.2s", size: 40 },
+
+  // ─── Center-Ambient Sector (Surrounding Auth Card) ───
+  { id: "gitl-1", name: "git", top: "25%", left: "25%", anim: "animate-float-icon-1", delay: "1.7s", size: 36 },
+  { id: "term-1", name: "terminal", top: "25%", right: "25%", anim: "animate-float-icon-3", delay: "0.5s", size: 36 },
+  { id: "code-1", name: "code", top: "40%", left: "23%", anim: "animate-float-icon-4", delay: "1.0s", size: 36 },
+  { id: "db-1", name: "database", top: "40%", right: "23%", anim: "animate-float-icon-2", delay: "0.8s", size: 36 },
+  { id: "srv-1", name: "server", top: "60%", left: "23%", anim: "animate-float-icon-3", delay: "0.4s", size: 36 },
+  { id: "sec-1", name: "security", top: "60%", right: "23%", anim: "animate-float-icon-1", delay: "1.3s", size: 36 },
+  { id: "cpu-1", name: "cpu", top: "74%", left: "25%", anim: "animate-float-icon-2", delay: "1.1s", size: 36 },
+  { id: "brn-1", name: "brain", top: "74%", right: "25%", anim: "animate-float-icon-4", delay: "0.6s", size: 36 },
 
   // ─── Bottom Perimeter ───
-  { id: "aws-1", name: "aws", bottom: "4%", left: "22%", anim: "animate-float-icon-2", delay: "1.3s", size: 42 },
-  { id: "k8s-1", name: "kubernetes", bottom: "3%", left: "35%", anim: "animate-float-icon-4", delay: "0.5s", size: 44 },
-  { id: "sql-1", name: "mysql", bottom: "3%", right: "35%", anim: "animate-float-icon-3", delay: "0.4s", size: 44 },
-  { id: "mongo-1", name: "mongodb", bottom: "4%", right: "22%", anim: "animate-float-icon-1", delay: "1.1s", size: 42 },
-
-  // ─── Ambient Corner & Filler Accents ───
-  { id: "fig-1", name: "figma", top: "14%", left: "26%", anim: "animate-float-icon-3", delay: "1.6s", size: 36 },
-  { id: "dart-1", name: "dart", top: "14%", right: "26%", anim: "animate-float-icon-1", delay: "0.8s", size: 36 },
-  { id: "html-1", name: "html", bottom: "14%", left: "28%", anim: "animate-float-icon-4", delay: "1.0s", size: 38 },
-  { id: "css-1", name: "css", bottom: "14%", right: "28%", anim: "animate-float-icon-2", delay: "0.6s", size: 38 },
-  { id: "gitl-1", name: "git", top: "50%", left: "20%", anim: "animate-float-icon-1", delay: "1.7s", size: 36 },
-  { id: "dj-1", name: "django", top: "50%", right: "20%", anim: "animate-float-icon-3", delay: "1.5s", size: 36 },
+  { id: "ml-1", name: "machine_learning", bottom: "3%", left: "4%", anim: "animate-float-icon-1", delay: "0.5s", size: 42 },
+  { id: "dl-1", name: "deep_learning", bottom: "4%", left: "16%", anim: "animate-float-icon-3", delay: "1.2s", size: 42 },
+  { id: "gen-1", name: "generative_ai", bottom: "3%", left: "28%", anim: "animate-float-icon-2", delay: "0.8s", size: 42 },
+  { id: "nlp-1", name: "nlp", bottom: "4%", left: "40%", anim: "animate-float-icon-4", delay: "0.3s", size: 40 },
+  { id: "cv-1", name: "computer_vision", bottom: "4%", right: "40%", anim: "animate-float-icon-1", delay: "1.4s", size: 40 },
+  { id: "ds-1", name: "data_science", bottom: "3%", right: "28%", anim: "animate-float-icon-3", delay: "0.7s", size: 42 },
+  { id: "alg-1", name: "algorithm", bottom: "4%", right: "16%", anim: "animate-float-icon-2", delay: "1.0s", size: 42 },
+  { id: "bin-1", name: "binary", bottom: "3%", right: "4%", anim: "animate-float-icon-4", delay: "0.6s", size: 42 },
 ];
 
 /* ============================================================
@@ -127,17 +153,17 @@ export const TechBackground = React.memo(function TechBackground({
         />
       )}
 
-      {/* 3. 36+ Floating Tech Brand Vectors (Enabled on Auth / Login pages) */}
+      {/* 3. 72+ Dense Floating Tech Brand Vectors */}
       {showLogos && (
         <div
           className={`block absolute inset-0 overflow-hidden pointer-events-none transform-gpu will-change-transform transition-opacity duration-300 ${
-            isLight ? "opacity-60 sm:opacity-70" : "opacity-75 sm:opacity-85"
+            isLight ? "opacity-65 sm:opacity-75" : "opacity-80 sm:opacity-90"
           }`}
         >
           {FLOATING_BRAND_LOGOS.map((item) => (
             <div
               key={item.id}
-              className={`absolute ${item.anim} filter drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform`}
+              className={`absolute ${item.anim} filter drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]`}
               style={{
                 top: item.top,
                 bottom: item.bottom,
@@ -157,7 +183,7 @@ export const TechBackground = React.memo(function TechBackground({
         className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${
           isLight
             ? "bg-gradient-to-b from-white/30 via-transparent to-slate-200/40 opacity-30"
-            : "bg-gradient-to-b from-black/30 via-transparent to-black/70 opacity-50"
+            : "bg-gradient-to-b from-black/30 via-transparent to-black/70 opacity-40"
         }`}
       />
     </div>
