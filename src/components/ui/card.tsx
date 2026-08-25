@@ -311,14 +311,14 @@ export function ConfirmDialog({
         <div className="flex items-center justify-end gap-2.5">
           <button
             onClick={onClose}
-            className="px-3.5 py-2 text-xs font-medium text-text-secondary hover:text-text-primary rounded-xl border border-border hover:bg-surface-secondary transition-colors cursor-pointer min-h-[38px]"
+            className="px-3.5 py-2 text-xs font-medium text-text-secondary hover:text-text-primary rounded-lg border border-border hover:bg-surface-secondary transition-colors cursor-pointer min-h-[38px]"
           >
             Batal
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="px-4 py-2 text-xs font-semibold text-white bg-accent-red hover:bg-red-600 rounded-xl transition-colors disabled:opacity-50 cursor-pointer shadow-xs min-h-[38px]"
+            className="px-4 py-2 text-xs font-semibold text-white bg-accent-red hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 cursor-pointer shadow-xs min-h-[38px]"
           >
             {loading ? "Menghapus..." : confirmText}
           </button>
@@ -334,7 +334,7 @@ export interface SkeletonProps {
 }
 
 export function Skeleton({ className }: SkeletonProps) {
-  return <div className={cn("skeleton rounded-xl", className)} />;
+  return <div className={cn("skeleton rounded-lg", className)} />;
 }
 
 // ========== Empty State ==========
@@ -348,7 +348,7 @@ export interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-8 sm:py-12 px-4 text-center rounded-2xl border border-dashed border-border bg-surface-secondary/30", className)}>
+    <div className={cn("flex flex-col items-center justify-center py-8 sm:py-12 px-4 text-center rounded-xl border border-dashed border-border bg-surface-secondary/30", className)}>
       {icon && <div className="mb-2.5 text-text-tertiary">{icon}</div>}
       <h3 className="text-sm sm:text-base font-bold text-text-primary mb-1 font-display">{title}</h3>
       <p className="text-xs sm:text-sm text-text-secondary mb-4 max-w-md leading-relaxed">{description}</p>

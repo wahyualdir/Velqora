@@ -376,7 +376,7 @@ export default function AITutorPage() {
       });
       saveSessions(updatedSessions);
     } catch (err: any) {
-      toast.error("Gagal mendapatkan respon AI: " + (err.message || "Error"));
+      toast.error("Tidak dapat terhubung ke AI Tutor saat ini. Silakan coba sesaat lagi.");
     } finally {
       setIsTyping(false);
       inputRef.current?.focus();

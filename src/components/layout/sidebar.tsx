@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
-import { isAdminUser } from "@/lib/utils";
+import { isAdminUser, OWNER_EMAIL } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { TranslationKey } from "@/lib/i18n/translations";
 
@@ -185,7 +185,7 @@ export function Sidebar({
       if (u) {
         const email = (u.email || "").trim().toLowerCase();
 
-        if (email === "wahyualdiriyanto80@gmail.com" || localRole === "owner") {
+        if (email === OWNER_EMAIL.toLowerCase() || localRole === "owner") {
           setIsOwner(true);
           setIsAdmin(true);
           return;
@@ -198,6 +198,18 @@ export function Sidebar({
     }
     checkRole();
   }, []);
+
+  // ESC key handler for mobile drawer
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   return (
     <>
