@@ -5,3 +5,5 @@ export * from "./scenario-generator";
 export * from "./scenario-validator";
 export * from "./scenario-engine";
 export * from "./validation-report";
+export * from "./data-integrity-checker";
+export * from "./product-experience-generator";

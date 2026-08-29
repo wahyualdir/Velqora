@@ -88,7 +88,7 @@ export function EarlyWarningBanner({
                   onClick={() => onActionClick?.(warn)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-primary text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+                  <ArrowRight className="w-3.5 h-3.5 text-text-secondary" />
                   <span>Lihat Solusi</span>
                 </button>
               </div>

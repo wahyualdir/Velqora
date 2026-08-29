@@ -189,7 +189,7 @@ export function AcademicIntelligenceCenter() {
             </Link>
             <span className="text-text-muted">•</span>
             <span className="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase font-mono bg-brand-500/10 text-brand-600 dark:text-brand-400 px-2 py-0.5 rounded border border-brand-500/20">
-              <Sparkles className="w-3 h-3" />
+              <Activity className="w-3 h-3" />
               <span>Intelligence Center</span>
             </span>
           </div>
