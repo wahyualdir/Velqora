@@ -123,6 +123,26 @@ export const logger = {
   },
 };
 
+export type IntelligenceEvent =
+  | "recommendation_generated"
+  | "recommendation_reviewed"
+  | "recommendation_accepted"
+  | "recommendation_rejected"
+  | "recommendation_applied"
+  | "recommendation_rolled_back"
+  | "session_completed"
+  | "session_skipped"
+  | "schedule_changed"
+  | "proposal_invalidated";
+
+export function logIntelligenceEvent(
+  event: IntelligenceEvent,
+  metadata?: Record<string, unknown>,
+  correlationId?: string
+) {
+  logger.info("ACADEMIC_INTELLIGENCE_AUDIT", `Event: ${event}`, { event, ...metadata }, correlationId);
+}
+
 /**
  * Generate a safe Correlation ID
  */

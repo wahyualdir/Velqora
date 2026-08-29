@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Plus, Sparkles, UploadCloud, ChevronDown, CalendarPlus } from "lucide-react";
+import Link from "next/link";
+import { Plus, Sparkles, UploadCloud, ChevronDown, CalendarPlus, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GoogleClassroomIcon } from "@/components/ui/brand-logos";
 
@@ -58,6 +59,17 @@ export function ScheduleHeader({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 flex-wrap shrink-0">
+          <Link href="/dashboard/jadwal/intelligence">
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10 shadow-2xs"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Intelligence Center</span>
+            </Button>
+          </Link>
+
           {onOpenClassroom && (
             <Button
               size="sm"

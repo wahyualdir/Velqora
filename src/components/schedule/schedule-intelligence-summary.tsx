@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Sparkles,
   Clock,
@@ -14,6 +15,7 @@ import {
   Sliders,
   Scale,
   ShieldAlert,
+  Activity,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,6 +83,17 @@ export function ScheduleIntelligenceSummary({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap shrink-0">
+          <Link href="/dashboard/jadwal/intelligence">
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10 h-8 px-2.5 shadow-2xs"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Intelligence Center</span>
+            </Button>
+          </Link>
+
           {onOpenPreferences && (
             <Button
               size="sm"

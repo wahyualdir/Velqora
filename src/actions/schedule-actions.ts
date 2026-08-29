@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { ScheduleItem, Task } from "@/types";
+import { ScheduleItem, Task, ScheduleDay } from "@/types";
 import {
   processScheduleDocumentImport,
   ImportPipelineResult,
@@ -1940,6 +1940,329 @@ export async function simulateThreeWayOutcomeAction(
     return { success: false, error: err.message || "Gagal melakukan simulasi 3 arah." };
   }
 }
+
+// ==========================================
+// 11. FASE 36: ACADEMIC INTELLIGENCE CENTER (USER-FACING EXPERIENCE & OBSERVABILITY)
+// ==========================================
+
+import {
+  EarlyWarning2Item,
+  Explainability12Answers,
+  BehaviorSignal2,
+} from "@/lib/schedule-outcomes/types";
+import { generate12QuestionExplanation } from "@/lib/schedule-outcomes/explanation-engine-4";
+import { evaluateHistoricalRecommendations } from "@/lib/schedule-outcomes/recommendation-outcome";
+import { calculateRecommendationQuality } from "@/lib/schedule-intelligence/recommendation-quality";
+import { extractBehaviorSignals2 } from "@/lib/schedule-intelligence/behavior-signals";
+import { analyzeWorkload } from "@/lib/schedule-intelligence/workload-analyzer";
+import { analyzeTaskDeadlines } from "@/lib/schedule-intelligence/deadline-analyzer";
+import {
+  WorkloadSummary,
+  DeadlineAnalysisItem,
+  DeadlineCoverageReport,
+} from "@/lib/schedule-intelligence/types";
+import { DEFAULT_SCHEDULE_PREFERENCE } from "@/lib/schedule-intelligence";
+import { ACADEMIC_CONSTANTS } from "@/lib/schedule/academic-constants";
+import { logIntelligenceEvent, IntelligenceEvent } from "@/lib/observability";
+
+export interface AcademicIntelligenceCenterData {
+  schedules: ScheduleItem[];
+  tasks: Task[];
+  snapshot: ScheduleSnapshot;
+  health: AcademicHealthScore;
+  healthTrend: HealthTrendReport;
+  workload: WorkloadSummary;
+  deadlines: DeadlineAnalysisItem[];
+  deadlineCoverage: DeadlineCoverageReport[];
+  behaviorSignals: BehaviorSignal2;
+  topRecommendations: Array<{
+    id: string;
+    sessionId: string;
+    title: string;
+    fromDay: ScheduleDay;
+    fromTime: string;
+    toDay: ScheduleDay;
+    toTime: string;
+    durationMinutes: number;
+    qualityScore: number;
+    qualityLabel: string;
+    impactSummary: string[];
+    explanationAnswers: Record<string, string>;
+  }>;
+  earlyWarnings: EarlyWarning2Item[];
+  adherenceReport: ActualVsPlannedReport;
+  recommendationHistory: RecommendationOutcomeRecord[];
+  recommendationSummary?: {
+    totalRecommendations: number;
+    acceptedCount: number;
+    acceptanceRate: number;
+    averageOutcomeScore: number;
+    effectivenessRating: string;
+    summary: string;
+  };
+  proposal: OptimizationProposal | null;
+}
+
+export async function getAcademicIntelligenceCenterDataAction(): Promise<{
+  success: boolean;
+  data?: AcademicIntelligenceCenterData;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Unauthorized: Silakan login terlebih dahulu." };
+    }
+
+    // 1. Fetch live schedules, tasks, preferences, and session outcomes in parallel
+    const [schedulesRes, tasksRes, prefRes, outcomesRes, recOutcomesRes] = await Promise.all([
+      supabase.from("schedules").select("*").eq("user_id", user.id),
+      supabase.from("tasks").select("*").eq("user_id", user.id),
+      supabase.from("schedule_preferences").select("*").eq("user_id", user.id).maybeSingle(),
+      supabase.from("schedule_outcomes").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20),
+      supabase.from("recommendation_outcomes").select("*").eq("user_id", user.id).order("recorded_at", { ascending: false }).limit(20),
+    ]);
+
+    const schedules: ScheduleItem[] = schedulesRes.data || [];
+    const tasks: Task[] = tasksRes.data || [];
+    const preferences: UserSchedulePreference = prefRes.data
+      ? sanitizeSchedulePreferences({
+          preferredStudyStartTime: prefRes.data.preferred_study_start_time,
+          preferredStudyEndTime: prefRes.data.preferred_study_end_time,
+          preferredDays: prefRes.data.preferred_study_days,
+          maximumDailyStudyMinutes: prefRes.data.maximum_daily_study_minutes,
+          preferredBreakDuration: prefRes.data.break_duration_minutes,
+        })
+      : DEFAULT_SCHEDULE_PREFERENCE;
+
+    const sessionOutcomes: SessionOutcome[] = (outcomesRes.data || []).map((row: any) => ({
+      id: row.id,
+      userId: row.user_id,
+      scheduleItemId: row.schedule_item_id,
+      sessionTitle: row.session_title,
+      day: row.day,
+      plannedStartTime: row.planned_start_time,
+      plannedEndTime: row.planned_end_time,
+      plannedDurationMinutes: row.planned_duration_minutes,
+      actualStartTime: row.actual_start_time,
+      actualEndTime: row.actual_end_time,
+      actualDurationMinutes: row.actual_duration_minutes,
+      status: row.status,
+      skipReason: row.skip_reason,
+      notes: row.notes,
+      recordedAt: row.created_at || row.recorded_at,
+    }));
+
+    const recOutcomes: RecommendationOutcomeRecord[] = (recOutcomesRes.data || []).map((row: any) => ({
+      recommendationId: row.recommendation_id,
+      userId: row.user_id,
+      proposalTitle: row.proposal_title,
+      wasAccepted: row.was_accepted,
+      wasExecuted: row.was_executed,
+      affectedSessionsOutcomes: row.affected_sessions_outcomes || [],
+      conflictsOccurred: row.conflicts_occurred || 0,
+      outcomeScore: row.outcome_score,
+      recordedAt: row.recorded_at || row.created_at,
+    }));
+
+    // 2. Compute Core Deterministic Intelligence
+    const snapshot = generateScheduleSnapshot(user.id, schedules, tasks, preferences);
+    const health = calculateAcademicHealthScore(schedules, tasks);
+    const healthTrend = evaluateHealthTrend(health.overallScore, []);
+    const workload = analyzeWorkload(schedules, tasks);
+    const deadlines = analyzeTaskDeadlines(tasks);
+    const deadlineCoverage = tasks.map((t) => analyzeDeadlineCoverage(t, schedules));
+    const behaviorSignals = extractBehaviorSignals2(user.id, schedules, sessionOutcomes);
+    const earlyWarnings = generatePatternEarlyWarnings(schedules, tasks, sessionOutcomes, recOutcomes);
+    const adherenceReport = analyzeActualVsPlanned(user.id, sessionOutcomes);
+    const proposal = generateContinuousOptimizationProposal(user.id, snapshot, tasks, sessionOutcomes, recOutcomes);
+
+    // 3. Format Top 3 Recommendations
+    const topRecommendations = proposal.affectedSessions.slice(0, 3).map((item, idx) => {
+      const qScore = calculateRecommendationQuality({
+        deadlineUrgency: "UPCOMING",
+        slotDurationMinutes: item.durationMinutes || 90,
+        targetDurationMinutes: item.durationMinutes || 90,
+        hasConflict: false,
+        dayWorkloadLevel: workload.dailyBreakdown[item.toDay]?.level || "NORMAL",
+        hasSufficientBreak: true,
+        isPreferredTimeMatch: true,
+      });
+
+      const explanation = generate12QuestionExplanation({
+        sessionTitle: item.title,
+        targetDay: item.toDay,
+        targetStartTime: item.toTime.split(" - ")[0] || "14:00",
+        targetEndTime: item.toTime.split(" - ")[1] || "15:30",
+        durationMinutes: item.durationMinutes || 90,
+        workloadMinutesAfter: workload.dailyBreakdown[item.toDay]?.totalMinutes || 120,
+        conflictsCount: 0,
+        qualityScore: qScore.score,
+        rankingPosition: idx + 1,
+      });
+
+      return {
+        id: `rec_${item.id}_${idx}`,
+        sessionId: item.id,
+        title: item.title,
+        fromDay: item.fromDay,
+        fromTime: item.fromTime,
+        toDay: item.toDay,
+        toTime: item.toTime,
+        durationMinutes: item.durationMinutes || 90,
+        qualityScore: qScore.score,
+        qualityLabel: qScore.label,
+        impactSummary: [
+          `Mengurangi beban pada ${item.fromDay} dan mendistribusikan ke ${item.toDay}`,
+          "Bebas bentrok jadwal dengan kuliah dan sesi belajar lain",
+          `Menjaga batas aman beban belajar harian (${ACADEMIC_CONSTANTS.DAILY_WORKLOAD_HARD_CAP_MINUTES} menit)`,
+        ],
+        explanationAnswers: explanation as any,
+      };
+    });
+
+    const recEvaluation = evaluateHistoricalRecommendations(recOutcomes);
+
+    // Log structured telemetry safely
+    logIntelligenceEvent("recommendation_generated", {
+      userId: user.id,
+      recommendationsCount: topRecommendations.length,
+      healthScore: health.overallScore,
+    });
+
+    return {
+      success: true,
+      data: {
+        schedules,
+        tasks,
+        snapshot,
+        health,
+        healthTrend,
+        workload,
+        deadlines,
+        deadlineCoverage,
+        behaviorSignals,
+        topRecommendations,
+        earlyWarnings,
+        adherenceReport,
+        recommendationHistory: recOutcomes,
+        recommendationSummary: {
+          totalRecommendations: recEvaluation.totalRecommendations,
+          acceptedCount: recEvaluation.acceptedCount,
+          acceptanceRate: recEvaluation.acceptanceRate,
+          averageOutcomeScore: recEvaluation.averageOutcomeScore,
+          effectivenessRating: recEvaluation.effectivenessRating,
+          summary: recEvaluation.summary,
+        },
+        proposal,
+      },
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.message || "Gagal mengagregasi data pusat intelijen akademik.",
+    };
+  }
+}
+
+export async function getRecommendationExplanationAction(params: {
+  sessionTitle: string;
+  targetDay: ScheduleDay;
+  targetStartTime: string;
+  targetEndTime: string;
+  durationMinutes: number;
+  workloadMinutesAfter: number;
+  conflictsCount: number;
+  qualityScore: number;
+  rankingPosition?: number;
+}): Promise<{
+  success: boolean;
+  explanation?: Explainability12Answers;
+  error?: string;
+}> {
+  try {
+    const explanation = generate12QuestionExplanation({
+      ...params,
+      rankingPosition: params.rankingPosition || 1,
+    });
+    return { success: true, explanation };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal menghasilkan penjelasan." };
+  }
+}
+
+export async function logClientIntelligenceEventAction(
+  event: IntelligenceEvent,
+  metadata?: Record<string, unknown>
+): Promise<{ success: boolean }> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    logIntelligenceEvent(event, {
+      userId: user?.id,
+      ...metadata,
+    });
+    return { success: true };
+  } catch {
+    return { success: true };
+  }
+}
+
+export async function recordRecommendationFeedbackAction(
+  recommendationId: string,
+  wasAccepted: boolean,
+  proposalTitle = "OPTIMASI_MINGGUAN"
+): Promise<{ success: boolean; error?: string }> {
+  const correlationId = generateCorrelationId("act_rec_feedback");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Sesi login berakhir." };
+    }
+
+    const outcomeScore = wasAccepted ? 90 : 30;
+
+    try {
+      await supabase.from("recommendation_outcomes").insert({
+        id: `rec_out_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        user_id: user.id,
+        recommendation_id: recommendationId,
+        proposal_title: proposalTitle,
+        was_accepted: wasAccepted,
+        was_executed: wasAccepted,
+        conflicts_occurred: 0,
+        outcome_score: outcomeScore,
+        recorded_at: new Date().toISOString(),
+      });
+    } catch (dbErr) {
+      logger.warn("SCHEDULE_ACTIONS", "recommendation_outcomes insert warning:", { error: (dbErr as any)?.message });
+    }
+
+    logIntelligenceEvent(
+      wasAccepted ? "recommendation_accepted" : "recommendation_rejected",
+      { userId: user.id, recommendationId, wasAccepted },
+      correlationId
+    );
+
+    revalidatePath("/dashboard/jadwal");
+    revalidatePath("/dashboard/jadwal/intelligence");
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
 
 
 
