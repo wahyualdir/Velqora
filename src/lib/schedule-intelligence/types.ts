@@ -172,3 +172,127 @@ export interface ScheduleIntelligenceContext {
   deadlines: DeadlineAnalysisItem[];
   availableSlotsCount: number;
 }
+
+// ==========================================
+// FASE 31: ADAPTIVE INTELLIGENCE & DIFF CONTRACTS
+// ==========================================
+
+export type ScheduleDiffType =
+  | "ADDED"
+  | "REMOVED"
+  | "TIME_CHANGED"
+  | "DATE_CHANGED"
+  | "ROOM_CHANGED"
+  | "LECTURER_CHANGED"
+  | "TITLE_CHANGED"
+  | "UNCHANGED";
+
+export interface ScheduleDiffItem {
+  identityKey: string;
+  diffType: ScheduleDiffType;
+  description: string;
+  previousItem?: ScheduleItem;
+  incomingItem?: Partial<ScheduleItem>;
+  changes: Array<{
+    field: string;
+    previousValue: any;
+    newValue: any;
+  }>;
+  selectedAction: "ADD" | "UPDATE" | "KEEP_OLD" | "REMOVE" | "IGNORE";
+}
+
+export interface ScheduleDiffResult {
+  totalIncoming: number;
+  totalExisting: number;
+  addedCount: number;
+  removedCount: number;
+  changedCount: number;
+  unchangedCount: number;
+  items: ScheduleDiffItem[];
+  categorized: {
+    added: ScheduleDiffItem[];
+    changed: ScheduleDiffItem[];
+    unchanged: ScheduleDiffItem[];
+    removed: ScheduleDiffItem[];
+  };
+  summary: string;
+}
+
+export interface RecommendationQualityBreakdown {
+  score: number; // 0 - 100
+  label: "Sangat Cocok" | "Optimal" | "Cukup" | "Perlu Penyesuaian";
+  factors: {
+    deadlineUrgencyScore: number; // max 30
+    freeTimeAdequacyScore: number; // max 20
+    zeroConflictScore: number; // max 15
+    workloadBalanceScore: number; // max 15
+    breakComplianceScore: number; // max 10
+    preferredTimeScore: number; // max 10
+  };
+  explanations: string[];
+}
+
+export interface RescheduleAlternative {
+  slot: FreeTimeSlot;
+  quality: RecommendationQualityBreakdown;
+  explanation: RecommendationExplanation;
+  isRecommended: boolean;
+}
+
+export interface RescheduleImpactReport {
+  hasImpact: boolean;
+  eventChanged: {
+    id?: string;
+    title: string;
+    day: ScheduleDay;
+    previousTime?: string;
+    newStartTime: string;
+    newEndTime: string;
+  };
+  affectedSchedules: ScheduleItem[];
+  affectedStudySessions: ScheduleItem[];
+  affectedTasks: Task[];
+  lostFreeTimeMinutes: number;
+  gainedFreeTimeMinutes: number;
+  newConflictsCount: number;
+  resolvedConflictsCount: number;
+  workloadBefore: WorkloadLevel;
+  workloadAfter: WorkloadLevel;
+  deadlineRiskIncreased: boolean;
+  recommendedAlternatives: RescheduleAlternative[];
+  humanSummary: string;
+}
+
+export interface AdaptiveScheduleContext {
+  userId: string;
+  currentDateIso: string;
+  currentDay: ScheduleDay;
+  todayLectures: ScheduleItem[];
+  weekLectures: ScheduleItem[];
+  activeStudySessions: ScheduleItem[];
+  activeTasks: Task[];
+  criticalDeadlines: DeadlineAnalysisItem[];
+  todayFreeSlots: FreeTimeSlot[];
+  todayWorkload: DayWorkloadBreakdown;
+  weeklyWorkload: WorkloadSummary;
+  isOverloaded: boolean;
+  recoveryModeActive: boolean;
+  activeConflictsCount: number;
+  incompleteTasksCount: number;
+}
+
+export interface ImportUpdateModePayload {
+  selectedDiffItems: ScheduleDiffItem[];
+  correlationId?: string;
+}
+
+export interface ImportUpdateModeResult {
+  success: boolean;
+  addedCount: number;
+  updatedCount: number;
+  removedCount: number;
+  ignoredCount: number;
+  savedSchedules: ScheduleItem[];
+  errors: string[];
+}
+

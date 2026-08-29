@@ -27,6 +27,10 @@ import {
   generateWeeklyPlan,
   detectRescheduleImpact,
   persistApprovedRecommendations,
+  buildAdaptiveScheduleContext,
+  diffScheduleCollections,
+  planSmartReschedule,
+  generateAdaptiveDailyPlan,
   DailyPlanRequest,
   DailyPlanResult,
   WeeklyPlanRequest,
@@ -35,6 +39,12 @@ import {
   ScheduleIntelligenceContext,
   ScheduleRecommendation,
   PersistenceResult,
+  AdaptiveScheduleContext,
+  ScheduleDiffResult,
+  ScheduleDiffItem,
+  RescheduleImpactReport,
+  ImportUpdateModePayload,
+  ImportUpdateModeResult,
 } from "@/lib/schedule-intelligence";
 
 // ==========================================
@@ -776,5 +786,336 @@ export async function confirmScheduleRecommendationsAction(
   }
   return res;
 }
+
+// ==========================================
+// 8. FASE 31: ADAPTIVE SCHEDULE & DIFF ACTIONS
+// ==========================================
+
+/**
+ * Fetches real-time Adaptive Schedule Context
+ */
+export async function getAdaptiveScheduleContextAction(): Promise<{
+  success: boolean;
+  context?: AdaptiveScheduleContext;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_adapt_ctx");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const schedules = await getUserSchedules();
+
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+
+    if (tasksData) {
+      tasks = tasksData as Task[];
+    }
+
+    const context = buildAdaptiveScheduleContext(user.id, schedules, tasks);
+    return { success: true, context };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "getAdaptiveScheduleContextAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal memuat konteks adaptif jadwal." };
+  }
+}
+
+/**
+ * Compares incoming schedules against user's current schedule collection
+ */
+export async function diffScheduleVersionsAction(
+  incomingItems: Array<Partial<ScheduleItem> & { courseCode?: string }>
+): Promise<{
+  success: boolean;
+  diff?: ScheduleDiffResult;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_sched_diff");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const existing = await getUserSchedules();
+    const diff = diffScheduleCollections(existing, incomingItems);
+
+    return { success: true, diff };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "diffScheduleVersionsAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal membandingkan versi jadwal." };
+  }
+}
+
+/**
+ * Analyzes complete ripple effects and discovers alternative slots when an event shifts
+ */
+export async function analyzeRescheduleImpactAction(
+  changedEvent: {
+    id?: string;
+    title: string;
+    day: any;
+    previousTime?: string;
+    newStartTime: string;
+    newEndTime: string;
+  }
+): Promise<{
+  success: boolean;
+  impactReport?: RescheduleImpactReport;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_resched_impact");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const schedules = await getUserSchedules();
+
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+
+    if (tasksData) {
+      tasks = tasksData as Task[];
+    }
+
+    const impactReport = planSmartReschedule({
+      changedEvent,
+      existingSchedules: schedules,
+      tasks,
+    });
+
+    return { success: true, impactReport };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "analyzeRescheduleImpactAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal menganalisis dampak perubahan jadwal." };
+  }
+}
+
+/**
+ * Applies a reschedule proposal by updating the changed event and relocating affected study session
+ */
+export async function applyRescheduleProposalAction(payload: {
+  changedEvent: {
+    id: string;
+    title: string;
+    day: any;
+    startTime: string;
+    endTime: string;
+  };
+  relocatedSession?: {
+    id: string;
+    day: any;
+    startTime: string;
+    endTime: string;
+  };
+}): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_apply_resched");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    // 1. Update changed lecture event
+    const { error: updateMainErr } = await supabase
+      .from("schedules")
+      .update({
+        day: payload.changedEvent.day,
+        start_time: payload.changedEvent.startTime,
+        end_time: payload.changedEvent.endTime,
+        time: `${payload.changedEvent.startTime} - ${payload.changedEvent.endTime}`,
+      })
+      .eq("id", payload.changedEvent.id)
+      .eq("user_id", user.id);
+
+    if (updateMainErr) {
+      return { success: false, error: updateMainErr.message || "Gagal memperbarui jadwal." };
+    }
+
+    // 2. If an affected study session is relocated, update its slot
+    if (payload.relocatedSession) {
+      const { error: updateRelocErr } = await supabase
+        .from("schedules")
+        .update({
+          day: payload.relocatedSession.day,
+          start_time: payload.relocatedSession.startTime,
+          end_time: payload.relocatedSession.endTime,
+          time: `${payload.relocatedSession.startTime} - ${payload.relocatedSession.endTime}`,
+        })
+        .eq("id", payload.relocatedSession.id)
+        .eq("user_id", user.id);
+
+      if (updateRelocErr) {
+        return { success: false, error: updateRelocErr.message || "Gagal memindahkan sesi belajar." };
+      }
+    }
+
+    revalidatePath("/dashboard/jadwal");
+    return { success: true };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "applyRescheduleProposalAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal menerapkan perubahan jadwal." };
+  }
+}
+
+/**
+ * Imports schedules using Update Mode ("Perbarui Jadwal")
+ */
+export async function importScheduleWithUpdateModeAction(
+  payload: ImportUpdateModePayload
+): Promise<ImportUpdateModeResult> {
+  const correlationId = payload.correlationId || generateCorrelationId("act_imp_update");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return {
+        success: false,
+        addedCount: 0,
+        updatedCount: 0,
+        removedCount: 0,
+        ignoredCount: payload.selectedDiffItems.length,
+        savedSchedules: [],
+        errors: ["Sesi login tidak valid atau telah berakhir."],
+      };
+    }
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    let removedCount = 0;
+    let ignoredCount = 0;
+    const errors: string[] = [];
+
+    for (const diff of payload.selectedDiffItems) {
+      if (diff.selectedAction === "ADD" && diff.incomingItem) {
+        const item = diff.incomingItem;
+        const sStart = item.start_time || (item.time ? item.time.split("-")[0]?.trim() : "");
+        const sEnd = item.end_time || (item.time ? item.time.split("-")[1]?.trim() : "");
+
+        const { error: insErr } = await supabase.from("schedules").insert({
+          user_id: user.id,
+          title: item.title || "Kuliah",
+          subject: item.subject || "",
+          day: item.day || "Senin",
+          start_time: sStart,
+          end_time: sEnd,
+          time: item.time || `${sStart} - ${sEnd}`,
+          location: item.location || "",
+          lecturer: item.lecturer || "",
+          type: item.type || "jadwal",
+          priority: item.priority || "sedang",
+          is_completed: false,
+          source: "import_update_mode",
+        });
+
+        if (insErr) {
+          errors.push(`Gagal menambahkan '${item.title}': ${insErr.message}`);
+        } else {
+          addedCount++;
+        }
+      } else if (diff.selectedAction === "UPDATE" && diff.previousItem && diff.incomingItem) {
+        const inc = diff.incomingItem;
+        const sStart = inc.start_time || (inc.time ? inc.time.split("-")[0]?.trim() : diff.previousItem.start_time);
+        const sEnd = inc.end_time || (inc.time ? inc.time.split("-")[1]?.trim() : diff.previousItem.end_time);
+
+        const { error: upErr } = await supabase
+          .from("schedules")
+          .update({
+            title: inc.title || diff.previousItem.title,
+            subject: inc.subject !== undefined ? inc.subject : diff.previousItem.subject,
+            day: inc.day || diff.previousItem.day,
+            start_time: sStart,
+            end_time: sEnd,
+            time: inc.time || `${sStart} - ${sEnd}`,
+            location: inc.location !== undefined ? inc.location : diff.previousItem.location,
+            lecturer: inc.lecturer !== undefined ? inc.lecturer : diff.previousItem.lecturer,
+          })
+          .eq("id", diff.previousItem.id)
+          .eq("user_id", user.id);
+
+        if (upErr) {
+          errors.push(`Gagal memperbarui '${diff.previousItem.title}': ${upErr.message}`);
+        } else {
+          updatedCount++;
+        }
+      } else if (diff.selectedAction === "REMOVE" && diff.previousItem) {
+        const { error: delErr } = await supabase
+          .from("schedules")
+          .delete()
+          .eq("id", diff.previousItem.id)
+          .eq("user_id", user.id);
+
+        if (delErr) {
+          errors.push(`Gagal menghapus '${diff.previousItem.title}': ${delErr.message}`);
+        } else {
+          removedCount++;
+        }
+      } else {
+        ignoredCount++;
+      }
+    }
+
+    revalidatePath("/dashboard/jadwal");
+
+    const savedSchedules = await getUserSchedules();
+
+    return {
+      success: errors.length === 0,
+      addedCount,
+      updatedCount,
+      removedCount,
+      ignoredCount,
+      savedSchedules,
+      errors,
+    };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "importScheduleWithUpdateModeAction error:", err, undefined, correlationId);
+    return {
+      success: false,
+      addedCount: 0,
+      updatedCount: 0,
+      removedCount: 0,
+      ignoredCount: payload.selectedDiffItems.length,
+      savedSchedules: [],
+      errors: [err.message || "Gagal memproses pembaruan jadwal."],
+    };
+  }
+}
+
 
 

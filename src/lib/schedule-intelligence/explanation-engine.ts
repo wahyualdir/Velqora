@@ -13,12 +13,24 @@ export interface ExplanationParams {
   checkedSchedulesCount: number;
   maxDailyMinutes: number;
   minBreakMinutes: number;
+  workloadStatus?: string;
+  alternativesCount?: number;
+}
+
+export interface DetailedExplanationAnswers {
+  whyChosen: string;
+  whatPrioritized: string;
+  schedulesConsidered: string;
+  conflictStatusText: string;
+  deadlineImpactText: string;
+  workloadSafetyText: string;
+  alternativesAvailableText: string;
 }
 
 /**
- * Builds structured and explainable reasoning for schedule recommendations
+ * Builds structured, explainable 2.0 reasoning for schedule recommendations
  */
-export function buildRecommendationExplanation(params: ExplanationParams): RecommendationExplanation {
+export function buildRecommendationExplanation(params: ExplanationParams): RecommendationExplanation & { answers?: DetailedExplanationAnswers } {
   const {
     activity,
     day,
@@ -31,6 +43,8 @@ export function buildRecommendationExplanation(params: ExplanationParams): Recom
     checkedSchedulesCount,
     maxDailyMinutes,
     minBreakMinutes,
+    workloadStatus = "Optimal",
+    alternativesCount = 0,
   } = params;
 
   let summary = `Disarankan mempelajari ${activity} pada hari ${day} pukul ${startTime}–${endTime} (${durationMinutes} menit).`;
@@ -54,10 +68,21 @@ export function buildRecommendationExplanation(params: ExplanationParams): Recom
     `Zero-hallucination: Menggunakan data mata kuliah dan tenggat tugas nyata.`,
   ];
 
+  const answers: DetailedExplanationAnswers = {
+    whyChosen: `Slot ${day} ${startTime}–${endTime} dipilih karena tersedia penuh selama ${durationMinutes} menit tanpa bertabrakan dengan jadwal perkuliahan.`,
+    whatPrioritized: deadlineUrgencyLabel ? `Mata kuliah/tugas '${activity}' dengan urgensi ${deadlineUrgencyLabel}.` : `Sesi fokus terencana '${activity}'.`,
+    schedulesConsidered: `Mempertimbangkan ${checkedSchedulesCount} agenda akademik aktif di database.`,
+    conflictStatusText: `Bebas konflik terverifikasi, menjaga jeda istirahat minimal ${minBreakMinutes} menit.`,
+    deadlineImpactText: deadlineUrgencyLabel ? `Mempersiapkan tugas sebelum batas akhir pengumpulan (${deadlineUrgencyLabel}).` : `Tidak ada deadline mendesak yang terancam.`,
+    workloadSafetyText: `Beban belajar harian tetap aman dalam batas maksimal ${maxDailyMinutes} menit (status: ${workloadStatus}).`,
+    alternativesAvailableText: alternativesCount > 0 ? `Tersedia ${alternativesCount} alternatif slot waktu luang lainnya.` : `Ini merupakan slot waktu luang terbaik yang tersedia.`,
+  };
+
   return {
     summary,
     factors: factors.length > 0 ? factors : ["Waktu luang optimal", "Bebas bentrok jadwal kuliah"],
     evidence,
     constraintsApplied,
+    answers,
   };
 }

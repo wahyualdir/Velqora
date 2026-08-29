@@ -38,6 +38,9 @@ import { DAYS } from "./schedule-navigation";
 import { ScheduleImportHistoryItem } from "@/types/schedule";
 import { ScheduleItem } from "@/types";
 import { toast } from "sonner";
+import { diffScheduleCollections } from "@/lib/schedule-intelligence/schedule-diff";
+import { ScheduleDiffResult } from "@/lib/schedule-intelligence/types";
+import { ScheduleChangeReview } from "./schedule-change-review";
 
 interface ScheduleImportModalProps {
   isOpen: boolean;
@@ -53,6 +56,7 @@ type ImportStep =
   | "validating"
   | "detecting_conflicts"
   | "review"
+  | "diff_review"
   | "confirm"
   | "saving";
 
@@ -70,6 +74,7 @@ export function ScheduleImportModal({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<ExtractedScheduleItem>>({});
   const [evidenceModalItem, setEvidenceModalItem] = useState<ExtractedScheduleItem | null>(null);
+  const [diffResult, setDiffResult] = useState<ScheduleDiffResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingDurationMs, setProcessingDurationMs] = useState<number | null>(null);
@@ -97,7 +102,7 @@ export function ScheduleImportModal({
     setStep("uploading");
 
     try {
-      // Fetch user's existing schedules for conflict detection
+      // Fetch user's existing schedules for conflict detection and diffing
       const existing = await getUserSchedules();
       setExistingSchedules(existing);
 
@@ -134,6 +139,17 @@ export function ScheduleImportModal({
 
       setProcessingDurationMs(Date.now() - startTime);
       setItems(result.items);
+
+      if (existing.length > 0) {
+        const diff = diffScheduleCollections(existing, result.items);
+        setDiffResult(diff);
+        if (diff.changedCount > 0 || diff.removedCount > 0) {
+          setStep("diff_review");
+          toast.info(`Terdeteksi ${diff.changedCount} perubahan dari jadwal sebelumnya.`);
+          return;
+        }
+      }
+
       setStep("review");
       toast.success(`${result.items.length} agenda ditemukan dan siap diperiksa.`);
     } catch (err: any) {
@@ -518,6 +534,19 @@ export function ScheduleImportModal({
               </div>
             )}
           </div>
+        )}
+
+        {/* ================= STEP: DIFF REVIEW (IMPORT UPDATE MODE) ================= */}
+        {step === "diff_review" && diffResult && (
+          <ScheduleChangeReview
+            diffResult={diffResult}
+            onSuccess={(saved) => {
+              onSuccess(saved);
+              handleReset();
+              onClose();
+            }}
+            onCancel={() => setStep("review")}
+          />
         )}
 
         {/* ================= STEP: REVIEW ================= */}
