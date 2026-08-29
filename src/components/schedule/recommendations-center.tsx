@@ -98,6 +98,9 @@ export function RecommendationsCenter({
 
                 {/* Session Title */}
                 <div>
+                  <div className="text-[10px] uppercase font-mono font-semibold text-text-tertiary tracking-wider mb-0.5">
+                    Rekomendasi Penyesuaian
+                  </div>
                   <h4 className="text-sm font-bold text-text-primary">
                     {rec.title}
                   </h4>
@@ -106,6 +109,16 @@ export function RecommendationsCenter({
                     <ArrowRight className="w-3 h-3 text-brand-500 shrink-0" />
                     <span className="font-semibold text-brand-600 dark:text-brand-400">{rec.toDay} ({rec.toTime})</span>
                   </div>
+                </div>
+
+                {/* Reason Section */}
+                <div className="space-y-1 pt-2 border-t border-border/40">
+                  <span className="text-[11px] font-semibold text-text-tertiary uppercase font-mono">
+                    Alasan:
+                  </span>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    {rec.explanationAnswers?.["Mengapa dipilih?"] || "Deadline mendekati dan slot waktu belajar pada hari tujuan bebas bentrok dengan beban seimbang."}
+                  </p>
                 </div>
 
                 {/* Impact Bullet Points */}

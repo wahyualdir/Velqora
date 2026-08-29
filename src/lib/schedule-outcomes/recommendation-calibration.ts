@@ -26,12 +26,12 @@ export function calculateCalibrationMultipliers(
       typeGroups[typeKey].accepted++;
     }
 
-    const completed = r.affectedSessionsOutcomes.filter(
-      (s) => s === "COMPLETED"
-    ).length;
-    if (r.affectedSessionsOutcomes.length > 0) {
-      typeGroups[typeKey].completed +=
-        completed / r.affectedSessionsOutcomes.length;
+    const outcomesList = Array.isArray(r.affectedSessionsOutcomes)
+      ? r.affectedSessionsOutcomes
+      : [];
+    const completed = outcomesList.filter((s) => s === "COMPLETED").length;
+    if (outcomesList.length > 0) {
+      typeGroups[typeKey].completed += completed / outcomesList.length;
     }
   }
 
