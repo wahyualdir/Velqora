@@ -89,11 +89,12 @@ const TIME_PATTERN = /\b\d{1,2}[:.]\d{2}\s*(?:-|–|—|s\.?d\.?|sampai|hingga|\
 const SINGLE_TIME_PATTERN = /\b\d{1,2}[:.]\d{2}\b/;
 
 /**
- * Classifies document to determine if it is an academic schedule, possible schedule, non-schedule, or empty document (Classification 2.0).
+ * Classifies document to determine if it is an academic schedule, possible schedule, partial schedule, non-schedule, or empty document (Classification 3.0).
  */
 export function classifyScheduleDocument(
   text: string,
-  fileName: string = ""
+  fileName: string = "",
+  metadata?: { isPartial?: boolean; failedPagesCount?: number }
 ): DocumentClassificationResult {
   const normalized = text.toLowerCase();
   const nameNorm = fileName.toLowerCase();
@@ -106,6 +107,18 @@ export function classifyScheduleDocument(
       isSchedule: false,
       confidence: 0.1,
       reason: "Dokumen kosong atau tidak memiliki teks yang cukup untuk dianalisis.",
+      detectedKeywords: [],
+    };
+  }
+
+  // Check for partial page failure flag
+  if (metadata?.isPartial || (metadata?.failedPagesCount && metadata.failedPagesCount > 0)) {
+    return {
+      category: "course_schedule",
+      canonicalCategory: "PARTIAL_SCHEDULE",
+      isSchedule: true,
+      confidence: 0.7,
+      reason: "Dokumen jadwal berhasil dibaca sebagian. Beberapa halaman memerlukan pemeriksaan mandiri.",
       detectedKeywords: [],
     };
   }

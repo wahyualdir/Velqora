@@ -18,12 +18,14 @@ export * from "./confidence-engine";
 export * from "./normalizer";
 export * from "./conflict-engine";
 export * from "./ai-structuring";
+export { ocrService, ocrRegistry, preprocessOcrImage, inspectPdfStructure } from "../schedule/ocr";
 
 import { defaultOCRProvider } from "./ocr-provider";
+import { ocrService } from "../schedule/ocr";
 
 /**
- * Full End-to-End Schedule Import Pipeline (FASE 28)
- * FLOW: Uploaded Buffer -> Parser -> OCR Check -> Classifier -> AI/Table Structuring -> Normalization -> Conflict Engine -> Review Payload
+ * Full End-to-End Schedule Import Pipeline (FASE 29)
+ * FLOW: Uploaded Buffer -> Parser -> OCR Check -> Classifier 3.0 -> AI/Table Structuring -> Normalization -> Conflict Engine -> Review Payload
  */
 export async function processScheduleDocumentImport(
   fileBuffer: Buffer,
@@ -47,7 +49,11 @@ export async function processScheduleDocumentImport(
     const rawDoc = await parseScheduleDocument(fileBuffer, fileName, mimeType);
 
     if (rawDoc.isScanned && !process.env.GEMINI_API_KEY && !rawDoc.metadata?.isImage) {
-      if (!defaultOCRProvider.isAvailable()) {
+      const ocrResult = await ocrService.processDocument(fileBuffer, mimeType);
+      if (ocrResult.fullText && ocrResult.fullText.trim().length >= 15) {
+        rawDoc.extractedText = ocrResult.fullText;
+        rawDoc.isScanned = false;
+      } else if (!defaultOCRProvider.isAvailable()) {
         return {
           success: false,
           correlationId,

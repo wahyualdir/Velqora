@@ -10,6 +10,7 @@ export type ConfidenceTier = "HIGH_CONFIDENCE" | "REVIEW_REQUIRED" | "LOW_CONFID
 export type DocumentClassification =
   | "ACADEMIC_SCHEDULE"
   | "POSSIBLE_SCHEDULE"
+  | "PARTIAL_SCHEDULE"
   | "NON_SCHEDULE"
   | "EMPTY_DOCUMENT"
   | "UNREADABLE_DOCUMENT"
@@ -37,7 +38,13 @@ export interface OCRProvider {
 
 export interface DocumentClassificationResult {
   category: DocumentClassification;
-  canonicalCategory?: "ACADEMIC_SCHEDULE" | "POSSIBLE_SCHEDULE" | "NON_SCHEDULE" | "EMPTY_DOCUMENT" | "UNREADABLE_DOCUMENT";
+  canonicalCategory?:
+    | "ACADEMIC_SCHEDULE"
+    | "POSSIBLE_SCHEDULE"
+    | "PARTIAL_SCHEDULE"
+    | "NON_SCHEDULE"
+    | "EMPTY_DOCUMENT"
+    | "UNREADABLE_DOCUMENT";
   isSchedule: boolean;
   confidence: number;
   reason: string;
@@ -69,7 +76,11 @@ export type ConflictCategory =
   | "same_room_overlap"
   | "same_day_overlap"
   | "invalid_time"
-  | "date_mismatch";
+  | "date_mismatch"
+  | "study_overload"
+  | "deadline_risk"
+  | "insufficient_break"
+  | "outside_availability";
 
 export interface ExtractedScheduleItem {
   id: string;
@@ -99,6 +110,7 @@ export interface ExtractedScheduleItem {
   sourceRow?: number;
   sourceColumn?: number | string;
   sourcePage?: number;
+  ocrConfidence?: number;
   extractionMethod?: "ai_gemini" | "deterministic_table" | "deterministic_heuristic";
   confidence: ScheduleConfidence;
   confidenceTier?: ConfidenceTier;

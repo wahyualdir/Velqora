@@ -337,6 +337,8 @@ export async function generateAutoScheduleAction(
         goal: goalData,
         totalCandidateSlots: 0,
         recommendedSessionsCount: 0,
+        totalStudyHours: 0,
+        workloadLevel: "optimal",
         candidates: [],
         availabilityOverview: {
           Senin: [],
@@ -382,6 +384,8 @@ export async function generateAutoScheduleAction(
       goal: goalData,
       totalCandidateSlots: 0,
       recommendedSessionsCount: 0,
+      totalStudyHours: 0,
+      workloadLevel: "optimal",
       candidates: [],
       availabilityOverview: {
         Senin: [],

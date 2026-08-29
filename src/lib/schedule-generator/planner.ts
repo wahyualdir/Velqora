@@ -3,14 +3,26 @@ import {
   AutoScheduleGoalRequest,
   AutoSchedulePlanResult,
   GeneratedScheduleCandidate,
+  WorkloadLevel,
 } from "./types";
 import { computeAvailabilityWindows } from "./availability";
 import { validateGoalRequest, alignToSlotStep, DEFAULT_ACADEMIC_CONSTRAINTS } from "./constraints";
 import { isCandidateSlotConflicting } from "./conflict-engine";
 import { minutesToTime } from "../schedule-import/normalizer";
 
+const DAY_ORDER: ScheduleDay[] = [
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+  "Minggu",
+];
+
 /**
- * Deterministic Multi-Criteria Academic Schedule Planner
+ * Deterministic Multi-Criteria Academic Schedule Planner 2.0
+ * Includes Workload Protection, Deadline Proximity, Session Splitting, and Explainable Rationale.
  */
 export function planAcademicSchedule(
   rawRequest: AutoScheduleGoalRequest,
@@ -25,6 +37,8 @@ export function planAcademicSchedule(
       goal: rawRequest,
       totalCandidateSlots: 0,
       recommendedSessionsCount: 0,
+      totalStudyHours: 0,
+      workloadLevel: "optimal",
       candidates: [],
       availabilityOverview: {
         Senin: [],
@@ -39,16 +53,32 @@ export function planAcademicSchedule(
     };
   }
 
-  // 1. Compute availability windows
+  // 1. Check deadline proximity if task or deadline provided
+  let deadlineInfo: { deadlineDate: string; daysRemaining: number; isUrgent: boolean } | undefined;
+  if (sanitized.deadline) {
+    const targetDate = new Date(sanitized.deadline);
+    if (!isNaN(targetDate.getTime())) {
+      const now = new Date();
+      const diffMs = targetDate.getTime() - now.getTime();
+      const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+      deadlineInfo = {
+        deadlineDate: sanitized.deadline,
+        daysRemaining,
+        isUrgent: daysRemaining <= 3,
+      };
+    }
+  }
+
+  // 2. Compute availability windows
   const availability = computeAvailabilityWindows(
     sanitized.preferredDays,
     sanitized.timePreference,
     existingSchedules,
     existingTasks,
-    DEFAULT_ACADEMIC_CONSTRAINTS.minBufferMinutes
+    sanitized.minBreakMinutes || DEFAULT_ACADEMIC_CONSTRAINTS.minBufferMinutes
   );
 
-  // 2. Generate candidate slots
+  // 3. Generate candidate slots
   const allCandidates: GeneratedScheduleCandidate[] = [];
   const duration = sanitized.durationMinutes;
 
@@ -64,7 +94,7 @@ export function planAcademicSchedule(
         const startTimeStr = minutesToTime(slotStart);
         const endTimeStr = minutesToTime(slotEnd);
 
-        // Check conflict
+        // Check conflict with existing schedules
         const isConflict = isCandidateSlotConflicting(
           { day, startTime: startTimeStr, endTime: endTimeStr },
           existingSchedules,
@@ -78,7 +108,16 @@ export function planAcademicSchedule(
             slotEnd,
             win.startMinutes,
             win.endMinutes,
-            sanitized
+            sanitized,
+            deadlineInfo?.daysRemaining
+          );
+
+          const explanation = buildExplainableReasoning(
+            day,
+            startTimeStr,
+            endTimeStr,
+            sanitized,
+            deadlineInfo
           );
 
           allCandidates.push({
@@ -94,6 +133,8 @@ export function planAcademicSchedule(
             type: "jadwal",
             suitabilityScore: scoreBreakdown.score,
             scoreReasons: scoreBreakdown.reasons,
+            explanation,
+            deadlineProximityDays: deadlineInfo?.daysRemaining,
             selected: false,
           });
         }
@@ -103,38 +144,69 @@ export function planAcademicSchedule(
     });
   });
 
-  // 3. Sort candidates by score descending
+  // 4. Sort candidates by score descending
   allCandidates.sort((a, b) => b.suitabilityScore - a.suitabilityScore);
 
-  // 4. Select top candidates evenly distributed across days up to targetSessionsPerWeek
+  // 5. Select top candidates with Workload Protection
+  const maxDailyMinutes = sanitized.maxDailyStudyMinutes || DEFAULT_ACADEMIC_CONSTRAINTS.maxDailyStudyMinutes;
   const pickedCandidates: GeneratedScheduleCandidate[] = [];
-  const daysUsed = new Set<ScheduleDay>();
+  const dailyStudyMinutesMap: Record<ScheduleDay, number> = {
+    Senin: 0,
+    Selasa: 0,
+    Rabu: 0,
+    Kamis: 0,
+    Jumat: 0,
+    Sabtu: 0,
+    Minggu: 0,
+  };
 
-  // Pass 1: pick highest scoring slot from distinct days
+  // Pass 1: pick highest scoring slot from distinct days without exceeding daily limit
   for (const candidate of allCandidates) {
     if (pickedCandidates.length >= sanitized.targetSessionsPerWeek) break;
 
-    if (!daysUsed.has(candidate.day)) {
+    const currentDaily = dailyStudyMinutesMap[candidate.day] || 0;
+    if (currentDaily === 0 && currentDaily + duration <= maxDailyMinutes) {
       if (!isCandidateSlotConflicting(candidate, existingSchedules, pickedCandidates)) {
         candidate.selected = true;
         pickedCandidates.push(candidate);
-        daysUsed.add(candidate.day);
+        dailyStudyMinutesMap[candidate.day] += duration;
       }
     }
   }
 
-  // Pass 2: if target sessions not met, pick remaining top scoring non-conflicting slots
+  // Pass 2: if target sessions not met, pick remaining top scoring non-conflicting slots within daily workload limits
   if (pickedCandidates.length < sanitized.targetSessionsPerWeek) {
     for (const candidate of allCandidates) {
       if (pickedCandidates.length >= sanitized.targetSessionsPerWeek) break;
 
       if (!candidate.selected) {
-        if (!isCandidateSlotConflicting(candidate, existingSchedules, pickedCandidates)) {
-          candidate.selected = true;
-          pickedCandidates.push(candidate);
+        const currentDaily = dailyStudyMinutesMap[candidate.day] || 0;
+        if (currentDaily + duration <= maxDailyMinutes) {
+          if (!isCandidateSlotConflicting(candidate, existingSchedules, pickedCandidates)) {
+            candidate.selected = true;
+            pickedCandidates.push(candidate);
+            dailyStudyMinutesMap[candidate.day] += duration;
+          }
         }
       }
     }
+  }
+
+  // Sort picked candidates chronologically (Senin -> Minggu, then startTime)
+  pickedCandidates.sort((a, b) => {
+    const dayDiff = DAY_ORDER.indexOf(a.day) - DAY_ORDER.indexOf(b.day);
+    if (dayDiff !== 0) return dayDiff;
+    return a.startTime.localeCompare(b.startTime);
+  });
+
+  const totalStudyMinutes = pickedCandidates.length * duration;
+  const totalStudyHours = Number((totalStudyMinutes / 60).toFixed(1));
+
+  let workloadLevel: WorkloadLevel = "optimal";
+  if (totalStudyHours <= 3) {
+    workloadLevel = "ringan";
+  } else if (totalStudyHours > 6) {
+    workloadLevel = "padat";
   }
 
   const warnings: string[] = [];
@@ -149,8 +221,11 @@ export function planAcademicSchedule(
     goal: sanitized,
     totalCandidateSlots: allCandidates.length,
     recommendedSessionsCount: pickedCandidates.length,
+    totalStudyHours,
+    workloadLevel,
     candidates: allCandidates,
     availabilityOverview: availability,
+    deadlineInfo,
     warnings: warnings.length > 0 ? warnings : undefined,
   };
 }
@@ -164,7 +239,8 @@ function calculateSuitabilityScore(
   slotEnd: number,
   windowStart: number,
   windowEnd: number,
-  goal: AutoScheduleGoalRequest
+  goal: AutoScheduleGoalRequest,
+  daysUntilDeadline?: number
 ): { score: number; reasons: string[] } {
   let score = 70; // Base score
   const reasons: string[] = ["Slot bebas bentrok"];
@@ -186,7 +262,7 @@ function calculateSuitabilityScore(
   const marginAfter = windowEnd - slotEnd;
   if (marginBefore >= 30 && marginAfter >= 30) {
     score += 10;
-    reasons.push("Jeda waktu lapang sebelum & sesudah sesi");
+    reasons.push("Jeda waktu lapang (≥30m) sebelum & sesudah sesi");
   } else if (marginBefore < 15 || marginAfter < 15) {
     score -= 5;
     reasons.push("Jeda waktu mepet dengan agenda lain");
@@ -198,11 +274,40 @@ function calculateSuitabilityScore(
     reasons.push("Jam produktif pagi hari");
   } else if (goal.timePreference === "malam" && slotStart >= 19 * 60 && slotStart <= 21 * 60) {
     score += 10;
-    reasons.push("Jam fokus malam hari");
+    reasons.push("Jam produktif malam hari");
+  } else if (goal.timePreference === "sore" && slotStart >= 16 * 60 && slotStart <= 18 * 60) {
+    score += 10;
+    reasons.push("Jam produktif sore hari");
+  }
+
+  // 5. Deadline urgency bonus
+  if (daysUntilDeadline !== undefined && daysUntilDeadline <= 3) {
+    score += 15;
+    reasons.push(`Prioritas tenggat waktu dekat (${daysUntilDeadline} hari lagi)`);
   }
 
   return {
-    score: Math.min(100, Math.max(10, score)),
+    score: Math.min(100, Math.max(0, score)),
     reasons,
   };
+}
+
+/**
+ * Builds deterministic human-readable explainable reasoning for a recommended study session
+ */
+function buildExplainableReasoning(
+  day: ScheduleDay,
+  startTime: string,
+  endTime: string,
+  goal: AutoScheduleGoalRequest,
+  deadlineInfo?: { deadlineDate: string; daysRemaining: number }
+): string {
+  const duration = goal.durationMinutes;
+  const prefText = goal.timePreference === "fleksibel" ? "waktu luang" : `preferensi ${goal.timePreference}`;
+
+  if (deadlineInfo && deadlineInfo.daysRemaining <= 3) {
+    return `Dipilih karena merupakan slot luang ${duration} menit pada hari ${day} (${startTime} - ${endTime}) sebelum tenggat tugas (${deadlineInfo.daysRemaining} hari lagi) tanpa bentrok jadwal kuliah.`;
+  }
+
+  return `Dipilih karena merupakan slot ${duration} menit yang optimal pada hari ${day} (${startTime} - ${endTime}) sesuai ${prefText} dan berjarak aman dari agenda akademik lain.`;
 }

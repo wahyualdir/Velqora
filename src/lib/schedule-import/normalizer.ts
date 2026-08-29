@@ -562,6 +562,8 @@ export function normalizeExtractedScheduleItem(
     priority: raw.priority || "sedang",
     sourceText: raw.sourceText || "",
     sourceTrace: sourceTraceOverride || raw.sourceTrace || `Baris ${index + 1}`,
+    sourcePage: (raw as any).sourcePage || undefined,
+    ocrConfidence: (raw as any).ocrConfidence || undefined,
     dayDateMismatch: dateCheck.dayDateMismatch,
     dayDateMismatchReason: dateCheck.reason,
     expectedDayFromDate: dateCheck.actualDay || undefined,
