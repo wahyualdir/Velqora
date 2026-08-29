@@ -4,6 +4,7 @@ import { analyzeWorkload, calculateItemDurationMinutes } from "../schedule-intel
 import { analyzeDeadlineCoverage } from "../schedule-intelligence/deadline-coverage";
 import { analyzeScheduleRealism } from "../schedule-intelligence/schedule-realism";
 import { UserSchedulePreference } from "../schedule-intelligence/types";
+import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 import {
   RegressionAnalysis,
   RegressionSeverity,
@@ -103,9 +104,12 @@ export function detectScheduleRegression(
   const propMaxDay = Math.max(...propDailyMinutes, 0);
   const origMaxDay = Math.max(...origDailyMinutes, 0);
 
-  if (propMaxDay > 360 && propMaxDay > origMaxDay) {
+  if (
+    propMaxDay > ACADEMIC_CONSTANTS.DAILY_WORKLOAD_HARD_CAP_MINUTES &&
+    propMaxDay > origMaxDay
+  ) {
     reasons.push(
-      `Usulan membebani satu hari melebihi batas keras 360 menit (${propMaxDay} menit).`
+      `Usulan membebani satu hari melebihi batas keras ${ACADEMIC_CONSTANTS.DAILY_WORKLOAD_HARD_CAP_MINUTES} menit (${propMaxDay} menit).`
     );
     return {
       severity: "CRITICAL_REGRESSION",

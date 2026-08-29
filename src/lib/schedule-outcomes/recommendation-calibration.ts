@@ -2,6 +2,7 @@ import {
   RecommendationOutcomeRecord,
   RecommendationCalibrationMultiplier,
 } from "./types";
+import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 
 /**
  * Derives empirical calibration multipliers from historical recommendation outcome records.
@@ -54,7 +55,13 @@ export function calculateCalibrationMultipliers(
 
     // Map [0.0, 1.0] to [0.75, 1.25]
     let rawMultiplier = 0.75 + combinedSuccess * 0.5;
-    rawMultiplier = Math.min(1.3, Math.max(0.7, Math.round(rawMultiplier * 100) / 100));
+    rawMultiplier = Math.min(
+      ACADEMIC_CONSTANTS.CALIBRATION_MULTIPLIER_MAX,
+      Math.max(
+        ACADEMIC_CONSTANTS.CALIBRATION_MULTIPLIER_MIN,
+        Math.round(rawMultiplier * 100) / 100
+      )
+    );
 
     multipliers[typeKey] = {
       recommendationType: typeKey,

@@ -1,8 +1,8 @@
-import { ScheduleDay } from "@/types";
 import { timeToMinutes } from "../schedule-import/normalizer";
+import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 
-export const DEFAULT_MAX_DAILY_STUDY_MINUTES = 240; // 4 hours
-export const DEFAULT_MIN_BREAK_MINUTES = 30; // 30 mins buffer
+export const DEFAULT_MAX_DAILY_STUDY_MINUTES = ACADEMIC_CONSTANTS.DEFAULT_MAX_DAILY_STUDY_MINUTES;
+export const DEFAULT_MIN_BREAK_MINUTES = ACADEMIC_CONSTANTS.DEFAULT_BREAK_DURATION_MINUTES;
 
 export interface SafetyCheckResult {
   isValid: boolean;

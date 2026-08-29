@@ -23,3 +23,4 @@ export * from "./deadline-coverage";
 export * from "./missed-session-recovery";
 export * from "./weekly-optimizer";
 export * from "./recommendation-ranking";
+export { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";

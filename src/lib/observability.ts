@@ -47,7 +47,7 @@ const REDACTED_KEYS = new Set([
   "service_role_key",
 ]);
 
-function sanitizeMetadata(meta?: Record<string, unknown>): Record<string, unknown> | undefined {
+export function sanitizeMetadata(meta?: Record<string, unknown>): Record<string, unknown> | undefined {
   if (!meta) return undefined;
   const clean: Record<string, unknown> = {};
 

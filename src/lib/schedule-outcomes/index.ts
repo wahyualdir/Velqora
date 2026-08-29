@@ -7,3 +7,4 @@ export * from "./health-trends";
 export * from "./early-warning-2";
 export * from "./what-if-outcome-simulator";
 export * from "./explanation-engine-4";
+export { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";

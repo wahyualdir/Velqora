@@ -12,6 +12,7 @@ import { calculateRecommendationQuality } from "./recommendation-quality";
 import { buildRecommendationExplanation } from "./explanation-engine";
 import { getDayFromDateString } from "./recommendation-engine";
 import { timeToMinutes } from "../schedule-import/normalizer";
+import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 
 const ALL_DAYS: ScheduleDay[] = [
   "Senin",
@@ -48,8 +49,8 @@ export function generateAdaptiveDailyPlan(
   const targetDay = req.day || (req.date ? getDayFromDateString(req.date) : "Senin");
   const targetHours = req.targetStudyHours || 3;
   const targetMinutes = Math.round(targetHours * 60);
-  const maxDailyMinutes = req.maxDailyStudyMinutes || 240;
-  const minBreakMinutes = req.minBreakMinutes || 30;
+  const maxDailyMinutes = req.maxDailyStudyMinutes || ACADEMIC_CONSTANTS.DEFAULT_MAX_DAILY_STUDY_MINUTES;
+  const minBreakMinutes = req.minBreakMinutes || ACADEMIC_CONSTANTS.DEFAULT_BREAK_DURATION_MINUTES;
 
   const warnings: string[] = [];
 
@@ -169,7 +170,11 @@ export function generateAdaptiveDailyPlan(
       if (availableInSlot < 45) break;
 
       // Cap session to 45-90 minutes
-      const sessionDuration = Math.min(availableInSlot, remainingToTarget, 90);
+      const sessionDuration = Math.min(
+        availableInSlot,
+        remainingToTarget,
+        ACADEMIC_CONSTANTS.ADAPTIVE_MAX_SINGLE_SESSION_MINUTES
+      );
       if (sessionDuration < 45) break;
 
       // Safety: check daily study limit

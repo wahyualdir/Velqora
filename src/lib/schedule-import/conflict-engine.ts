@@ -3,7 +3,7 @@ import { ScheduleItem } from "@/types";
 
 export function timeToMinutes(timeStr: string): number {
   if (!timeStr) return 0;
-  const parts = timeStr.split(":");
+  const parts = timeStr.split(/[:.]/);
   const h = parseInt(parts[0], 10) || 0;
   const m = parseInt(parts[1], 10) || 0;
   return h * 60 + m;

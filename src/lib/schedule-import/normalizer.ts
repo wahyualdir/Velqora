@@ -419,6 +419,7 @@ export function extractLocationFromTitle(
       const fullMatchedLocation = match[0].trim();
       const remainingTitle = title
         .replace(pattern, " ")
+        .replace(/\b(?:di|pada|at)\s*$/i, "")
         .replace(/[-–—/:([]+\s*$/, "")
         .replace(/^\s*[-–—/:)\]]+/, "")
         .replace(/\s+/g, " ")

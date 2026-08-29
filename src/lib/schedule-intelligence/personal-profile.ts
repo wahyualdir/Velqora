@@ -1,13 +1,14 @@
 import { ScheduleDay } from "@/types";
 import { UserSchedulePreference, PlanningStyle } from "./types";
+import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 
 export const DEFAULT_SCHEDULE_PREFERENCE: UserSchedulePreference = {
   preferredStudyStartTime: "19:00",
   preferredStudyEndTime: "21:30",
-  preferredSessionDuration: 60,
+  preferredSessionDuration: ACADEMIC_CONSTANTS.DEFAULT_SESSION_DURATION_MINUTES,
   preferredDays: ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"],
-  preferredBreakDuration: 30,
-  maximumDailyStudyMinutes: 240,
+  preferredBreakDuration: ACADEMIC_CONSTANTS.DEFAULT_BREAK_DURATION_MINUTES,
+  maximumDailyStudyMinutes: ACADEMIC_CONSTANTS.DEFAULT_MAX_DAILY_STUDY_MINUTES,
   planningStyle: "BALANCED",
 };
 
@@ -34,9 +35,12 @@ export function sanitizeSchedulePreferences(
   let sessionDuration = Number(input.preferredSessionDuration) || DEFAULT_SCHEDULE_PREFERENCE.preferredSessionDuration;
   sessionDuration = Math.min(120, Math.max(30, sessionDuration));
 
-  // Max daily study minutes clamped between 60 and 360 minutes
+  // Max daily study minutes clamped between MIN_DAILY_STUDY_MINUTES and DAILY_WORKLOAD_HARD_CAP_MINUTES
   let maxDailyStudy = Number(input.maximumDailyStudyMinutes) || DEFAULT_SCHEDULE_PREFERENCE.maximumDailyStudyMinutes;
-  maxDailyStudy = Math.min(360, Math.max(60, maxDailyStudy));
+  maxDailyStudy = Math.min(
+    ACADEMIC_CONSTANTS.DAILY_WORKLOAD_HARD_CAP_MINUTES,
+    Math.max(ACADEMIC_CONSTANTS.MIN_DAILY_STUDY_MINUTES, maxDailyStudy)
+  );
 
   // Break duration clamped between 15 and 60 minutes
   let breakDuration = Number(input.preferredBreakDuration) || DEFAULT_SCHEDULE_PREFERENCE.preferredBreakDuration;

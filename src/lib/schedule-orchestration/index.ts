@@ -9,3 +9,4 @@ export * from "./approval-gate";
 export * from "./proposal-versioning";
 export * from "./academic-health";
 export * from "./early-warning";
+export { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";

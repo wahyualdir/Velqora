@@ -1,4 +1,5 @@
 export * from "./types";
+export * from "./academic-constants";
 export * from "./document-parser";
 export * from "./schedule-extractor";
 export * from "./schedule-validator";

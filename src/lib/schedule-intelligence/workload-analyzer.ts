@@ -6,6 +6,7 @@ import {
   WorkloadActivityEvidence,
 } from "./types";
 import { timeToMinutes } from "../schedule-import/normalizer";
+import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 
 const ALL_DAYS: ScheduleDay[] = [
   "Senin",
@@ -132,7 +133,8 @@ export function analyzeWorkload(
     const dayStat = dailyBreakdown[day];
     dayStat.totalHours = parseFloat((dayStat.totalMinutes / 60).toFixed(1));
     dayStat.level = classifyWorkloadLevel(dayStat.totalMinutes);
-    dayStat.isOverloaded = dayStat.totalMinutes > 360; // Over 6 hours in a single day
+    dayStat.isOverloaded =
+      dayStat.totalMinutes > ACADEMIC_CONSTANTS.DAILY_WORKLOAD_HARD_CAP_MINUTES;
 
     if (dayStat.isOverloaded) {
       overloadedDaysCount++;
