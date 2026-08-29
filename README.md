@@ -1,90 +1,132 @@
-# StudyVault — Perpustakaan Digital Tugas & Modul Pribadi
+# Velqora — Intelligent Academic Workspace & Learning Platform
 
-StudyVault adalah aplikasi web pribadi modern untuk menyimpan, mengelola, dan mengorganisir seluruh materi kuliah, tugas, modul pembelajaran, catatan, project, notebook Jupyter, source code, dan file pembelajaran Anda dalam satu tempat yang aman dan terstruktur.
-
----
-
-## 🌟 Fitur Utama
-
-- 📊 **Dashboard Interaktif**: Statistik total materi, tugas, modul, dan file. Tampilan tugas mendekati deadline dan modul aktif.
-- 📚 **Sistem Materi (CRUD)**: Kelola materi kuliah, catatan, notebook, project, dan referensi eksternal.
-- 📋 **Sistem Tugas Kuliah**: Manajemen deadline dengan indikator visual otomatis (merah/kuning/hijau), tingkat prioritas, dan status pengerjaan.
-- 🎓 **Modul Pembelajaran Step-by-Step**: Kelola bab/chapter pembelajaran dengan progress bar persentase otomatis.
-- 📁 **Cloud File Storage**: Integrasi langsung dengan Supabase Storage untuk upload & download file hingga 50MB (PDF, DOCX, IPYNB, ZIP, Gambar, dll).
-- 🏷️ **Kategori & Tag**: Pengelompokan fleksibel berdasarkan mata kuliah atau topik (Python, Data Science, Web Dev, dll).
-- 🔍 **Pencarian Global & Filter**: Filter berdasarkan kategori, jenis materi, status, dan kata kunci.
-- 🌙 **Dark / Light / System Mode**: Tampilan fleksibel yang nyaman di mata.
-- 💾 **Backup & Export Data**: Ekspor metadata ke format JSON untuk perlindungan data.
-- 🔐 **Keamanan Terjamin**: Proteksi Row Level Security (RLS) Supabase — pengguna hanya dapat melihat dan mengubah datanya sendiri.
+Velqora adalah platform manajemen pembelajaran dan produktivitas akademik berbasis AI yang dirancang untuk mengorganisasi silabus kuliah, tugas, catatan, jadwal terotomasi, modul pembelajaran interaktif, serta repositori dokumen perkuliahan dalam satu lingkungan kerja yang modern, terstruktur, dan aman.
 
 ---
 
 ## 🛠️ Stack Teknologi
 
-- **Frontend Framework**: Next.js 15 (App Router, Server Actions)
-- **Bahasa**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Icons**: Lucide React
-- **Database & Auth**: Supabase PostgreSQL + Supabase Auth
-- **File Storage**: Supabase Storage
-- **UI Feedback**: Sonner (Toast notifications)
-- **Deployment Target**: Vercel
+- **Frontend & App Framework**: [Next.js 15.5](https://nextjs.org/) (App Router, Server Actions)
+- **UI & Runtime**: [React 19](https://react.dev/) & TypeScript 5
+- **Design System & Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Iconography**: [Lucide React](https://lucide.dev/)
+- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Supabase Auth SSR, Storage, RLS)
+- **Document Processing**: jsPDF, docx, jszip, pdf-parse, xlsx, qrcode
+- **PWA**: Web App Manifest, Service Worker (Stale-While-Revalidate caching)
+- **Testing Engine**: Built-in NodeJS Test Runner via `tsx`
 
 ---
 
-## 🚀 Panduan Setup & Instalasi Lokal
+## 📁 Struktur Folder Utama
 
-### 1. Persiapan Supabase
+```
+velqora/
+├── src/
+│   ├── app/                 # Next.js App Router (35 routes: auth, dashboard, api)
+│   ├── components/          # 123 Presentation components grouped by domain
+│   │   ├── ai/              # AI Tutor, Context & Memory components
+│   │   ├── classes/         # Classroom management & collaboration
+│   │   ├── converter/       # Document format converter workbench
+│   │   ├── dashboard/       # Central workspace focus, metrics & lists
+│   │   ├── files/           # File repository & direct upload hub
+│   │   ├── layout/          # Sidebar, Navbar, CommandPalette, Footers
+│   │   ├── materi/          # Learning materials & PDF reader
+│   │   ├── modul/           # Course modules, syllabus & drive explorer
+│   │   ├── playground/      # Interactive code runner sandbox
+│   │   ├── quiz/            # AI Quiz generator & session runner
+│   │   ├── schedule/        # Academic schedule intelligence & controls
+│   │   ├── settings/        # Profile, appearance, security & learning prefs
+│   │   ├── tasks/           # Task management & deadline tracking
+│   │   └── ui/              # Reusable design system primitives
+│   ├── actions/             # Next.js Server Actions (study, schedule, ai, quiz, auth)
+│   ├── lib/                 # Core domain logic, AI engines, schedule pipelines, Supabase
+│   ├── context/             # Global providers (LanguageContext, ThemeAccentContext)
+│   └── types/               # Core TypeScript definitions and contracts
+├── docs/                    # Centralized project documentation
+│   ├── architecture/        # System design & component architecture specs
+│   ├── audits/              # Project audit reports (Phase 0 Audit, Phase 1 Report)
+│   ├── implementation/      # Implementation logs & engineering guides
+│   ├── testing/             # Test strategy & validation suites
+│   └── archive/             # Archived phase reports & historical logs
+├── public/                  # Static assets, PWA manifest, service worker & icons
+├── scripts/                 # Test runners, fixture generators, icon tools
+├── supabase/                # Database migrations (001 to 007) & RLS policies
+└── fixtures/                # Real-world academic schedule documents for testing
+```
 
-1. Buka [supabase.com](https://supabase.com) dan buat project baru (Gratis).
-2. Di **SQL Editor** Supabase, jalankan isi file `supabase/migrations/001_initial_schema.sql` untuk membuat tabel, trigger, dan RLS policies.
-3. Di **Storage**, buat bucket baru bernama: `studyvault-files` dan centang opsi **Public**.
-4. Di **Authentication -> Providers**, pastikan provider **Email** aktif.
+---
+
+## 🚀 Panduan Setup & Menjalankan Project
+
+### 1. Prasyarat
+- Node.js 18.18+ atau Node.js 20+
+- Akun Supabase aktif
 
 ### 2. Environment Variables
-
-Buat file `.env.local` di root folder project dan isi dengan credential dari Supabase Project Settings -> API:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-```
-
-### 3. Install Dependencies & Jalankan Project
-
-Jalankan perintah berikut di terminal:
+Salin file template `.env.example` menjadi `.env.local` di root directory:
 
 ```bash
-npm install
-npm run dev
+cp .env.example .env.local
 ```
 
-Buka browser dan akses: `http://localhost:3000`
+Isi variabel konfigurasi dengan nilai dari dashboard Supabase & penyedia AI Anda:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GEMINI_API_KEY=your_gemini_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+```
+
+> **Catatan Keamanan**: Jangan pernah melakukan commit file `.env.local` atau credential asli ke dalam git repository.
+
+### 3. Instalasi Dependencies
+```bash
+npm install
+```
+
+### 4. Menjalankan Server Development
+```bash
+npm run dev
+```
+Akses aplikasi melalui browser di `http://localhost:3000`.
 
 ---
 
-## 📦 Menjalankan Build Testing
+## 🧪 Pengujian (Testing)
 
-Untuk memastikan tidak ada error TypeScript atau ESLint sebelum deployment:
+Velqora dilengkapi dengan 23 automated test suites yang mencakup unit test, integration test, conflict engine, schedule import, heuristic parser, dan product experience scenarios.
+
+Jalankan seluruh test suite dengan:
+```bash
+npm test
+```
+
+---
+
+## 📦 Build & Production Verification
+
+Untuk memvalidasi type check, server actions, dan kompilasi 35 route produksi:
 
 ```bash
 npm run build
 ```
 
----
-
-## 🚀 Panduan Deploy ke Vercel
-
-1. Push repository ini ke akun **GitHub** Anda.
-2. Login ke [vercel.com](https://vercel.com) dan pilih **Add New Project**.
-3. Import repository GitHub **StudyVault**.
-4. Di bagian **Environment Variables**, tambahkan:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-5. Klik **Deploy**. Project Anda akan aktif secara instan dalam beberapa detik!
+Untuk menjalankan static analysis linter:
+```bash
+npm run lint
+```
 
 ---
 
-## 📄 Lisensi & Hak Cipta
+## 📚 Dokumentasi Terkait
 
-Project ini dibuat khusus sebagai perpustakaan digital pribadi.
+- [Comprehensive Phase 0 Audit Report](docs/audits/AUDIT_REPORT.md)
+- [Phase 1 Repository Hygiene Report](docs/audits/PHASE_1_REPORT.md)
+- [Production Release Checklist](PRODUCTION_RELEASE_CHECKLIST.md)
+- [Historical Phase Archives](docs/archive/)
+
+---
+
+## 📄 Lisensi
+Hak Cipta © 2026 Velqora. All rights reserved.

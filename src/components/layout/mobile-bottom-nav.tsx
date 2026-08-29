@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Bot, Scan, BookOpen, Menu } from "lucide-react";
+import { LayoutDashboard, BookOpen, CheckSquare, Layers, Menu } from "lucide-react";
 
 interface MobileBottomNavProps {
   onToggleSidebar: () => void;
@@ -14,27 +14,27 @@ export function MobileBottomNav({ onToggleSidebar }: MobileBottomNavProps) {
 
   const navItems = [
     {
-      label: "Dashboard",
+      label: "Beranda",
       href: "/dashboard",
       icon: LayoutDashboard,
       exact: true,
     },
     {
-      label: "Konversi",
-      href: "/dashboard/konversi",
-      icon: Scan,
-      exact: false,
-    },
-    {
-      label: "Tutor AI",
-      href: "/dashboard/ai-tutor",
-      icon: Bot,
-      exact: false,
-    },
-    {
       label: "Materi",
       href: "/dashboard/materi",
       icon: BookOpen,
+      exact: false,
+    },
+    {
+      label: "Tugas",
+      href: "/dashboard/tugas",
+      icon: CheckSquare,
+      exact: false,
+    },
+    {
+      label: "Modul",
+      href: "/dashboard/modul",
+      icon: Layers,
       exact: false,
     },
   ];

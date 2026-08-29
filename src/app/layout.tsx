@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/context/language-context";
 import { ThemeAccentProvider } from "@/context/theme-accent-context";
+import { PwaRegister } from "@/components/layout/pwa-register";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -111,6 +112,7 @@ export default function RootLayout({
           <ThemeAccentProvider>
             <LanguageProvider>
               {children}
+              <PwaRegister />
               <Toaster position="top-right" richColors />
             </LanguageProvider>
           </ThemeAccentProvider>

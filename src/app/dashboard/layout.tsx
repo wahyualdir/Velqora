@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Navbar } from "@/components/layout/navbar";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { TechBackground } from "@/components/ui/tech-background";
 import { DashboardFooter, MinimalCopyright } from "@/components/layout/watermark-footer";
 import { CommandPalette } from "@/components/layout/command-palette";
@@ -29,7 +30,7 @@ function SubpageBackButton() {
             router.push("/dashboard");
           }
         }}
-        className="h-9.5 w-9.5 min-h-[38px] min-w-[38px] flex items-center justify-center rounded-xl bg-surface hover:bg-surface-secondary border border-border text-text-secondary hover:text-text-primary transition-all active:scale-95 group shadow-2xs cursor-pointer"
+        className="h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-surface hover:bg-surface-secondary border border-border text-text-secondary hover:text-text-primary transition-all active:scale-95 group shadow-2xs cursor-pointer"
         title="Kembali"
         aria-label="Kembali"
       >
@@ -92,7 +93,7 @@ export default function DashboardLayout({
 
   return (
     <div className="relative min-h-screen flex bg-transparent pb-6 overflow-x-hidden">
-      {/* Ambient dynamic tech background with 37 brand logos & tech grid */}
+      {/* Precision technical canvas background */}
       <TechBackground />
 
       {/* Global Spotlight Command Palette (Ctrl+K) */}
@@ -122,7 +123,7 @@ export default function DashboardLayout({
           onSearchChange={setSearchQuery}
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         />
-        <main className="flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-4 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-4rem)] safe-area-bottom">
+        <main className="flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-4 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-4rem)] pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-6">
           <div className="flex-1">
             <SubpageBackButton />
             {children}
@@ -130,6 +131,9 @@ export default function DashboardLayout({
           {isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />}
         </main>
       </div>
+
+      {/* Mobile App Experience: 5-Destination Bottom Navigation Bar */}
+      <MobileBottomNav onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
     </div>
   );
 }
