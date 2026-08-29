@@ -14,52 +14,78 @@ export type SemanticColumnType =
 
 export const SEMANTIC_HEADER_PATTERNS: Record<SemanticColumnType, RegExp[]> = {
   DAY: [
-    /^(?:hari|day|hari\s*kuliah|hari\/tanggal|hari\s*pelaksanaan|day\s*of\s*week)$/i,
+    /^(?:hari|day|hari\s*kuliah|hari\/tanggal|hari\/tgl|hari\s*pelaksanaan|day\s*of\s*week|jadwal\s*hari)$/i,
     /\b(?:hari|day)\b/i,
   ],
   DATE: [
-    /^(?:tanggal|date|tgl|tgl\s*kuliah|tanggal\s*pelaksanaan)$/i,
+    /^(?:tanggal|date|tgl|tgl\s*kuliah|tanggal\s*pelaksanaan|tanggal\/hari|tanggal\s*kegiatan)$/i,
     /\b(?:tanggal|date|tgl)\b/i,
   ],
   TIME: [
-    /^(?:jam|waktu|time|jam\s*kuliah|pukul|waktu\s*pelaksanaan|slot\s*waktu|sesi|waktu\s*kuliah)$/i,
-    /\b(?:jam|waktu|time|pukul)\b/i,
+    /^(?:jam|waktu|time|jam\s*kuliah|waktu\s*kuliah|pukul|waktu\s*pelaksanaan|slot\s*waktu|sesi|range\s*jam|jam\s*pelaksanaan|waktu\s*belajar)$/i,
+    /\b(?:jam|waktu|time|pukul|slot)\b/i,
   ],
   COURSE: [
-    /^(?:mata\s*kuliah|matakuliah|mata\s*ajaran|course|subject|nama\s*mata\s*kuliah|nama\s*mk|course\s*name|kegiatan|agenda)$/i,
-    /\b(?:mata\s*kuliah|matakuliah|course|subject)\b/i,
+    /^(?:mata\s*kuliah|matakuliah|matkul|mata\s*kuliah\/praktikum|mata\s*ajaran|course|subject|nama\s*mata\s*kuliah|nama\s*mk|course\s*name|kegiatan|agenda|topik|nama\s*kegiatan)$/i,
+    /\b(?:mata\s*kuliah|matakuliah|course|subject|matkul)\b/i,
   ],
   CODE: [
-    /^(?:kode|kode\s*mk|kode\s*matkul|kode\s*mata\s*kuliah|course\s*code|sandi\s*mk|class\s*code)$/i,
+    /^(?:kode|kode\s*mk|kode\s*matkul|kode\s*mata\s*kuliah|course\s*code|sandi\s*mk|class\s*code|no\s*mk|kode\s*kelas)$/i,
     /\b(?:kode\s*mk|kode|code)\b/i,
   ],
   ROOM: [
-    /^(?:ruang|ruangan|room|lokasi|tempat|lab|laboratorium|gedung|kelas|classroom|virtual\s*room)$/i,
+    /^(?:ruang|ruangan|room|lokasi|tempat|lab|laboratorium|gedung|kelas\/ruang|ruang\s*kelas|classroom|virtual\s*room|ruang\s*kuliah)$/i,
     /\b(?:ruang|ruangan|room|lokasi|lab)\b/i,
   ],
   LECTURER: [
-    /^(?:dosen|pengajar|lecturer|instructor|dosen\s*pengampu|dosen\s*pembimbing|nama\s*dosen|teacher)$/i,
+    /^(?:dosen|pengajar|lecturer|instructor|dosen\s*pengampu|dosen\s*pembimbing|nama\s*dosen|teacher|tim\s*dosen)$/i,
     /\b(?:dosen|pengajar|lecturer|instructor)\b/i,
   ],
-  SKS: [/^(?:sks|kredit|credit|credits)$/i],
-  CLASS: [/^(?:kelas|paralel|group|section)$/i],
+  SKS: [/^(?:sks|kredit|credit|credits|bobot)$/i],
+  CLASS: [/^(?:kelas|paralel|group|section|rombel|kelompok)$/i],
   UNKNOWN: [],
 };
 
 /**
+ * Normalizes header string for semantic classification
+ */
+function normalizeHeaderString(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/[._\-/:()[\]{}]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
  * Classifies a column header label into a canonical semantic column type
+ * Uses exact match first, then regex dictionary, then token matching
  */
 export function classifyColumnHeader(headerText: string): SemanticColumnType {
-  const clean = headerText.trim().toLowerCase().replace(/[-_:]+/g, " ");
+  const clean = normalizeHeaderString(headerText);
+  if (!clean) return "UNKNOWN";
 
+  // 1. Direct Regex Pattern Match
   for (const [type, patterns] of Object.entries(SEMANTIC_HEADER_PATTERNS) as [SemanticColumnType, RegExp[]][]) {
     if (type === "UNKNOWN") continue;
     for (const pattern of patterns) {
-      if (pattern.test(clean)) {
+      if (pattern.test(clean) || pattern.test(headerText.trim())) {
         return type;
       }
     }
   }
+
+  // 2. Token Matching Fallback
+  const tokens = clean.split(" ");
+  if (tokens.includes("hari") || tokens.includes("day")) return "DAY";
+  if (tokens.includes("tanggal") || tokens.includes("tgl") || tokens.includes("date")) return "DATE";
+  if (tokens.includes("waktu") || tokens.includes("jam") || tokens.includes("time") || tokens.includes("pukul")) return "TIME";
+  if (tokens.includes("matkul") || tokens.includes("kuliah") || tokens.includes("course") || tokens.includes("subject")) return "COURSE";
+  if (tokens.includes("dosen") || tokens.includes("pengajar") || tokens.includes("lecturer")) return "LECTURER";
+  if (tokens.includes("ruang") || tokens.includes("ruangan") || tokens.includes("room") || tokens.includes("lab")) return "ROOM";
+  if (tokens.includes("kode") || tokens.includes("code")) return "CODE";
+  if (tokens.includes("sks") || tokens.includes("kredit")) return "SKS";
+  if (tokens.includes("kelas") || tokens.includes("class")) return "CLASS";
 
   return "UNKNOWN";
 }
@@ -75,14 +101,16 @@ export interface ParsedTableStructure {
   columns: TableColumnMapping[];
   dataRows: string[][];
   sourceTracePrefix?: string;
+  rowTraceLabels?: string[];
 }
 
 /**
- * Discovers table structure, detects header row, and maps semantic columns
+ * Discovers table structure, detects header row (searching up to 10 rows), and maps semantic columns
  */
 export function analyzeTableStructure(
   rows: string[][],
-  tracePrefix: string = "Tabel"
+  tracePrefix: string = "Tabel",
+  rowTraces?: string[]
 ): ParsedTableStructure | null {
   if (!rows || rows.length === 0) return null;
 
@@ -90,7 +118,7 @@ export function analyzeTableStructure(
   let bestHeaderScore = 0;
   let bestColumns: TableColumnMapping[] = [];
 
-  // Search first 10 rows for best header row candidate
+  // Search first 10 rows for best header candidate
   const maxSearchRows = Math.min(rows.length, 10);
 
   for (let r = 0; r < maxSearchRows; r++) {
@@ -133,12 +161,14 @@ export function analyzeTableStructure(
   }
 
   const dataRows = rows.slice(bestHeaderRowIndex + 1);
+  const dataRowTraces = rowTraces ? rowTraces.slice(bestHeaderRowIndex + 1) : undefined;
 
   return {
     headerRowIndex: bestHeaderRowIndex,
     columns: bestColumns,
     dataRows,
     sourceTracePrefix: tracePrefix,
+    rowTraceLabels: dataRowTraces,
   };
 }
 
@@ -159,6 +189,7 @@ export function extractItemsFromTableStructure(
   const lecturerCols = table.columns.filter((c) => c.semanticType === "LECTURER").map((c) => c.columnIndex);
 
   let lastKnownDay = "";
+  let lastKnownDate = "";
 
   for (let r = 0; r < table.dataRows.length; r++) {
     const row = table.dataRows[r];
@@ -166,10 +197,10 @@ export function extractItemsFromTableStructure(
 
     // Extract fields
     let day = dayCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
-    const date = dateCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
+    let date = dateCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
     const time = timeCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
     let title = courseCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
-    const subject = codeCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
+    let subject = codeCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
     const location = roomCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
     const instructor = lecturerCols.map((idx) => row[idx]).filter(Boolean).join(" ").trim();
 
@@ -178,6 +209,13 @@ export function extractItemsFromTableStructure(
       lastKnownDay = day;
     } else if (lastKnownDay && (time || title)) {
       day = lastKnownDay;
+    }
+
+    // Carry-over merged date cells if date is empty
+    if (date) {
+      lastKnownDate = date;
+    } else if (lastKnownDate && (time || title)) {
+      date = lastKnownDate;
     }
 
     // Skip rows without meaningful title or time
@@ -193,6 +231,19 @@ export function extractItemsFromTableStructure(
       }
     }
 
+    // Disambiguate course code if embedded in title
+    if (title && !subject) {
+      const codeMatch = title.match(/\b([A-Z]{2,4}[-\s]?\d{3,4})\b/i);
+      if (codeMatch) {
+        subject = codeMatch[1];
+        title = title.replace(/\b[A-Z]{2,4}[-\s]?\d{3,4}\b/i, "").replace(/[()]/g, "").trim();
+      }
+    }
+
+    const rowTrace = (table.rowTraceLabels && table.rowTraceLabels[r])
+      ? table.rowTraceLabels[r]
+      : `${table.sourceTracePrefix || "Baris"} ${table.headerRowIndex + r + 2}`;
+
     if (title && title.length >= 2) {
       items.push({
         title,
@@ -203,7 +254,7 @@ export function extractItemsFromTableStructure(
         location: location || undefined,
         instructor: instructor || undefined,
         sourceText: row.join(" | "),
-        sourceTrace: `${table.sourceTracePrefix || "Baris"} ${table.headerRowIndex + r + 2}`,
+        sourceTrace: rowTrace,
         type: "jadwal",
         priority: "sedang",
       });

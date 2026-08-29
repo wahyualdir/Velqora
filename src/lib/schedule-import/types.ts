@@ -54,6 +54,7 @@ export interface ExtractedScheduleItem {
   id: string;
   title: string;
   subject?: string;
+  courseCode?: string;
   day?: string;
   date?: string;
   startTime?: string;
@@ -61,7 +62,9 @@ export interface ExtractedScheduleItem {
   time?: string;
   timeIncomplete?: boolean;
   isEstimatedEndTime?: boolean;
+  endTimeEstimated?: boolean;
   location?: string;
+  rawLocationSnippet?: string;
   instructor?: string;
   lecturer?: string;
   multiLecturers?: string[];

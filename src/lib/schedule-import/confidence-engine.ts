@@ -66,6 +66,11 @@ export function evaluateConfidence2(
     reasons.push("Dosen/pengajar terdeteksi");
   }
 
+  if (item.subject || item.courseCode) {
+    score += 0.05;
+    reasons.push("Kode mata kuliah teridentifikasi");
+  }
+
   if (item.date && !item.dayDateMismatch) {
     score += 0.10;
     reasons.push("Tanggal terverifikasi");

@@ -1,6 +1,7 @@
 import { RawDocumentExtraction } from "./types";
 import { aiStructuringOutputSchema, AIStructuringOutput, RawScheduleItemInput } from "./schema";
 import { analyzeTableStructure, extractItemsFromTableStructure } from "./table-structuring";
+import { extractLocationFromTitle } from "./normalizer";
 import { logger } from "@/lib/observability";
 
 const MAX_PROMPT_CHARS = 10000;
@@ -235,15 +236,23 @@ export function heuristicTextScheduleExtractor(text: string): AIStructuringOutpu
 
   // 1. Check if document has raw grid table rows without key-value prefixes
   const potentialTableRows: string[][] = [];
+  const rowTraces: string[] = [];
+
   for (const line of rawLines) {
     let clean = line;
+    let trace = `Baris ${potentialTableRows.length + 1}`;
     const traceMatch = line.match(/^\[([^\]]+)\]:\s*(.*)$/);
-    if (traceMatch) clean = traceMatch[2];
+    if (traceMatch) {
+      trace = traceMatch[1];
+      clean = traceMatch[2];
+    }
 
     if (clean.includes("|")) {
       potentialTableRows.push(clean.split("|").map((c) => c.trim()));
+      rowTraces.push(trace);
     } else if (clean.includes("\t")) {
       potentialTableRows.push(clean.split("\t").map((c) => c.trim()));
+      rowTraces.push(trace);
     }
   }
 
@@ -252,7 +261,7 @@ export function heuristicTextScheduleExtractor(text: string): AIStructuringOutpu
   );
 
   if (!isKeyValueFormat && potentialTableRows.length >= 3) {
-    const tableStruct = analyzeTableStructure(potentialTableRows);
+    const tableStruct = analyzeTableStructure(potentialTableRows, "Tabel", rowTraces);
     if (tableStruct) {
       const tableItems = extractItemsFromTableStructure(tableStruct);
       if (tableItems.length >= 1) {
@@ -324,6 +333,15 @@ export function heuristicTextScheduleExtractor(text: string): AIStructuringOutpu
         if (cCode && !subject) {
           subject = cCode[1];
           title = title.replace(COURSE_CODE_REGEX, "").replace(/[()]/g, "").trim();
+        }
+      }
+
+      // Disambiguate location from title if merged
+      if (title) {
+        const locDisambig = extractLocationFromTitle(title, location);
+        title = locDisambig.cleanTitle || title;
+        if (!location && locDisambig.extractedLocation) {
+          location = locDisambig.extractedLocation;
         }
       }
 
@@ -526,6 +544,13 @@ function extractFieldsFromDelimitedLine(
   if (embeddedCode && !subject) {
     subject = embeddedCode[1];
     title = title.replace(COURSE_CODE_REGEX, "").replace(/[()]/g, "").trim();
+  }
+
+  // Disambiguate location from title if merged
+  const locDisambig = extractLocationFromTitle(title, location);
+  title = locDisambig.cleanTitle || title;
+  if (!location && locDisambig.extractedLocation) {
+    location = locDisambig.extractedLocation;
   }
 
   if (!title || title.length < 2) {

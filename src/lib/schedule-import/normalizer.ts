@@ -369,9 +369,82 @@ export function normalizeTimeRange(rawTime?: string | null): {
   };
 }
 
+const LOCATION_PATTERNS: RegExp[] = [
+  /\b(?:ruang|ruangan|room)\s*[:.\-]?\s*([A-Za-z0-9.\-]+(?:\s+[A-Za-z0-9.\-]+)*)\b/i,
+  /\b(?:r\.|r\s+)\s*(\d{2,4}[A-Za-z]?)\b/i,
+  /\b(?:lab(?:oratorium)?)\s*[:.\-]?\s*([A-Za-z0-9.\-]+(?:\s+[A-Za-z0-9.\-]+)*)\b/i,
+  /\b(?:gedung\s+[A-Za-z0-9]+(?:\s+lt\.?\s*\d+)?)\b/i,
+  /\b(?:auditorium|aula)(?:\s+[A-Za-z0-9]+)?\b/i,
+  /\b(?:zoom|google\s*meet|teams|online)\b/i,
+];
+
+const COURSE_CODE_REGEX = /\b([A-Z]{2,4}[-\s]?\d{3,4})\b/i;
+
 /**
- * Parses and normalizes multiple lecturer strings
- * e.g. "Budi Santoso, S.Kom., M.T.; Andi Pratama, M.Kom." or "Dr. Budi / Ir. Andi"
+ * Disambiguates location from title if location is merged inside title string.
+ * e.g. "Etika Profesi Ruang 401" -> title: "Etika Profesi", location: "Ruang 401"
+ * "Algoritma dan Pemrograman - Lab Komputer 2" -> title: "Algoritma dan Pemrograman", location: "Lab Komputer 2"
+ */
+export function extractLocationFromTitle(
+  rawTitle: string,
+  existingLocation?: string | null
+): {
+  cleanTitle: string;
+  extractedLocation?: string;
+} {
+  let title = rawTitle.trim();
+  if (!title) return { cleanTitle: "", extractedLocation: existingLocation || undefined };
+
+  // If explicit location already exists and is not inside title, return as is
+  if (existingLocation && existingLocation.trim()) {
+    // Remove location from title if redundantly present
+    const locClean = existingLocation.trim();
+    if (title.toLowerCase().includes(locClean.toLowerCase())) {
+      const cleaned = title
+        .replace(new RegExp(`[-–—/:([]*\\s*${escapeRegex(locClean)}\\s*[\\])]*`, "gi"), " ")
+        .replace(/\s+/g, " ")
+        .replace(/[-–—/:(]+$/, "")
+        .trim();
+      if (cleaned.length >= 2) {
+        title = cleaned;
+      }
+    }
+    return { cleanTitle: title, extractedLocation: locClean };
+  }
+
+  // Look for location patterns in title
+  for (const pattern of LOCATION_PATTERNS) {
+    const match = title.match(pattern);
+    if (match) {
+      const fullMatchedLocation = match[0].trim();
+      const remainingTitle = title
+        .replace(pattern, " ")
+        .replace(/[-–—/:([]+\s*$/, "")
+        .replace(/^\s*[-–—/:)\]]+/, "")
+        .replace(/\s+/g, " ")
+        .replace(/[()[\]{}]/g, "")
+        .trim();
+
+      // Only strip if remaining title is meaningful
+      if (remainingTitle.length >= 2) {
+        return {
+          cleanTitle: remainingTitle,
+          extractedLocation: fullMatchedLocation,
+        };
+      }
+    }
+  }
+
+  return { cleanTitle: title, extractedLocation: undefined };
+}
+
+function escapeRegex(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Parses and normalizes multiple lecturer strings without breaking on degree commas
+ * e.g. "Dr. Budi Santoso, S.Kom., M.Kom.; Andi Pratama, M.T." or "Prof. Ir. Siti / Dr. Hendra"
  */
 export function parseMultiLecturers(raw?: string | null): {
   primary: string;
@@ -382,7 +455,9 @@ export function parseMultiLecturers(raw?: string | null): {
   }
 
   const clean = raw.trim().replace(/^dosen[:\s-]*/i, "");
-  // Split by semicolon, slash, or " dan " / " & "
+
+  // Split only by semicolon, slash with spaces, or " dan " / " & "
+  // Do NOT split by plain commas because commas separate academic degrees (e.g. Dr. Budi, S.Kom., M.T.)
   const parts = clean
     .split(/;\s*|\s+\/\s+|\s+dan\s+|\s+&\s+/i)
     .map((p) => p.trim())
@@ -434,10 +509,23 @@ export function normalizeExtractedScheduleItem(
   index: number = 0,
   sourceTraceOverride?: string
 ): ExtractedScheduleItem {
-  const title = (raw.title || raw.subject || "").trim();
+  let title = (raw.title || raw.subject || "").trim();
+  let subject = raw.subject?.trim() || undefined;
   const rawDay = raw.day || "";
   const rawTime = raw.time || `${raw.startTime || ""} - ${raw.endTime || ""}`;
   const rawDate = raw.date || undefined;
+
+  // 1. Extract course code from title if present
+  const codeMatch = title.match(COURSE_CODE_REGEX);
+  if (codeMatch && !subject) {
+    subject = codeMatch[1];
+    title = title.replace(COURSE_CODE_REGEX, "").replace(/[()[\]{}]/g, "").replace(/^[-–—:\s]+|[-–—:\s]+$/g, "").trim();
+  }
+
+  // 2. Disambiguate Location from Title
+  const locationDisambig = extractLocationFromTitle(title, raw.location);
+  title = locationDisambig.cleanTitle || title;
+  const rawLocation = locationDisambig.extractedLocation || raw.location || "";
 
   const normalizedDay = normalizeDayName(rawDay);
   const timeNorm = normalizeTimeRange(rawTime);
@@ -448,20 +536,23 @@ export function normalizeExtractedScheduleItem(
 
   // Parse multi-lecturers and multi-rooms
   const lecturers = parseMultiLecturers(raw.instructor || raw.lecturer || "");
-  const rooms = parseMultiRooms(raw.location || "");
+  const rooms = parseMultiRooms(rawLocation);
 
   const item: Partial<ExtractedScheduleItem> = {
     id: ("id" in raw && raw.id ? raw.id : undefined) || `ext_${index + 1}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
     title,
-    subject: raw.subject?.trim() || undefined,
+    subject: subject || undefined,
+    courseCode: subject || undefined,
     day: normalizedDay || undefined,
     date: normalizedDate || undefined,
     startTime: timeNorm.startTime || undefined,
     endTime: timeNorm.endTime || undefined,
     time: timeNorm.startTime && timeNorm.endTime ? `${timeNorm.startTime} - ${timeNorm.endTime}` : rawTime || undefined,
     isEstimatedEndTime: timeNorm.isEstimatedEndTime,
+    endTimeEstimated: timeNorm.isEstimatedEndTime,
     timeIncomplete: !timeNorm.isValid,
     location: rooms.primary || undefined,
+    rawLocationSnippet: rawLocation || undefined,
     instructor: lecturers.primary || undefined,
     lecturer: lecturers.primary || undefined,
     multiLecturers: lecturers.list.length > 1 ? lecturers.list : undefined,
@@ -476,7 +567,7 @@ export function normalizeExtractedScheduleItem(
     expectedDayFromDate: dateCheck.actualDay || undefined,
   };
 
-  // Evaluate Confidence 2.0
+  // Evaluate Confidence 3.0
   const confResult = evaluateConfidence2(item);
   item.confidence = confResult.confidence;
   item.confidenceTier = confResult.confidenceTier;
