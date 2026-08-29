@@ -11,15 +11,24 @@ import {
   ApprovalLevel,
   ProposalStatus,
 } from "./types";
+import {
+  SessionOutcome,
+  RecommendationOutcomeRecord,
+} from "../schedule-outcomes/types";
+import { calculateCalibrationMultipliers } from "../schedule-outcomes/recommendation-calibration";
+import { extractBehaviorSignals2 } from "../schedule-intelligence/behavior-signals";
 
 /**
- * Continuous Schedule Optimizer 2.0
- * Generates actionable, regression-aware optimization proposals without mutating the database.
+ * Continuous Schedule Optimizer 3.0 (FASE 34)
+ * Generates actionable, outcome-informed, regression-aware optimization proposals without mutating the database.
+ * Incorporates historical outcome learning, calibration multipliers, and behavior signals as secondary ranking inputs.
  */
 export function generateContinuousOptimizationProposal(
   userId: string,
   currentSnapshot: ScheduleSnapshot,
-  tasks: Task[] = []
+  tasks: Task[] = [],
+  outcomes: SessionOutcome[] = [],
+  recommendationHistory: RecommendationOutcomeRecord[] = []
 ): OptimizationProposal {
   const currentSchedules = [
     ...currentSnapshot.courses,
@@ -44,7 +53,11 @@ export function generateContinuousOptimizationProposal(
       Math.max(0, 100 - currentWorkload.overloadedDaysCount * 20) * 0.4
   );
 
-  // 2. Generate Base Optimization Candidates
+  // 2. Behavior Signals & Calibration Multipliers (FASE 34 Learning Signals)
+  const behaviorSignals = extractBehaviorSignals2(userId, currentSchedules, outcomes);
+  const calibrationMultipliers = calculateCalibrationMultipliers(recommendationHistory);
+
+  // 3. Generate Base Optimization Candidates
   const baseOptimization = optimizeWeeklySchedule(currentSchedules, {
     preference: currentSnapshot.userPreferences,
     tasks,
@@ -76,7 +89,7 @@ export function generateContinuousOptimizationProposal(
     return { ...s };
   });
 
-  // 3. Regression Detection
+  // 4. Regression Detection
   const regression = detectScheduleRegression(
     currentSchedules,
     proposedSchedules,
@@ -96,9 +109,17 @@ export function generateContinuousOptimizationProposal(
         100
       : 100;
 
-  const proposedStateScore = Math.round(
+  const baseProposedStateScore = Math.round(
     proposedRealism.overallRealismScore * 0.6 +
       Math.max(0, 100 - proposedWorkload.overloadedDaysCount * 20) * 0.4
+  );
+
+  // Apply calibration multiplier if applicable
+  const calMultiplier =
+    calibrationMultipliers["GENERAL_OPTIMIZATION"]?.rankingMultiplier || 1.0;
+  const proposedStateScore = Math.min(
+    100,
+    Math.max(0, Math.round(baseProposedStateScore * calMultiplier))
   );
 
   const rawImprovement = Math.max(0, proposedStateScore - currentStateScore);
@@ -112,7 +133,7 @@ export function generateContinuousOptimizationProposal(
     workloadAfter[day] = proposedWorkload.dailyBreakdown[day].totalMinutes;
   });
 
-  // 4. Approval Level Determination
+  // 5. Approval Level Determination
   let approvalLevel: ApprovalLevel = "USER_CONFIRMATION";
   let status: ProposalStatus = "READY_FOR_REVIEW";
 
@@ -124,11 +145,15 @@ export function generateContinuousOptimizationProposal(
     status = "DRAFT";
   }
 
-  // 5. Natural Explanation Rationale
+  // 6. Natural Explanation Rationale (with Behavior Signal Context)
   let explanation =
     affectedSessions.length === 0
       ? "Distribusi jadwal mingguan saat ini sudah berada dalam kondisi seimbang dan aman."
       : `Sistem mengusulkan pemindahan ${affectedSessions.length} sesi belajar dari hari padat ke hari yang lebih lengang untuk mengurangi risiko kelelahan tanpa mengurangi total waktu belajar.`;
+
+  if (behaviorSignals.isSufficientData) {
+    explanation += ` Rekomendasi disesuaikan dengan pola waktu belajar Anda (${behaviorSignals.observedTimePattern.toLowerCase()}) dan hari paling konsisten (${behaviorSignals.mostConsistentDays.slice(0, 2).join(", ")}).`;
+  }
 
   if (regression.tradeOffs.length > 0) {
     const tradeOffTexts = regression.tradeOffs

@@ -27,6 +27,8 @@ import { SchedulePreferencesModal } from "@/components/schedule/schedule-prefere
 import { WeeklyOptimizationModal } from "@/components/schedule/weekly-optimization-modal";
 import { ScheduleControlCenter } from "@/components/schedule/schedule-control-center";
 import { WhatIfModal } from "@/components/schedule/what-if-modal";
+import { UserPatternCard } from "@/components/schedule/user-pattern-card";
+import { SessionFeedbackModal } from "@/components/schedule/session-feedback-modal";
 import { ScheduleIntelligenceSummary } from "@/components/schedule/schedule-intelligence-summary";
 import { ScheduleImportHistoryModal } from "@/components/schedule/schedule-import-history-modal";
 import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
@@ -78,6 +80,7 @@ function JadwalContent() {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [importHistory, setImportHistory] = useState<ScheduleImportHistoryItem[]>([]);
   const [showClassroomModal, setShowClassroomModal] = useState(false);
+  const [feedbackSession, setFeedbackSession] = useState<ScheduleItem | null>(null);
   const [classroomState, setClassroomState] = useState<ClassroomSyncState>({
     isConnected: false,
     userEmail: "",
@@ -288,7 +291,12 @@ function JadwalContent() {
         onOpenWhatIf={() => setShowWhatIfModal(true)}
       />
 
-      {/* ─── 3. Intelligence Summary & Workload Overview (FASE 30-32) ─── */}
+      {/* ─── 3. Pola Jadwal Saya & Pembelajaran Nyata (FASE 34) ─── */}
+      <UserPatternCard
+        onOpenPreferences={() => setShowPreferencesModal(true)}
+      />
+
+      {/* ─── 4. Intelligence Summary & Workload Overview (FASE 30-32) ─── */}
       <ScheduleIntelligenceSummary
         context={intelligenceContext}
         selectedDay={selectedDay}
@@ -518,6 +526,19 @@ function JadwalContent() {
           onClose={() => setShowHistoryModal(false)}
           historyItems={importHistory}
           onClearHistory={handleClearHistory}
+        />
+      )}
+
+      {/* ─── Session Feedback Modal (FASE 34) ─── */}
+      {feedbackSession && (
+        <SessionFeedbackModal
+          isOpen={!!feedbackSession}
+          onClose={() => setFeedbackSession(null)}
+          session={feedbackSession}
+          onSuccess={() => {
+            loadScheduleData();
+            toast.success("Hasil sesi berhasil dicatat!");
+          }}
         />
       )}
     </PageContainer>

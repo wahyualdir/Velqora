@@ -99,7 +99,7 @@ export async function preprocessOcrImage(
 
   try {
     const opts = { ...DEFAULT_PREPROCESS_OPTIONS, ...options };
-    let processedBuffer = Buffer.from(inputBuffer);
+    const processedBuffer = Buffer.from(inputBuffer);
     let wasModified = false;
 
     // Step 1: Format Validation
