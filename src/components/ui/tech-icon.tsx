@@ -3,29 +3,21 @@
 import React, { useState, useCallback } from "react";
 import {
   Code,
-  Terminal,
   Brain,
   Cpu,
   Database,
   Globe,
   Server,
-  Layers,
   Sparkles,
   BarChart3,
   Bot,
-  FileCode2,
-  Boxes,
-  Workflow,
   MessageSquareCode,
   Eye,
   Mic,
   Gamepad2,
-  Network,
   Shield,
   Binary,
   Calculator,
-  HardDrive,
-  FileSpreadsheet,
 } from "lucide-react";
 
 export type TechIconKey =

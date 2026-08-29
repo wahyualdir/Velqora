@@ -1,6 +1,6 @@
 import { MemoryCategory, MemoryItem, UserMemoryProfile } from "./types";
 
-const MEMORY_STORAGE_PREFIX = "velqora_ai_memory_";
+export const MEMORY_STORAGE_PREFIX = "velqora_ai_memory_";
 
 /**
  * In-memory fallback / cache store for user memories (isolated by userId)

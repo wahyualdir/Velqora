@@ -1,27 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Code2,
-  Play,
-  RotateCcw,
-  Copy,
-  Check,
-  Terminal,
-  ShieldCheck,
-  Sparkles,
-  Layers,
-  ArrowRight,
-  BookOpen,
-} from "lucide-react";
-import { Card, Badge, Skeleton } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/ui/page-header";
+import React, { useState, useEffect } from "react";
+import { PageContainer } from "@/components/ui/section";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { executeJavaScript, executePython, ExecutionResult } from "@/lib/code-runner";
 import { toast } from "sonner";
+import { PlaygroundHeader } from "@/components/playground/playground-header";
+import { PlaygroundEditor, LanguagePreset } from "@/components/playground/playground-editor";
+import { PlaygroundOutput } from "@/components/playground/playground-output";
 
-const CODE_PRESETS = {
+const CODE_PRESETS: Record<string, LanguagePreset> = {
   javascript: {
     name: "JavaScript",
     extension: ".js",
@@ -30,7 +18,7 @@ const CODE_PRESETS = {
         label: "Dasar & Array",
         code: `// Belajar JavaScript Modern
 const dataMahasiswa = [
-  { nama: "Wahyu", nilai: 95 },
+  { nama: "Alex", nilai: 95 },
   { nama: "Budi", nilai: 88 },
   { nama: "Siti", nilai: 92 }
 ];
@@ -86,10 +74,12 @@ print(f"Bilangan kuadrat 1-5: {kuadrat}")`,
 export default function PlaygroundPage() {
   const [lang, setLang] = useState<"javascript" | "python">("javascript");
   const [code, setCode] = useState(CODE_PRESETS.javascript.templates[0].code);
+  const [selectedTemplateLabel, setSelectedTemplateLabel] = useState(
+    CODE_PRESETS.javascript.templates[0].label
+  );
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<ExecutionResult | null>(null);
   const [copied, setCopied] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleRun = async () => {
     if (!code.trim()) {
@@ -137,163 +127,70 @@ export default function PlaygroundPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSelectTemplate = (tplCode: string) => {
-    setCode(tplCode);
+  const handleReset = () => {
+    const defaultTemplate = CODE_PRESETS[lang].templates[0];
+    setCode(defaultTemplate.code);
+    setSelectedTemplateLabel(defaultTemplate.label);
+    setResult(null);
+    toast.info("Kode dikembalikan ke template awal.");
+  };
+
+  const handleChangeLang = (newLang: "javascript" | "python") => {
+    setLang(newLang);
+    const defaultTemplate = CODE_PRESETS[newLang].templates[0];
+    setCode(defaultTemplate.code);
+    setSelectedTemplateLabel(defaultTemplate.label);
+    setResult(null);
+  };
+
+  const handleSelectTemplate = (templateCode: string) => {
+    const found = CODE_PRESETS[lang].templates.find((t) => t.code === templateCode);
+    setCode(templateCode);
+    if (found) setSelectedTemplateLabel(found.label);
     setResult(null);
   };
 
   return (
-    <div className="page-container space-y-6 sm:space-y-8 animate-fade-in pb-12">
-      {/* Header */}
-      <PageHeader
-        eyebrow="~/sandbox"
-        technicalMark="< js // py // ts // html />"
-        title="Ruang Praktik & Alat"
-        description="Tulis, eksperimen logika, dan jalankan kode langsung di browser."
-        actions={
-          <Button
-            onClick={handleRun}
-            loading={isRunning}
-            className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold min-h-[40px] px-4 shadow-xs"
-          >
-            <Play className="w-4 h-4 fill-white" />
-            <span>Jalankan (Ctrl+Enter)</span>
-          </Button>
-        }
-      />
+    <PageContainer>
+      <div className="space-y-6">
+        {/* Navigation Tabs */}
+        <SubNavTabs category="tools" />
 
-      {/* Sub-Navigation Tabs */}
-      <SubNavTabs category="tools" />
+        {/* Workspace Header */}
+        <PlaygroundHeader
+          lang={lang}
+          onRun={handleRun}
+          isRunning={isRunning}
+          onReset={handleReset}
+          onCopy={handleCopy}
+          copied={copied}
+        />
 
-      {/* Control Bar: Language, Templates, Sandbox Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-surface border border-border shadow-xs">
-        {/* Language Tabs */}
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => {
-              setLang("javascript");
-              setCode(CODE_PRESETS.javascript.templates[0].code);
-              setResult(null);
-            }}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-              lang === "javascript"
-                ? "bg-brand-600 text-white shadow-xs"
-                : "bg-surface-secondary text-text-secondary hover:text-text-primary hover:bg-surface-tertiary"
-            }`}
-          >
-            JavaScript / Node
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setLang("python");
-              setCode(CODE_PRESETS.python.templates[0].code);
-              setResult(null);
-            }}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-              lang === "python"
-                ? "bg-brand-600 text-white shadow-xs"
-                : "bg-surface-secondary text-text-secondary hover:text-text-primary hover:bg-surface-tertiary"
-            }`}
-          >
-            Python
-          </button>
-        </div>
+        {/* Editor & Console Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* Main Code Editor */}
+          <div className="lg:col-span-7 xl:col-span-8">
+            <PlaygroundEditor
+              lang={lang}
+              onChangeLang={handleChangeLang}
+              code={code}
+              onChangeCode={setCode}
+              presets={CODE_PRESETS}
+              onSelectTemplate={handleSelectTemplate}
+              selectedTemplateLabel={selectedTemplateLabel}
+            />
+          </div>
 
-        {/* Template Selector */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[11px] font-mono uppercase text-text-tertiary">Contoh:</span>
-          {CODE_PRESETS[lang].templates.map((tpl) => (
-            <button
-              key={tpl.label}
-              type="button"
-              onClick={() => handleSelectTemplate(tpl.code)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-secondary hover:bg-surface-tertiary text-text-secondary hover:text-text-primary border border-border transition-colors cursor-pointer"
-            >
-              {tpl.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Sandbox Notice Badge */}
-        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Client Sandbox</span>
+          {/* Execution Output Console */}
+          <div className="lg:col-span-5 xl:col-span-4">
+            <PlaygroundOutput
+              result={result}
+              onClear={() => setResult(null)}
+              isRunning={isRunning}
+            />
+          </div>
         </div>
       </div>
-
-      {/* Editor & Output (Vertical on Mobile, 2-Col on Desktop) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Code Editor Container */}
-        <Card className="p-0 rounded-2xl bg-surface border-border overflow-hidden flex flex-col shadow-sm">
-          <div className="px-4 py-2.5 border-b border-border bg-surface-secondary/50 flex items-center justify-between">
-            <span className="text-xs font-mono font-semibold text-text-secondary">
-              editor{CODE_PRESETS[lang].extension}
-            </span>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="flex items-center gap-1 text-xs text-text-tertiary hover:text-text-primary p-1 rounded transition-colors cursor-pointer"
-              title="Salin Kode"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-              <span className="text-[11px]">{copied ? "Tersalin" : "Salin"}</span>
-            </button>
-          </div>
-
-          <textarea
-            ref={textareaRef}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            spellCheck={false}
-            className="w-full min-h-[300px] sm:min-h-[380px] p-4 bg-[#010206] text-slate-100 font-mono text-xs sm:text-sm leading-relaxed focus:outline-none resize-none"
-            placeholder="Ketik kode di sini..."
-          />
-        </Card>
-
-        {/* Output Console / Terminal */}
-        <Card className="p-0 rounded-2xl bg-surface border-border overflow-hidden flex flex-col shadow-sm">
-          <div className="px-4 py-2.5 border-b border-border bg-surface-secondary/50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Terminal className="w-3.5 h-3.5 text-text-tertiary" />
-              <span className="text-xs font-mono font-semibold text-text-secondary">
-                Output Terminal
-              </span>
-            </div>
-
-            {result && (
-              <span className="text-[10px] font-mono text-text-tertiary">
-                {result.executionTimeMs} ms
-              </span>
-            )}
-          </div>
-
-          <div className="p-4 bg-[#010206] min-h-[300px] sm:min-h-[380px] font-mono text-xs sm:text-sm overflow-y-auto max-h-[420px]">
-            {!result ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-slate-500 py-16">
-                <Play className="w-8 h-8 mb-2 opacity-30" />
-                <p className="text-xs">Klik &quot;Jalankan&quot; atau tekan Ctrl+Enter untuk mengeksekusi kode.</p>
-              </div>
-            ) : result.error ? (
-              <div className="space-y-2">
-                <div className="text-rose-400 font-semibold flex items-center gap-1.5">
-                  <span>Eksekusi Gagal:</span>
-                </div>
-                <pre className="text-rose-300 text-xs whitespace-pre-wrap leading-relaxed">
-                  {result.error}
-                </pre>
-              </div>
-            ) : (
-              <div className="space-y-1 text-emerald-400">
-                <pre className="whitespace-pre-wrap leading-relaxed font-mono">
-                  {result.output}
-                </pre>
-              </div>
-            )}
-          </div>
-        </Card>
-      </div>
-    </div>
+    </PageContainer>
   );
 }

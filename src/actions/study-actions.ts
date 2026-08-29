@@ -15,8 +15,8 @@ import {
   extractModuleDriveFromNotes,
   injectModuleDriveIntoNotes,
   ModuleComment,
-  ModuleReaction,
 } from "@/types/module-drive";
+import { isOwnerUser } from "@/lib/utils";
 
 // ==========================================
 // DASHBOARD STATS
@@ -773,8 +773,8 @@ export async function seedStarterCommunityModules() {
       description: "Panduan lengkap belajar bahasa pemrograman Python untuk pemula hingga mahir, mencakup sintaks, struktur data, fungsi, OOP, dan manipulasi data.",
       categoryMatch: "Python",
       level: "pemula",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul resmi kurikulum Python untuk mahasiswa dan pelajar.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul resmi kurikulum Python untuk mahasiswa dan pelajar.",
       chapters: [
         "Pengenalan Python, Variabel, dan Tipe Data",
         "Struktur Kendali (If-Else, For Loop, While Loop)",
@@ -789,8 +789,8 @@ export async function seedStarterCommunityModules() {
       description: "Belajar ekosistem JavaScript modern, TypeScript static typing, asynchronous programming, dan integrasi API RESTful.",
       categoryMatch: "JavaScript",
       level: "menengah",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul panduan JavaScript & TypeScript modern.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul panduan JavaScript & TypeScript modern.",
       chapters: [
         "JavaScript ES6+ Syntax & Array Methods",
         "Asynchronous JavaScript: Promise, Async/Await",
@@ -804,8 +804,8 @@ export async function seedStarterCommunityModules() {
       description: "Arsitektur web modern dengan Next.js App Router, Server vs Client Components, dynamic routing, dan mutasi data database.",
       categoryMatch: "Next.js",
       level: "menengah",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul belajar Web Development dengan Next.js.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul belajar Web Development dengan Next.js.",
       chapters: [
         "Konsep Server Components vs Client Components",
         "Routing, Layouts, dan Dynamic Route Segments",
@@ -819,8 +819,8 @@ export async function seedStarterCommunityModules() {
       description: "Konsep dasar kecerdasan buatan, algoritma supervised & unsupervised learning, preprocessing data, dan evaluasi model.",
       categoryMatch: "Machine Learning",
       level: "menengah",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul kecerdasan buatan & machine learning.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul kecerdasan buatan & machine learning.",
       chapters: [
         "Pengantar Kecerdasan Buatan & Cabang AI",
         "Data Preprocessing & Feature Engineering",
@@ -835,8 +835,8 @@ export async function seedStarterCommunityModules() {
       description: "Desain database relasional, DDL/DML, relasi antar tabel (FK/PK), JOIN kompleks, subquery, dan indexing performa tinggi.",
       categoryMatch: "PostgreSQL",
       level: "pemula",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul perancangan dan kueri database SQL.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul perancangan dan kueri database SQL.",
       chapters: [
         "Konsep RDBMS & Normalisasi Database (1NF-3NF)",
         "DDL: CREATE, ALTER, DROP Table & Constraints",
@@ -851,8 +851,8 @@ export async function seedStarterCommunityModules() {
       description: "Metode pembersihan data, eksplorasi pola statistik, korelasi variabel, dan visualisasi interaktif.",
       categoryMatch: "Data Science",
       level: "pemula",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul analisis data sains dan visualisasi.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul analisis data sains dan visualisasi.",
       chapters: [
         "Data Ingestion dari CSV, Excel, dan Database",
         "Data Cleaning: Missing Values & Outlier Detection",
@@ -866,8 +866,8 @@ export async function seedStarterCommunityModules() {
       description: "Memahami prinsip CIA Triad, identifikasi ancaman siber, OWASP Top 10 web vulnerabilities, dan proteksi sistem.",
       categoryMatch: "Cyber Security",
       level: "pemula",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul fundamental keamanan sistem informasi.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul fundamental keamanan sistem informasi.",
       chapters: [
         "Prinsip Dasar Keamanan Informasi (CIA Triad)",
         "Arsitektur Jaringan, Firewall, dan Port Scanning",
@@ -881,8 +881,8 @@ export async function seedStarterCommunityModules() {
       description: "Prinsip antarmuka pengguna modern, wireframing, prototipe interaktif, dan pembuatan reusable design system.",
       categoryMatch: "UI/UX Design",
       level: "pemula",
-      author: "Wahyu Aldiriyanto",
-      notes: "👤 **Diposting oleh:** Wahyu Aldiriyanto\n\nModul panduan desain antarmuka dan pengalaman pengguna.",
+      author: "Tim Kurikulum Velqora",
+      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul panduan desain antarmuka dan pengalaman pengguna.",
       chapters: [
         "User Research & Pembuatan Persona Pengguna",
         "Prinsip Tata Letak, Grid System & Visual Hierarchy",
@@ -899,9 +899,9 @@ export async function seedStarterCommunityModules() {
       description: "Repositori proyek machine learning lengkap untuk memprediksi curah hujan dan pola iklim harian menggunakan Random Forest & Pandas.",
       categoryMatch: "Machine Learning",
       level: "menengah",
-      author: "Wahyu Aldiriyanto",
+      author: "Tim Kurikulum Velqora",
       notes: injectModuleDriveIntoNotes(
-        "👤 **Dibuat oleh:** Wahyu Aldiriyanto\n\nProyek implementasi machine learning praktis end-to-end dengan notebook Jupyter, skrip training modular, dan dataset.",
+        "👤 **Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek implementasi machine learning praktis end-to-end dengan notebook Jupyter, skrip training modular, dan dataset.",
         [
           { id: "f_src", name: "src", parentId: null, createdAt: new Date().toISOString() },
           { id: "f_data", name: "data", parentId: null, createdAt: new Date().toISOString() },
@@ -992,7 +992,7 @@ export async function seedStarterCommunityModules() {
             uploadedAt: new Date().toISOString(),
             textContent: `"""
 Weather Prediction ML Pipeline
-Author: Wahyu Aldiriyanto
+Author: Tim Kurikulum Velqora
 License: MIT
 """
 
@@ -1101,8 +1101,8 @@ Dibuat untuk keperluan materi pembelajaran & portofolio sains data.`
         {
           kind: "project",
           techStack: ["Python", "Scikit-Learn", "Pandas", "Jupyter", "Machine Learning"],
-          authorName: "Wahyu Aldiriyanto",
-          repositoryUrl: "https://github.com/wahyualdi/weather-prediction-ml",
+          authorName: "Tim Kurikulum Velqora",
+          repositoryUrl: "https://github.com/velqora-team/weather-prediction-ml",
         }
       ),
       chapters: [
@@ -1118,9 +1118,9 @@ Dibuat untuk keperluan materi pembelajaran & portofolio sains data.`
       description: "Repositori web dashboard modern dengan Next.js App Router, TypeScript, Tailwind CSS, dan integrasi schema database Supabase.",
       categoryMatch: "Next.js",
       level: "menengah",
-      author: "Wahyu Aldiriyanto",
+      author: "Tim Kurikulum Velqora",
       notes: injectModuleDriveIntoNotes(
-        "👤 **Dibuat oleh:** Wahyu Aldiriyanto\n\nProyek fullstack web application untuk manajemen transaksi, metrik penjualan, dan visualisasi analitik.",
+        "👤 **Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek fullstack web application untuk manajemen transaksi, metrik penjualan, dan visualisasi analitik.",
         [
           { id: "f_comp", name: "components", parentId: null, createdAt: new Date().toISOString() },
           { id: "f_db", name: "database", parentId: null, createdAt: new Date().toISOString() },
@@ -1253,8 +1253,8 @@ npm run dev
         {
           kind: "project",
           techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "React"],
-          authorName: "Wahyu Aldiriyanto",
-          repositoryUrl: "https://github.com/wahyualdi/nextjs-ecommerce-analytics",
+          authorName: "Tim Kurikulum Velqora",
+          repositoryUrl: "https://github.com/velqora-team/nextjs-ecommerce-analytics",
         }
       ),
       chapters: [
@@ -1269,9 +1269,9 @@ npm run dev
       description: "Aplikasi kasir point of sale berbasis Python & SQLite dengan kalkulasi total otomatis, cetak struk, dan manajemen inventaris.",
       categoryMatch: "Python",
       level: "pemula",
-      author: "Wahyu Aldiriyanto",
+      author: "Tim Kurikulum Velqora",
       notes: injectModuleDriveIntoNotes(
-        "👤 **Dibuat oleh:** Wahyu Aldiriyanto\n\nProyek aplikasi kasir desktop dengan basis data lokal SQLite dan antarmuka Python.",
+        "👤 **Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek aplikasi kasir desktop dengan basis data lokal SQLite dan antarmuka Python.",
         [],
         [
           {
@@ -1335,7 +1335,7 @@ Aplikasi kasir mandiri ringan dengan basis data SQLite lokal untuk UMKM.`
         {
           kind: "project",
           techStack: ["Python", "SQLite", "Desktop", "OOP"],
-          authorName: "Wahyu Aldiriyanto",
+          authorName: "Tim Kurikulum Velqora",
         }
       ),
       chapters: [
@@ -1433,7 +1433,7 @@ Aplikasi kasir mandiri ringan dengan basis data SQLite lokal untuk UMKM.`
             tech_stack: drive.techStack || [],
             repository_url: drive.repositoryUrl || null,
             demo_url: drive.demoUrl || null,
-            author_name: starter.author || "Wahyu Aldiriyanto",
+            author_name: starter.author || "Tim Kurikulum Velqora",
           })
           .select()
           .single();
@@ -1478,7 +1478,7 @@ export async function updateModule(id: string, data: Partial<ModuleFormData>) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const isOwner = user.email === "wahyualdiriyanto80@gmail.com";
+  const isOwner = isOwnerUser(user.email);
 
   // Fetch current module to maintain drive contents
   const { data: currentMod } = await supabase.from("modules").select("notes").eq("id", id).maybeSingle();
@@ -1592,7 +1592,7 @@ export async function deleteModule(id: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const isOwner = user.email === "wahyualdiriyanto80@gmail.com";
+  const isOwner = isOwnerUser(user.email);
 
   // Safely clean up associated chapters first
   await supabase.from("module_chapters").delete().eq("module_id", id);
@@ -1643,7 +1643,7 @@ export async function saveModuleDrive(
 
   if (!mod) throw new Error("Modul tidak ditemukan");
 
-  const isOwner = user.email === "wahyualdiriyanto80@gmail.com";
+  const isOwner = isOwnerUser(user.email);
   const isCreator = mod.user_id === user.id;
 
   if (!isCreator && !isOwner) {
@@ -1893,7 +1893,7 @@ export async function addModuleComment(
     user.email?.split("@")[0] ||
     "Pengguna";
 
-  const isOwner = user.email === "wahyualdiriyanto80@gmail.com";
+  const isOwner = isOwnerUser(user.email);
   const isCreator = mod.user_id === user.id;
   const authorRole = isOwner ? "Owner" : isCreator ? "Pembuat Modul" : "Mahasiswa / Pelajar";
 
@@ -1954,7 +1954,7 @@ export async function deleteModuleComment(
   const targetComment = existingComments.find((c) => c.id === commentId);
   if (!targetComment) throw new Error("Komentar tidak ditemukan");
 
-  const isOwner = user.email === "wahyualdiriyanto80@gmail.com";
+  const isOwner = isOwnerUser(user.email);
   const isCreator = mod.user_id === user.id;
   const isAuthor = targetComment.userId === user.id;
 
@@ -2528,8 +2528,21 @@ export async function deleteFile(id: string, storagePath: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  // Hapus dari Storage
-  await supabase.storage.from("studyvault-files").remove([storagePath]);
+  // Verify file in DB belongs to user
+  const { data: fileRecord } = await supabase
+    .from("files")
+    .select("id, path")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!fileRecord) {
+    throw new Error("Berkas tidak ditemukan atau Anda tidak memiliki hak akses.");
+  }
+
+  // Hapus dari Storage hanya path milik user
+  const pathToDelete = fileRecord.path || (storagePath.startsWith(`${user.id}/`) ? storagePath : `${user.id}/${storagePath}`);
+  await supabase.storage.from("studyvault-files").remove([pathToDelete]);
 
   // Hapus dari DB
   const { error } = await supabase.from("files").delete().eq("id", id).eq("user_id", user.id);

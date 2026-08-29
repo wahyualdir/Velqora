@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
 
 export type AccentColor =
   | "platinum"
@@ -296,7 +295,6 @@ const STORAGE_KEY = "velqora_theme_settings";
 export function ThemeAccentProvider({ children }: { children: React.ReactNode }) {
   const { setTheme: setNextTheme } = useTheme();
   const [settings, setSettings] = useState<ThemeSettings>(DEFAULT_THEME_SETTINGS);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // Apply DOM attributes to <html>
   const applyAttributesToDOM = useCallback((s: ThemeSettings) => {
@@ -383,7 +381,6 @@ export function ThemeAccentProvider({ children }: { children: React.ReactNode })
 
     setSettings(loadedSettings);
     applyAttributesToDOM(loadedSettings);
-    setIsInitialized(true);
   }, [applyAttributesToDOM]);
 
   // Specific setters
@@ -465,7 +462,7 @@ export function ThemeAccentProvider({ children }: { children: React.ReactNode })
       setNextTheme(validated.mode);
       toast.success("Konfigurasi tema berhasil diimpor!");
       return true;
-    } catch (e) {
+    } catch {
       toast.error("Format file konfigurasi JSON tidak valid!");
       return false;
     }

@@ -8,27 +8,21 @@ import {
   Trash2,
   ArrowRight,
   BookOpen,
-  GraduationCap,
   FileText,
-  BookmarkCheck,
-  X,
-  Plus,
   Copy,
   Download,
-  Share2,
   Check,
-  ExternalLink,
   Layers,
 } from "lucide-react";
-import { Card, Badge, Skeleton, EmptyState } from "@/components/ui/card";
+import { Badge, Skeleton, EmptyState } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer, PageSection } from "@/components/ui/section";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import {
   getBookmarks,
   removeBookmark,
-  clearAllBookmarks,
   BookmarkItem,
 } from "@/lib/bookmark-service";
 import { toast } from "sonner";
@@ -74,7 +68,7 @@ export default function BookmarkPage() {
     const url = item.url ? `${window.location.origin}${item.url}` : window.location.href;
     navigator.clipboard.writeText(url);
     setCopiedId(item.id);
-    toast.success("Tautan modul/materi berhasil disalin!");
+    toast.success("Tautan materi berhasil disalin!");
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -84,7 +78,7 @@ export default function BookmarkPage() {
       return;
     }
 
-    const content = `# Daftar Bookmark Belajar Saya — Velqora\n\nTotal Tersimpan: ${bookmarks.length}\nTanggal Ekspor: ${new Date().toLocaleDateString("id-ID")}\n\n${bookmarks
+    const content = `# Daftar Bookmark Belajar — Velqora\n\nTotal Tersimpan: ${bookmarks.length}\nTanggal Ekspor: ${new Date().toLocaleDateString("id-ID")}\n\n${bookmarks
       .map(
         (b, i) =>
           `${i + 1}. **[${b.title}](${b.url || "#"})** (${b.type.toUpperCase()})\n   - Kategori: ${b.category || "Umum"}\n   - Disimpan pada: ${new Date(
@@ -97,10 +91,10 @@ export default function BookmarkPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `bookmark-saya-${new Date().toISOString().slice(0, 10)}.md`;
+    a.download = `bookmark-velqora-${new Date().toISOString().slice(0, 10)}.md`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Daftar bookmark berhasil diekspor ke Markdown!");
+    toast.success("Daftar bookmark berhasil diekspor ke format Markdown!");
   };
 
   const filteredBookmarks = bookmarks.filter((item) => {
@@ -113,24 +107,10 @@ export default function BookmarkPage() {
     return matchType && matchQuery;
   });
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case "project":
-        return <span className="text-xs font-mono font-bold text-purple-400">{"</>"}</span>;
-      case "module":
-        return <Layers className="w-4 h-4 text-brand-400" />;
-      case "material":
-        return <BookOpen className="w-4 h-4 text-emerald-400" />;
-      case "file":
-      default:
-        return <FileText className="w-4 h-4 text-amber-400" />;
-    }
-  };
-
   const getTypeBadge = (type: string) => {
     switch (type) {
       case "project":
-        return <Badge variant="purple">Project</Badge>;
+        return <Badge variant="purple">Proyek</Badge>;
       case "module":
         return <Badge variant="brand">Modul</Badge>;
       case "material":
@@ -142,199 +122,187 @@ export default function BookmarkPage() {
   };
 
   return (
-    <div className="page-container space-y-6 sm:space-y-8 pb-12 animate-fade-in">
-      {/* Header */}
+    <PageContainer className="space-y-6 pb-14">
+      {/* 1. Header */}
       <PageHeader
-        eyebrow="~/saved"
-        technicalMark="< pinned // bookmarks />"
-        title="Simpan untuk nanti"
-        description="Materi, modul, dan referensi yang ingin kamu baca atau pelajari kembali."
+        eyebrow="Tersimpan"
+        title="Materi Tersimpan"
+        description="Akses cepat ke materi, modul, dan referensi akademik yang Anda simpan untuk dipelajari kembali."
         actions={
-          <>
+          <div className="flex items-center gap-2">
             {bookmarks.length > 0 && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleExportBookmarks}
-                className="gap-1.5 text-xs sm:text-sm min-h-[40px] px-3.5"
+                leftIcon={<Download className="w-3.5 h-3.5" />}
+                className="text-xs"
               >
-                <Download className="w-4 h-4" />
-                <span>Ekspor (.md)</span>
+                Ekspor (.md)
               </Button>
             )}
-            <span className="text-xs sm:text-sm font-mono text-text-tertiary px-3.5 py-2 rounded-xl bg-surface-secondary border border-border min-h-[40px] inline-flex items-center">
+            <span className="text-xs font-mono text-text-tertiary px-3 py-1.5 rounded-lg bg-surface border border-border min-h-[36px] inline-flex items-center shadow-2xs">
               {bookmarks.length} Tersimpan
             </span>
-          </>
+          </div>
         }
       />
 
-      {/* Sub-Navigation Tabs */}
+      {/* 2. Sub-Navigation Tabs */}
       <SubNavTabs category="documents" />
 
-      {/* Filter & Search Console */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-surface p-3.5 sm:p-4 rounded-2xl border border-border shadow-xs">
-        {/* Search Input */}
-        <div className="flex-1">
-          <Input
-            placeholder="Cari materi atau modul tersimpan..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onClear={() => setSearch("")}
-            className="text-xs sm:text-sm"
+      {/* 3. Filter & Search Toolbar */}
+      <PageSection>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface p-3.5 rounded-xl border border-border shadow-2xs">
+          {/* Search Input */}
+          <div className="flex-1 max-w-md">
+            <Input
+              placeholder="Cari materi atau modul tersimpan..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              startIcon={<Search className="w-3.5 h-3.5 text-text-tertiary" />}
+              onClear={search ? () => setSearch("") : undefined}
+            />
+          </div>
+
+          {/* Type Filter Buttons */}
+          <div className="flex items-center gap-1.5 p-1 rounded-lg bg-surface-secondary border border-border overflow-x-auto text-xs shrink-0">
+            {[
+              { id: "all", label: `Semua (${bookmarks.length})` },
+              { id: "module", label: `Modul (${bookmarks.filter((b) => b.type === "module").length})` },
+              { id: "material", label: `Materi (${bookmarks.filter((b) => b.type === "material").length})` },
+              { id: "project", label: `Proyek (${bookmarks.filter((b) => b.type === "project").length})` },
+            ].map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setFilterType(f.id as any)}
+                className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                  filterType === f.id
+                    ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold border border-brand-500/20 shadow-2xs"
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </PageSection>
+
+      {/* 4. List-First Bookmark Rows */}
+      <PageSection>
+        {loading ? (
+          <div className="space-y-3">
+            <Skeleton className="h-20 rounded-xl" />
+            <Skeleton className="h-20 rounded-xl" />
+            <Skeleton className="h-20 rounded-xl" />
+          </div>
+        ) : filteredBookmarks.length === 0 ? (
+          <EmptyState
+            icon={<Bookmark className="w-10 h-10 text-text-tertiary" />}
+            title={bookmarks.length === 0 ? "Belum ada bookmark tersimpan" : "Materi tidak ditemukan"}
+            description={
+              bookmarks.length === 0
+                ? "Tandai modul atau materi pembelajaran saat membaca untuk menyimpannya di sini."
+                : "Tidak ada bookmark yang sesuai dengan kata kunci pencarian Anda."
+            }
+            action={
+              <Link href="/dashboard/modul">
+                <Button size="sm" leftIcon={<Layers className="w-4 h-4" />}>
+                  Jelajahi Modul
+                </Button>
+              </Link>
+            }
           />
-        </div>
-
-        {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-secondary border border-border overflow-x-auto text-xs sm:text-sm shrink-0">
-          <button
-            onClick={() => setFilterType("all")}
-            className={`px-3.5 py-2 rounded-lg font-semibold transition-all cursor-pointer ${
-              filterType === "all"
-                ? "bg-brand-600 text-white shadow-xs"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Semua ({bookmarks.length})
-          </button>
-          <button
-            onClick={() => setFilterType("module")}
-            className={`px-3.5 py-2 rounded-lg font-semibold transition-all cursor-pointer ${
-              filterType === "module"
-                ? "bg-brand-600 text-white shadow-xs"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Modul ({bookmarks.filter((b) => b.type === "module").length})
-          </button>
-          <button
-            onClick={() => setFilterType("material")}
-            className={`px-3.5 py-2 rounded-lg font-semibold transition-all cursor-pointer ${
-              filterType === "material"
-                ? "bg-brand-600 text-white shadow-xs"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Materi ({bookmarks.filter((b) => b.type === "material").length})
-          </button>
-          <button
-            onClick={() => setFilterType("project")}
-            className={`px-3.5 py-2 rounded-lg font-semibold transition-all cursor-pointer ${
-              filterType === "project"
-                ? "bg-brand-600 text-white shadow-xs"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Project ({bookmarks.filter((b) => b.type === "project").length})
-          </button>
-        </div>
-      </div>
-
-      {/* Grid Content */}
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          <Skeleton className="h-48 rounded-2xl" />
-          <Skeleton className="h-48 rounded-2xl" />
-          <Skeleton className="h-48 rounded-2xl" />
-        </div>
-      ) : filteredBookmarks.length === 0 ? (
-        <EmptyState
-          icon={<Bookmark className="w-12 h-12 text-text-tertiary" />}
-          title={bookmarks.length === 0 ? "Belum ada materi tersimpan" : "Materi tidak ditemukan"}
-          description={
-            bookmarks.length === 0
-              ? "Tandai modul atau materi pembelajaran untuk menyimpannya di sini."
-              : "Tidak ada modul atau materi yang sesuai dengan pencarian Anda."
-          }
-          action={
-            <Link href="/dashboard/modul">
-              <Button size="sm" className="gap-2">
-                <Layers className="w-4 h-4" />
-                <span>Lihat Modul</span>
-              </Button>
-            </Link>
-          }
-        />
-      ) : (
-        <div className="card-grid">
-          {filteredBookmarks.map((item) => (
-            <Card
-              key={item.id}
-              className="p-4 sm:p-4.5 lg:p-5 rounded-xl bg-surface border-border hover:border-brand-500/40 hover:bg-surface-secondary/60 transition-all duration-150 shadow-2xs flex flex-col justify-between space-y-3.5 group relative overflow-hidden"
-            >
-              <div className="space-y-3">
-                {/* Header Badge & Action */}
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {getTypeBadge(item.type)}
-                    {item.category && (
-                      <span className="text-[10px] font-medium text-text-secondary bg-surface-secondary border border-border px-2 py-0.5 rounded-md">
-                        {item.category}
-                      </span>
+        ) : (
+          <div className="space-y-2.5">
+            {filteredBookmarks.map((item) => (
+              <div
+                key={item.id}
+                className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-border bg-surface hover:border-brand-500/40 hover:bg-surface-secondary/40 transition-all shadow-2xs"
+              >
+                {/* Left Meta & Title */}
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 rounded-lg bg-surface-secondary border border-border flex items-center justify-center shrink-0 mt-0.5 text-text-secondary">
+                    {item.type === "material" ? (
+                      <BookOpen className="w-4 h-4 text-emerald-500" />
+                    ) : item.type === "module" ? (
+                      <Layers className="w-4 h-4 text-brand-500" />
+                    ) : (
+                      <FileText className="w-4 h-4 text-amber-500" />
                     )}
                   </div>
+
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {getTypeBadge(item.type)}
+                      {item.category && (
+                        <span className="text-[11px] font-mono font-medium text-text-tertiary bg-surface-secondary border border-border px-2 py-0.5 rounded">
+                          {item.category}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-mono text-text-tertiary">
+                        {item.savedAt
+                          ? new Date(item.savedAt).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "Tersimpan"}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xs sm:text-sm font-bold text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                      {item.title}
+                    </h3>
+
+                    {item.subtitle && (
+                      <p className="text-xs text-text-secondary line-clamp-1 leading-relaxed">
+                        {item.subtitle}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Action Buttons */}
+                <div className="flex items-center justify-end gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/70">
+                  <button
+                    type="button"
+                    onClick={(e) => handleCopyLink(item, e)}
+                    className="p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+                    title="Salin Tautan"
+                    aria-label="Salin tautan materi"
+                  >
+                    {copiedId === item.id ? (
+                      <Check className="w-4 h-4 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </button>
 
                   <button
                     type="button"
                     onClick={() => handleRemove(item.id, item.title)}
-                    className="p-1.5 rounded-lg text-text-tertiary hover:text-rose-500 hover:bg-surface-secondary transition-colors cursor-pointer"
-                    title="Hapus Bookmark"
+                    className="p-2 rounded-lg text-text-tertiary hover:text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                    title="Hapus dari Bookmark"
+                    aria-label={`Hapus bookmark ${item.title}`}
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {/* Title & Subtitle */}
-                <div>
-                  <h3 className="text-base font-bold text-text-primary group-hover:text-brand-400 transition-colors line-clamp-2 font-display">
-                    {item.title}
-                  </h3>
-                  {item.subtitle && (
-                    <p className="text-xs text-text-secondary line-clamp-2 mt-1 leading-relaxed">
-                      {item.subtitle}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="pt-3 border-t border-border/70 flex items-center justify-between">
-                <span className="font-mono text-[10px] text-text-tertiary">
-                  {item.savedAt
-                    ? new Date(item.savedAt).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })
-                    : "Tersimpan"}
-                </span>
-
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={(e) => handleCopyLink(item, e)}
-                    className="p-1.5 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors"
-                    title="Salin Tautan"
-                  >
-                    {copiedId === item.id ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
+                    <Trash2 className="w-4 h-4" />
                   </button>
 
                   <Link href={item.url || `/dashboard/modul?module=${item.id}`}>
-                    <Button size="sm" variant="outline" className="gap-1 text-xs py-1 px-2.5 h-8">
+                    <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8 px-3">
                       <span>Buka</span>
-                      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
                   </Link>
                 </div>
               </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </PageSection>
+    </PageContainer>
   );
 }

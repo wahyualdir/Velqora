@@ -185,8 +185,7 @@ async function callGoogleGemini(
   imageBase64?: string,
   imageMimeType?: string
 ): Promise<string | null> {
-  const apiKey =
-    process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) return null;
 
@@ -246,6 +245,7 @@ async function callGoogleGemini(
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(30000),
           body: JSON.stringify({
             contents,
             generationConfig: {
@@ -264,7 +264,7 @@ async function callGoogleGemini(
           return replyText;
         }
       }
-    } catch (e) {
+    } catch {
       // Continue to next model candidate
     }
   }
@@ -310,6 +310,7 @@ async function callAnthropicClaude(
         "x-api-key": anthropicKey,
         "anthropic-version": "2023-06-01",
       },
+      signal: AbortSignal.timeout(30000),
       body: JSON.stringify({
         model: "claude-3-7-sonnet-20250219",
         max_tokens: 4096,
@@ -339,7 +340,7 @@ function generateNeuralContextualAnswer(
   focusedModule?: ModuleMemoryRef,
   fileAttachment?: { fileName: string }
 ): string {
-  const { resolvedUserIntent, activeLanguage, activeSkillLevel, followUpTarget, isFollowUp } = context;
+  const { activeLanguage, followUpTarget, isFollowUp } = context;
 
   // 1. Follow-up Anaphoric Context ("lanjutkan", "tambahkan X", "buat lebih lengkap")
   if (isFollowUp && followUpTarget) {

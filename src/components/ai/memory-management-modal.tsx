@@ -6,12 +6,9 @@ import {
   Trash2,
   Plus,
   X,
-  Check,
   Shield,
-  Eye,
   ToggleLeft,
   ToggleRight,
-  AlertCircle,
   RefreshCw,
   FolderKanban,
   GraduationCap,
@@ -60,7 +57,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
     try {
       const data = await getUserMemoriesAction();
       setProfile(data);
-    } catch (err) {
+    } catch {
       toast.error("Gagal memuat data memori AI");
     } finally {
       setLoading(false);
@@ -98,7 +95,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
         );
         toast.success("Item memori berhasil dihapus");
       }
-    } catch (e) {
+    } catch {
       toast.error("Gagal menghapus item memori");
     } finally {
       setDeletingId(null);
@@ -114,7 +111,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
       await clearAllUserMemoriesAction();
       setProfile((prev) => (prev ? { ...prev, memories: [] } : null));
       toast.success("Semua memori AI berhasil dihapus bersih");
-    } catch (e) {
+    } catch {
       toast.error("Gagal menghapus semua memori");
     } finally {
       setIsClearingAll(false);
@@ -144,7 +141,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
         setShowAddForm(false);
         toast.success("Memori baru berhasil disimpan");
       }
-    } catch (e) {
+    } catch {
       toast.error("Gagal menyimpan memori baru");
     } finally {
       setIsSaving(false);

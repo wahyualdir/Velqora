@@ -51,18 +51,7 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/daftar") ||
     pathname.startsWith("/reset-password");
 
-  const isPublicRoute =
-    isAuthPage ||
-    pathname.startsWith("/api/ai");
-
-  // Jika belum login dan bukan di halaman publik/api, redirect ke /login
-  if (!user && !isPublicRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
-
-  // Jika sudah login dan membuka halaman auth, redirect ke /dashboard
+  // Jika sudah login dan membuka halaman auth, arahkan ke /dashboard
   if (user && isAuthPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";

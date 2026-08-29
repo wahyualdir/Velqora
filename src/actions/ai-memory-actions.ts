@@ -20,8 +20,8 @@ export async function getUserMemoriesAction(): Promise<UserMemoryProfile | null>
       data: { user },
     } = await supabase.auth.getUser();
 
-    const userId = user?.id || "guest_user";
-    return await getUserMemoryProfile(userId);
+    if (!user) return null;
+    return await getUserMemoryProfile(user.id);
   } catch (err) {
     console.error("Failed to get user memories:", err);
     return null;
@@ -42,8 +42,8 @@ export async function saveUserMemoryAction(
       data: { user },
     } = await supabase.auth.getUser();
 
-    const userId = user?.id || "guest_user";
-    return await saveUserMemoryItem(userId, category, key, value, 1.0, "user_manual");
+    if (!user) return null;
+    return await saveUserMemoryItem(user.id, category, key, value, 1.0, "user_manual");
   } catch (err) {
     console.error("Failed to save user memory:", err);
     return null;
@@ -60,8 +60,8 @@ export async function deleteUserMemoryAction(memoryId: string): Promise<boolean>
       data: { user },
     } = await supabase.auth.getUser();
 
-    const userId = user?.id || "guest_user";
-    return await deleteUserMemoryItem(userId, memoryId);
+    if (!user) return false;
+    return await deleteUserMemoryItem(user.id, memoryId);
   } catch (err) {
     console.error("Failed to delete user memory:", err);
     return false;
@@ -78,8 +78,8 @@ export async function clearAllUserMemoriesAction(): Promise<boolean> {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const userId = user?.id || "guest_user";
-    await clearAllUserMemories(userId);
+    if (!user) return false;
+    await clearAllUserMemories(user.id);
     return true;
   } catch (err) {
     console.error("Failed to clear user memories:", err);
@@ -97,8 +97,8 @@ export async function toggleUserMemoryEnabledAction(isEnabled: boolean): Promise
       data: { user },
     } = await supabase.auth.getUser();
 
-    const userId = user?.id || "guest_user";
-    return await toggleUserMemoryEnabled(userId, isEnabled);
+    if (!user) return false;
+    return await toggleUserMemoryEnabled(user.id, isEnabled);
   } catch (err) {
     console.error("Failed to toggle user memory:", err);
     return isEnabled;

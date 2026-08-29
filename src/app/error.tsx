@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { TechBackground } from "@/components/ui/tech-background";
 import { Logo } from "@/components/ui/logo";
-import { AlertTriangle, RefreshCw, ArrowLeft, Home } from "lucide-react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function Error({

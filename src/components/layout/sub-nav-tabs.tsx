@@ -37,8 +37,8 @@ const DOCUMENT_TABS: SubNavTabItem[] = [
 ];
 
 const AI_TABS: SubNavTabItem[] = [
-  { label: "AI Tutor Cerdas", href: "/dashboard/ai-tutor", icon: Bot },
-  { label: "Latihan & Kuis AI", href: "/dashboard/kuis-ai", icon: BrainCircuit },
+  { label: "AI Tutor", href: "/dashboard/ai-tutor", icon: Bot },
+  { label: "Kuis & Evaluasi AI", href: "/dashboard/kuis-ai", icon: BrainCircuit },
 ];
 
 const TOOL_TABS: SubNavTabItem[] = [
@@ -48,7 +48,7 @@ const TOOL_TABS: SubNavTabItem[] = [
 
 const TASK_TABS: SubNavTabItem[] = [
   { label: "Daftar Tugas", href: "/dashboard/tugas", icon: CheckSquare },
-  { label: "Jadwal Perkuliahan", href: "/dashboard/tugas?tab=jadwal", icon: Calendar },
+  { label: "Jadwal Perkuliahan", href: "/dashboard/jadwal", icon: Calendar },
 ];
 
 const SETTINGS_TABS: SubNavTabItem[] = [
@@ -82,19 +82,13 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
     <nav
       aria-label="Navigasi Sub Kategori"
       className={cn(
-        "flex items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto scrollbar-none touch-pan-x max-w-full select-none",
+        "flex items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto scrollbar-none touch-pan-x max-w-full select-none shadow-2xs",
         className
       )}
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;
-        const isActive =
-          tab.href.includes("?tab=")
-            ? pathname === tab.href.split("?")[0] &&
-              (typeof window !== "undefined"
-                ? window.location.search.includes(tab.href.split("?")[1])
-                : false)
-            : pathname === tab.href;
+        const isActive = pathname === tab.href;
 
         return (
           <Link
@@ -109,7 +103,12 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
                 : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
             )}
           >
-            <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-brand-500 dark:text-brand-400" : "text-text-tertiary")} />
+            <Icon
+              className={cn(
+                "w-4 h-4 shrink-0",
+                isActive ? "text-brand-600 dark:text-brand-400" : "text-text-tertiary"
+              )}
+            />
             <span>{tab.label}</span>
             {tab.badge !== undefined && (
               <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-secondary border border-border text-text-muted">

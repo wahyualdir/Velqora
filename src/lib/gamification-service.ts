@@ -39,7 +39,7 @@ export function getGamificationState(): UserRewardState {
 
   try {
     return JSON.parse(stored) as UserRewardState;
-  } catch (err) {
+  } catch {
     return {
       exp: 0,
       streakDays: 0,

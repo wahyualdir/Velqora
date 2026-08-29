@@ -1,0 +1,8 @@
+JADWAL PERKULIAHAN SEMESTER GANJIL 2026/2027
+Nama Mahasiswa: Wahyu Aldi Riyanto
+
+1. Senin, 08:00 - 10:00 WIB | Rekayasa Perangkat Lunak | Ruang Teori 301 | Dosen: Dr. Aris Purnomo
+2. Selasa, 10:00 - 12:30 | Sistem Basis Data Terdistribusi | Lab Basis Data | Dosen: Ir. Siti Nurhaliza
+3. Rabu, 13:00 - 15:00 | Machine Learning & Deep Learning | Lab AI Gedung B | Dosen: Prof. Budi Raharjo
+4. Kamis, 08.00 s/d 10.30 | Jaringan Komputer Lanjut | Ruang 204 | Dosen: Hendra Wijaya, M.T.
+5. Jumat, 08:00 - 10:00 | Keamanan Informasi & Kriptografi | Lab Cyber Security | Dosen: Dr. Maya Lestari

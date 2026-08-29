@@ -9,24 +9,19 @@ import {
   Sparkles,
   Upload,
   X,
-  User,
   Code,
   BookOpen,
-  Github,
-  Globe,
   Trash2,
   Layers,
   Image as ImageIcon,
   FolderOpen,
   CheckCircle2,
-  FileCode,
-  FileSpreadsheet,
-  FileText,
   File,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, Select } from "@/components/ui/input";
+import { ContentContainer } from "@/components/ui/section";
 import {
   createModule,
   updateModule,
@@ -702,7 +697,7 @@ export function UnifiedContentForm({
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 pb-16 max-w-4xl mx-auto px-1 sm:px-0 animate-fade-in">
+    <ContentContainer className="space-y-6 sm:space-y-8 pb-16">
       {/* ─── 1. Header & Navigation ─── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div className="flex items-center gap-3">
@@ -1373,6 +1368,6 @@ export function UnifiedContentForm({
           </Button>
         </div>
       </form>
-    </div>
+    </ContentContainer>
   );
 }

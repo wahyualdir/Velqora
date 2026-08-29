@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  User,
   LogOut,
   Settings,
   Camera,
@@ -16,7 +15,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { STORAGE_BUCKET } from "@/lib/constants";
-import { isAdminUser } from "@/lib/utils";
+import { isAdminUser, isOwnerUser } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { toast } from "sonner";
 
@@ -30,7 +29,6 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
   const router = useRouter();
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   // User Profile State
@@ -79,7 +77,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
         const photo = meta.avatar_url || meta.picture || meta.avatar || null;
         setAvatarUrl(photo);
 
-        if (email === "wahyualdiriyanto80@gmail.com" || localRole === "owner") {
+        if (isOwnerUser(email) || localRole === "owner") {
           setIsOwner(true);
           setIsAdmin(true);
         } else if (localRole === "admin" || isAdminUser(email)) {
@@ -88,8 +86,6 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
       }
     } catch (err) {
       console.error("Error loading user profile menu data:", err);
-    } finally {
-      setLoading(false);
     }
   };
 

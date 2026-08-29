@@ -5,17 +5,9 @@ import {
   ThumbsUp,
   ThumbsDown,
   MessageSquare,
-  Send,
   Trash2,
-  Sparkles,
-  User,
-  Shield,
-  Clock,
   ChevronDown,
   ChevronUp,
-  CornerDownRight,
-  MoreVertical,
-  Share2,
 } from "lucide-react";
 import { ModuleComment, ModuleReaction } from "@/types/module-drive";
 import {
@@ -69,17 +61,17 @@ function formatRelativeTime(dateString: string): string {
 
 export function ModuleInteractionBar({
   moduleId,
-  moduleTitle,
+  moduleTitle: _moduleTitle,
   comments,
   reactions,
   initialComments,
   initialReactions,
-  initialNotes,
+  initialNotes: _initialNotes,
   currentUser,
   targetId = "module",
   targetName,
   onDataUpdated,
-  onSync,
+  onSync: _onSync,
 }: ModuleInteractionBarProps) {
   const effectiveComments = comments || initialComments || [];
   const effectiveReactions = reactions || initialReactions || [];

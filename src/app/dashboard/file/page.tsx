@@ -1,35 +1,19 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import {
-  FileBox,
-  Download,
-  Trash2,
-  HardDrive,
-  UploadCloud,
-  Search,
-  Eye,
-  Copy,
-  Check,
-  FileCode,
-  FileText,
-  Sparkles,
-  Filter,
-  X,
-  Bookmark,
-  BookmarkCheck,
-} from "lucide-react";
-import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/ui/page-header";
-import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
+import React, { useEffect, useState, useRef } from "react";
 import { getFiles, deleteFile, uploadDirectFileAction } from "@/actions/study-actions";
-import { formatDate, formatFileSize } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { validateFileForUpload } from "@/lib/academic-content-filter";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import { ModuleDriveFile, getFileCategory } from "@/types/module-drive";
 import { toast } from "sonner";
+import { PageContainer } from "@/components/ui/section";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
+import { FileHeader } from "@/components/files/file-header";
+import { FileToolbar } from "@/components/files/file-toolbar";
+import { FileListItem } from "@/components/files/file-list-item";
+import { FileBox } from "lucide-react";
+import { Skeleton } from "@/components/ui/card";
 
 export default function FilePage() {
   const [files, setFiles] = useState<any[]>([]);
@@ -37,8 +21,6 @@ export default function FilePage() {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; path: string } | null>(null);
-  const [deleting, setDeleting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<ModuleDriveFile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,9 +29,10 @@ export default function FilePage() {
     setLoading(true);
     try {
       const list = await getFiles();
-      setFiles(list);
+      setFiles(list || []);
     } catch (err) {
       console.error(err);
+      toast.error("Gagal memuat daftar berkas.");
     } finally {
       setLoading(false);
     }
@@ -95,305 +78,226 @@ export default function FilePage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
+  const handleDelete = async (id: string, path: string) => {
     try {
-      await deleteFile(deleteTarget.id, deleteTarget.path);
-      toast.success("File berhasil dihapus dari cloud storage");
-      setFiles(files.filter((f) => f.id !== deleteTarget.id));
-      setDeleteTarget(null);
+      await deleteFile(id, path);
+      toast.success("Berkas berhasil dihapus.");
+      setFiles((prev) => prev.filter((f) => f.id !== id));
     } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setDeleting(false);
+      toast.error(err.message || "Gagal menghapus berkas.");
     }
   };
 
   const handleCopyUrl = (file: any) => {
-    if (!file.url) return;
+    if (!file.url) {
+      toast.error("Tautan berkas tidak tersedia.");
+      return;
+    }
     navigator.clipboard.writeText(file.url);
     setCopiedId(file.id);
-    toast.success("Tautan file disalin ke papan klip!");
+    toast.success("Tautan unduhan disalin.");
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const filteredFiles = files.filter((f) => {
-    const matchesSearch =
-      !search ||
-      f.name?.toLowerCase().includes(search.toLowerCase()) ||
-      f.mime_type?.toLowerCase().includes(search.toLowerCase());
+  const handleToggleBookmarkFile = (file: any) => {
+    toggleBookmark({
+      id: file.id,
+      title: file.name,
+      type: "file",
+      subtitle: file.mime_type,
+      url: file.url,
+      category: "Berkas",
+    });
+    setFiles([...files]);
+    toast.success("Status simpan berkas diperbarui.");
+  };
 
-    if (!matchesSearch) return false;
-    if (typeFilter === "all") return true;
-    if (typeFilter === "pdf") return f.name?.toLowerCase().endsWith(".pdf");
-    if (typeFilter === "code") {
-      const name = f.name?.toLowerCase() || "";
-      return name.endsWith(".py") || name.endsWith(".js") || name.endsWith(".ts") || name.endsWith(".ipynb") || name.endsWith(".html") || name.endsWith(".cpp");
+  const handlePreviewFile = (file: any) => {
+    const ext = file.name?.split(".").pop() || "";
+    const driveFile: ModuleDriveFile = {
+      id: file.id,
+      name: file.name,
+      folderId: null,
+      storagePath: file.file_path || file.path || "",
+      url: file.url || "",
+      size: file.size || 0,
+      fileType: file.mime_type || "application/octet-stream",
+      extension: ext,
+      category: getFileCategory(file.name || "").category,
+      uploadedAt: file.created_at || new Date().toISOString(),
+    };
+    setPreviewFile(driveFile);
+  };
+
+  // Filtering
+  const filteredFiles = files.filter((f) => {
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      const matchName = f.name?.toLowerCase().includes(q);
+      const matchExt = f.mime_type?.toLowerCase().includes(q);
+      if (!matchName && !matchExt) return false;
     }
-    if (typeFilter === "image") {
-      const name = f.name?.toLowerCase() || "";
-      return name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".webp");
+
+    if (typeFilter !== "all") {
+      const name = (f.name || "").toLowerCase();
+      const mime = (f.mime_type || "").toLowerCase();
+
+      if (typeFilter === "document") {
+        return (
+          mime.includes("pdf") ||
+          mime.includes("word") ||
+          name.endsWith(".pdf") ||
+          name.endsWith(".doc") ||
+          name.endsWith(".docx") ||
+          name.endsWith(".txt")
+        );
+      }
+      if (typeFilter === "image") {
+        return (
+          mime.includes("image") ||
+          name.endsWith(".jpg") ||
+          name.endsWith(".jpeg") ||
+          name.endsWith(".png") ||
+          name.endsWith(".webp")
+        );
+      }
+      if (typeFilter === "code") {
+        return (
+          name.endsWith(".py") ||
+          name.endsWith(".js") ||
+          name.endsWith(".ts") ||
+          name.endsWith(".tsx") ||
+          name.endsWith(".json") ||
+          name.endsWith(".sql") ||
+          name.endsWith(".csv") ||
+          name.endsWith(".html") ||
+          name.endsWith(".css")
+        );
+      }
+      if (typeFilter === "archive") {
+        return (
+          mime.includes("zip") ||
+          name.endsWith(".zip") ||
+          name.endsWith(".rar") ||
+          name.endsWith(".7z") ||
+          name.endsWith(".tar")
+        );
+      }
     }
-    if (typeFilter === "archive") {
-      const name = f.name?.toLowerCase() || "";
-      return name.endsWith(".zip") || name.endsWith(".rar") || name.endsWith(".tar.gz");
-    }
+
     return true;
   });
 
-  const totalStorageBytes = files.reduce((acc, f) => acc + (Number(f.size) || 0), 0);
+  const hasActiveFilter = search.trim() !== "" || typeFilter !== "all";
 
   return (
-    <div className="page-container space-y-6 sm:space-y-8 animate-fade-in pb-12">
-      {/* Header */}
-      <PageHeader
-        eyebrow="~/storage"
-        technicalMark="< cloud // assets />"
-        title="Semua berkas pembelajaran"
-        description="Arsip dokumen, slide, dan lampiran belajar yang tersimpan rapi."
-        actions={
-          <>
-            <div className="flex items-center gap-2 py-1.5 px-3 bg-surface-secondary border border-border rounded-xl text-xs h-9">
-              <HardDrive className="w-4 h-4 text-brand-400" />
-              <span className="text-text-secondary">Kapasitas:</span>
-              <strong className="text-text-primary font-mono font-bold">{formatFileSize(totalStorageBytes)}</strong>
+    <PageContainer>
+      <div className="space-y-6">
+        {/* Navigation Tabs */}
+        <SubNavTabs category="documents" />
+
+        {/* Workspace Header */}
+        <FileHeader
+          onUploadClick={() => fileInputRef.current?.click()}
+          uploading={uploading}
+          fileCount={files.length}
+        />
+
+        {/* Hidden File Upload Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          onChange={handleFileUpload}
+          className="hidden"
+        />
+
+        {/* Search & Filter Toolbar */}
+        <FileToolbar
+          search={search}
+          onSearchChange={setSearch}
+          typeFilter={typeFilter}
+          onTypeFilterChange={setTypeFilter}
+          onResetFilter={() => {
+            setSearch("");
+            setTypeFilter("all");
+          }}
+          hasActiveFilter={hasActiveFilter}
+        />
+
+        {/* File Collection List */}
+        <div className="space-y-2">
+          {loading ? (
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-xl border border-border bg-surface flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-3.5 flex-1">
+                    <Skeleton className="w-9 h-9 rounded-lg" />
+                    <div className="space-y-2 flex-1 max-w-sm">
+                      <Skeleton className="h-4 w-3/4 rounded" />
+                      <Skeleton className="h-3 w-1/2 rounded" />
+                    </div>
+                  </div>
+                  <Skeleton className="w-24 h-8 rounded-lg" />
+                </div>
+              ))}
             </div>
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              multiple
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              loading={uploading}
-              className="gap-2 text-xs font-semibold h-9"
-            >
-              <UploadCloud className="w-4 h-4" /> Unggah Berkas
-            </Button>
-          </>
-        }
-      />
-
-      {/* Sub-Navigation Tabs */}
-      <SubNavTabs category="documents" />
-
-      {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 bg-surface p-3.5 rounded-xl border border-border">
-        <div className="relative flex-1 w-full flex items-center">
-          <Search className="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Cari berkas berdasarkan nama atau ekstensi..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-9 py-2 rounded-lg bg-surface-secondary border border-border text-xs text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-brand-500"
-          />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="absolute right-2.5 p-1 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface transition-colors"
-              title="Hapus pencarian"
-              aria-label="Hapus pencarian"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
+          ) : filteredFiles.length === 0 ? (
+            <div className="p-8 sm:p-12 text-center rounded-xl border border-dashed border-border bg-surface space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto">
+                <FileBox className="w-6 h-6" />
+              </div>
+              <div className="space-y-1 max-w-md mx-auto">
+                <h3 className="text-sm sm:text-base font-semibold text-text-primary">
+                  {hasActiveFilter ? "Berkas tidak ditemukan" : "Belum ada berkas"}
+                </h3>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  {hasActiveFilter
+                    ? "Tidak ada berkas yang sesuai dengan kata kunci pencarian atau filter yang dipilih."
+                    : "Unggah berkas dokumen, kode program, atau gambar perkuliahan Anda untuk mulai mengelola berkas studi."}
+                </p>
+              </div>
+              {hasActiveFilter && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    setTypeFilter("all");
+                  }}
+                  className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline cursor-pointer"
+                >
+                  Reset filter pencarian
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {filteredFiles.map((file) => (
+                <FileListItem
+                  key={file.id}
+                  file={file}
+                  onPreview={handlePreviewFile}
+                  onCopyUrl={handleCopyUrl}
+                  isCopied={copiedId === file.id}
+                  onDelete={handleDelete}
+                  isBookmarked={isBookmarked(file.id)}
+                  onToggleBookmark={handleToggleBookmarkFile}
+                />
+              ))}
+            </div>
           )}
-        </div>
-
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto">
-          {[
-            { id: "all", label: "Semua" },
-            { id: "pdf", label: "PDF" },
-            { id: "code", label: "Code & Jupyter" },
-            { id: "image", label: "Gambar" },
-            { id: "archive", label: "ZIP/Arsip" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTypeFilter(t.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                typeFilter === t.id
-                  ? "bg-brand-600 text-white font-semibold"
-                  : "bg-surface-secondary text-text-secondary hover:text-text-primary border border-border"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
         </div>
       </div>
 
-      {/* File List Table */}
-      {loading ? (
-        <Skeleton className="h-48 rounded-xl" />
-      ) : filteredFiles.length === 0 ? (
-        <EmptyState
-          icon={<FileBox className="w-12 h-12 text-text-tertiary" />}
-          title="Belum Ada Berkas"
-          description={
-            search
-              ? "Tidak ada berkas yang cocok dengan kata kunci pencarian Anda."
-              : "Unggah berkas bahan ajar atau modul perkuliahan untuk menyimpannya ke cloud storage."
-          }
-        />
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-xs">
-          <table className="w-full min-w-[600px] text-left text-xs">
-            <thead className="bg-surface-secondary/70 text-text-tertiary font-mono uppercase border-b border-border">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Nama File</th>
-                <th className="px-4 py-3 font-semibold">Kategori</th>
-                <th className="px-4 py-3 font-semibold">Ukuran</th>
-                <th className="px-4 py-3 font-semibold">Tanggal Upload</th>
-                <th className="px-4 py-3 font-semibold text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.04]">
-              {filteredFiles.map((file) => {
-                const fileInfo = getFileCategory(file.name);
-                const mockDriveFile: ModuleDriveFile = {
-                  id: file.id,
-                  name: file.name,
-                  folderId: null,
-                  storagePath: file.path || "",
-                  url: file.url,
-                  size: Number(file.size) || 0,
-                  fileType: file.mime_type || "file",
-                  extension: fileInfo.extension,
-                  category: fileInfo.category,
-                  uploadedAt: file.created_at || new Date().toISOString(),
-                };
-
-                return (
-                  <tr key={file.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-4 py-3 font-medium text-white max-w-xs truncate">
-                      <div className="flex items-center gap-2.5">
-                        <FileCode className="w-4 h-4 text-cyan-400 shrink-0" />
-                        <span
-                          onClick={() => setPreviewFile(mockDriveFile)}
-                          className="truncate hover:text-[#2997ff] cursor-pointer font-bold"
-                          title={file.name}
-                        >
-                          {file.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${fileInfo.badgeBg} ${fileInfo.badgeBorder} ${fileInfo.badgeText}`}
-                      >
-                        {fileInfo.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 font-mono text-[11px]">
-                      {formatFileSize(file.size)}
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 text-[11px]">
-                      {formatDate(file.created_at)}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {/* Preview */}
-                        <button
-                          onClick={() => setPreviewFile(mockDriveFile)}
-                          className="p-1.5 rounded-lg text-cyan-400 hover:bg-cyan-500/10 transition-colors"
-                          title="Buka Pratinjau Dokumen"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-
-                        {/* Bookmark */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const isNow = toggleBookmark({
-                              id: file.id,
-                              type: "file",
-                              title: file.name,
-                              subtitle: `${formatFileSize(file.size)} • ${fileInfo.label}`,
-                              url: file.url,
-                              savedAt: new Date().toISOString(),
-                            });
-                            toast.success(isNow ? "Berkas disimpan ke Bookmark." : "Berkas dihapus dari Bookmark.");
-                            setFiles((prev) => [...prev]);
-                          }}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-amber-400/10 transition-colors cursor-pointer"
-                          title="Tandai / Bookmark Berkas"
-                        >
-                          {isBookmarked(file.id) ? (
-                            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400 fill-amber-400/20" />
-                          ) : (
-                            <Bookmark className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-
-                        {/* Copy Link */}
-                        <button
-                          onClick={() => handleCopyUrl(file)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                          title="Salin Tautan Publik"
-                        >
-                          {copiedId === file.id ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-
-                        {/* Download */}
-                        <a
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          download={file.name}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                          title="Unduh Berkas"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                        </a>
-
-                        {/* Delete */}
-                        <button
-                          onClick={() => setDeleteTarget({ id: file.id, path: file.storage_path })}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                          title="Hapus File Permanen"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* In-App File Previewer Modal */}
-      {previewFile && (
-        <ModuleFilePreviewerModal
-          file={previewFile}
-          isOpen={!!previewFile}
-          onClose={() => setPreviewFile(null)}
-        />
-      )}
-
-      {/* Confirm Delete Dialog */}
-      <ConfirmDialog
-        isOpen={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDelete}
-        loading={deleting}
-        title="Hapus File Ini?"
-        message="File akan dihapus secara permanen dari Supabase Cloud Storage."
+      {/* Module File Previewer Modal */}
+      <ModuleFilePreviewerModal
+        file={previewFile}
+        isOpen={Boolean(previewFile)}
+        onClose={() => setPreviewFile(null)}
       />
-    </div>
+    </PageContainer>
   );
 }

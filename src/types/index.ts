@@ -179,3 +179,40 @@ export interface RecentView {
   // Joined
   material?: Material;
 }
+
+export type ScheduleDay =
+  | "Senin"
+  | "Selasa"
+  | "Rabu"
+  | "Kamis"
+  | "Jumat"
+  | "Sabtu"
+  | "Minggu";
+
+export type ScheduleType = "jadwal" | "reminder" | "classroom";
+export type SchedulePriority = "tinggi" | "sedang" | "rendah";
+
+export interface ScheduleItem {
+  id: string;
+  user_id?: string;
+  title: string;
+  subject?: string;
+  day: ScheduleDay | string;
+  start_time?: string | null;
+  end_time?: string | null;
+  time: string;
+  location?: string;
+  lecturer?: string;
+  type: ScheduleType;
+  priority: SchedulePriority;
+  is_completed?: boolean;
+  isCompleted?: boolean;
+  source?: "manual" | "imported" | "auto_generated" | "classroom";
+  source_file?: string | null;
+  classroomUrl?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export * from "./schedule";
+

@@ -26,46 +26,6 @@ function GitHubIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-function LinkedInIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-    </svg>
-  );
-}
-
-function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M20.52 3.48A11.93 11.93 0 0 0 12.06 0C5.46 0 .09 5.37.09 11.97c0 2.11.55 4.17 1.6 5.99L0 24l6.2-1.63a11.93 11.93 0 0 0 5.86 1.52h.01c6.6 0 11.97-5.37 11.97-11.97 0-3.2-.125-6.21-3.52-8.44zM12.07 21.9h-.01a9.92 9.92 0 0 1-5.06-1.39l-.36-.21-3.76.99 1-3.66-.23-.38a9.92 9.92 0 0 1-1.52-5.28c0-5.48 4.46-9.94 9.95-9.94 2.65 0 5.15 1.03 7.03 2.91a9.88 9.88 0 0 1 2.91 7.02c0 5.48-4.46 9.94-9.92 9.94zm5.45-7.44c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.8-1.5-1.78-1.67-2.08-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.52.07-.8.37s-1.05 1.03-1.05 2.5 1.08 2.9 1.23 3.1c.15.2 2.12 3.24 5.14 4.54.72.31 1.28.5 1.72.63.72.23 1.38.2 1.9.12.58-.09 1.77-.73 2.02-1.43.25-.7.25-1.3.18-1.43-.08-.12-.28-.2-.58-.35z" />
-    </svg>
-  );
-}
-
-function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect
-        x="2.5"
-        y="2.5"
-        width="19"
-        height="19"
-        rx="5.5"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <circle
-        cx="12"
-        cy="12"
-        r="4.2"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" />
-    </svg>
-  );
-}
-
 /* ============================================================
    VELQORA BRAND HEADER (DASHBOARD ONLY)
    ============================================================ */
@@ -145,24 +105,9 @@ export function DashboardFooter({ className = "" }: { className?: string }) {
 
   const socialLinks = [
     {
-      name: "GitHub",
-      href: "https://github.com/WahyuAldiRiyanto",
+      name: "GitHub Repository",
+      href: "https://github.com/wahyualdir/Velqora",
       icon: GitHubIcon,
-    },
-    {
-      name: "LinkedIn",
-      href: "https://linkedin.com/in/wahyualdiriyanto",
-      icon: LinkedInIcon,
-    },
-    {
-      name: "WhatsApp",
-      href: "https://wa.me/6283162031942",
-      icon: WhatsAppIcon,
-    },
-    {
-      name: "Instagram",
-      href: "https://instagram.com/wahyualdriy",
-      icon: InstagramIcon,
     },
   ];
 

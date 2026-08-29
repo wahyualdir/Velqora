@@ -1,5 +1,3 @@
-import { createClient } from "@/lib/supabase/client";
-
 export interface ClassItem {
   id: string;
   name: string;
@@ -62,7 +60,7 @@ export function getLocalClasses(): ClassItem[] {
   if (!saved) return [];
   try {
     return JSON.parse(saved);
-  } catch (e) {
+  } catch {
     return [];
   }
 }
@@ -90,7 +88,7 @@ export function getJoinedClassCodes(): string[] {
   if (!saved) return [];
   try {
     return JSON.parse(saved);
-  } catch (e) {
+  } catch {
     return [];
   }
 }

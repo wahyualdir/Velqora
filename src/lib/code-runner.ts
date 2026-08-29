@@ -1,6 +1,7 @@
 /**
- * In-Browser Code Execution Engine (Sandbox Runner)
- * Velqora Learning Platform
+ * In-Browser Restricted Client-Side Code Execution Engine
+ * Features: Console output interception, 5000ms timeout guard, output memory throttling
+ * Velqora Academic Workspace
  */
 
 export interface ExecutionResult {
@@ -11,43 +12,56 @@ export interface ExecutionResult {
 }
 
 /**
- * Execute JavaScript / TypeScript code safely in a client sandbox
+ * Execute JavaScript / TypeScript code in a restricted client-side execution context
  */
 export async function executeJavaScript(code: string): Promise<ExecutionResult> {
   const startTime = performance.now();
   const logs: { type: "log" | "error" | "warn" | "info"; text: string }[] = [];
+  const MAX_LOGS = 500;
+  const MAX_LOG_LENGTH = 10000;
+
+  const appendLog = (type: "log" | "error" | "warn" | "info", text: string) => {
+    if (logs.length >= MAX_LOGS) {
+      if (logs.length === MAX_LOGS) {
+        logs.push({
+          type: "warn",
+          text: `[Batas output tercapai (${MAX_LOGS} baris). Baris selanjutnya tidak ditampilkan untuk mencegah memori meluap.]`,
+        });
+      }
+      return;
+    }
+    const truncated = text.length > MAX_LOG_LENGTH ? text.slice(0, MAX_LOG_LENGTH) + " ... [dipotong]" : text;
+    logs.push({ type, text: truncated });
+  };
 
   // Custom console interceptor
   const customConsole = {
     log: (...args: any[]) => {
-      logs.push({
-        type: "log",
-        text: args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" "),
-      });
+      appendLog(
+        "log",
+        args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" ")
+      );
     },
     error: (...args: any[]) => {
-      logs.push({
-        type: "error",
-        text: args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" "),
-      });
+      appendLog(
+        "error",
+        args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" ")
+      );
     },
     warn: (...args: any[]) => {
-      logs.push({
-        type: "warn",
-        text: args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" "),
-      });
+      appendLog(
+        "warn",
+        args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" ")
+      );
     },
     info: (...args: any[]) => {
-      logs.push({
-        type: "info",
-        text: args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" "),
-      });
+      appendLog(
+        "info",
+        args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" ")
+      );
     },
     table: (data: any) => {
-      logs.push({
-        type: "log",
-        text: JSON.stringify(data, null, 2),
-      });
+      appendLog("log", JSON.stringify(data, null, 2));
     },
   };
 
@@ -58,11 +72,26 @@ export async function executeJavaScript(code: string): Promise<ExecutionResult> 
       .replace(/interface\s+[A-Za-z0-9_]+\s*\{[\s\S]*?\}/g, "")
       .replace(/type\s+[A-Za-z0-9_]+\s*=[\s\S]*?;/g, "");
 
-    // Sandboxed AsyncFunction
+    // Sandboxed AsyncFunction with 5000ms timeout
     const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
     const runFn = new AsyncFunction("console", "window", "document", "localStorage", cleanJs);
 
-    const result = await runFn(customConsole, {}, {}, {});
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(
+        () =>
+          reject(
+            new Error(
+              "Waktu eksekusi melebihi batas (5 detik). Kemungkinan terdapat perulangan tak berujung (infinite loop)."
+            )
+          ),
+        5000
+      )
+    );
+
+    const result = await Promise.race([
+      runFn(customConsole, {}, {}, {}),
+      timeoutPromise,
+    ]);
 
     if (result !== undefined && logs.length === 0) {
       customConsole.log(result);
@@ -94,6 +123,22 @@ export async function executeJavaScript(code: string): Promise<ExecutionResult> 
 export async function executePython(code: string): Promise<ExecutionResult> {
   const startTime = performance.now();
   const logs: { type: "log" | "error" | "warn" | "info"; text: string }[] = [];
+  const MAX_LOGS = 500;
+  const MAX_LOG_LENGTH = 10000;
+
+  const appendLog = (type: "log" | "error" | "warn" | "info", text: string) => {
+    if (logs.length >= MAX_LOGS) {
+      if (logs.length === MAX_LOGS) {
+        logs.push({
+          type: "warn",
+          text: `[Batas output tercapai (${MAX_LOGS} baris). Baris selanjutnya tidak ditampilkan untuk mencegah memori meluap.]`,
+        });
+      }
+      return;
+    }
+    const truncated = text.length > MAX_LOG_LENGTH ? text.slice(0, MAX_LOG_LENGTH) + " ... [dipotong]" : text;
+    logs.push({ type, text: truncated });
+  };
 
   // Check if Pyodide is loaded globally on window
   if (typeof window !== "undefined" && (window as any).loadPyodide) {
@@ -103,13 +148,13 @@ export async function executePython(code: string): Promise<ExecutionResult> {
 
       pyodide.setStdout({
         batched: (msg: string) => {
-          logs.push({ type: "log", text: msg });
+          appendLog("log", msg);
         },
       });
 
       const res = await pyodide.runPythonAsync(code);
       if (res !== undefined && logs.length === 0) {
-        logs.push({ type: "log", text: String(res) });
+        appendLog("log", String(res));
       }
 
       const endTime = performance.now();
@@ -134,10 +179,10 @@ export async function executePython(code: string): Promise<ExecutionResult> {
     const lines = code.split("\n");
     const scope: Record<string, any> = {
       print: (...args: any[]) => {
-        logs.push({
-          type: "log",
-          text: args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
-        });
+        appendLog(
+          "log",
+          args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" ")
+        );
       },
       len: (obj: any) => (obj ? obj.length : 0),
       range: (start: number, stop?: number, step: number = 1) => {
@@ -195,7 +240,7 @@ export async function executePython(code: string): Promise<ExecutionResult> {
             `return (${rawVal});`
           )(...Object.values(scope));
           scope[cleanVar] = evalVal;
-        } catch (e) {
+        } catch {
           scope[cleanVar] = rawVal;
         }
         continue;

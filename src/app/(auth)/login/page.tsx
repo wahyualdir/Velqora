@@ -16,58 +16,11 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
+import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
    OFFICIAL SOCIAL MEDIA & BRAND ICONS
    ============================================================ */
-
-function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <path
-        d="M20.52 3.48A11.93 11.93 0 0 0 12.06 0C5.46 0 .09 5.37.09 11.97c0 2.11.55 4.17 1.6 5.99L0 24l6.2-1.63a11.93 11.93 0 0 0 5.86 1.52h.01c6.6 0 11.97-5.37 11.97-11.97 0-3.2-.125-6.21-3.52-8.44zM12.07 21.9h-.01a9.92 9.92 0 0 1-5.06-1.39l-.36-.21-3.76.99 1-3.66-.23-.38a9.92 9.92 0 0 1-1.52-5.28c0-5.48 4.46-9.94 9.95-9.94 2.65 0 5.15 1.03 7.03 2.91a9.88 9.88 0 0 1 2.91 7.02c0 5.48-4.46 9.94-9.92 9.94zm5.45-7.44c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.8-1.5-1.78-1.67-2.08-.18-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.52.07-.8.37s-1.05 1.03-1.05 2.5 1.08 2.9 1.23 3.1c.15.2 2.12 3.24 5.14 4.54.72.31 1.28.5 1.72.63.72.23 1.38.2 1.9.12.58-.09 1.77-.73 2.02-1.43.25-.7.25-1.3.18-1.43-.08-.12-.28-.2-.58-.35z"
-        fill="#25D366"
-      />
-    </svg>
-  );
-}
-
-function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <defs>
-        <radialGradient id="ig-grad-login" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(6 18) rotate(-45) scale(20.5)">
-          <stop offset="0%" stopColor="#FFDD55" />
-          <stop offset="0.3" stopColor="#FF543E" />
-          <stop offset="0.6" stopColor="#C837AB" />
-          <stop offset="1" stopColor="#3771C8" />
-        </radialGradient>
-      </defs>
-      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#ig-grad-login)" strokeWidth="2" fill="none" />
-      <circle cx="12" cy="12" r="4.2" stroke="url(#ig-grad-login)" strokeWidth="2" fill="none" />
-      <circle cx="17.2" cy="6.8" r="1.2" fill="url(#ig-grad-login)" />
-    </svg>
-  );
-}
-
-function TikTokIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <path
-        d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.9 2.9 0 1 1-2.9-2.9c.25 0 .48.03.71.09V9.38a6.37 6.37 0 1 0 5.64 6.29V9.01a8.22 8.22 0 0 0 5.02 1.69V7.24a4.82 4.82 0 0 1-1.25-.55z"
-        fill="#EE1D52"
-      />
-      <path
-        d="M18.34 6.14a4.83 4.83 0 0 1-3.77-4.25V1.45h-3.45v13.67a2.9 2.9 0 1 1-2.9-2.9c.25 0 .48.03.71.09V8.83a6.37 6.37 0 1 0 5.64 6.29V8.46a8.22 8.22 0 0 0 5.02 1.69V6.69a4.82 4.82 0 0 1-1.25-.55z"
-        fill="#69C9D0"
-      />
-      <path
-        d="M18.84 6.42a4.83 4.83 0 0 1-3.77-4.25V1.72h-3.45v13.67a2.9 2.9 0 1 1-2.9-2.9c.25 0 .48.03.71.09V9.1a6.37 6.37 0 1 0 5.64 6.29V8.74a8.22 8.22 0 0 0 5.02 1.69V6.96a4.82 4.82 0 0 1-1.25-.54z"
-        fill="#FFFFFF"
-      />
-    </svg>
-  );
-}
 
 function GitHubIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -114,14 +67,6 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-
-  const socialLinks = {
-    whatsapp: "https://wa.me/6283162031942",
-    instagram: "https://instagram.com/wahyualdriy",
-    tiktok: "https://tiktok.com/@wahyuhengsem",
-    github: "https://github.com/WahyuAldiRiyanto",
-  };
-
   const triggerErrorState = (message: string) => {
     toast.error(message);
   };
@@ -219,7 +164,7 @@ export default function LoginPage() {
     setLoading(true);
     const supabase = createClient();
     const normalizedEmail = email.trim().toLowerCase();
-    const isOwner = normalizedEmail === "wahyualdiriyanto80@gmail.com";
+    const isOwner = isOwnerUser(normalizedEmail);
 
     try {
       let { error } = await supabase.auth.signInWithPassword({
@@ -272,7 +217,7 @@ export default function LoginPage() {
 
         toast.success(
           role === "owner"
-            ? "Selamat datang kembali, Wahyu!"
+            ? "Selamat datang kembali, System Owner!"
             : role === "admin"
             ? "Selamat datang kembali, Administrator!"
             : "Selamat datang kembali di Velqora!"
@@ -294,8 +239,8 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-[#0071e3] selection:text-white">
 
-      {/* Interactive Tech Canvas Background with Floating Tech Brand Logos */}
-      <TechBackground showLogos={true} />
+      {/* Subtle Background */}
+      <TechBackground />
 
       {/* Main Login Card Section */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10 z-10 w-full">
@@ -598,50 +543,11 @@ export default function LoginPage() {
         </div>
       </main>
 
-      {/* Social Media & Footer with Enhanced Hover Effects */}
+      {/* Footer */}
       <footer
-        className="w-full py-6 px-4 border-t border-white/[0.08] z-10 flex flex-col items-center justify-center gap-3.5 max-w-4xl mx-auto text-center animate-fade-in-up"
+        className="w-full py-6 px-4 border-t border-white/[0.08] z-10 flex items-center justify-center max-w-4xl mx-auto text-center animate-fade-in-up"
         style={{ animationDelay: "400ms" }}
       >
-        <div className="flex items-center justify-center gap-2 sm:gap-3">
-          <a
-            href={socialLinks.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="WhatsApp"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/[0.12] bg-white/[0.03] hover:bg-emerald-500/15 hover:border-emerald-400/50 flex items-center justify-center text-slate-300 hover:text-emerald-400 transition-all active:scale-95 group shadow-2xs"
-          >
-            <WhatsAppIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-          </a>
-          <a
-            href={socialLinks.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Instagram"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/[0.12] bg-white/[0.03] hover:bg-rose-500/15 hover:border-rose-400/50 flex items-center justify-center text-slate-300 hover:text-rose-400 transition-all active:scale-95 group shadow-2xs"
-          >
-            <InstagramIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-          </a>
-          <a
-            href={socialLinks.tiktok}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="TikTok"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/[0.12] bg-white/[0.03] hover:bg-cyan-500/15 hover:border-cyan-400/50 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition-all active:scale-95 group shadow-2xs"
-          >
-            <TikTokIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-          </a>
-          <a
-            href={socialLinks.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="GitHub"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/[0.12] bg-white/[0.03] hover:bg-white/[0.12] hover:border-white/60 flex items-center justify-center text-slate-300 hover:text-white transition-all active:scale-95 group shadow-2xs"
-          >
-            <GitHubIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-          </a>
-        </div>
-
         <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed">
           &copy; 2026 <span className="text-slate-300 font-medium">JOBLIB505 FORUM GROUP</span>. Semua hak dilindungi undang-undang.
         </p>

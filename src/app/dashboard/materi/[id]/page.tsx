@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Download,
@@ -16,10 +17,16 @@ import {
   Pencil,
   Copy,
   Check,
+  BookOpen,
+  Bot,
+  Sparkles,
 } from "lucide-react";
-import { Card, Badge, Skeleton, ConfirmDialog, Modal } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
+import { ReadingContainer } from "@/components/ui/section";
+import { Modal, ConfirmDialog } from "@/components/ui/modal";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getMaterialById, deleteMaterial } from "@/actions/study-actions";
 import { MATERIAL_TYPE_LABELS, MaterialType } from "@/types";
 import { formatDate, formatFileSize, isPreviewable } from "@/lib/utils";
@@ -31,7 +38,6 @@ import {
   StudyNote,
 } from "@/lib/notes-service";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 export default function DetailMateriPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -41,6 +47,7 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [copiedNotes, setCopiedNotes] = useState(false);
 
   useEffect(() => {
     async function loadMaterial() {
@@ -51,7 +58,7 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
           setBookmarked(isBookmarked(data.id));
         }
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load material:", err);
       } finally {
         setLoading(false);
       }
@@ -71,64 +78,97 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
       savedAt: new Date().toISOString(),
     });
     setBookmarked(isNow);
-    toast.success(isNow ? "Materi disimpan ke Bookmark Saya." : "Materi dihapus dari Bookmark.");
+    toast.success(isNow ? "Materi disimpan ke Bookmark." : "Materi dihapus dari Bookmark.");
   };
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
       await deleteMaterial(id);
-      toast.success("Materi berhasil dihapus");
+      toast.success("Materi berhasil dihapus.");
       router.push("/dashboard/materi");
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || "Gagal menghapus materi.");
     } finally {
       setDeleting(false);
     }
   };
 
+  const handleCopyNotes = () => {
+    if (material?.notes) {
+      navigator.clipboard.writeText(material.notes);
+      setCopiedNotes(true);
+      toast.success("Catatan materi disalin ke clipboard!");
+      setTimeout(() => setCopiedNotes(false), 2000);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-64" />
-      </div>
+      <ReadingContainer className="space-y-6 pb-16 pt-4">
+        <Skeleton className="h-6 w-32 rounded-lg" />
+        <div className="space-y-3 p-6 rounded-xl border border-border bg-surface">
+          <Skeleton className="h-4 w-24 rounded" />
+          <Skeleton className="h-8 w-3/4 rounded" />
+          <Skeleton className="h-4 w-1/2 rounded" />
+        </div>
+        <Skeleton className="h-64 w-full rounded-xl" />
+      </ReadingContainer>
     );
   }
 
   if (!material) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-xl font-bold text-text-primary">Materi tidak ditemukan</h2>
-        <p className="text-sm text-text-secondary mt-2">Materi mungkin telah dihapus atau ID tidak valid.</p>
-        <Link href="/dashboard/materi" className="mt-4 inline-block">
-          <Button variant="outline">Kembali ke Daftar Materi</Button>
+      <ReadingContainer className="text-center py-20 space-y-4">
+        <div className="w-12 h-12 rounded-xl bg-surface-secondary border border-border flex items-center justify-center mx-auto text-text-tertiary">
+          <BookOpen className="w-6 h-6" />
+        </div>
+        <h2 className="text-lg sm:text-xl font-bold text-text-primary font-display">
+          Materi tidak ditemukan
+        </h2>
+        <p className="text-xs sm:text-sm text-text-secondary max-w-md mx-auto">
+          Materi mungkin telah dihapus atau tautan yang Anda akses tidak valid.
+        </p>
+        <Link href="/dashboard/materi" className="inline-block pt-2">
+          <Button variant="outline" size="sm" className="text-xs">
+            Kembali ke Daftar Materi
+          </Button>
         </Link>
-      </div>
+      </ReadingContainer>
     );
   }
 
   const canPreview = material.file_type ? isPreviewable(material.file_type) : false;
+  const typeLabel =
+    MATERIAL_TYPE_LABELS[material.type as MaterialType] || material.type || "Materi";
 
   return (
-    <div className="max-w-[1000px] mx-auto space-y-5 sm:space-y-6 animate-fade-in pb-12">
-      {/* Back & Actions */}
-      <div className="flex items-center justify-between">
-        <Link href="/dashboard/materi">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4" /> Kembali
-          </Button>
+    <ReadingContainer className="space-y-6 sm:space-y-8 pb-20 pt-2">
+      {/* ─── 1. Navigation & Quick Actions Toolbar ─── */}
+      <div className="flex items-center justify-between gap-4 border-b border-border/70 pb-4">
+        <Link
+          href="/dashboard/materi"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Kembali ke Semua Materi</span>
         </Link>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleToggleBookmark}
-            className="p-2 rounded-xl border border-border text-text-secondary hover:text-brand-500 hover:bg-surface-secondary transition-colors cursor-pointer"
-            title="Bookmark Materi"
+            aria-pressed={bookmarked}
+            className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+              bookmarked
+                ? "bg-amber-500/10 border-amber-500/30 text-amber-500"
+                : "border-border bg-surface hover:bg-surface-secondary text-text-tertiary hover:text-text-primary"
+            }`}
+            title={bookmarked ? "Hapus dari Bookmark" : "Simpan ke Bookmark"}
+            aria-label={bookmarked ? "Hapus dari Bookmark" : "Simpan ke Bookmark"}
           >
             {bookmarked ? (
-              <BookmarkCheck className="w-4 h-4 text-brand-500 fill-brand-500/20" />
+              <BookmarkCheck className="w-4 h-4" />
             ) : (
               <Bookmark className="w-4 h-4" />
             )}
@@ -138,143 +178,210 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
             variant="danger"
             size="sm"
             onClick={() => setDeleteModal(true)}
+            className="gap-1.5 text-xs"
           >
-            <Trash2 className="w-4 h-4" /> Hapus
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Hapus</span>
           </Button>
         </div>
       </div>
 
-      {/* Main Info Header */}
-      <Card className="space-y-4">
+      {/* ─── 2. Document Reading Header ─── */}
+      <header className="p-5 sm:p-7 rounded-xl border border-border bg-surface shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="info">
-            {MATERIAL_TYPE_LABELS[material.type as MaterialType] || material.type}
+          <Badge variant="neutral">
+            {material.category?.name || "Umum"}
           </Badge>
-          {material.category && (
-            <span
-              className="text-xs font-semibold px-2.5 py-1 rounded-md"
-              style={{
-                backgroundColor: `${material.category.color}15`,
-                color: material.category.color,
-              }}
-            >
-              {material.category.name}
-            </span>
+
+          <Badge variant="secondary">
+            {typeLabel}
+          </Badge>
+
+          {material.status && (
+            <Badge variant={material.status === "selesai" ? "success" : "warning"}>
+              {material.status === "selesai" ? "Selesai" : "Draft"}
+            </Badge>
           )}
-          <Badge variant={material.status === "selesai" ? "success" : "warning"}>
-            {material.status}
-          </Badge>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary tracking-tight font-display leading-tight">
           {material.title}
         </h1>
 
         {material.subject && (
-          <p className="text-sm text-brand-600 font-medium">
-            Mata Kuliah: {material.subject}
+          <p className="text-xs sm:text-sm font-semibold text-brand-600 dark:text-brand-400">
+            Mata Kuliah / Topik: {material.subject}
           </p>
         )}
 
         {material.description && (
-          <p className="text-sm text-text-secondary leading-relaxed border-t border-border pt-3">
+          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed border-t border-border/70 pt-3">
             {material.description}
           </p>
         )}
 
-        <div className="flex items-center gap-4 text-xs text-text-tertiary pt-2">
+        <div className="flex items-center gap-4 text-[11px] font-mono text-text-tertiary pt-2 border-t border-border/50">
           <span className="flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5" /> Dibuat: {formatDate(material.created_at)}
+            <Calendar className="w-3 h-3" /> Dibuat: {formatDate(material.created_at)}
           </span>
         </div>
-      </Card>
+      </header>
 
-      {/* Attachments & Preview */}
+      {/* ─── Interactive AI Learning Actions ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Link
+          href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(`Jelaskan ringkasan materi: ${material.title}`)}`}
+          className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-surface hover:border-brand-500/40 hover:bg-surface-secondary/60 transition-all shadow-2xs group"
+        >
+          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0 border border-brand-500/20">
+            <Bot className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-text-primary group-hover:text-brand-500 transition-colors">
+              Diskusikan dengan AI Tutor
+            </p>
+            <p className="text-[11px] text-text-tertiary truncate">
+              Minta ringkasan konsep atau penjelasan mendalam
+            </p>
+          </div>
+        </Link>
+
+        <Link
+          href={`/dashboard/kuis-ai?topic=${encodeURIComponent(material.title)}`}
+          className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-surface hover:border-brand-500/40 hover:bg-surface-secondary/60 transition-all shadow-2xs group"
+        >
+          <div className="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 border border-purple-500/20">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-text-primary group-hover:text-purple-400 transition-colors">
+              Uji Pemahaman (Kuis AI)
+            </p>
+            <p className="text-[11px] text-text-tertiary truncate">
+              Buat kuis latihan otomatis berbasis materi ini
+            </p>
+          </div>
+        </Link>
+      </div>
+
+      {/* ─── 3. Document File Attachment & Reader Preview ─── */}
       {material.file_url && (
-        <Card className="space-y-4">
-          <h3 className="text-base font-semibold text-text-primary flex items-center gap-2">
-            <FileText className="w-5 h-5 text-brand-600" />
-            Lampiran File
-          </h3>
-
-          <div className="flex items-center justify-between p-4 bg-surface-secondary rounded-xl border border-border">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-text-primary">{material.file_name || "File Lampiran"}</p>
-              {material.file_size && (
-                <p className="text-xs text-text-tertiary">{formatFileSize(material.file_size)}</p>
-              )}
-            </div>
+        <section className="p-5 sm:p-7 rounded-xl border border-border bg-surface shadow-2xs space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2 border-b border-border/70 pb-3">
+            <h2 className="text-sm font-bold text-text-primary tracking-tight uppercase font-mono flex items-center gap-2">
+              <FileText className="w-4 h-4 text-brand-500" />
+              <span>Berkas Lampiran Dokumen</span>
+            </h2>
 
             <a href={material.file_url} target="_blank" rel="noopener noreferrer" download>
-              <Button size="sm" className="gap-2">
-                <Download className="w-4 h-4" /> Download File
+              <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+                <Download className="w-3.5 h-3.5" />
+                <span>Unduh File</span>
               </Button>
             </a>
           </div>
 
-          {/* PDF / Image Preview */}
+          <div className="flex items-center justify-between p-3.5 bg-surface-secondary/70 rounded-xl border border-border">
+            <div className="space-y-0.5 min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-text-primary truncate">
+                {material.file_name || "File Lampiran"}
+              </p>
+              {material.file_size && (
+                <p className="text-[11px] font-mono text-text-tertiary">
+                  {formatFileSize(material.file_size)}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Inline Previewer for PDF & Images */}
           {canPreview && (
-            <div className="mt-4 border border-border rounded-xl overflow-hidden bg-black/5">
+            <div className="mt-4 border border-border rounded-xl overflow-hidden bg-surface-secondary/40">
               {material.file_type?.startsWith("image/") ? (
                 <img
                   src={material.file_url}
                   alt={material.title}
-                  className="w-full max-h-[500px] object-contain mx-auto"
+                  className="w-full max-h-[550px] object-contain mx-auto"
                 />
               ) : (
                 <iframe
                   src={material.file_url}
-                  className="w-full h-[600px]"
-                  title="PDF Preview"
+                  className="w-full h-[650px] border-0"
+                  title={`Pratinjau Dokumen ${material.title}`}
                 />
               )}
             </div>
           )}
-        </Card>
+        </section>
       )}
 
-      {/* External Link */}
+      {/* ─── 4. External Reference Link ─── */}
       {material.external_url && (
-        <Card>
-          <h3 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
-            <ExternalLink className="w-4 h-4 text-brand-600" /> Link Referensi Eksternal
-          </h3>
+        <section className="p-4 sm:p-5 rounded-xl border border-border bg-surface shadow-2xs space-y-2">
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-1.5">
+            <ExternalLink className="w-3.5 h-3.5 text-brand-500" />
+            <span>Tautan Referensi Eksternal</span>
+          </h2>
           <a
             href={material.external_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-brand-600 hover:underline break-all"
+            className="text-xs sm:text-sm text-brand-600 dark:text-brand-400 hover:underline break-all font-medium inline-flex items-center gap-1"
           >
-            {material.external_url}
+            <span>{material.external_url}</span>
           </a>
-        </Card>
+        </section>
       )}
 
-      {/* Notes / Content from Material */}
+      {/* ─── 5. Text Notes / Syllabus Code Content ─── */}
       {material.notes && (
-        <Card className="space-y-3">
-          <h3 className="text-base font-semibold text-text-primary flex items-center gap-2">
-            <FileText className="w-4 h-4 text-brand-500" />
-            <span>Deskripsi / Catatan Materi</span>
-          </h3>
-          <div className="p-4 bg-surface-secondary rounded-xl border border-border whitespace-pre-wrap font-mono text-sm text-text-primary">
+        <section className="p-5 sm:p-7 rounded-xl border border-border bg-surface shadow-2xs space-y-3">
+          <div className="flex items-center justify-between border-b border-border/70 pb-3">
+            <h2 className="text-sm font-bold text-text-primary tracking-tight uppercase font-mono flex items-center gap-2">
+              <FileText className="w-4 h-4 text-brand-500" />
+              <span>Deskripsi & Catatan Pembelajaran</span>
+            </h2>
+
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleCopyNotes}
+              className="gap-1.5 text-xs"
+            >
+              {copiedNotes ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-emerald-500">Tersalin</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Salin Teks</span>
+                </>
+              )}
+            </Button>
+          </div>
+
+          <div className="p-4 bg-surface-secondary/70 rounded-xl border border-border whitespace-pre-wrap font-mono text-xs sm:text-sm text-text-primary leading-relaxed">
             {material.notes}
           </div>
-        </Card>
+        </section>
       )}
 
-      {/* ─── PERSONAL STUDY NOTES WIDGET (Catatan Pribadi Siswa) ─── */}
+      {/* ─── 6. Personal Study Notes Widget ─── */}
       <PersonalMaterialNotesWidget material={material} />
 
+      {/* ─── Delete Confirmation Dialog ─── */}
       <ConfirmDialog
         isOpen={deleteModal}
         onClose={() => setDeleteModal(false)}
         onConfirm={handleDelete}
         loading={deleting}
         title="Hapus Materi Ini?"
-        message="Apakah Anda yakin ingin menghapus materi ini?"
+        message={`Apakah Anda yakin ingin menghapus materi "${material.title}"? Dokumen dan catatan terkait akan dihapus secara permanen.`}
+        confirmText="Hapus Materi"
       />
-    </div>
+    </ReadingContainer>
   );
 }
 
@@ -347,32 +454,39 @@ function PersonalMaterialNotesWidget({ material }: { material: any }) {
   };
 
   return (
-    <Card className="space-y-4 border-brand-500/30 bg-surface shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-brand-500/10 text-brand-500 border border-brand-500/20">
+    <section className="p-5 sm:p-7 rounded-xl border border-border bg-surface shadow-2xs space-y-4">
+      <div className="flex items-center justify-between flex-wrap gap-2 border-b border-border/70 pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-500 border border-brand-500/20 flex items-center justify-center">
             <FileEdit className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-text-primary">Catatan Belajar Pribadi</h3>
+            <h3 className="text-sm font-bold text-text-primary tracking-tight font-display">
+              Catatan Belajar Pribadi
+            </h3>
             <p className="text-xs text-text-secondary">
-              Catatan khusus yang hanya dapat dilihat dan diedit oleh akun Anda.
+              Hanya dapat dilihat dan dikelola oleh akun Anda.
             </p>
           </div>
         </div>
 
-        <Button size="sm" onClick={handleOpenCreate} className="gap-1.5 text-xs">
+        <Button size="sm" onClick={handleOpenCreate} className="gap-1.5 text-xs font-semibold">
           <Plus className="w-3.5 h-3.5" />
           <span>Tulis Catatan</span>
         </Button>
       </div>
 
       {personalNotes.length === 0 ? (
-        <div className="p-4 rounded-xl bg-surface-secondary border border-border/70 text-center space-y-2">
+        <div className="p-5 rounded-xl bg-surface-secondary/50 border border-border/70 text-center space-y-2">
           <p className="text-xs text-text-secondary">
             Belum ada catatan pribadi untuk materi ini. Tulis ringkasan, rumus, atau poin penting Anda.
           </p>
-          <Button size="sm" variant="outline" onClick={handleOpenCreate} className="gap-1.5 text-xs">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleOpenCreate}
+            className="gap-1.5 text-xs"
+          >
             <Plus className="w-3.5 h-3.5" />
             <span>Tambah Catatan Pertama</span>
           </Button>
@@ -382,10 +496,10 @@ function PersonalMaterialNotesWidget({ material }: { material: any }) {
           {personalNotes.map((note) => (
             <div
               key={note.id}
-              className="p-4 rounded-xl bg-surface-secondary border border-border hover:border-brand-500/40 transition-all space-y-2 group"
+              className="p-4 rounded-xl bg-surface-secondary/60 border border-border hover:border-brand-500/40 transition-colors space-y-2"
             >
               <div className="flex items-start justify-between gap-2">
-                <h4 className="text-sm font-bold text-text-primary group-hover:text-brand-400 transition-colors">
+                <h4 className="text-xs sm:text-sm font-bold text-text-primary">
                   {note.title}
                 </h4>
 
@@ -393,16 +507,18 @@ function PersonalMaterialNotesWidget({ material }: { material: any }) {
                   <button
                     type="button"
                     onClick={() => handleOpenEdit(note)}
-                    className="p-1 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface transition-colors"
-                    title="Edit"
+                    className="p-1 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer"
+                    title="Edit catatan"
+                    aria-label="Edit catatan"
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(note.id, note.title)}
-                    className="p-1 rounded-lg text-text-tertiary hover:text-rose-500 hover:bg-surface transition-colors"
-                    title="Hapus"
+                    className="p-1 rounded-lg text-text-tertiary hover:text-rose-500 hover:bg-surface transition-colors cursor-pointer"
+                    title="Hapus catatan"
+                    aria-label="Hapus catatan"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -413,7 +529,7 @@ function PersonalMaterialNotesWidget({ material }: { material: any }) {
                 {note.content}
               </p>
 
-              <div className="pt-1 text-[10px] font-mono text-text-tertiary">
+              <div className="pt-1 text-[10.5px] font-mono text-text-tertiary">
                 Disimpan pada:{" "}
                 {new Date(note.updatedAt || note.createdAt).toLocaleDateString("id-ID", {
                   day: "numeric",
@@ -464,6 +580,6 @@ function PersonalMaterialNotesWidget({ material }: { material: any }) {
           </div>
         </form>
       </Modal>
-    </Card>
+    </section>
   );
 }

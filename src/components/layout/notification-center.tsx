@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bell, Check, Trash2, Sparkles, GraduationCap, Crown, MessageSquare, ExternalLink, Calendar, AlertCircle } from "lucide-react";
+import { Bell, Check, Trash2, Sparkles, GraduationCap, Crown } from "lucide-react";
 import Link from "next/link";
 import { getUrgentClassroomAlerts } from "@/lib/classroom-sync";
 

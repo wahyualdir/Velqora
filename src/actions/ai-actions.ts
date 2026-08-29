@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { executeAIEngine } from "@/lib/ai/engine";
 import { ModuleMemoryRef, UserAcademicContext, ChatDialogueTurn } from "@/lib/ai/types";
+import { checkRateLimit, logger } from "@/lib/observability";
 
 // ==========================================
 // TYPES (PRESERVED FOR BACKWARD COMPATIBILITY)
@@ -170,7 +171,7 @@ export async function askAITutorAction(
   chatHistory?: ChatTurn[],
   focusedModuleId?: string
 ): Promise<string> {
-  const prompt = (userPrompt || "").trim();
+  const prompt = (userPrompt || "").trim().slice(0, 10000);
   if (!prompt && !imageBase64 && !fileAttachment) {
     return "Silakan ketikkan pertanyaan atau unggah foto/berkas yang ingin didiskusikan!";
   }
@@ -197,27 +198,39 @@ export async function askAITutorAction(
     // Guest fallback
   }
 
-  const academicContext = await getUserLearningContext(focusedModuleId);
+  // Rate Limit: 20 AI queries per minute per user
+  const rateCheck = checkRateLimit(`ai_tutor_${userId}`, 20, 60000);
+  if (!rateCheck.allowed) {
+    logger.warn("AI_TUTOR_RATE_LIMIT", "Rate limit AI Tutor tercapai", { userId });
+    return "Anda mengirim pertanyaan terlalu cepat. Mohon tunggu beberapa detik sebelum bertanya kembali.";
+  }
 
-  // 2. Format chat turns for AI engine
-  const historyTurns: ChatDialogueTurn[] = (chatHistory || []).map((t) => ({
-    role: t.role,
-    text: t.text,
-  }));
+  try {
+    const academicContext = await getUserLearningContext(focusedModuleId);
 
-  // 3. Execute through the Production AI Engine
-  const result = await executeAIEngine({
-    prompt,
-    history: historyTurns,
-    userId,
-    displayName,
-    provider: aiProvider,
-    focusedModuleId,
-    academicContext,
-    fileAttachment,
-    imageBase64,
-    imageMimeType,
-  });
+    // 2. Format chat turns for AI engine
+    const historyTurns: ChatDialogueTurn[] = (chatHistory || []).map((t) => ({
+      role: t.role,
+      text: t.text,
+    }));
 
-  return result.reply;
+    // 3. Execute through the Production AI Engine
+    const result = await executeAIEngine({
+      prompt,
+      history: historyTurns,
+      userId,
+      displayName,
+      provider: aiProvider,
+      focusedModuleId,
+      academicContext,
+      fileAttachment,
+      imageBase64,
+      imageMimeType,
+    });
+
+    return result.reply;
+  } catch (err: any) {
+    logger.error("AI_TUTOR_EXEC_ERROR", "Gagal mengeksekusi AI Tutor", err, { userId });
+    return "Maaf, terjadi kendala saat menghubungkan ke asisten AI. Silakan coba beberapa saat lagi.";
+  }
 }

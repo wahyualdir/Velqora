@@ -4,25 +4,20 @@ import React, { useState, useRef } from "react";
 import {
   Sparkles,
   UploadCloud,
-  FileText,
   CheckCircle2,
   Layers,
-  ArrowRight,
   Loader2,
   Trash2,
   Plus,
-  RefreshCw,
   Tag,
-  GraduationCap,
-  FolderTree,
 } from "lucide-react";
-import { Modal, Card, Badge } from "@/components/ui/card";
+import { Modal } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, Select } from "@/components/ui/input";
 import { TechIcon, TechIconKey } from "@/components/ui/tech-icon";
 import { classifyViaLocalNLP, ClassificationResult } from "@/lib/module-classifier-engine";
 import { createModule, addModuleChapters } from "@/actions/study-actions";
-import { ModuleLevel, MODULE_LEVEL_LABELS } from "@/types";
+import { ModuleLevel } from "@/types";
 import { toast } from "sonner";
 
 import { createClient } from "@/lib/supabase/client";

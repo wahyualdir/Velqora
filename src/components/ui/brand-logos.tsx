@@ -2,22 +2,12 @@
 
 import React from "react";
 import {
-  SiGoogleclassroom,
-  SiGoogle,
-  SiGooglegemini,
   SiDeepseek,
-  SiTanstack,
   SiVercel,
   SiNextdotjs,
-  SiTypescript,
-  SiJavascript,
-  SiReact,
   SiSupabase,
   SiTailwindcss,
   SiGithub,
-  SiDocker,
-  SiPostgresql,
-  SiNodedotjs,
 } from "react-icons/si";
 import { TbBrandOpenai } from "react-icons/tb";
 import { VscVscode } from "react-icons/vsc";

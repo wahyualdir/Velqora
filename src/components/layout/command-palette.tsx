@@ -14,9 +14,7 @@ import {
   CheckSquare,
   Users,
   Tags,
-  Tag,
   Files,
-  FolderOpen,
   BarChart3,
   Bookmark,
   PenLine,
@@ -25,19 +23,14 @@ import {
   Settings,
   Plus,
   Palette,
-  Sparkles,
   Command,
   ArrowRight,
   X,
   FileCode,
   Layers,
   Code2,
-  Check,
-  ShieldCheck,
-  MapPin,
 } from "lucide-react";
-import { useThemeAccent, AccentColor } from "@/context/theme-accent-context";
-import { useTheme } from "next-themes";
+import { useThemeAccent } from "@/context/theme-accent-context";
 import { toast } from "sonner";
 
 interface CommandItem {
@@ -63,8 +56,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const { accent, setAccent, bgStyle, setBgStyle } = useThemeAccent();
-  const { theme, setTheme } = useTheme();
+  const { setAccent } = useThemeAccent();
 
   // Focus input on open
   useEffect(() => {
@@ -78,10 +70,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   }, [isOpen]);
 
   // Navigate helper
-  const navigateTo = (path: string) => {
-    router.push(path);
-    onClose();
-  };
+  const navigateTo = React.useCallback(
+    (path: string) => {
+      router.push(path);
+      onClose();
+    },
+    [router, onClose]
+  );
 
   // Base command list
   const commandItems: CommandItem[] = useMemo(() => {
@@ -383,7 +378,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         keywords: ["violet", "purple", "ungu", "amethyst"],
       },
     ];
-  }, [router, setAccent, onClose]);
+  }, [navigateTo, setAccent, onClose]);
 
   // Filter items based on query
   const filteredItems = useMemo(() => {
@@ -458,6 +453,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     <div
       className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 pt-16 sm:pt-24 bg-black/70 backdrop-blur-md animate-fade-in"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Pencarian Cepat dan Navigasi Perintah"
     >
       <div
         className="w-full max-w-2xl bg-surface border border-border/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] sm:max-h-[75vh] animate-scale-up"

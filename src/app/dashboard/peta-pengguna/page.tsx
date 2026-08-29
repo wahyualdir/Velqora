@@ -3,11 +3,25 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { MapPin, Users, Globe, Clock, RefreshCw, Shield } from "lucide-react";
+import { MapPin, Users, Globe, Clock, RefreshCw } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isAdminUser } from "@/lib/utils";
 import { getVisitorLocations } from "@/lib/track-visit";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer, PageSection } from "@/components/ui/section";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableContainer,
+  TableEmpty,
+  TableLoading,
+} from "@/components/ui/table";
 
 /* Leaflet map loaded client-side only (no SSR) */
 const MapView = dynamic(() => import("./map-view"), { ssr: false, loading: () => (
@@ -112,108 +126,118 @@ export default function PetaPenggunaPage() {
   const uniqueCountries = new Set(visits.map((v) => v.country).filter(Boolean)).size;
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6 animate-fade-in pb-12">
-
+    <PageContainer className="max-w-6xl space-y-6 pb-12">
       {/* Header */}
       <PageHeader
-        eyebrow="~/telemetry"
-        technicalMark="< geo-ip // sessions />"
-        title="Aktivitas pengguna"
+        eyebrow="Telemetri"
+        title="Aktivitas Pengguna"
         description="Pantau persebaran lokasi dan data kunjungan pengguna secara langsung."
         badge={
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-semibold text-emerald-400 font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Live Sync</span>
-          </div>
+          <Badge variant="success" dot size="sm">
+            Live Sync
+          </Badge>
         }
         actions={
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={fetchVisits}
-            disabled={loading}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold text-text-secondary bg-surface-secondary hover:bg-surface-tertiary border border-border transition-all disabled:opacity-50 shrink-0 h-9 cursor-pointer"
+            loading={loading}
+            leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            <span>Sync Data</span>
-          </button>
+            Sync Data
+          </Button>
         }
       />
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3 shadow-xs">
-          <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><Users className="w-4 h-4" /></div>
-          <div>
-            <div className="text-lg font-bold text-text-primary">{uniqueUsers}</div>
-            <div className="text-[11px] text-text-tertiary">Total Pengguna</div>
+      <PageSection>
+        <div className="stats-grid">
+          <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-brand-500/10 text-brand-400"><Users className="w-4 h-4" /></div>
+            <div>
+              <div className="text-lg font-bold text-text-primary">{uniqueUsers}</div>
+              <div className="text-xs text-text-tertiary">Total Pengguna</div>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><MapPin className="w-4 h-4" /></div>
+            <div>
+              <div className="text-lg font-bold text-text-primary">{uniqueCities}</div>
+              <div className="text-xs text-text-tertiary">Kota Berbeda</div>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400"><Globe className="w-4 h-4" /></div>
+            <div>
+              <div className="text-lg font-bold text-text-primary">{uniqueCountries}</div>
+              <div className="text-xs text-text-tertiary">Negara</div>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400"><Clock className="w-4 h-4" /></div>
+            <div>
+              <div className="text-lg font-bold text-text-primary">{visits.length}</div>
+              <div className="text-xs text-text-tertiary">Total Kunjungan</div>
+            </div>
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3 shadow-xs">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><MapPin className="w-4 h-4" /></div>
-          <div>
-            <div className="text-lg font-bold text-text-primary">{uniqueCities}</div>
-            <div className="text-[11px] text-text-tertiary">Kota Berbeda</div>
-          </div>
-        </div>
-        <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3 shadow-xs">
-          <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400"><Globe className="w-4 h-4" /></div>
-          <div>
-            <div className="text-lg font-bold text-text-primary">{uniqueCountries}</div>
-            <div className="text-[11px] text-text-tertiary">Negara</div>
-          </div>
-        </div>
-        <div className="p-4 rounded-xl bg-surface border border-border flex items-center gap-3 shadow-xs">
-          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400"><Clock className="w-4 h-4" /></div>
-          <div>
-            <div className="text-lg font-bold text-text-primary">{visits.length}</div>
-            <div className="text-[11px] text-text-tertiary">Total Kunjungan</div>
-          </div>
-        </div>
-      </div>
+      </PageSection>
 
       {/* Map */}
-      <div className="rounded-2xl border border-border overflow-hidden bg-surface" style={{ height: 420 }}>
-        <MapView visits={visits} />
-      </div>
+      <PageSection>
+        <div className="rounded-xl border border-border overflow-hidden bg-surface" style={{ height: 420 }}>
+          <MapView visits={visits} />
+        </div>
+      </PageSection>
 
       {/* Recent visitors table */}
-      <div className="rounded-2xl border border-border bg-surface overflow-hidden">
-        <div className="px-5 py-4 border-b border-border">
-          <h2 className="text-sm font-semibold text-text-primary">Riwayat Kunjungan Terbaru</h2>
+      <PageSection>
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-text-primary font-display">Riwayat Kunjungan Terbaru</h2>
+          
+          <TableContainer>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Kota</TableHead>
+                  <TableHead>Negara</TableHead>
+                  <TableHead>Waktu</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableLoading colSpan={4} rows={4} />
+                ) : visits.length === 0 ? (
+                  <TableEmpty
+                    colSpan={4}
+                    message="Belum ada data kunjungan"
+                    description="Data aktivitas kunjungan akan tercatat otomatis saat pengguna membuka dashboard."
+                  />
+                ) : (
+                  visits.slice(0, 20).map((v, i) => (
+                    <TableRow key={i}>
+                      <TableCell className="font-medium">{v.user_email}</TableCell>
+                      <TableCell className="text-text-secondary">{v.city}, {v.region}</TableCell>
+                      <TableCell className="text-text-secondary">{v.country}</TableCell>
+                      <TableCell className="text-text-tertiary font-mono text-xs">
+                        {new Date(v.visited_at).toLocaleString("id-ID", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-left text-[10px] font-semibold text-text-tertiary uppercase tracking-wider border-b border-border">
-                <th className="px-5 py-3">Email</th>
-                <th className="px-5 py-3">Kota</th>
-                <th className="px-5 py-3">Negara</th>
-                <th className="px-5 py-3">Waktu</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visits.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-text-tertiary">
-                    {loading ? "Memuat data..." : "Belum ada data kunjungan. Data akan muncul setelah tabel user_visits dibuat di Supabase."}
-                  </td>
-                </tr>
-              ) : (
-                visits.slice(0, 20).map((v, i) => (
-                  <tr key={i} className="border-b border-border/50 hover:bg-surface-secondary/50">
-                    <td className="px-5 py-3 text-text-primary font-medium">{v.user_email}</td>
-                    <td className="px-5 py-3 text-text-secondary">{v.city}, {v.region}</td>
-                    <td className="px-5 py-3 text-text-secondary">{v.country}</td>
-                    <td className="px-5 py-3 text-text-tertiary font-mono text-[10px]">
-                      {new Date(v.visited_at).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 }

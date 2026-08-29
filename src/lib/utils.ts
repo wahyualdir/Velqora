@@ -107,19 +107,25 @@ export function isPreviewable(mimeType: string): boolean {
 }
 
 /**
- * Owner & Admin Credentials Helper
+ * Owner & Admin Credentials Helper (Configurable via Environment Variables)
  */
-export const OWNER_EMAIL = "wahyualdiriyanto80@gmail.com";
-export const ADMIN_EMAIL = "wahyualdiriyanto80@gmail.com";
+export const OWNER_EMAIL = (
+  process.env.NEXT_PUBLIC_OWNER_EMAIL || "admin@velqora.app"
+).trim().toLowerCase();
+
+export const ADMIN_EMAIL = (
+  process.env.NEXT_PUBLIC_ADMIN_EMAIL || OWNER_EMAIL
+).trim().toLowerCase();
 
 export function isOwnerUser(email?: string | null): boolean {
   if (!email) return false;
-  return email.trim().toLowerCase() === OWNER_EMAIL.toLowerCase();
+  return email.trim().toLowerCase() === OWNER_EMAIL;
 }
 
 export function isAdminUser(email?: string | null): boolean {
   if (!email) return false;
-  return email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const normalized = email.trim().toLowerCase();
+  return normalized === ADMIN_EMAIL || normalized === OWNER_EMAIL;
 }
 
 export function isOwnerOrAdminRole(role?: string | null, email?: string | null): boolean {

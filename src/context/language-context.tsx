@@ -13,7 +13,6 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("id");
-  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -21,7 +20,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (savedLang && (savedLang === "id" || savedLang === "en")) {
         setLanguageState(savedLang);
       }
-      setIsInitialized(true);
     }
   }, []);
 

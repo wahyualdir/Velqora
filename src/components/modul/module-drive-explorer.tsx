@@ -10,27 +10,18 @@ import {
   Download,
   Trash2,
   Eye,
-  Copy,
   Pencil,
   Search,
   Grid,
   List,
   ChevronRight,
   Home,
-  HardDrive,
-  Sparkles,
-  ArrowRight,
-  MoreVertical,
-  Check,
   X,
-  FileArchive,
   FileSpreadsheet,
-  Layers,
 } from "lucide-react";
 import {
   ModuleDriveFolder,
   ModuleDriveFile,
-  FileCategory,
   getFileCategory,
 } from "@/types/module-drive";
 import {
@@ -39,7 +30,6 @@ import {
   deleteModuleDriveFolder,
   deleteModuleDriveFile,
   renameModuleDriveItem,
-  moveModuleDriveFile,
 } from "@/actions/study-actions";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import { createClient } from "@/lib/supabase/client";
@@ -76,11 +66,11 @@ export function ModuleDriveExplorer({
   moduleTitle,
   initialFolders,
   initialFiles,
-  initialNotes,
+  initialNotes: _initialNotes,
   canEdit = true,
   onDriveUpdated,
-  onSync,
-  onFilePreview,
+  onSync: _onSync,
+  onFilePreview: _onFilePreview,
 }: ModuleDriveExplorerProps) {
   const [folders, setFolders] = useState<ModuleDriveFolder[]>(initialFolders || []);
   const [files, setFiles] = useState<ModuleDriveFile[]>(initialFiles || []);
@@ -393,7 +383,7 @@ export function ModuleDriveExplorer({
               reader.onerror = reject;
               reader.readAsDataURL(currentUploadFile);
             });
-          } catch (e) {
+          } catch {
             fileUrl = "";
           }
         }

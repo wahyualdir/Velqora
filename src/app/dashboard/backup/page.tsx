@@ -4,18 +4,13 @@ import { useState, useRef } from "react";
 import {
   Download,
   UploadCloud,
-  FileJson,
   ShieldCheck,
-  RefreshCw,
-  CheckCircle2,
-  AlertTriangle,
-  Database,
-  FileText,
-  Sparkles,
+  Loader2,
+  CheckCircle,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer, PageSection } from "@/components/ui/section";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { exportUserData, importUserData } from "@/actions/study-actions";
 import { toast } from "sonner";
@@ -42,9 +37,9 @@ export default function BackupPage() {
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      toast.success("Backup data JSON berhasil diunduh!");
+      toast.success("Cadangan data workspace JSON berhasil diunduh!");
     } catch (err: any) {
-      toast.error("Gagal export: " + err.message);
+      toast.error("Gagal mengekspor data: " + err.message);
     } finally {
       setExporting(false);
     }
@@ -55,7 +50,7 @@ export default function BackupPage() {
     if (!file) return;
 
     if (!file.name.endsWith(".json")) {
-      toast.error("Berkas harus berformat .JSON");
+      toast.error("Berkas cadangan harus berformat .JSON");
       return;
     }
 
@@ -67,14 +62,14 @@ export default function BackupPage() {
       const payload = JSON.parse(text);
 
       if (!payload || typeof payload !== "object") {
-        throw new Error("Format JSON tidak valid");
+        throw new Error("Format JSON tidak valid atau rusak.");
       }
 
       const result = await importUserData(payload);
       setImportResult(result);
-      toast.success("Data berhasil dipulihkan (restore) ke Velqora!");
+      toast.success("Data cadangan berhasil dipulihkan ke Velqora!");
     } catch (err: any) {
-      toast.error("Gagal memulihkan backup: " + (err.message || "File rusak"));
+      toast.error("Gagal memulihkan cadangan: " + (err.message || "Berkas tidak dapat dibaca."));
     } finally {
       setImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -82,133 +77,125 @@ export default function BackupPage() {
   };
 
   return (
-    <div className="max-w-[1000px] mx-auto space-y-5 sm:space-y-6 animate-fade-in pb-12">
+    <PageContainer className="max-w-5xl space-y-6 pb-14">
+      {/* 1. Header */}
       <PageHeader
-        eyebrow="~/backup-recovery"
-        technicalMark="< json // snapshots />"
-        title="Cadangan Data Lengkap"
-        description="Ekspor seluruh materi, tugas, modul, dan riwayat belajar ke berkas JSON atau pulihkan data kapan saja."
+        eyebrow="Pemulihan Data"
+        title="Cadangan & Pemulihan Data"
+        description="Ekspor materi, tugas, modul, dan riwayat belajar Anda ke berkas JSON atau pulihkan data kapan saja."
       />
 
-      {/* Sub-Navigation Tabs */}
+      {/* 2. Sub-Navigation Tabs */}
       <SubNavTabs category="settings" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* 1. Export Card */}
-        <Card className="p-6 rounded-2xl bg-surface border-border space-y-5 shadow-sm transition-all flex flex-col justify-between">
-          <div className="space-y-4">
-            <div className="w-11 h-11 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center">
-              <Download className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-text-primary">Cadangkan Data (Ekspor JSON)</h3>
-              <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-                Unduh seluruh struktur data akun Anda (materi, tugas, modul, bab pembelajaran, kategori, dan label) dalam format JSON.
-              </p>
-            </div>
-
-            <div className="p-3 rounded-xl bg-surface-secondary border border-border text-xs text-text-secondary space-y-1 font-mono">
-              <div>✓ Format JSON standar</div>
-              <div>✓ Termasuk struktur bab & progress</div>
-              <div>✓ Portabel & siap dipindahkan</div>
-            </div>
-          </div>
-
-          <Button
-            onClick={handleExportJSON}
-            loading={exporting}
-            className="w-full gap-2 text-xs font-semibold py-2.5"
-          >
-            <Download className="w-4 h-4" /> Unduh Cadangan (.JSON)
-          </Button>
-        </Card>
-
-        {/* 2. Import / Restore Card */}
-        <Card className="p-6 rounded-2xl bg-surface border-border space-y-5 shadow-sm transition-all flex flex-col justify-between">
-          <div className="space-y-4">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
-              <UploadCloud className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-text-primary">Pulihkan Data (Restore JSON)</h3>
-              <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-                Pulihkan atau impor modul, tugas, dan materi dari berkas cadangan JSON yang sebelumnya pernah Anda simpan.
-              </p>
-            </div>
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept=".json,application/json"
-              onChange={handleImportFile}
-              className="hidden"
-            />
-
-            {importResult ? (
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-400 space-y-1 font-mono">
-                <div className="font-bold text-text-primary flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Hasil Restore Berhasil:
-                </div>
-                <div>• Modul: {importResult.importedModules} modul</div>
-                <div>• Materi: {importResult.importedMaterials} materi</div>
-                <div>• Tugas: {importResult.importedTasks} tugas</div>
-                <div>• Kategori: {importResult.importedCategories} kategori</div>
+      {/* 3. Main Backup & Restore Grid */}
+      <PageSection>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Export JSON Column */}
+          <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface flex flex-col justify-between space-y-6 shadow-2xs">
+            <div className="space-y-4">
+              <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+                <Download className="w-5 h-5" />
               </div>
-            ) : (
-              <div className="p-3 rounded-xl bg-surface-secondary border border-border text-xs text-text-secondary space-y-1 font-mono">
-                <div>• Mendukung sinkronisasi tanpa duplikasi</div>
-                <div>• Mempertahankan struktur bab modul</div>
-                <div>• Langsung aktif seketika</div>
+              <div className="space-y-1">
+                <h3 className="text-sm sm:text-base font-bold text-text-primary">
+                  Cadangkan Data (Ekspor JSON)
+                </h3>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Unduh seluruh modul, dokumen materi, daftar tugas, catatan studi, dan relasi kategori ke dalam satu berkas format JSON terenkripsi.
+                </p>
               </div>
-            )}
+            </div>
+
+            <Button
+              onClick={handleExportJSON}
+              disabled={exporting}
+              className="gap-2 text-xs font-semibold w-full min-h-[40px] cursor-pointer"
+            >
+              {exporting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Mengekspor Berkas...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>Unduh Cadangan JSON</span>
+                </>
+              )}
+            </Button>
           </div>
 
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            loading={importing}
-            variant="outline"
-            className="w-full gap-2 text-xs font-semibold py-2.5 border-border text-text-primary hover:bg-surface-secondary"
-          >
-            <UploadCloud className="w-4 h-4" /> Pilih Berkas JSON
-          </Button>
-        </Card>
-      </div>
+          {/* Import / Restore Column */}
+          <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface flex flex-col justify-between space-y-6 shadow-2xs">
+            <div className="space-y-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <UploadCloud className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm sm:text-base font-bold text-text-primary">
+                  Pulihkan Data (Impor JSON)
+                </h3>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Unggah berkas cadangan JSON yang pernah Anda unduh sebelumnya untuk memulihkan seluruh struktur modul dan catatan studi.
+                </p>
+              </div>
+            </div>
 
-      {/* Security & Cloud Info Card */}
-      <Card className="p-6 rounded-2xl bg-surface border-border space-y-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 flex items-center justify-center">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-text-primary font-display">Keamanan Cloud Storage & Database</h3>
-            <p className="text-xs text-text-secondary">
-              Seluruh berkas fisik disimpan di Supabase Cloud Storage dengan Row Level Security (RLS) terisolasi per akun.
-            </p>
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                onChange={handleImportFile}
+                className="hidden"
+                id="restore-file-input"
+              />
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={importing}
+                className="gap-2 text-xs font-semibold w-full min-h-[40px] cursor-pointer"
+              >
+                {importing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Memulihkan Data...</span>
+                  </>
+                ) : (
+                  <>
+                    <UploadCloud className="w-4 h-4" />
+                    <span>Pilih Berkas Cadangan (.json)</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="p-3.5 rounded-xl bg-surface-secondary border border-border text-xs space-y-1">
-            <strong className="text-text-primary">Isolasi Pengguna</strong>
-            <p className="text-[11px] text-text-secondary leading-relaxed">
-              Setiap user hanya dapat mengakses dan memodifikasi data miliknya sendiri.
-            </p>
+        {/* Restore Result Notice */}
+        {importResult && (
+          <div className="mt-4 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-xs text-text-primary flex items-start gap-3">
+            <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-semibold text-emerald-600 dark:text-emerald-400">
+                Pemulihan Berkas Berhasil!
+              </p>
+              <p className="text-text-secondary">
+                Data cadangan telah berhasil diintegrasikan ke workspace Anda.
+              </p>
+            </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-surface-secondary border border-border text-xs space-y-1">
-            <strong className="text-text-primary">Bebas Vendor Lock-in</strong>
-            <p className="text-[11px] text-text-secondary leading-relaxed">
-              Format JSON standar yang dapat dibaca dan dimigrasikan ke platform lain kapan pun.
-            </p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-surface-secondary border border-border text-xs space-y-1">
-            <strong className="text-text-primary">Penyimpanan Terenkripsi</strong>
-            <p className="text-[11px] text-text-secondary leading-relaxed">
-              Koneksi database PostgreSQL terenkripsi HTTPS/SSL end-to-end.
-            </p>
-          </div>
+        )}
+
+        {/* Security Note */}
+        <div className="mt-4 flex items-center gap-2 text-xs text-text-tertiary">
+          <ShieldCheck className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+          <span>
+            Berkas cadangan tidak menyimpan kredensial autentikasi atau kata sandi pribadi Anda.
+          </span>
         </div>
-      </Card>
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 }

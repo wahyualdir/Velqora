@@ -3,45 +3,38 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  Compass,
   Search,
-  BookOpen,
   GraduationCap,
-  FolderOpen,
-  UploadCloud,
-  FileCode,
-  ThumbsUp,
-  ThumbsDown,
   MessageSquare,
   Sparkles,
   ShieldCheck,
-  Users,
-  Calendar,
   ClipboardList,
   BarChart3,
-  Lock,
   ChevronDown,
   ChevronUp,
   ArrowRight,
-  CheckCircle2,
-  XCircle,
-  FileText,
-  Sliders,
-  Eye,
-  Layers,
   HelpCircle,
-  Clock,
   ShieldAlert,
-  HardDrive,
   Cpu,
-  Check,
   Mail,
   Copy,
+  Check,
   MessageCircle,
   X,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { PageContainer, PageSection } from "@/components/ui/section";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableContainer,
+} from "@/components/ui/table";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
 
@@ -295,14 +288,13 @@ export default function PanduanAplikasiPage() {
   });
 
   return (
-    <div className="page-container space-y-6 sm:space-y-8 pb-12 animate-fade-in">
+    <PageContainer className="space-y-6 sm:space-y-8 pb-14">
       {/* ─── 1. Header Section ─── */}
       <section className="space-y-4 pt-1">
         <PageHeader
-          eyebrow="~/docs"
-          technicalMark="< handbook // faqs />"
-          title="Cara kerja platform"
-          description="Petunjuk ringkas agar kamu bisa memaksimalkan semua fitur belajar."
+          eyebrow="Bantuan"
+          title="Panduan Penggunaan"
+          description="Panduan lengkap dan jawaban pertanyaan umum untuk memaksimalkan seluruh fitur Velqora."
           border={false}
         />
 
@@ -464,189 +456,217 @@ export default function PanduanAplikasiPage() {
       </div>
 
       {/* ─── 3. Role & Permissions Matrix Table ─── */}
-      <div className="rounded-2xl bg-surface border border-border p-5 sm:p-6 space-y-4 shadow-sm">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-brand-400" />
-            <h3 className="text-sm font-bold text-text-primary">
-              Matriks Hak Akses Pengguna
-            </h3>
+      <PageSection>
+        <div className="rounded-xl bg-surface border border-border p-4 sm:p-6 space-y-4">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-brand-500" />
+              <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">
+                Matriks Hak Akses Pengguna
+              </h3>
+            </div>
+            <p className="text-xs text-text-secondary">
+              Panduan otorisasi hak akses untuk menjaga integritas dan keamanan bahan ajar.
+            </p>
           </div>
-          <p className="text-xs text-text-secondary">
-            Panduan otorisasi hak akses untuk menjaga integritas dan keamanan bahan ajar.
-          </p>
-        </div>
 
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-surface-secondary border-b border-border text-text-tertiary font-mono">
-                <th className="py-2.5 px-4 font-semibold">Tindakan / Fitur</th>
-                <th className="py-2.5 px-4 font-semibold">Owner (Super Admin)</th>
-                <th className="py-2.5 px-4 font-semibold">Pembuat Modul</th>
-                <th className="py-2.5 px-4 font-semibold">Pengguna Umum</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border text-text-secondary">
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Melihat & Mengunduh Berkas Modul</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Pratinjau Berkas Dokumen (PDF, Kode, Gambar)</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Memberikan Reaksi Like & Dislike</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Menulis Komentar Diskusi Akademik</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Lencana Owner</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Lencana Pembuat</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Lencana Mahasiswa</td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Unggah, Ubah Nama, & Hapus Berkas</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Seluruh Folder</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Folder Milik Sendiri</td>
-                <td className="py-2.5 px-4 text-text-tertiary font-semibold">Hanya Baca</td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Ubah Judul, Kategori & Bab Modul</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Diizinkan</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Modul Sendiri</td>
-                <td className="py-2.5 px-4 text-text-tertiary font-semibold">Tidak Diizinkan</td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-4 font-medium text-text-primary">Moderasi / Hapus Komentar Anggota Lain</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Semua Komentar</td>
-                <td className="py-2.5 px-4 text-emerald-400 font-semibold">Di Modul Sendiri</td>
-                <td className="py-2.5 px-4 text-text-secondary">Komentar Sendiri</td>
-              </tr>
-            </tbody>
-          </table>
+          <TableContainer>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tindakan / Fitur</TableHead>
+                  <TableHead>Owner (Super Admin)</TableHead>
+                  <TableHead>Pembuat Modul</TableHead>
+                  <TableHead>Pengguna Umum</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Melihat & Mengunduh Berkas Modul</TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Pratinjau Berkas Dokumen (PDF, Kode, CSV)</TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Memberikan Reaksi & Bookmark</TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                  <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Menulis Komentar Diskusi Akademik</TableCell>
+                  <TableCell><Badge variant="warning" isMono size="sm">Lencana Owner</Badge></TableCell>
+                  <TableCell><Badge variant="brand" isMono size="sm">Lencana Pembuat</Badge></TableCell>
+                  <TableCell><Badge variant="neutral" isMono size="sm">Lencana Mahasiswa</Badge></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Unggah, Ubah Nama, & Hapus Berkas</TableCell>
+                  <TableCell><Badge variant="success" size="sm">Seluruh Folder</Badge></TableCell>
+                  <TableCell><Badge variant="brand" size="sm">Folder Milik Sendiri</Badge></TableCell>
+                  <TableCell className="text-text-tertiary text-xs">Hanya Baca</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Ubah Judul, Kategori & Bab Modul</TableCell>
+                  <TableCell><Badge variant="success" size="sm">Semua Modul</Badge></TableCell>
+                  <TableCell><Badge variant="brand" size="sm">Modul Sendiri</Badge></TableCell>
+                  <TableCell className="text-text-tertiary text-xs">Tidak Diizinkan</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Moderasi / Hapus Komentar</TableCell>
+                  <TableCell><Badge variant="success" size="sm">Semua Komentar</Badge></TableCell>
+                  <TableCell><Badge variant="brand" size="sm">Di Modul Sendiri</Badge></TableCell>
+                  <TableCell className="text-text-secondary text-xs">Komentar Sendiri</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
-      </div>
+      </PageSection>
 
       {/* ─── 4. Frequently Asked Questions (FAQ) ─── */}
-      <div className="rounded-2xl bg-surface border border-border p-5 sm:p-6 space-y-4 shadow-sm">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <HelpCircle className="w-4 h-4 text-brand-400" />
-            <h3 className="text-sm font-bold text-text-primary">
-              Pertanyaan yang Sering Diajukan (FAQ)
-            </h3>
+      <PageSection>
+        <div className="rounded-xl bg-surface border border-border p-4 sm:p-6 space-y-4">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-brand-500" />
+              <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">
+                Pertanyaan yang Sering Diajukan (FAQ)
+              </h3>
+            </div>
+            <p className="text-xs text-text-secondary">
+              Penjelasan ringkas untuk menjawab pertanyaan umum pengguna sistem.
+            </p>
           </div>
-          <p className="text-xs text-text-secondary">
-            Penjelasan ringkas untuk menjawab pertanyaan umum pengguna sistem.
-          </p>
-        </div>
 
-        <div className="space-y-2.5">
-          {filteredFaqs.map((faq, idx) => {
-            const isOpen = expandedFaq[idx];
+          <div className="space-y-2.5">
+            {filteredFaqs.map((faq, idx) => {
+              const isOpen = expandedFaq[idx];
 
-            return (
-              <div
-                key={idx}
-                className="rounded-xl bg-surface-secondary/60 border border-border overflow-hidden transition-colors"
-              >
-                <button
-                  onClick={() => toggleFaq(idx)}
-                  className="w-full p-3.5 text-left flex items-center justify-between gap-3 hover:bg-surface-tertiary transition-colors"
+              return (
+                <div
+                  key={idx}
+                  className="rounded-xl bg-surface-secondary/60 border border-border overflow-hidden transition-colors"
                 >
-                  <span className="text-xs font-bold text-text-primary">{faq.q}</span>
-                  {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-brand-400 shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-text-tertiary shrink-0" />
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(idx)}
+                    aria-expanded={isOpen}
+                    className="w-full p-3.5 text-left flex items-center justify-between gap-3 hover:bg-surface-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500"
+                  >
+                    <span className="text-xs sm:text-sm font-semibold text-text-primary">{faq.q}</span>
+                    {isOpen ? (
+                      <ChevronUp className="w-4 h-4 text-brand-400 shrink-0" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-text-tertiary shrink-0" />
+                    )}
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-3.5 pb-3.5 text-xs sm:text-sm text-text-secondary leading-relaxed border-t border-border/60 pt-2.5 bg-surface/30">
+                      {faq.a}
+                    </div>
                   )}
-                </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </PageSection>
 
-                {isOpen && (
-                  <div className="px-3.5 pb-3.5 text-xs text-text-secondary leading-relaxed border-t border-border/60 pt-2.5 bg-surface/40">
-                    {faq.a}
-                  </div>
+      {/* ─── 5. Kritik dan Saran ─── */}
+      <PageSection>
+        <div className="rounded-xl bg-surface border border-border p-4 sm:p-6 space-y-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shrink-0 mt-0.5 sm:mt-0">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">
+                    Kritik dan Saran
+                  </h3>
+                  <Badge variant="neutral" isMono size="sm" className="hidden sm:inline-flex">
+                    Pusat Masukan
+                  </Badge>
+                </div>
+                <p className="text-xs text-text-secondary leading-relaxed max-w-2xl">
+                  Kirimkan masukan, laporan kendala, kritik membangun, atau ide pengembangan fitur untuk membantu kami terus meningkatkan kualitas platform Velqora.
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto shrink-0 pt-1 sm:pt-0">
+              <a
+                href="mailto:support@velqora.com?subject=Kritik%20%26%20Saran%20Velqora&body=Halo%20Tim%20Velqora%2C%0A%0ASaya%20ingin%20menyampaikan%20masukan%20mengenai%3A%0A%0A%5BTuliskan%20masukan%2C%20saran%2C%20atau%20kendala%20Anda%20di%20sini%5D%0A%0ATerima%20kasih."
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-brand-600 hover:bg-brand-500 text-white transition-all text-center w-full sm:w-auto"
+              >
+                <Mail className="w-4 h-4 shrink-0" />
+                <span>Kirim via Email</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-secondary hover:bg-surface-secondary/80 text-text-primary border border-border transition-all text-center w-full sm:w-auto cursor-pointer"
+              >
+                {copiedEmail ? (
+                  <>
+                    <Check className="w-4 h-4 shrink-0 text-emerald-500" />
+                    <span>Email Tersalin</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 shrink-0 text-text-tertiary" />
+                    <span>Salin Email</span>
+                  </>
                 )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+              </button>
 
-      {/* ─── 5. Kritik dan Saran — Mobile-Optimized ─── */}
-      <div className="rounded-2xl bg-surface border border-border p-4 sm:p-6 space-y-4 shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shrink-0 mt-0.5 sm:mt-0">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm sm:text-base font-bold text-text-primary">
-                  Kritik dan Saran
-                </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-surface-secondary text-text-secondary border border-border hidden sm:inline-block">
-                  Pusat Masukan
-                </span>
-              </div>
-              <p className="text-xs text-text-secondary leading-relaxed max-w-2xl">
-                Kirimkan masukan, laporan kendala, kritik membangun, atau ide pengembangan fitur untuk membantu kami terus meningkatkan kualitas platform Velqora.
-              </p>
+              <a
+                href="https://wa.me/6283162031942?text=Halo%20Admin%20Velqora%2C%20saya%20ingin%20menyampaikan%20kritik%20dan%20saran%20mengenai%20platform%3A%20"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-secondary hover:bg-surface-secondary/80 text-text-primary border border-border transition-all text-center w-full sm:w-auto"
+              >
+                <MessageCircle className="w-4 h-4 shrink-0 text-emerald-500" />
+                <span>Kirim via WhatsApp</span>
+              </a>
             </div>
           </div>
-
-          {/* Action Buttons: Responsive Grid for Mobile (Full Width) & Inline on Desktop */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto shrink-0 pt-1 sm:pt-0">
-            <a
-              href="mailto:support@velqora.com?subject=Kritik%20%26%20Saran%20Velqora&body=Halo%20Tim%20Velqora%2C%0A%0ASaya%20ingin%20menyampaikan%20masukan%20mengenai%3A%0A%0A%5BTuliskan%20masukan%2C%20saran%2C%20atau%20kendala%20Anda%20di%20sini%5D%0A%0ATerima%20kasih."
-              className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-500 active:scale-[0.98] text-white shadow-md shadow-brand-500/20 transition-all touch-manipulation text-center w-full sm:w-auto"
-            >
-              <Mail className="w-4 h-4 shrink-0" />
-              <span>Kirim via Email</span>
-            </a>
-
-            <a
-              href="https://wa.me/6283162031942?text=Halo%20Admin%20Velqora%2C%20saya%20ingin%20menyampaikan%20kritik%20dan%20saran%20mengenai%20platform%3A%20"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl text-xs font-bold bg-surface-secondary hover:bg-surface-tertiary active:scale-[0.98] text-text-primary border border-border shadow-sm transition-all touch-manipulation text-center w-full sm:w-auto"
-            >
-              <MessageCircle className="w-4 h-4 shrink-0 text-[#25D366]" />
-              <span>Kirim via WhatsApp</span>
-            </a>
-          </div>
         </div>
-      </div>
+      </PageSection>
 
       {/* ─── 6. Footer Navigation Links ─── */}
-      <div className="rounded-2xl bg-surface border border-border p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-        <div className="space-y-1">
-          <h4 className="text-sm font-bold text-text-primary">Mulai Eksplorasi Materi</h4>
-          <p className="text-xs text-text-secondary">
-            Akses langsung ke koleksi modul pembelajaran atau kelola preferensi akun Anda.
-          </p>
+      <PageSection>
+        <div className="rounded-xl bg-surface border border-border p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-text-primary font-display">Mulai Eksplorasi Materi</h4>
+            <p className="text-xs text-text-secondary">
+              Akses langsung ke koleksi modul pembelajaran atau kelola preferensi akun Anda.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            <Link href="/dashboard/modul">
+              <Button size="sm">
+                Buka Modul
+              </Button>
+            </Link>
+            <Link href="/dashboard/pengaturan">
+              <Button variant="outline" size="sm">
+                Pengaturan Akun
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2.5">
-          <Link href="/dashboard/modul">
-            <Button size="sm" className="text-xs font-semibold">
-              Buka Modul
-            </Button>
-          </Link>
-          <Link href="/dashboard/pengaturan">
-            <Button variant="outline" size="sm" className="text-xs font-semibold border-border">
-              Pengaturan Akun
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 }

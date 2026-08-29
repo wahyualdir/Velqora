@@ -354,10 +354,18 @@ export function getFileCategory(filename: string): {
   }
 }
 
-export const DRIVE_MARKER_START = "<!-- WAHYUSTUDY_MODULE_DRIVE_START -->";
-export const DRIVE_MARKER_END = "<!-- WAHYUSTUDY_MODULE_DRIVE_END -->";
-const LEGACY_DRIVE_MARKER_START = "<!-- STUDYVAULT_MODULE_DRIVE_START -->";
-const LEGACY_DRIVE_MARKER_END = "<!-- STUDYVAULT_MODULE_DRIVE_END -->";
+export const DRIVE_MARKER_START = "<!-- VELQORA_MODULE_DRIVE_START -->";
+export const DRIVE_MARKER_END = "<!-- VELQORA_MODULE_DRIVE_END -->";
+const LEGACY_MARKERS_START = [
+  "<!-- VELQORA_MODULE_DRIVE_START -->",
+  "<!-- WAHYUSTUDY_MODULE_DRIVE_START -->",
+  "<!-- STUDYVAULT_MODULE_DRIVE_START -->",
+];
+const LEGACY_MARKERS_END = [
+  "<!-- VELQORA_MODULE_DRIVE_END -->",
+  "<!-- WAHYUSTUDY_MODULE_DRIVE_END -->",
+  "<!-- STUDYVAULT_MODULE_DRIVE_END -->",
+];
 
 export function extractModuleDriveFromNotes(notes?: string | null): {
   folders: ModuleDriveFolder[];
@@ -378,16 +386,8 @@ export function extractModuleDriveFromNotes(notes?: string | null): {
   if (!notes) return { folders: [], files: [], comments: [], reactions: [] };
 
   try {
-    const startTag = notes.includes(DRIVE_MARKER_START)
-      ? DRIVE_MARKER_START
-      : notes.includes(LEGACY_DRIVE_MARKER_START)
-      ? LEGACY_DRIVE_MARKER_START
-      : null;
-    const endTag = notes.includes(DRIVE_MARKER_END)
-      ? DRIVE_MARKER_END
-      : notes.includes(LEGACY_DRIVE_MARKER_END)
-      ? LEGACY_DRIVE_MARKER_END
-      : null;
+    const startTag = LEGACY_MARKERS_START.find((tag) => notes.includes(tag)) || null;
+    const endTag = LEGACY_MARKERS_END.find((tag) => notes.includes(tag)) || null;
 
     if (startTag && endTag) {
       const startIndex = notes.indexOf(startTag) + startTag.length;
@@ -468,7 +468,7 @@ export function injectModuleDriveIntoNotes(
   }
 ): string {
   const cleanBaseNotes = (existingNotes || "")
-    .replace(/<!-- (?:WAHYUSTUDY|STUDYVAULT)_MODULE_DRIVE_START -->[\s\S]*?<!-- (?:WAHYUSTUDY|STUDYVAULT)_MODULE_DRIVE_END -->/g, "")
+    .replace(/<!-- (?:VELQORA|WAHYUSTUDY|STUDYVAULT)_MODULE_DRIVE_START -->[\s\S]*?<!-- (?:VELQORA|WAHYUSTUDY|STUDYVAULT)_MODULE_DRIVE_END -->/g, "")
     .trim();
 
   // Preserve existing comments and reactions if not explicitly overridden

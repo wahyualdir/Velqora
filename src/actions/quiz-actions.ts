@@ -1,5 +1,8 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit, logger } from "@/lib/observability";
+
 export interface QuizQuestion {
   id: string;
   question: string;
@@ -88,7 +91,7 @@ const PRESET_FALLBACK_QUIZZES: Record<string, GenerateQuizResult> = {
           "Dapat menggunakan useState secara bebas",
           "Ukuran bundle JavaScript di browser menjadi lebih kecil",
           "Hanya bisa berjalan di browser smartphone",
-          "Tidak memerlukan HTML sama sekali"
+          "Tidak memerlukan HTML sama sekali",
         ],
         correctAnswer: 1,
         explanation: "Server Components di-render sepenuhnya di server sehingga kode dependency-nya tidak dikirim ke browser client, memperkecil ukuran JS bundle.",
@@ -111,14 +114,38 @@ export async function generateAIQuizAction(
   customContext?: string,
   fileAttachment?: { fileName: string; fileContent: string }
 ): Promise<GenerateQuizResult> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  // Rate Limit check
+  let userId = "guest";
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) userId = user.id;
+  } catch {
+    // Continue with guest rate limit
+  }
+
+  const rateCheck = checkRateLimit(`quiz_gen_${userId}`, 15, 60000);
+  if (!rateCheck.allowed) {
+    logger.warn("QUIZ_GEN_RATE_LIMIT", "Rate limit kuis tercapai", { userId });
+    // Return friendly preset fallback when rate limit hit
+    const normalized = topic.toLowerCase();
+    const fallbackSource = (normalized.includes("react") || normalized.includes("next"))
+      ? PRESET_FALLBACK_QUIZZES.react
+      : PRESET_FALLBACK_QUIZZES.python;
+    return {
+      title: `${fallbackSource.title} (Mode Cadangan)`,
+      questions: fallbackSource.questions.slice(0, Math.min(5, questionCount)),
+    };
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
 
   // Clamp questionCount strictly between 1 and 50
   const safeCount = Math.min(50, Math.max(1, Number(questionCount) || 5));
 
   // Fallback if API key is not configured
   if (!apiKey) {
-    console.warn("GEMINI_API_KEY tidak ditemukan. Menggunakan kuis preset fallback.");
+    logger.info("QUIZ_GEN_FALLBACK", "GEMINI_API_KEY tidak ditemukan. Menggunakan kuis preset fallback.");
     const normalized = topic.toLowerCase();
     const fallbackSource = (normalized.includes("react") || normalized.includes("next"))
       ? PRESET_FALLBACK_QUIZZES.react
@@ -134,19 +161,23 @@ export async function generateAIQuizAction(
     difficulty === "mudah"
       ? "Dasar / Pemula (Easy)"
       : difficulty === "sulit"
-      ? "Lanjutan / Kompleks (Hard)"
-      : "Menengah (Medium)";
+      ? "Lanjutan / Sulit (Advanced / Deep Concepts)"
+      : "Menengah (Intermediate)";
 
   const promptText = `
-Role: Anda adalah Pembuat Kuis Edukasi & Penguji Pemrograman Profesional.
-Tugas: Buatkan ${safeCount} butir soal kuis pilihan ganda interaktif berkualitas tinggi tentang topik: "${topic || "Evaluasi Berkas Materi"}".
-Tingkat Kesulitan: ${difficultyLabel}.
-${customContext ? `Materi Pendukung: "${customContext.slice(0, 1500)}"` : ""}
-${fileAttachment?.fileName && fileAttachment?.fileContent ? `\n[BERKAS UTAMA TERLAMPIR: ${fileAttachment.fileName}]\n\`\`\`\n${fileAttachment.fileContent.slice(0, 8000)}\n\`\`\`\nCatatan Khusus: Buatkan soal kuis yang menguji pemahaman pengguna secara langsung tentang isi berkas di atas!` : ""}
+Anda adalah pembuat soal kuis akademik dan instruktur evaluasi materi pembelajaran di Velqora.
+Buat kuis pilihan ganda berdasarkan topik: "${topic}".
+Tingkat kesulitan: ${difficultyLabel}.
+Jumlah pertanyaan: ${safeCount} butir soal.
 
-PETUNJUK FORMAT MUTLAK:
-- Kembalikan HANYA format JSON valid tanpa teks pengantar atau penutup.
-- Bahasa: Bahasa Indonesia yang jelas, profesional, dan edukatif. Jangan gunakan emoji.
+${customContext ? `Konteks Tambahan Pengguna:\n${customContext}\n` : ""}
+${fileAttachment?.fileName ? `Materi Lampiran (${fileAttachment.fileName}):\n${fileAttachment.fileContent}\n` : ""}
+
+Instruksi Pembuatan Soal:
+- Buat pertanyaan yang menguji pemahaman konsep nyata, bukan hafalan kata per kata.
+- Berikan tepat 4 pilihan jawaban yang masuk akal (A, B, C, D).
+- Berikan indeks jawaban yang benar (0 = A, 1 = B, 2 = C, 3 = D).
+- Berikan penjelasan edukatif yang jelas dan ringkas.
 - Buat tepat ${safeCount} pertanyaan unik dan bervariasi.
 
 Format JSON yang wajib diikuti secara persis:
@@ -184,6 +215,7 @@ Catatan: "correctAnswer" adalah indeks angka 0 (untuk A), 1 (untuk B), 2 (untuk 
               "Content-Type": "application/json",
               "X-goog-api-key": apiKey,
             },
+            signal: AbortSignal.timeout(30000),
             body: JSON.stringify({
               contents: [{ parts: [{ text: promptText }] }],
             }),
@@ -198,20 +230,22 @@ Catatan: "correctAnswer" adalah indeks angka 0 (untuk A), 1 (untuk B), 2 (untuk 
           if (text.startsWith("```json")) {
             text = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
           } else if (text.startsWith("```")) {
-            text = text.replace(/^```\s*/, "").replace(/\s*```$/, "");
+            text = text.replace(/^```\w*\s*/, "").replace(/\s*```$/, "");
           }
 
           const parsed = JSON.parse(text) as GenerateQuizResult;
-
-          if (parsed.questions && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
-            return parsed;
+          if (parsed && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
+            return {
+              title: parsed.title || `Kuis: ${topic}`,
+              questions: parsed.questions.slice(0, safeCount),
+            };
           }
         } else {
           const errText = await response.text();
-          console.warn(`Gemini model ${model} error for Quiz:`, response.status, errText.slice(0, 100));
+          logger.warn("QUIZ_GEN_API_ERROR", `Gemini model ${model} error: ${response.status}`, { errText });
         }
-      } catch (innerErr) {
-        console.warn(`Quiz generation failed with model ${model}:`, innerErr);
+      } catch (err: any) {
+        logger.warn("QUIZ_MODEL_FALLBACK", `Percobaan model ${model} gagal, beralih ke model berikutnya`, { error: err?.message });
       }
     }
 

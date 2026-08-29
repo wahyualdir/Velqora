@@ -1,4 +1,4 @@
-import { AIIntent, AIIntentType, ChatDialogueTurn } from "./types";
+import { AIIntent, ChatDialogueTurn } from "./types";
 
 /**
  * Intelligent Multi-stage Intent & Entity Detector

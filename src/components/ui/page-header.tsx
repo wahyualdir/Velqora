@@ -1,18 +1,17 @@
 import React from "react";
-import { Terminal } from "lucide-react";
 
 export interface PageHeaderProps {
-  /** Small path/category context at the top, e.g. '~/workspace' or '01 / silabus' */
+  /** Clean category/context at the top */
   eyebrow?: React.ReactNode;
   /** Main H1 heading title */
   title: React.ReactNode;
-  /** Conversational, fresh subtitle */
+  /** Conversational, clear subtitle */
   description?: React.ReactNode;
   /** Right-aligned or bottom action buttons/switches */
   actions?: React.ReactNode;
   /** Optional status pill or counter badge next to title/eyebrow */
   badge?: React.ReactNode;
-  /** Optional technical mark string e.g. '< dev />' or '[ 01 ]' */
+  /** Deprecated technical mark prop (kept for backward compatibility, unused) */
   technicalMark?: string;
   /** Whether to show a subtle bottom separator border */
   border?: boolean;
@@ -28,7 +27,6 @@ export function PageHeader({
   description,
   actions,
   badge,
-  technicalMark,
   border = true,
   className = "",
   children,
@@ -41,19 +39,13 @@ export function PageHeader({
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4">
         {/* Left Column: Context Eyebrow + Title + Subtitle */}
-        <div className="space-y-1.5 min-w-0 max-w-2xl">
-          {/* Eyebrow & Technical Marks */}
-          {(eyebrow || technicalMark || badge) && (
-            <div className="flex items-center flex-wrap gap-2 text-[11px] font-mono text-text-tertiary">
+        <div className="space-y-1 min-w-0 max-w-2xl">
+          {/* Context Eyebrow & Badges */}
+          {(eyebrow || badge) && (
+            <div className="flex items-center flex-wrap gap-2 text-xs text-text-tertiary">
               {eyebrow && (
-                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-secondary font-medium tracking-tight">
-                  <Terminal className="w-3 h-3 text-brand-400 shrink-0" />
-                  <span>{eyebrow}</span>
-                </div>
-              )}
-              {technicalMark && (
-                <span className="text-[10px] text-text-tertiary font-mono hidden xs:inline">
-                  {technicalMark}
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-secondary text-text-secondary border border-border/60">
+                  {eyebrow}
                 </span>
               )}
               {badge && <div className="inline-flex items-center">{badge}</div>}
@@ -61,11 +53,11 @@ export function PageHeader({
           )}
 
           {/* Main Title H1 */}
-          <h1 className="text-lg sm:text-2xl md:text-[26px] font-bold text-text-primary tracking-tight font-display flex items-center gap-2 flex-wrap leading-snug">
+          <h1 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight font-display flex items-center gap-2 flex-wrap leading-snug">
             <span>{title}</span>
           </h1>
 
-          {/* Fresh Natural Subtitle */}
+          {/* Subtitle */}
           {description && (
             <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-xl">
               {description}
@@ -86,3 +78,4 @@ export function PageHeader({
     </div>
   );
 }
+

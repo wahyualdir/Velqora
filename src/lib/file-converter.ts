@@ -1175,7 +1175,7 @@ export function convertJsonToCsv(jsonStr: string): string {
       csvRows.push(values.join(","));
     }
     return csvRows.join("\n");
-  } catch (err: any) {
+  } catch {
     throw new Error("JSON tidak valid untuk diubah ke CSV.");
   }
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { Menu, Search, Command, Crown, ArrowLeft } from "lucide-react";
+import { Menu, Search, Command, Crown } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { isAdminUser } from "@/lib/utils";
@@ -12,18 +11,15 @@ import { useTheme } from "next-themes";
 interface NavbarProps {
   onToggleSidebar: () => void;
   searchQuery: string;
-  onSearchChange: (query: string) => void;
+  onSearchChange?: (query: string) => void;
   onOpenCommandPalette?: () => void;
 }
 
 export function Navbar({
   onToggleSidebar,
   searchQuery,
-  onSearchChange,
   onOpenCommandPalette,
 }: NavbarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
   const [isAdmin, setIsAdmin] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { t } = useLanguage();
@@ -34,16 +30,6 @@ export function Navbar({
   }, []);
 
   const isLight = mounted && resolvedTheme === "light";
-
-  const handleExitPage = () => {
-    if (pathname === "/dashboard") {
-      router.push("/");
-    } else if (typeof window !== "undefined" && window.history.length > 2) {
-      router.back();
-    } else {
-      router.push("/dashboard");
-    }
-  };
 
   useEffect(() => {
     async function checkAdminStatus() {
@@ -59,8 +45,6 @@ export function Navbar({
     }
     checkAdminStatus();
   }, []);
-
-  const isSubPage = pathname !== "/dashboard" && pathname !== "/";
 
   return (
     <header
