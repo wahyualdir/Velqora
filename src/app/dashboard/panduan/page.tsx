@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
+import { WhatsAppIcon, InstagramIcon, TikTokIcon } from "@/components/ui/brand-logos";
 
 interface GuideItem {
   id: string;
@@ -634,10 +635,30 @@ export default function PanduanAplikasiPage() {
                 href="https://wa.me/6283162031942?text=Halo%20Admin%20Velqora%2C%20saya%20ingin%20menyampaikan%20kritik%20dan%20saran%20mengenai%20platform%3A%20"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-secondary hover:bg-surface-secondary/80 text-text-primary border border-border transition-all text-center w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-secondary hover:bg-surface-secondary/80 text-text-primary border border-border hover:border-emerald-500/40 hover:text-emerald-400 transition-all text-center w-full sm:w-auto"
               >
-                <MessageCircle className="w-4 h-4 shrink-0 text-emerald-500" />
-                <span>Kirim via WhatsApp</span>
+                <WhatsAppIcon className="w-4 h-4 shrink-0 text-emerald-500" />
+                <span>WhatsApp</span>
+              </a>
+
+              <a
+                href="https://instagram.com/velqora"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-secondary hover:bg-surface-secondary/80 text-text-primary border border-border hover:border-pink-500/40 hover:text-pink-400 transition-all text-center w-full sm:w-auto"
+              >
+                <InstagramIcon className="w-4 h-4 shrink-0 text-pink-500" />
+                <span>Instagram</span>
+              </a>
+
+              <a
+                href="https://tiktok.com/@velqora"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-secondary hover:bg-surface-secondary/80 text-text-primary border border-border hover:border-cyan-500/40 hover:text-cyan-400 transition-all text-center w-full sm:w-auto"
+              >
+                <TikTokIcon className="w-4 h-4 shrink-0 text-cyan-400" />
+                <span>TikTok</span>
               </a>
             </div>
           </div>

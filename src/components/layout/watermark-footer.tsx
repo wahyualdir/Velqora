@@ -26,6 +26,32 @@ function GitHubIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.04 20.15C10.56 20.15 9.12 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.07 7.68C8.91 7.68 8.65 7.74 8.43 7.98C8.21 8.22 7.6 8.79 7.6 9.94C7.6 11.09 8.44 12.2 8.56 12.36C8.68 12.52 10.18 14.83 12.5 15.83C13.05 16.07 13.48 16.21 13.81 16.32C14.36 16.49 14.86 16.47 15.26 16.41C15.7 16.34 16.62 15.85 16.81 15.31C17 14.77 17 14.31 16.94 14.21C16.88 14.11 16.72 14.05 16.48 13.93C16.24 13.81 15.06 13.23 14.84 13.15C14.62 13.07 14.46 13.03 14.3 13.27C14.14 13.51 13.68 14.05 13.54 14.21C13.4 14.37 13.26 14.39 13.02 14.27C12.78 14.15 12.01 13.9 11.09 13.08C10.37 12.44 9.88 11.65 9.74 11.41C9.6 11.17 9.73 11.04 9.85 10.92C9.96 10.81 10.1 10.63 10.22 10.49C10.34 10.35 10.38 10.25 10.46 10.09C10.54 9.93 10.5 9.79 10.44 9.67C10.38 9.55 9.92 8.42 9.73 7.95C9.54 7.49 9.35 7.55 9.21 7.54C9.08 7.54 8.92 7.54 8.76 7.54" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.46 6.27 6.27 0 0 0 1.84-4.46V8.75a8.28 8.28 0 0 0 4.93 1.6V6.9a4.83 4.83 0 0 1-1-.21z" />
+    </svg>
+  );
+}
+
 /* ============================================================
    VELQORA BRAND HEADER (DASHBOARD ONLY)
    ============================================================ */
@@ -105,9 +131,28 @@ export function DashboardFooter({ className = "" }: { className?: string }) {
 
   const socialLinks = [
     {
+      name: "WhatsApp",
+      href: "https://wa.me/6283162031942?text=Halo%20Admin%20Velqora%2C%20saya%20ingin%20bertanya%20seputar%20platform%3A%20",
+      icon: WhatsAppIcon,
+      hoverClass: "hover:text-emerald-500 hover:border-emerald-500/40",
+    },
+    {
+      name: "Instagram",
+      href: "https://instagram.com/velqora",
+      icon: InstagramIcon,
+      hoverClass: "hover:text-pink-500 hover:border-pink-500/40",
+    },
+    {
+      name: "TikTok",
+      href: "https://tiktok.com/@velqora",
+      icon: TikTokIcon,
+      hoverClass: "hover:text-cyan-400 hover:border-cyan-400/40",
+    },
+    {
       name: "GitHub Repository",
       href: "https://github.com/wahyualdir/Velqora",
       icon: GitHubIcon,
+      hoverClass: "hover:text-text-primary hover:border-brand-500/40",
     },
   ];
 
@@ -148,7 +193,7 @@ export function DashboardFooter({ className = "" }: { className?: string }) {
                     rel="noopener noreferrer"
                     aria-label={`Kunjungi ${item.name} Velqora`}
                     title={item.name}
-                    className="w-8 h-8 rounded-lg bg-surface border border-border text-text-secondary hover:text-text-primary hover:border-brand-500/40 hover:bg-surface-secondary flex items-center justify-center transition-all duration-150 active:scale-95 shadow-2xs focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-500"
+                    className={`w-8 h-8 rounded-lg bg-surface border border-border text-text-secondary hover:text-text-primary hover:bg-surface-secondary flex items-center justify-center transition-all duration-150 active:scale-95 shadow-2xs focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 ${item.hoverClass || "hover:border-brand-500/40"}`}
                   >
                     <IconComponent className="w-3.5 h-3.5" />
                   </a>
