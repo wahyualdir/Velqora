@@ -296,3 +296,157 @@ export interface ImportUpdateModeResult {
   errors: string[];
 }
 
+// ==========================================
+// FASE 32: PERSONALIZED ASSISTANT & CONTINUOUS OPTIMIZATION
+// ==========================================
+
+export type PlanningStyle =
+  | "BALANCED"
+  | "DEADLINE_FOCUSED"
+  | "LIGHT_DAILY"
+  | "INTENSIVE_WEEKEND";
+
+export interface UserSchedulePreference {
+  userId?: string;
+  preferredStudyStartTime: string; // e.g. "19:00"
+  preferredStudyEndTime: string; // e.g. "21:30"
+  preferredSessionDuration: number; // minutes (default: 60, min 30, max 120)
+  preferredDays: ScheduleDay[]; // default: ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"]
+  preferredBreakDuration: number; // minutes (default: 30, min 15, max 60)
+  maximumDailyStudyMinutes: number; // minutes (default: 240, max 360)
+  planningStyle: PlanningStyle;
+  updatedAt?: string;
+}
+
+export interface ScheduleBehaviorSignal {
+  userId: string;
+  preferredTimeWindow: "PAGI" | "SIANG" | "SORE" | "MALAM";
+  averageCompletedDurationMinutes: number;
+  mostActiveDays: ScheduleDay[];
+  movedSessionsCount: number;
+  cancelledSessionsCount: number;
+  skippedTimeSlots: string[];
+  lastEvaluatedAt: string;
+}
+
+export type RealismIssueType =
+  | "HIGH_DAILY_DENSITY"
+  | "EXCESSIVE_CONSECUTIVE_SESSIONS"
+  | "INSUFFICIENT_RECOVERY"
+  | "UNREALISTIC_STUDY_TARGET";
+
+export interface ScheduleRealismIssue {
+  type: RealismIssueType;
+  day: ScheduleDay;
+  severity: "INFO" | "WARNING" | "CRITICAL";
+  title: string;
+  description: string;
+  affectedSessions: string[];
+  recommendation: string;
+}
+
+export interface ScheduleRealismReport {
+  overallRealismScore: number; // 0 - 100
+  status: "REALISTIS" | "CUKUP_PADAT" | "KURANG_REALISTIS";
+  issues: ScheduleRealismIssue[];
+  summary: string;
+}
+
+export interface WeeklyOptimizationProposal {
+  sessionId?: string;
+  sessionTitle: string;
+  fromDay: ScheduleDay;
+  fromTime: string;
+  toDay: ScheduleDay;
+  toTime: string;
+  durationMinutes: number;
+  reason: string;
+  selected: boolean;
+}
+
+export interface WeeklyOptimizationResult {
+  currentWorkload: WorkloadSummary;
+  optimizedWorkload: WorkloadSummary;
+  proposals: WeeklyOptimizationProposal[];
+  movedSessionsCount: number;
+  unchangedSessionsCount: number;
+  suggestedSessionsCount: number;
+  deadlineCoverageRate: number; // 0.0 - 1.0 (100%)
+  conflictsCount: number;
+  improvementScore: number; // 0 - 100
+  summary: string;
+}
+
+export interface MissedSessionRecoveryOption {
+  optionId: "TODAY" | "TOMORROW" | "SPLIT" | "CUSTOM";
+  title: string;
+  description: string;
+  day: ScheduleDay;
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+  splitSessions?: Array<{
+    day: ScheduleDay;
+    startTime: string;
+    endTime: string;
+    durationMinutes: number;
+  }>;
+  qualityScore: number; // 0 - 100
+  isRecommended: boolean;
+}
+
+export interface MissedSessionRecoveryReport {
+  session: ScheduleItem;
+  missedDay: ScheduleDay;
+  missedTime: string;
+  hasSafeRecoverySlot: boolean;
+  options: MissedSessionRecoveryOption[];
+  explanation: string;
+}
+
+export interface DeadlineCoverageReport {
+  status: "SUFFICIENT_TIME" | "INSUFFICIENT_TIME" | "OVERDUE";
+  taskTitle: string;
+  deadline: string;
+  daysRemaining: number;
+  hoursNeeded: number;
+  hoursAvailable: number;
+  gapMinutes: number;
+  riskLevel: "RENDAH" | "SEDANG" | "TINGGI" | "KRITIS";
+  suggestedSplits: Array<{
+    day: ScheduleDay;
+    startTime: string;
+    endTime: string;
+    durationMinutes: number;
+  }>;
+  summary: string;
+}
+
+export interface WorkloadFactorBreakdown {
+  label: string;
+  hours: number;
+  minutes: number;
+  description: string;
+}
+
+export interface WorkloadExplanation {
+  day: ScheduleDay;
+  level: WorkloadLevel;
+  totalHours: number;
+  lectureHours: number;
+  studyHours: number;
+  urgentTasksCount: number;
+  factors: WorkloadFactorBreakdown[];
+  narrativeExplanation: string;
+}
+
+export interface RankedRecommendation {
+  rank: number;
+  recommendation: ScheduleRecommendation;
+  qualityScore: number;
+  matchReasons: string[];
+  workloadImpact: WorkloadLevel;
+  deadlineImpact: string;
+}
+
+

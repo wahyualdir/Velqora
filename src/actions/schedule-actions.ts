@@ -31,6 +31,14 @@ import {
   diffScheduleCollections,
   planSmartReschedule,
   generateAdaptiveDailyPlan,
+  sanitizeSchedulePreferences,
+  extractBehaviorSignals,
+  analyzeScheduleRealism,
+  explainDayWorkload,
+  analyzeDeadlineCoverage,
+  planMissedSessionRecovery,
+  optimizeWeeklySchedule,
+  rankScheduleRecommendations,
   DailyPlanRequest,
   DailyPlanResult,
   WeeklyPlanRequest,
@@ -45,6 +53,12 @@ import {
   RescheduleImpactReport,
   ImportUpdateModePayload,
   ImportUpdateModeResult,
+  UserSchedulePreference,
+  ScheduleRealismReport,
+  WeeklyOptimizationResult,
+  WeeklyOptimizationProposal,
+  MissedSessionRecoveryReport,
+  WorkloadExplanation,
 } from "@/lib/schedule-intelligence";
 
 // ==========================================
@@ -1116,6 +1130,280 @@ export async function importScheduleWithUpdateModeAction(
     };
   }
 }
+
+// ==========================================
+// 9. FASE 32: PERSONALIZED ASSISTANT & OPTIMIZATION ACTIONS
+// ==========================================
+
+/**
+ * In-memory / Safe User Preferences Store fallback with RLS authentication
+ */
+let userPreferencesMemoryStore = new Map<string, UserSchedulePreference>();
+
+export async function getUserSchedulePreferencesAction(): Promise<{
+  success: boolean;
+  preferences: UserSchedulePreference;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const userId = user?.id || "guest";
+    const stored = userPreferencesMemoryStore.get(userId);
+    const sanitized = sanitizeSchedulePreferences(stored);
+    return { success: true, preferences: sanitized };
+  } catch (err: any) {
+    return { success: true, preferences: sanitizeSchedulePreferences(null) };
+  }
+}
+
+export async function saveUserSchedulePreferencesAction(
+  prefs: Partial<UserSchedulePreference>
+): Promise<{
+  success: boolean;
+  preferences: UserSchedulePreference;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_save_prefs");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, preferences: sanitizeSchedulePreferences(null), error: "Silakan login terlebih dahulu." };
+    }
+
+    const sanitized = sanitizeSchedulePreferences({ ...prefs, userId: user.id });
+    userPreferencesMemoryStore.set(user.id, sanitized);
+
+    revalidatePath("/dashboard/jadwal");
+    return { success: true, preferences: sanitized };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "saveUserSchedulePreferencesAction error:", err, undefined, correlationId);
+    return {
+      success: false,
+      preferences: sanitizeSchedulePreferences(null),
+      error: err.message || "Gagal menyimpan preferensi jadwal.",
+    };
+  }
+}
+
+export async function getWeeklyOptimizationProposalAction(): Promise<{
+  success: boolean;
+  result?: WeeklyOptimizationResult;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_opt_week");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const schedules = await getUserSchedules();
+    const prefsRes = await getUserSchedulePreferencesAction();
+
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+
+    if (tasksData) {
+      tasks = tasksData as Task[];
+    }
+
+    const result = optimizeWeeklySchedule(schedules, {
+      preference: prefsRes.preferences,
+      tasks,
+    });
+
+    return { success: true, result };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "getWeeklyOptimizationProposalAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal menyusun optimasi mingguan." };
+  }
+}
+
+export async function applyWeeklyOptimizationAction(
+  proposals: WeeklyOptimizationProposal[]
+): Promise<{
+  success: boolean;
+  appliedCount: number;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_apply_opt");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, appliedCount: 0, error: "Silakan login terlebih dahulu." };
+    }
+
+    let appliedCount = 0;
+    for (const p of proposals) {
+      if (p.selected && p.sessionId) {
+        const timeParts = p.toTime.split("-");
+        const sStart = timeParts[0]?.trim() || "";
+        const sEnd = timeParts[1]?.trim() || "";
+
+        const { error: upErr } = await supabase
+          .from("schedules")
+          .update({
+            day: p.toDay,
+            start_time: sStart,
+            end_time: sEnd,
+            time: p.toTime,
+          })
+          .eq("id", p.sessionId)
+          .eq("user_id", user.id);
+
+        if (!upErr) appliedCount++;
+      }
+    }
+
+    revalidatePath("/dashboard/jadwal");
+    return { success: true, appliedCount };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "applyWeeklyOptimizationAction error:", err, undefined, correlationId);
+    return { success: false, appliedCount: 0, error: err.message || "Gagal menerapkan optimasi." };
+  }
+}
+
+export async function getMissedSessionRecoveryAction(
+  sessionId: string
+): Promise<{
+  success: boolean;
+  report?: MissedSessionRecoveryReport;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_missed_rec");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const schedules = await getUserSchedules();
+    const targetSession = schedules.find((s) => s.id === sessionId);
+
+    if (!targetSession) {
+      return { success: false, error: "Sesi belajar tidak ditemukan." };
+    }
+
+    const report = planMissedSessionRecovery(targetSession, schedules, "Senin");
+    return { success: true, report };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "getMissedSessionRecoveryAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal mencari pemulihan sesi terlewat." };
+  }
+}
+
+export async function applyMissedSessionRecoveryAction(payload: {
+  sessionId: string;
+  targetDay: any;
+  startTime: string;
+  endTime: string;
+}): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_apply_missed");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const { error: upErr } = await supabase
+      .from("schedules")
+      .update({
+        day: payload.targetDay,
+        start_time: payload.startTime,
+        end_time: payload.endTime,
+        time: `${payload.startTime} - ${payload.endTime}`,
+      })
+      .eq("id", payload.sessionId)
+      .eq("user_id", user.id);
+
+    if (upErr) {
+      return { success: false, error: upErr.message || "Gagal memulihkan sesi." };
+    }
+
+    revalidatePath("/dashboard/jadwal");
+    return { success: true };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "applyMissedSessionRecoveryAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal memulihkan sesi belajar." };
+  }
+}
+
+export async function getWorkloadExplanationAction(
+  day: any
+): Promise<{
+  success: boolean;
+  explanation?: WorkloadExplanation;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const schedules = await getUserSchedules();
+    let tasks: Task[] = [];
+
+    if (user) {
+      const { data: tasksData } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", user.id)
+        .neq("status", "selesai");
+      if (tasksData) tasks = tasksData as Task[];
+    }
+
+    const explanation = explainDayWorkload(day, schedules, tasks);
+    return { success: true, explanation };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal memuat penjelasan beban." };
+  }
+}
+
+export async function getScheduleRealismReportAction(): Promise<{
+  success: boolean;
+  report?: ScheduleRealismReport;
+  error?: string;
+}> {
+  try {
+    const schedules = await getUserSchedules();
+    const report = analyzeScheduleRealism(schedules);
+    return { success: true, report };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal menganalisis realisme jadwal." };
+  }
+}
+
 
 
 

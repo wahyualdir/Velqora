@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Sparkles,
   Clock,
@@ -12,6 +11,9 @@ import {
   CalendarCheck,
   ChevronRight,
   Info,
+  Sliders,
+  Scale,
+  ShieldAlert,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,9 @@ interface ScheduleIntelligenceSummaryProps {
   selectedDay: string;
   onOpenDailyPlan: () => void;
   onOpenWeeklyPlan: () => void;
+  onOpenPreferences?: () => void;
+  onOpenOptimization?: () => void;
+  onOpenRealism?: () => void;
   onSelectDayFilter?: (day: string) => void;
 }
 
@@ -41,6 +46,9 @@ export function ScheduleIntelligenceSummary({
   selectedDay,
   onOpenDailyPlan,
   onOpenWeeklyPlan,
+  onOpenPreferences,
+  onOpenOptimization,
+  onOpenRealism,
 }: ScheduleIntelligenceSummaryProps) {
   if (!context) {
     return null;
@@ -55,41 +63,66 @@ export function ScheduleIntelligenceSummary({
 
   return (
     <section className="rounded-2xl border border-border/80 bg-surface/70 backdrop-blur-md p-4 sm:p-5 space-y-4 shadow-2xs">
-      {/* Header with Title & Quick Plan Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/60">
+      {/* Header with Title & Action Buttons */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-border/60">
         <div className="space-y-0.5">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-text-primary">
               <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-              <span>Analisis Jadwal Akademik Cerdas</span>
+              <span>Asisten Jadwal & Optimasi Cerdas</span>
             </span>
             <Badge variant={levelInfo.badgeVariant} size="sm" isMono>
               {levelInfo.label} ({dayBreakdown.totalHours} Jam)
             </Badge>
           </div>
           <p className="text-[11px] text-text-tertiary">
-            Analisis beban perkuliahan, jeda istirahat bebas bentrok, dan tenggat tugas aktif.
+            Analisis beban harian, jeda istirahat bebas bentrok, gaya belajar, dan optimasi mingguan.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap shrink-0">
+          {onOpenPreferences && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onOpenPreferences}
+              className="gap-1.5 text-xs text-text-secondary hover:text-text-primary h-8 px-2.5"
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>Preferensi</span>
+            </Button>
+          )}
+
+          {onOpenOptimization && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onOpenOptimization}
+              className="gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 border-purple-500/30 hover:bg-purple-500/10 h-8 px-2.5 shadow-2xs"
+            >
+              <Scale className="w-3.5 h-3.5" />
+              <span>Optimasi Mingguan</span>
+            </Button>
+          )}
+
           <Button
             size="sm"
             variant="outline"
             onClick={onOpenDailyPlan}
-            className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10 shadow-2xs"
+            className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10 h-8 px-2.5 shadow-2xs"
           >
             <CalendarCheck className="w-3.5 h-3.5" />
-            <span>Susun Hari Saya</span>
+            <span>Susun Hari</span>
           </Button>
+
           <Button
             size="sm"
             variant="outline"
             onClick={onOpenWeeklyPlan}
-            className="gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10 shadow-2xs"
+            className="gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10 h-8 px-2.5 shadow-2xs"
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>Susun Minggu Saya</span>
+            <span>Susun Minggu</span>
           </Button>
         </div>
       </div>

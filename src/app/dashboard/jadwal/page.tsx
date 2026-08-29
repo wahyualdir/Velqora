@@ -23,6 +23,8 @@ import { ScheduleImportModal } from "@/components/schedule/schedule-import-modal
 import { ScheduleGeneratorModal } from "@/components/schedule/schedule-generator-modal";
 import { DailyPlanModal } from "@/components/schedule/daily-plan-modal";
 import { WeeklyPlanModal } from "@/components/schedule/weekly-plan-modal";
+import { SchedulePreferencesModal } from "@/components/schedule/schedule-preferences-modal";
+import { WeeklyOptimizationModal } from "@/components/schedule/weekly-optimization-modal";
 import { ScheduleIntelligenceSummary } from "@/components/schedule/schedule-intelligence-summary";
 import { ScheduleImportHistoryModal } from "@/components/schedule/schedule-import-history-modal";
 import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
@@ -37,8 +39,9 @@ import {
   updateScheduleItemAction,
   deleteScheduleItemAction,
   getScheduleIntelligenceContextAction,
+  getWeeklyOptimizationProposalAction,
 } from "@/actions/schedule-actions";
-import { ScheduleIntelligenceContext } from "@/lib/schedule-intelligence/types";
+import { ScheduleIntelligenceContext, WeeklyOptimizationResult } from "@/lib/schedule-intelligence/types";
 import { ScheduleItem, Task } from "@/types";
 import { ScheduleImportHistoryItem } from "@/types/schedule";
 import { toast } from "sonner";
@@ -66,6 +69,9 @@ function JadwalContent() {
   const [showGeneratorModal, setShowGeneratorModal] = useState(false);
   const [showDailyPlanModal, setShowDailyPlanModal] = useState(false);
   const [showWeeklyPlanModal, setShowWeeklyPlanModal] = useState(false);
+  const [showPreferencesModal, setShowPreferencesModal] = useState(false);
+  const [showOptimizationModal, setShowOptimizationModal] = useState(false);
+  const [optimizationResult, setOptimizationResult] = useState<WeeklyOptimizationResult | null>(null);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [importHistory, setImportHistory] = useState<ScheduleImportHistoryItem[]>([]);
   const [showClassroomModal, setShowClassroomModal] = useState(false);
@@ -77,6 +83,20 @@ function JadwalContent() {
     assignments: [],
     autoSync: true,
   });
+
+  const handleOpenOptimization = async () => {
+    try {
+      const res = await getWeeklyOptimizationProposalAction();
+      if (res.success && res.result) {
+        setOptimizationResult(res.result);
+        setShowOptimizationModal(true);
+      } else {
+        toast.error(res.error || "Gagal memuat usulan optimasi mingguan.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Terjadi kesalahan saat memuat optimasi.");
+    }
+  };
 
   // Load Schedule data & Intelligence Context from Database
   const loadScheduleData = useCallback(async () => {
@@ -256,12 +276,14 @@ function JadwalContent() {
         isClassroomConnected={classroomState.isConnected}
       />
 
-      {/* ─── 2. Intelligence Summary & Workload Overview (FASE 30) ─── */}
+      {/* ─── 2. Intelligence Summary & Workload Overview (FASE 30-32) ─── */}
       <ScheduleIntelligenceSummary
         context={intelligenceContext}
         selectedDay={selectedDay}
         onOpenDailyPlan={() => setShowDailyPlanModal(true)}
         onOpenWeeklyPlan={() => setShowWeeklyPlanModal(true)}
+        onOpenPreferences={() => setShowPreferencesModal(true)}
+        onOpenOptimization={handleOpenOptimization}
       />
 
       {/* ─── Error Alert ─── */}
@@ -423,6 +445,29 @@ function JadwalContent() {
           isOpen={showWeeklyPlanModal}
           onClose={() => setShowWeeklyPlanModal(false)}
           onSuccess={handleImportSuccess}
+        />
+      )}
+
+      {/* ─── Schedule Preferences Modal (FASE 32) ─── */}
+      {showPreferencesModal && (
+        <SchedulePreferencesModal
+          isOpen={showPreferencesModal}
+          onClose={() => setShowPreferencesModal(false)}
+          onSaved={() => {
+            loadScheduleData();
+          }}
+        />
+      )}
+
+      {/* ─── Weekly Optimization Modal (FASE 32) ─── */}
+      {showOptimizationModal && (
+        <WeeklyOptimizationModal
+          isOpen={showOptimizationModal}
+          onClose={() => setShowOptimizationModal(false)}
+          optimizationResult={optimizationResult}
+          onSuccess={() => {
+            loadScheduleData();
+          }}
         />
       )}
 
