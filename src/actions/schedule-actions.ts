@@ -21,6 +21,21 @@ import {
   generateCorrelationId,
   logger,
 } from "@/lib/observability";
+import {
+  buildScheduleIntelligenceContext,
+  generateDailyPlan,
+  generateWeeklyPlan,
+  detectRescheduleImpact,
+  persistApprovedRecommendations,
+  DailyPlanRequest,
+  DailyPlanResult,
+  WeeklyPlanRequest,
+  WeeklyPlanResult,
+  RescheduleImpact,
+  ScheduleIntelligenceContext,
+  ScheduleRecommendation,
+  PersistenceResult,
+} from "@/lib/schedule-intelligence";
 
 // ==========================================
 // 1. GET USER SCHEDULES (Authenticated & Isolated)
@@ -553,4 +568,213 @@ export async function importScheduleAction(
     };
   }
 }
+
+// ==========================================
+// 7. SCHEDULE INTELLIGENCE SERVER ACTIONS (FASE 30)
+// ==========================================
+
+/**
+ * Fetches user's academic intelligence context (workload, deadlines, free slots)
+ */
+export async function getScheduleIntelligenceContextAction(): Promise<{
+  success: boolean;
+  context?: ScheduleIntelligenceContext;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_intel_ctx");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const schedules = await getUserSchedules();
+
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+
+    if (tasksData) {
+      tasks = tasksData as Task[];
+    }
+
+    const context = buildScheduleIntelligenceContext(user.id, schedules, tasks);
+    return { success: true, context };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "getScheduleIntelligenceContextAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal memuat analisis jadwal cerdas." };
+  }
+}
+
+/**
+ * Generates Smart Daily Study Plan ("Susun Hari Saya")
+ */
+export async function generateDailyPlanAction(
+  request: DailyPlanRequest
+): Promise<DailyPlanResult> {
+  const correlationId = generateCorrelationId("act_daily_plan");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return {
+        success: false,
+        date: request.date,
+        day: request.day || "Senin",
+        totalMinutesPlanned: 0,
+        totalHoursPlanned: 0,
+        targetMet: false,
+        recommendedSessions: [],
+        freeSlotsRemaining: [],
+        workloadStatus: "RINGAN",
+        warnings: [],
+        error: "Silakan login terlebih dahulu.",
+      };
+    }
+
+    const schedules = await getUserSchedules();
+
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+
+    if (tasksData) {
+      tasks = tasksData as Task[];
+    }
+
+    return generateDailyPlan(request, schedules, tasks);
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "generateDailyPlanAction error:", err, undefined, correlationId);
+    return {
+      success: false,
+      date: request.date,
+      day: request.day || "Senin",
+      totalMinutesPlanned: 0,
+      totalHoursPlanned: 0,
+      targetMet: false,
+      recommendedSessions: [],
+      freeSlotsRemaining: [],
+      workloadStatus: "RINGAN",
+      warnings: [],
+      error: err.message || "Gagal menyusun rencana harian.",
+    };
+  }
+}
+
+/**
+ * Generates Smart Weekly Study Plan ("Susun Minggu Saya")
+ */
+export async function generateWeeklyPlanAction(
+  request: WeeklyPlanRequest
+): Promise<WeeklyPlanResult> {
+  const correlationId = generateCorrelationId("act_weekly_plan");
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return {
+        success: false,
+        totalWeeklyMinutesPlanned: 0,
+        totalWeeklyHoursPlanned: 0,
+        recommendedSessionsCount: 0,
+        sessions: [],
+        dailyBreakdown: {
+          Senin: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+          Selasa: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+          Rabu: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+          Kamis: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+          Jumat: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+          Sabtu: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+          Minggu: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        },
+        overloadedDays: [],
+        warnings: [],
+        error: "Silakan login terlebih dahulu.",
+      };
+    }
+
+    const schedules = await getUserSchedules();
+
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+
+    if (tasksData) {
+      tasks = tasksData as Task[];
+    }
+
+    return generateWeeklyPlan(request, schedules, tasks);
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "generateWeeklyPlanAction error:", err, undefined, correlationId);
+    return {
+      success: false,
+      totalWeeklyMinutesPlanned: 0,
+      totalWeeklyHoursPlanned: 0,
+      recommendedSessionsCount: 0,
+      sessions: [],
+      dailyBreakdown: {
+        Senin: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        Selasa: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        Rabu: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        Kamis: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        Jumat: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        Sabtu: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+        Minggu: { sessions: [], totalMinutes: 0, level: "RINGAN" },
+      },
+      overloadedDays: [],
+      warnings: [],
+      error: err.message || "Gagal menyusun rencana mingguan.",
+    };
+  }
+}
+
+/**
+ * Detects rescheduling impact when an event moves
+ */
+export async function detectRescheduleImpactAction(
+  changedEvent: {
+    id?: string;
+    title: string;
+    day: any;
+    newStartTime: string;
+    newEndTime: string;
+  }
+): Promise<RescheduleImpact> {
+  const schedules = await getUserSchedules();
+  return detectRescheduleImpact(changedEvent, schedules, []);
+}
+
+/**
+ * Confirms and persists approved recommendations atomically with revalidation
+ */
+export async function confirmScheduleRecommendationsAction(
+  recommendations: ScheduleRecommendation[]
+): Promise<PersistenceResult> {
+  const correlationId = generateCorrelationId("act_rec_confirm");
+  const res = await persistApprovedRecommendations(recommendations, correlationId);
+  if (res.success) {
+    revalidatePath("/dashboard/jadwal");
+  }
+  return res;
+}
+
 

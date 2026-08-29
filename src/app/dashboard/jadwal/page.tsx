@@ -8,6 +8,8 @@ import {
   RefreshCw,
   Sparkles,
   UploadCloud,
+  CalendarCheck,
+  CalendarDays,
 } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,9 @@ import { ScheduleListItem } from "@/components/schedule/schedule-list-item";
 import { ScheduleFormModal } from "@/components/schedule/schedule-form-modal";
 import { ScheduleImportModal } from "@/components/schedule/schedule-import-modal";
 import { ScheduleGeneratorModal } from "@/components/schedule/schedule-generator-modal";
+import { DailyPlanModal } from "@/components/schedule/daily-plan-modal";
+import { WeeklyPlanModal } from "@/components/schedule/weekly-plan-modal";
+import { ScheduleIntelligenceSummary } from "@/components/schedule/schedule-intelligence-summary";
 import { ScheduleImportHistoryModal } from "@/components/schedule/schedule-import-history-modal";
 import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
 import { getActiveUserIdentifier } from "@/lib/bookmark-service";
@@ -31,8 +36,10 @@ import {
   createScheduleItemAction,
   updateScheduleItemAction,
   deleteScheduleItemAction,
+  getScheduleIntelligenceContextAction,
 } from "@/actions/schedule-actions";
-import { ScheduleItem } from "@/types";
+import { ScheduleIntelligenceContext } from "@/lib/schedule-intelligence/types";
+import { ScheduleItem, Task } from "@/types";
 import { ScheduleImportHistoryItem } from "@/types/schedule";
 import { toast } from "sonner";
 
@@ -43,6 +50,8 @@ function getScheduleStorageKey(): string {
 
 function JadwalContent() {
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [intelligenceContext, setIntelligenceContext] = useState<ScheduleIntelligenceContext | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,6 +64,8 @@ function JadwalContent() {
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showGeneratorModal, setShowGeneratorModal] = useState(false);
+  const [showDailyPlanModal, setShowDailyPlanModal] = useState(false);
+  const [showWeeklyPlanModal, setShowWeeklyPlanModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [importHistory, setImportHistory] = useState<ScheduleImportHistoryItem[]>([]);
   const [showClassroomModal, setShowClassroomModal] = useState(false);
@@ -67,7 +78,7 @@ function JadwalContent() {
     autoSync: true,
   });
 
-  // Load Schedule data from Database (with local cache fallback)
+  // Load Schedule data & Intelligence Context from Database
   const loadScheduleData = useCallback(async () => {
     try {
       setLoading(true);
@@ -101,7 +112,18 @@ function JadwalContent() {
         setScheduleItems([]);
       }
 
-      // 3. Load Import History
+      // 3. Fetch Intelligence Context (Workload, Deadlines, Free slots)
+      try {
+        const intelRes = await getScheduleIntelligenceContextAction();
+        if (intelRes.success && intelRes.context) {
+          setIntelligenceContext(intelRes.context);
+          setTasks(intelRes.context.tasks || []);
+        }
+      } catch (intelErr) {
+        console.warn("Could not fetch intelligence context:", intelErr);
+      }
+
+      // 4. Load Import History
       try {
         const histRaw = localStorage.getItem("velqora_schedule_import_history");
         if (histRaw) {
@@ -155,9 +177,10 @@ function JadwalContent() {
     }
     setEditingItem(null);
     setShowAddModal(false);
+    loadScheduleData();
   };
 
-  // Callback on successful import
+  // Callback on successful import or auto plan
   const handleImportSuccess = (imported: ScheduleItem[]) => {
     const combined = [...imported, ...scheduleItems];
     persistSchedule(combined);
@@ -183,6 +206,7 @@ function JadwalContent() {
     deleteScheduleItemAction(id).catch((e) =>
       console.error("Server delete failed:", e)
     );
+    loadScheduleData();
   };
 
   // Toggle Item Completion
@@ -225,9 +249,19 @@ function JadwalContent() {
         }}
         onOpenImportModal={() => setShowImportModal(true)}
         onOpenGeneratorModal={() => setShowGeneratorModal(true)}
+        onOpenDailyPlan={() => setShowDailyPlanModal(true)}
+        onOpenWeeklyPlan={() => setShowWeeklyPlanModal(true)}
         onOpenHistoryModal={() => setShowHistoryModal(true)}
         onOpenClassroom={() => setShowClassroomModal(true)}
         isClassroomConnected={classroomState.isConnected}
+      />
+
+      {/* ─── 2. Intelligence Summary & Workload Overview (FASE 30) ─── */}
+      <ScheduleIntelligenceSummary
+        context={intelligenceContext}
+        selectedDay={selectedDay}
+        onOpenDailyPlan={() => setShowDailyPlanModal(true)}
+        onOpenWeeklyPlan={() => setShowWeeklyPlanModal(true)}
       />
 
       {/* ─── Error Alert ─── */}
@@ -249,7 +283,7 @@ function JadwalContent() {
         </div>
       )}
 
-      {/* ─── 2. Day & Type Navigation ─── */}
+      {/* ─── 3. Day & Type Navigation ─── */}
       <ScheduleNavigation
         selectedDay={selectedDay}
         onSelectDay={setSelectedDay}
@@ -257,7 +291,7 @@ function JadwalContent() {
         onSelectType={setSelectedType}
       />
 
-      {/* ─── 3. Schedule Content List ─── */}
+      {/* ─── 4. Schedule Content List ─── */}
       <section className="space-y-3">
         <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
           <span>
@@ -287,7 +321,7 @@ function JadwalContent() {
             title="Belum ada agenda"
             description={
               selectedDay === "Semua"
-                ? "Belum ada kegiatan yang dijadwalkan. Import berkas jadwal perkuliahan atau susun jadwal otomatis."
+                ? "Belum ada kegiatan yang dijadwalkan. Import berkas jadwal perkuliahan atau susun rencana belajar harian."
                 : `Tidak ada jadwal kegiatan untuk hari ${selectedDay}.`
             }
             action={
@@ -295,20 +329,29 @@ function JadwalContent() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setShowImportModal(true)}
+                  onClick={() => setShowDailyPlanModal(true)}
                   className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10"
                 >
-                  <UploadCloud className="w-3.5 h-3.5" />
-                  <span>Import Dokumen</span>
+                  <CalendarCheck className="w-3.5 h-3.5" />
+                  <span>Susun Hari Saya</span>
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setShowGeneratorModal(true)}
+                  onClick={() => setShowWeeklyPlanModal(true)}
                   className="gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Susun Otomatis</span>
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  <span>Susun Minggu Saya</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowImportModal(true)}
+                  className="gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/10"
+                >
+                  <UploadCloud className="w-3.5 h-3.5" />
+                  <span>Import Dokumen</span>
                 </Button>
                 <Button
                   size="sm"
@@ -360,6 +403,25 @@ function JadwalContent() {
         <ScheduleImportModal
           isOpen={showImportModal}
           onClose={() => setShowImportModal(false)}
+          onSuccess={handleImportSuccess}
+        />
+      )}
+
+      {/* ─── Daily Plan Modal ("Susun Hari Saya" FASE 30) ─── */}
+      {showDailyPlanModal && (
+        <DailyPlanModal
+          isOpen={showDailyPlanModal}
+          onClose={() => setShowDailyPlanModal(false)}
+          tasks={tasks}
+          onSuccess={handleImportSuccess}
+        />
+      )}
+
+      {/* ─── Weekly Plan Modal ("Susun Minggu Saya" FASE 30) ─── */}
+      {showWeeklyPlanModal && (
+        <WeeklyPlanModal
+          isOpen={showWeeklyPlanModal}
+          onClose={() => setShowWeeklyPlanModal(false)}
           onSuccess={handleImportSuccess}
         />
       )}

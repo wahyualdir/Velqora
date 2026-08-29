@@ -9,6 +9,8 @@ interface ScheduleHeaderProps {
   onOpenAddModal: () => void;
   onOpenImportModal?: () => void;
   onOpenGeneratorModal?: () => void;
+  onOpenDailyPlan?: () => void;
+  onOpenWeeklyPlan?: () => void;
   onOpenHistoryModal?: () => void;
   onOpenClassroom?: () => void;
   isClassroomConnected?: boolean;
@@ -18,6 +20,8 @@ export function ScheduleHeader({
   onOpenAddModal,
   onOpenImportModal,
   onOpenGeneratorModal,
+  onOpenDailyPlan,
+  onOpenWeeklyPlan,
   onOpenHistoryModal,
   onOpenClassroom,
   isClassroomConnected = false,
@@ -81,35 +85,35 @@ export function ScheduleHeader({
 
             {showAutoDropdown && (
               <div className="absolute right-0 mt-1.5 w-64 rounded-xl border border-border bg-surface p-1.5 shadow-xl z-50 animate-in fade-in-0 zoom-in-95">
-                {onOpenImportModal && (
+                {onOpenDailyPlan && (
                   <button
                     type="button"
                     onClick={() => {
                       setShowAutoDropdown(false);
-                      onOpenImportModal();
+                      onOpenDailyPlan();
                     }}
                     className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-surface-secondary text-left transition-colors cursor-pointer group"
                   >
                     <div className="p-1.5 rounded-md bg-brand-500/10 text-brand-600 dark:text-brand-400 shrink-0 mt-0.5">
-                      <UploadCloud className="w-4 h-4" />
+                      <Sparkles className="w-4 h-4" />
                     </div>
                     <div className="space-y-0.5">
                       <span className="text-xs font-bold text-text-primary group-hover:text-brand-500 transition-colors">
-                        Import Berkas Jadwal
+                        Susun Hari Saya
                       </span>
                       <p className="text-[11px] text-text-tertiary leading-snug">
-                        Ekstrak jadwal dari PDF, Word, Excel, CSV, TXT, atau gambar.
+                        Rencanakan target belajar hari ini berbasis waktu luang & deadline.
                       </p>
                     </div>
                   </button>
                 )}
 
-                {onOpenGeneratorModal && (
+                {onOpenWeeklyPlan && (
                   <button
                     type="button"
                     onClick={() => {
                       setShowAutoDropdown(false);
-                      onOpenGeneratorModal();
+                      onOpenWeeklyPlan();
                     }}
                     className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-surface-secondary text-left transition-colors cursor-pointer group mt-0.5"
                   >
@@ -118,10 +122,33 @@ export function ScheduleHeader({
                     </div>
                     <div className="space-y-0.5">
                       <span className="text-xs font-bold text-text-primary group-hover:text-indigo-500 transition-colors">
-                        Susun Jadwal Otomatis AI
+                        Susun Minggu Saya
                       </span>
                       <p className="text-[11px] text-text-tertiary leading-snug">
-                        Rencanakan target belajar bebas bentrok waktu.
+                        Distribusi sesi belajar mingguan seimbang bebas overload.
+                      </p>
+                    </div>
+                  </button>
+                )}
+
+                {onOpenImportModal && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAutoDropdown(false);
+                      onOpenImportModal();
+                    }}
+                    className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-surface-secondary text-left transition-colors cursor-pointer group mt-0.5 border-t border-border/60 pt-2"
+                  >
+                    <div className="p-1.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                      <UploadCloud className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-xs font-bold text-text-primary group-hover:text-blue-500 transition-colors">
+                        Import Berkas Jadwal
+                      </span>
+                      <p className="text-[11px] text-text-tertiary leading-snug">
+                        Ekstrak jadwal dari PDF, Word, Excel, CSV, TXT, atau gambar.
                       </p>
                     </div>
                   </button>
