@@ -8,6 +8,11 @@ export type ScheduleConfidence = "verified" | "needs_review" | "invalid" | "low_
 export type ConfidenceTier = "HIGH_CONFIDENCE" | "REVIEW_REQUIRED" | "LOW_CONFIDENCE" | "INVALID";
 
 export type DocumentClassification =
+  | "ACADEMIC_SCHEDULE"
+  | "POSSIBLE_SCHEDULE"
+  | "NON_SCHEDULE"
+  | "EMPTY_DOCUMENT"
+  | "UNREADABLE_DOCUMENT"
   | "academic_schedule"
   | "course_schedule"
   | "exam_schedule"
@@ -15,8 +20,24 @@ export type DocumentClassification =
   | "unrelated_document"
   | "unknown";
 
+export interface OCRResult {
+  text: string;
+  confidence: number;
+  isAvailable: boolean;
+  engineName?: string;
+  lines?: string[];
+  error?: string;
+}
+
+export interface OCRProvider {
+  extractText(buffer: Buffer, mimeType?: string): Promise<OCRResult>;
+  isAvailable(): boolean;
+  getEngineName(): string;
+}
+
 export interface DocumentClassificationResult {
   category: DocumentClassification;
+  canonicalCategory?: "ACADEMIC_SCHEDULE" | "POSSIBLE_SCHEDULE" | "NON_SCHEDULE" | "EMPTY_DOCUMENT" | "UNREADABLE_DOCUMENT";
   isSchedule: boolean;
   confidence: number;
   reason: string;
@@ -82,6 +103,7 @@ export interface ExtractedScheduleItem {
   confidence: ScheduleConfidence;
   confidenceTier?: ConfidenceTier;
   confidenceReason?: string;
+  confidenceReasons?: string[];
   confidenceScore?: number;
   confidenceLevel?: "sangat_yakin" | "perlu_pemeriksaan_ringan" | "perlu_pemeriksaan" | "tidak_yakin";
   fieldEvidence?: FieldEvidence[];
@@ -94,6 +116,7 @@ export interface ExtractedScheduleItem {
   hasConflict?: boolean;
   conflictDetails?: string[];
   conflictCategories?: ConflictCategory[];
+  clashDurationMinutes?: number;
   selected?: boolean;
 }
 

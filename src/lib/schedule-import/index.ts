@@ -11,6 +11,7 @@ export * from "./types";
 export * from "./schema";
 export * from "./parser";
 export * from "./classifier";
+export * from "./ocr-provider";
 export * from "./table-structuring";
 export * from "./evidence";
 export * from "./confidence-engine";
@@ -18,9 +19,11 @@ export * from "./normalizer";
 export * from "./conflict-engine";
 export * from "./ai-structuring";
 
+import { defaultOCRProvider } from "./ocr-provider";
+
 /**
- * Full End-to-End Schedule Import Pipeline (FASE 26)
- * FLOW: Uploaded Buffer -> Parser -> Classifier -> AI/Table Structuring -> Normalization -> Conflict Engine -> Review Payload
+ * Full End-to-End Schedule Import Pipeline (FASE 28)
+ * FLOW: Uploaded Buffer -> Parser -> OCR Check -> Classifier -> AI/Table Structuring -> Normalization -> Conflict Engine -> Review Payload
  */
 export async function processScheduleDocumentImport(
   fileBuffer: Buffer,
@@ -44,28 +47,36 @@ export async function processScheduleDocumentImport(
     const rawDoc = await parseScheduleDocument(fileBuffer, fileName, mimeType);
 
     if (rawDoc.isScanned && !process.env.GEMINI_API_KEY && !rawDoc.metadata?.isImage) {
-      return {
-        success: false,
-        correlationId,
-        fileName,
-        totalFound: 0,
-        verifiedCount: 0,
-        needsReviewCount: 0,
-        invalidCount: 0,
-        conflictCount: 0,
-        items: [],
-        isScannedDocument: true,
-        error: "PDF ini berupa hasil scan. Teks jadwal belum dapat dibaca secara langsung tanpa OCR.",
-      };
+      if (!defaultOCRProvider.isAvailable()) {
+        return {
+          success: false,
+          correlationId,
+          fileName,
+          totalFound: 0,
+          verifiedCount: 0,
+          needsReviewCount: 0,
+          invalidCount: 0,
+          conflictCount: 0,
+          items: [],
+          isScannedDocument: true,
+          error: "PDF ini berupa hasil scan. Teks jadwal belum dapat dibaca secara langsung tanpa OCR.",
+        };
+      }
     }
 
-    // 2. Classify Document
+    // 2. Classify Document (Classification 2.0)
     const classification = classifyScheduleDocument(rawDoc.extractedText, fileName);
 
-    if (!classification.isSchedule && classification.category === "unrelated_document") {
+    if (
+      !classification.isSchedule &&
+      (classification.canonicalCategory === "NON_SCHEDULE" ||
+        classification.canonicalCategory === "EMPTY_DOCUMENT" ||
+        classification.category === "unrelated_document" ||
+        classification.category === "EMPTY_DOCUMENT")
+    ) {
       logger.warn(
         "SCHEDULE_IMPORT_PIPELINE",
-        `Document classified as unrelated: ${classification.reason}`,
+        `Document classified as non-schedule: ${classification.reason}`,
         { fileName, classification },
         correlationId
       );
@@ -83,7 +94,9 @@ export async function processScheduleDocumentImport(
         items: [],
         rawTextPreview: rawDoc.extractedText.slice(0, 500),
         warnings: [
-          "Dokumen ini belum dapat dikenali sebagai jadwal akademik.",
+          classification.canonicalCategory === "EMPTY_DOCUMENT"
+            ? "Dokumen kosong atau tidak memiliki teks yang cukup untuk dianalisis."
+            : "Dokumen ini belum dapat dikenali sebagai jadwal akademik.",
           classification.reason,
         ],
       };

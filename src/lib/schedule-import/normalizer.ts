@@ -573,6 +573,7 @@ export function normalizeExtractedScheduleItem(
   item.confidenceTier = confResult.confidenceTier;
   item.confidenceScore = confResult.confidenceScore;
   item.confidenceReason = confResult.confidenceReason;
+  item.confidenceReasons = confResult.confidenceReasons;
   item.confidenceLevel = confResult.confidenceLevel;
 
   // Build Field-Level Evidence

@@ -156,6 +156,22 @@ export function ScheduleImportModal({
     setItems((prev) => prev.map((item) => ({ ...item, selected: select })));
   };
 
+  // Select only verified/valid items without conflicts
+  const handleSelectOnlyValid = () => {
+    setItems((prev) =>
+      prev.map((item) => ({
+        ...item,
+        selected:
+          item.confidence === "verified" &&
+          !item.hasConflict &&
+          !item.isDuplicate &&
+          !item.dayDateMismatch &&
+          !item.timeIncomplete,
+      }))
+    );
+    toast.success("Hanya agenda yang siap dan terverifikasi yang dipilih.");
+  };
+
   // Delete item from draft
   const handleDeleteItem = (id: string) => {
     const updated = items.filter((i) => i.id !== id);
@@ -525,7 +541,16 @@ export function ScheduleImportModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleSelectOnlyValid}
+                  className="text-xs text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                  Pilih yang Siap ({verifiedCount})
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"
@@ -1041,12 +1066,38 @@ export function ScheduleImportModal({
                 <span className="font-semibold text-primary">{evidenceModalItem.sourceTrace || "Baris Dokumen"}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-muted-foreground">Metode Ekstraksi:</span>
+                <span className="font-semibold text-foreground">
+                  {evidenceModalItem.extractionMethod === "deterministic_table"
+                    ? "Tabel Terstruktur Deterministic"
+                    : evidenceModalItem.extractionMethod === "ai_gemini"
+                    ? "Model AI Velqora"
+                    : "Ekstraksi Heuristik Deterministic"}
+                </span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-muted-foreground">Confidence Score:</span>
                 <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                   {((evidenceModalItem.confidenceScore ?? 0.9) * 100).toFixed(0)}% ({evidenceModalItem.confidenceLevel || "Terverifikasi"})
                 </span>
               </div>
             </div>
+
+            {/* Confidence Reasons List */}
+            {evidenceModalItem.confidenceReasons && evidenceModalItem.confidenceReasons.length > 0 && (
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">
+                  Faktor Penilaian Keyakinan (Confidence Breakdown):
+                </label>
+                <div className="p-2.5 rounded-lg bg-muted/20 border border-border/40 space-y-1">
+                  {evidenceModalItem.confidenceReasons.map((reason, idx) => (
+                    <div key={idx} className="text-xs text-foreground flex items-center gap-1.5">
+                      <span className="text-xs">{reason}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Source Snippet */}
             <div>

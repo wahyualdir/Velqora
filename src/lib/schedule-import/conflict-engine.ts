@@ -37,6 +37,38 @@ export function checkIntervalOverlap(
 }
 
 /**
+ * Calculates overlap duration in minutes between two intervals
+ */
+export function calculateClashDurationMinutes(
+  startA: string,
+  endA: string,
+  startB: string,
+  endB: string
+): number {
+  const a1 = timeToMinutes(startA);
+  const a2 = timeToMinutes(endA);
+  const b1 = timeToMinutes(startB);
+  const b2 = timeToMinutes(endB);
+
+  const overlapStart = Math.max(a1, b1);
+  const overlapEnd = Math.min(a2, b2);
+
+  if (overlapStart < overlapEnd) {
+    return overlapEnd - overlapStart;
+  }
+  return 0;
+}
+
+export function formatClashDuration(minutes: number): string {
+  if (minutes <= 0) return "";
+  if (minutes < 60) return `${minutes} menit`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMins = minutes % 60;
+  if (remainingMins === 0) return `${hours} jam`;
+  return `${hours} jam ${remainingMins} menit`;
+}
+
+/**
  * Checks if two title strings are near-duplicates (e.g. "Pemrograman Web" vs "Pemrograman Web (IF101)")
  */
 export function isNearDuplicateTitle(titleA: string, titleB: string): boolean {
@@ -86,6 +118,9 @@ export function analyzeItemConflict(
     const isOverlap = checkIntervalOverlap(startA, endA, startB, endB);
 
     if (isOverlap) {
+      const clashMinutes = calculateClashDurationMinutes(startA, endA, startB, endB);
+      const clashFormatted = formatClashDuration(clashMinutes);
+
       if (exactSameTitle && startA === startB && endA === endB) {
         categories.push("exact_duplicate");
         return {
@@ -109,6 +144,7 @@ export function analyzeItemConflict(
 
       categories.push("time_overlap");
 
+      const clashNote = clashFormatted ? ` (tabrakan ${clashFormatted})` : "";
       return {
         hasConflict: true,
         conflictType: "time_overlap",
@@ -116,7 +152,7 @@ export function analyzeItemConflict(
         conflictingItemTitle: other.title,
         conflictingItemTime: `${startB} - ${endB}`,
         conflictingItemDay: other.day,
-        message: `Bentrok waktu pada hari ${other.day} dengan "${other.title}" (${startB} - ${endB}).`,
+        message: `Bentrok waktu${clashNote} pada hari ${other.day} dengan "${other.title}" (${startB} - ${endB}).`,
       };
     }
   }

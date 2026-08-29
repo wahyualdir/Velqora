@@ -89,7 +89,7 @@ const TIME_PATTERN = /\b\d{1,2}[:.]\d{2}\s*(?:-|–|—|s\.?d\.?|sampai|hingga|\
 const SINGLE_TIME_PATTERN = /\b\d{1,2}[:.]\d{2}\b/;
 
 /**
- * Classifies document to determine if it is an academic schedule, exam schedule, event rundown, or unrelated document.
+ * Classifies document to determine if it is an academic schedule, possible schedule, non-schedule, or empty document (Classification 2.0).
  */
 export function classifyScheduleDocument(
   text: string,
@@ -102,6 +102,7 @@ export function classifyScheduleDocument(
   if (normalized.trim().length < 10) {
     return {
       category: "unknown",
+      canonicalCategory: "EMPTY_DOCUMENT",
       isSchedule: false,
       confidence: 0.1,
       reason: "Dokumen kosong atau tidak memiliki teks yang cukup untuk dianalisis.",
@@ -119,21 +120,23 @@ export function classifyScheduleDocument(
   const hasTimeRange = TIME_PATTERN.test(text);
   const hasSingleTime = SINGLE_TIME_PATTERN.test(text);
 
-  // 3. Unrelated document detection
-  if (detectedUnrelated.length >= 2 && detectedDays.length === 0 && !hasTimeRange) {
+  // 3. Unrelated document detection (NON_SCHEDULE)
+  if (detectedUnrelated.length >= 1 && detectedDays.length === 0 && !hasTimeRange) {
     return {
       category: "unrelated_document",
+      canonicalCategory: "NON_SCHEDULE",
       isSchedule: false,
       confidence: 0.95,
-      reason: `Dokumen terdeteksi sebagai dokumen non-jadwal (${detectedUnrelated.join(", ")}). Tidak ditemukan pola waktu atau hari perkuliahan.`,
+      reason: "Dokumen ini belum dapat dikenali sebagai jadwal akademik.",
       detectedKeywords: detectedUnrelated,
     };
   }
 
-  // 4. Exam schedule detection
+  // 4. Exam schedule detection (ACADEMIC_SCHEDULE)
   if (detectedExam.length >= 2 && (detectedDays.length >= 1 || hasTimeRange)) {
     return {
       category: "exam_schedule",
+      canonicalCategory: "ACADEMIC_SCHEDULE",
       isSchedule: true,
       confidence: 0.92,
       reason: "Dokumen teridentifikasi sebagai jadwal ujian / evaluasi akademik.",
@@ -141,10 +144,11 @@ export function classifyScheduleDocument(
     };
   }
 
-  // 5. Academic course schedule detection
+  // 5. Academic course schedule detection (ACADEMIC_SCHEDULE)
   if (detectedAcademic.length >= 2 || (detectedAcademic.length >= 1 && (detectedDays.length >= 1 || hasTimeRange))) {
     return {
       category: "academic_schedule",
+      canonicalCategory: "ACADEMIC_SCHEDULE",
       isSchedule: true,
       confidence: 0.95,
       reason: "Dokumen teridentifikasi secara valid sebagai jadwal perkuliahan / akademik.",
@@ -152,10 +156,11 @@ export function classifyScheduleDocument(
     };
   }
 
-  // 6. Event schedule / Rundown detection
+  // 6. Event schedule / Rundown detection (ACADEMIC_SCHEDULE)
   if (detectedEvent.length >= 1 && (hasTimeRange || hasSingleTime)) {
     return {
       category: "event_schedule",
+      canonicalCategory: "ACADEMIC_SCHEDULE",
       isSchedule: true,
       confidence: 0.85,
       reason: "Dokumen teridentifikasi sebagai susunan acara / agenda kegiatan.",
@@ -163,10 +168,11 @@ export function classifyScheduleDocument(
     };
   }
 
-  // 7. General schedule if days & time patterns are clearly present
+  // 7. General schedule if days & time patterns are clearly present (ACADEMIC_SCHEDULE)
   if (detectedDays.length >= 1 && hasTimeRange) {
     return {
       category: "course_schedule",
+      canonicalCategory: "ACADEMIC_SCHEDULE",
       isSchedule: true,
       confidence: 0.88,
       reason: "Dokumen memiliki pola hari dan rentang waktu kegiatan yang terstruktur.",
@@ -174,12 +180,25 @@ export function classifyScheduleDocument(
     };
   }
 
-  // 8. Default: Unrelated or insufficient signals
+  // 8. Possible schedule if single day or single time is found (POSSIBLE_SCHEDULE - must enter Human Review)
+  if (detectedDays.length >= 1 || hasSingleTime || detectedAcademic.length >= 1) {
+    return {
+      category: "course_schedule",
+      canonicalCategory: "POSSIBLE_SCHEDULE",
+      isSchedule: true,
+      confidence: 0.55,
+      reason: "Dokumen memiliki sebagian pola jadwal. Silakan periksa hasil ekstraksi pada tabel review.",
+      detectedKeywords: [...detectedAcademic, ...detectedDays],
+    };
+  }
+
+  // 9. Default: Non-schedule (NON_SCHEDULE)
   return {
     category: "unrelated_document",
+    canonicalCategory: "NON_SCHEDULE",
     isSchedule: false,
     confidence: 0.75,
-    reason: "Dokumen berhasil dibaca, tetapi tidak ditemukan pola jadwal akademik atau rentang waktu yang cukup kuat.",
+    reason: "Dokumen ini belum dapat dikenali sebagai jadwal akademik.",
     detectedKeywords: [...detectedAcademic, ...detectedDays],
   };
 }
