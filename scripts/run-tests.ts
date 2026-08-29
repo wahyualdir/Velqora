@@ -7,6 +7,7 @@ const testDirs = [
   path.join(__dirname, "../src/lib/schedule-generator/__tests__"),
   path.join(__dirname, "../src/lib/schedule/__tests__"),
   path.join(__dirname, "../src/lib/schedule-intelligence/__tests__"),
+  path.join(__dirname, "../src/lib/schedule-orchestration/__tests__"),
 ];
 
 const testFiles: string[] = [];

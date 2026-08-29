@@ -25,6 +25,8 @@ import { DailyPlanModal } from "@/components/schedule/daily-plan-modal";
 import { WeeklyPlanModal } from "@/components/schedule/weekly-plan-modal";
 import { SchedulePreferencesModal } from "@/components/schedule/schedule-preferences-modal";
 import { WeeklyOptimizationModal } from "@/components/schedule/weekly-optimization-modal";
+import { ScheduleControlCenter } from "@/components/schedule/schedule-control-center";
+import { WhatIfModal } from "@/components/schedule/what-if-modal";
 import { ScheduleIntelligenceSummary } from "@/components/schedule/schedule-intelligence-summary";
 import { ScheduleImportHistoryModal } from "@/components/schedule/schedule-import-history-modal";
 import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
@@ -71,6 +73,7 @@ function JadwalContent() {
   const [showWeeklyPlanModal, setShowWeeklyPlanModal] = useState(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
   const [showOptimizationModal, setShowOptimizationModal] = useState(false);
+  const [showWhatIfModal, setShowWhatIfModal] = useState(false);
   const [optimizationResult, setOptimizationResult] = useState<WeeklyOptimizationResult | null>(null);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [importHistory, setImportHistory] = useState<ScheduleImportHistoryItem[]>([]);
@@ -276,7 +279,16 @@ function JadwalContent() {
         isClassroomConnected={classroomState.isConnected}
       />
 
-      {/* ─── 2. Intelligence Summary & Workload Overview (FASE 30-32) ─── */}
+      {/* ─── 2. Schedule Control Center (FASE 33) ─── */}
+      <ScheduleControlCenter
+        schedules={scheduleItems}
+        tasks={tasks}
+        onOpenPreferences={() => setShowPreferencesModal(true)}
+        onOpenOptimization={handleOpenOptimization}
+        onOpenWhatIf={() => setShowWhatIfModal(true)}
+      />
+
+      {/* ─── 3. Intelligence Summary & Workload Overview (FASE 30-32) ─── */}
       <ScheduleIntelligenceSummary
         context={intelligenceContext}
         selectedDay={selectedDay}
@@ -468,6 +480,15 @@ function JadwalContent() {
           onSuccess={() => {
             loadScheduleData();
           }}
+        />
+      )}
+
+      {/* ─── What-If Simulation Modal (FASE 33) ─── */}
+      {showWhatIfModal && (
+        <WhatIfModal
+          isOpen={showWhatIfModal}
+          onClose={() => setShowWhatIfModal(false)}
+          schedules={scheduleItems}
         />
       )}
 

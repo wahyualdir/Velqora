@@ -60,6 +60,27 @@ import {
   MissedSessionRecoveryReport,
   WorkloadExplanation,
 } from "@/lib/schedule-intelligence";
+import {
+  generateScheduleSnapshot,
+  diffScheduleSnapshots,
+  evaluateContextStaleness,
+  detectScheduleRegression,
+  generateContinuousOptimizationProposal,
+  simulateScheduleModification,
+  generateComprehensiveExplanation,
+  evaluateApprovalGate,
+  applyProposalWithRollback,
+  rollbackAppliedProposal,
+  calculateAcademicHealthScore,
+  generateEarlyWarnings,
+  ScheduleSnapshot,
+  SnapshotDiff,
+  OptimizationProposal,
+  WhatIfSimulationResult,
+  AcademicHealthScore,
+  EarlyWarningItem,
+  SimulationModification,
+} from "@/lib/schedule-orchestration";
 
 // ==========================================
 // 1. GET USER SCHEDULES (Authenticated & Isolated)
@@ -1403,6 +1424,295 @@ export async function getScheduleRealismReportAction(): Promise<{
     return { success: false, error: err.message || "Gagal menganalisis realisme jadwal." };
   }
 }
+
+// ==========================================
+// 10. FASE 33: AUTONOMOUS ORCHESTRATION ACTIONS
+// ==========================================
+
+export async function getScheduleSnapshotAction(): Promise<{
+  success: boolean;
+  snapshot?: ScheduleSnapshot;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Silakan login terlebih dahulu." };
+    }
+
+    const schedules = await getUserSchedules();
+    let tasks: Task[] = [];
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .neq("status", "selesai");
+    if (tasksData) tasks = tasksData as Task[];
+
+    const prefResult = await getUserSchedulePreferencesAction();
+    const snapshot = generateScheduleSnapshot(
+      user.id,
+      schedules,
+      tasks,
+      prefResult.preferences
+    );
+
+    return { success: true, snapshot };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal membuat snapshot jadwal." };
+  }
+}
+
+export async function getAcademicHealthAction(): Promise<{
+  success: boolean;
+  health?: AcademicHealthScore;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const schedules = await getUserSchedules();
+    let tasks: Task[] = [];
+    if (user) {
+      const { data: tasksData } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", user.id)
+        .neq("status", "selesai");
+      if (tasksData) tasks = tasksData as Task[];
+    }
+
+    const health = calculateAcademicHealthScore(schedules, tasks);
+    return { success: true, health };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal menganalisis skor kesehatan akademik." };
+  }
+}
+
+export async function getEarlyWarningsAction(): Promise<{
+  success: boolean;
+  warnings: EarlyWarningItem[];
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const schedules = await getUserSchedules();
+    let tasks: Task[] = [];
+    if (user) {
+      const { data: tasksData } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", user.id)
+        .neq("status", "selesai");
+      if (tasksData) tasks = tasksData as Task[];
+    }
+
+    const warnings = generateEarlyWarnings(schedules, tasks);
+    return { success: true, warnings };
+  } catch (err: any) {
+    return { success: false, warnings: [], error: err.message || "Gagal menganalisis peringatan dini." };
+  }
+}
+
+export async function simulateWhatIfAction(
+  modification: SimulationModification
+): Promise<{
+  success: boolean;
+  simulation?: WhatIfSimulationResult;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const schedules = await getUserSchedules();
+    let tasks: Task[] = [];
+    if (user) {
+      const { data: tasksData } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", user.id)
+        .neq("status", "selesai");
+      if (tasksData) tasks = tasksData as Task[];
+    }
+
+    const simulation = simulateScheduleModification(schedules, tasks, modification);
+    return { success: true, simulation };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal menjalankan simulasi what-if." };
+  }
+}
+
+export async function generateOrchestrationProposalAction(): Promise<{
+  success: boolean;
+  proposal?: OptimizationProposal;
+  error?: string;
+}> {
+  try {
+    const snapResult = await getScheduleSnapshotAction();
+    if (!snapResult.success || !snapResult.snapshot) {
+      return { success: false, error: snapResult.error || "Gagal memuat snapshot." };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    let tasks: Task[] = [];
+    if (user) {
+      const { data: tasksData } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", user.id)
+        .neq("status", "selesai");
+      if (tasksData) tasks = tasksData as Task[];
+    }
+
+    const proposal = generateContinuousOptimizationProposal(
+      snapResult.snapshot.userId,
+      snapResult.snapshot,
+      tasks
+    );
+
+    return { success: true, proposal };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Gagal menghasilkan usulan optimasi." };
+  }
+}
+
+export async function applyOrchestratedProposalAction(
+  proposal: OptimizationProposal
+): Promise<{
+  success: boolean;
+  appliedProposal?: OptimizationProposal;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_orchestrate_apply");
+  try {
+    const snapResult = await getScheduleSnapshotAction();
+    if (!snapResult.success || !snapResult.snapshot) {
+      return { success: false, error: "Gagal memuat kondisi kalender terbaru." };
+    }
+
+    const gate = evaluateApprovalGate(
+      "APPLY_OPTIMIZATION",
+      {
+        userId: snapResult.snapshot.userId,
+        parentSnapshotHash: proposal.parentSnapshotHash,
+      },
+      snapResult.snapshot
+    );
+
+    if (!gate.allowed) {
+      return { success: false, error: gate.reason };
+    }
+
+    const applyRes = applyProposalWithRollback(proposal, snapResult.snapshot);
+    if (!applyRes.success) {
+      return { success: false, error: applyRes.error };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Sesi login berakhir." };
+    }
+
+    // Persist affected schedule updates atomically
+    for (const item of proposal.affectedSessions) {
+      const startTime = item.toTime.split(" - ")[0];
+      const endTime = item.toTime.split(" - ")[1];
+
+      await supabase
+        .from("schedules")
+        .update({
+          day: item.toDay,
+          start_time: startTime,
+          end_time: endTime,
+          time: item.toTime,
+        })
+        .eq("id", item.id)
+        .eq("user_id", user.id);
+    }
+
+    revalidatePath("/dashboard/jadwal");
+    return { success: true, appliedProposal: applyRes.updatedProposal };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "applyOrchestratedProposalAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal menerapkan usulan optimasi." };
+  }
+}
+
+export async function rollbackProposalAction(
+  proposal: OptimizationProposal
+): Promise<{
+  success: boolean;
+  restoredProposal?: OptimizationProposal;
+  error?: string;
+}> {
+  const correlationId = generateCorrelationId("act_orchestrate_rollback");
+  try {
+    const snapResult = await getScheduleSnapshotAction();
+    if (!snapResult.success || !snapResult.snapshot) {
+      return { success: false, error: "Gagal memuat kondisi kalender terbaru." };
+    }
+
+    const rollbackRes = rollbackAppliedProposal(proposal, snapResult.snapshot);
+    if (!rollbackRes.success || !proposal.previousSchedulesBackup) {
+      return { success: false, error: rollbackRes.error || "Pencadangan rollback tidak tersedia." };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Sesi login berakhir." };
+    }
+
+    // Restore affected items to original positions
+    for (const item of proposal.affectedSessions) {
+      const origItem = proposal.previousSchedulesBackup.find((s) => s.id === item.id);
+      if (origItem) {
+        await supabase
+          .from("schedules")
+          .update({
+            day: origItem.day,
+            start_time: origItem.start_time,
+            end_time: origItem.end_time,
+            time: origItem.time,
+          })
+          .eq("id", origItem.id)
+          .eq("user_id", user.id);
+      }
+    }
+
+    revalidatePath("/dashboard/jadwal");
+    return { success: true, restoredProposal: rollbackRes.updatedProposal };
+  } catch (err: any) {
+    logger.error("SCHEDULE_ACTIONS", "rollbackProposalAction error:", err, undefined, correlationId);
+    return { success: false, error: err.message || "Gagal membatalkan usulan optimasi." };
+  }
+}
+
 
 
 

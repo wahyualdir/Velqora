@@ -100,8 +100,14 @@ export function analyzeItemConflict(
   }
 
   // 2. Extract times
-  const startA = target.startTime || parseStartTime(target.time);
-  const endA = target.endTime || parseEndTime(target.time);
+  const startA =
+    ("startTime" in target && target.startTime) ||
+    ("start_time" in (target as any) && (target as any).start_time) ||
+    parseStartTime(target.time);
+  const endA =
+    ("endTime" in target && target.endTime) ||
+    ("end_time" in (target as any) && (target as any).end_time) ||
+    parseEndTime(target.time);
   const startB = ("start_time" in other && other.start_time) ? other.start_time : ("startTime" in other && other.startTime) ? other.startTime : parseStartTime(other.time);
   const endB = ("end_time" in other && other.end_time) ? other.end_time : ("endTime" in other && other.endTime) ? other.endTime : parseEndTime(other.time);
 

@@ -55,11 +55,13 @@ export function analyzeTaskDeadlines(
   tasks: Task[] = [],
   referenceDate: Date = new Date()
 ): DeadlineAnalysisItem[] {
-  const activeTasks = tasks.filter((t) => t.status !== "selesai" && t.deadline);
+  const activeTasks = tasks.filter(
+    (t) => t.status !== "selesai" && (t.deadline || (t as any).due_date)
+  );
   const results: DeadlineAnalysisItem[] = [];
 
   for (const t of activeTasks) {
-    const rawDeadline = t.deadline || "";
+    const rawDeadline = t.deadline || (t as any).due_date || "";
     const parsedDate = new Date(rawDeadline);
 
     if (isNaN(parsedDate.getTime())) {
