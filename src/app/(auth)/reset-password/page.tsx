@@ -64,15 +64,15 @@ export default function ResetPasswordPage() {
       <TechBackground variant="bold" />
 
       {/* Reset Card */}
-      <div className="relative z-10 w-full max-w-[400px] space-y-7">
-        <div className="rounded-3xl border border-white/[0.12] bg-white/[0.03] backdrop-blur-md shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] p-7 space-y-6 transition-all duration-300 hover:border-white/[0.18]">
+      <div className="relative z-10 w-full max-w-[400px] space-y-6">
+        <div className="rounded-2xl border border-border bg-surface shadow-xl p-6 sm:p-7 space-y-6 transition-all duration-200">
           
           {/* Header */}
           <div className="space-y-1 text-center">
-            <h1 className="text-xl font-semibold text-white tracking-tight">
+            <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
               {isSuccess ? "Password Diperbarui!" : "Buat Password Baru"}
             </h1>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-text-secondary leading-relaxed">
               {isSuccess
                 ? "Password Anda berhasil diubah. Mengalihkan ke halaman login..."
                 : "Masukkan password baru Anda di bawah ini"}
@@ -80,17 +80,17 @@ export default function ResetPasswordPage() {
           </div>
 
           {isSuccess ? (
-            <div className="space-y-4 text-center py-4">
+            <div className="space-y-4 text-center py-2 animate-fade-in">
               <div className="flex justify-center">
-                <CheckCircle2 className="w-12 h-12 text-emerald-400 animate-bounce" />
+                <CheckCircle2 className="w-12 h-12 text-emerald-400" />
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-text-secondary">
                 Silakan masuk dengan password baru Anda.
               </p>
               <button
                 type="button"
                 onClick={() => router.push("/login")}
-                className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:from-indigo-500 hover:to-blue-500 backdrop-blur-sm border border-indigo-400/30 shadow-lg shadow-indigo-600/25 transition-all duration-200"
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 shadow-xs transition-all active:scale-[0.98] min-h-[40px] cursor-pointer"
               >
                 Masuk Sekarang
               </button>
@@ -99,17 +99,17 @@ export default function ResetPasswordPage() {
             <form onSubmit={handleUpdatePassword} className="space-y-4">
               {/* Password Baru */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">
                   Password Baru
                 </label>
                 <div
-                  className={`relative flex items-center rounded-xl border backdrop-blur-sm transition-all duration-200 ${
+                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                     focusedField === "password"
-                      ? "border-indigo-500/60 bg-white/[0.08] ring-1 ring-indigo-500/20"
-                      : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2] hover:bg-white/[0.05]"
+                      ? "border-brand-500 bg-surface-secondary/70 ring-2 ring-brand-500/20"
+                      : "border-border bg-surface-secondary/40 hover:border-border/80"
                   }`}
                 >
-                  <Lock className="absolute left-3.5 w-4 h-4 text-slate-400" />
+                  <Lock className="absolute left-3.5 w-4 h-4 text-text-tertiary" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -119,12 +119,12 @@ export default function ResetPasswordPage() {
                     placeholder="Minimal 6 karakter"
                     disabled={loading}
                     required
-                    className="w-full bg-transparent pl-10 pr-11 py-2.5 text-sm text-white placeholder:text-slate-400 focus:outline-none disabled:opacity-50"
+                    className="w-full bg-transparent pl-10 pr-11 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 p-1 text-slate-400 hover:text-slate-200 transition-colors"
+                    className="absolute right-3 p-1 text-text-tertiary hover:text-text-primary transition-colors"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -134,17 +134,17 @@ export default function ResetPasswordPage() {
 
               {/* Konfirmasi Password */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">
                   Konfirmasi Password
                 </label>
                 <div
-                  className={`relative flex items-center rounded-xl border backdrop-blur-sm transition-all duration-200 ${
+                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                     focusedField === "confirmPassword"
-                      ? "border-indigo-500/60 bg-white/[0.08] ring-1 ring-indigo-500/20"
-                      : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2] hover:bg-white/[0.05]"
+                      ? "border-brand-500 bg-surface-secondary/70 ring-2 ring-brand-500/20"
+                      : "border-border bg-surface-secondary/40 hover:border-border/80"
                   }`}
                 >
-                  <Lock className="absolute left-3.5 w-4 h-4 text-slate-400" />
+                  <Lock className="absolute left-3.5 w-4 h-4 text-text-tertiary" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
@@ -154,7 +154,7 @@ export default function ResetPasswordPage() {
                     placeholder="Ulangi password baru"
                     disabled={loading}
                     required
-                    className="w-full bg-transparent pl-10 pr-11 py-2.5 text-sm text-white placeholder:text-slate-400 focus:outline-none disabled:opacity-50"
+                    className="w-full bg-transparent pl-10 pr-11 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -163,13 +163,13 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:from-indigo-500 hover:to-blue-500 backdrop-blur-sm border border-indigo-400/30 shadow-lg shadow-indigo-600/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 shadow-xs transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] min-h-[42px] cursor-pointer"
               >
                 {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
                 ) : (
                   <>
-                    Simpan Password Baru
+                    <span>Simpan Password Baru</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

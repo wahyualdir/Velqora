@@ -293,9 +293,9 @@ export default function RegisterPage() {
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="group flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.1] backdrop-blur-md border border-white/[0.12] hover:border-blue-400/40 shadow-md hover:shadow-[0_0_20px_rgba(66,133,244,0.25)] transition-all duration-200 active:scale-[0.97] disabled:opacity-50"
+                className="group flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.12] hover:border-brand-500/40 transition-all duration-150 active:scale-[0.98] disabled:opacity-50"
               >
-                <GoogleIcon className="w-4 h-4 shrink-0 group-hover:scale-110 transition-transform duration-200" />
+                <GoogleIcon className="w-4 h-4 shrink-0" />
                 <span className="group-hover:text-white transition-colors">Google</span>
               </button>
 
@@ -303,9 +303,9 @@ export default function RegisterPage() {
                 type="button"
                 onClick={handleGithubLogin}
                 disabled={loading}
-                className="group flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.1] backdrop-blur-md border border-white/[0.12] hover:border-slate-400/50 shadow-md hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-200 active:scale-[0.97] disabled:opacity-50"
+                className="group flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.12] hover:border-slate-400/50 transition-all duration-150 active:scale-[0.98] disabled:opacity-50"
               >
-                <GitHubIcon className="w-4 h-4 shrink-0 text-slate-100 group-hover:scale-110 transition-transform duration-200" />
+                <GitHubIcon className="w-4 h-4 shrink-0 text-slate-100" />
                 <span className="group-hover:text-white transition-colors">GitHub</span>
               </button>
             </div>
@@ -316,7 +316,7 @@ export default function RegisterPage() {
                 <div className="w-full border-t border-white/[0.08]" />
               </div>
               <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                <span className="bg-[#0b101c]/90 backdrop-blur-md px-3 py-0.5 text-slate-400 font-medium rounded-full border border-white/[0.08] shadow-sm">
+                <span className="bg-[#0b101c]/90 px-3 py-0.5 text-slate-400 font-medium rounded-full border border-white/[0.08]">
                   atau daftar via email
                 </span>
               </div>
@@ -331,18 +331,18 @@ export default function RegisterPage() {
                   Nama Lengkap
                 </label>
                 <div
-                  className={`relative flex items-center rounded-xl border backdrop-blur-md transition-all duration-200 overflow-hidden ${
+                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                     focusedField === "fullName"
-                      ? "border-[#0071e3] bg-white/[0.08] ring-2 ring-[#0071e3]/40 shadow-[0_0_20px_rgba(0,113,227,0.3)]"
+                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
                       : fullName.length > 0
                       ? "border-white/[0.2] bg-white/[0.05]"
                       : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
                   }`}
                 >
                   <User
-                    className={`absolute left-3.5 w-4 h-4 transition-all duration-200 ${
+                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
                       focusedField === "fullName"
-                        ? "text-[#2997ff] scale-110 drop-shadow-[0_0_8px_rgba(0,113,227,0.8)]"
+                        ? "text-brand-400"
                         : fullName.length > 0
                         ? "text-slate-200"
                         : "text-slate-400"
@@ -359,13 +359,10 @@ export default function RegisterPage() {
                     required
                     className="w-full bg-transparent pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
                   />
-                  {focusedField === "fullName" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2997ff] to-transparent animate-pulse" />
-                  )}
                 </div>
               </div>
 
-              {/* Email Field with Dynamic Typing & Glow Animation */}
+              {/* Email Field */}
               <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "270ms" }}>
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block">
@@ -373,18 +370,18 @@ export default function RegisterPage() {
                   </label>
                 </div>
                 <div
-                  className={`relative flex items-center rounded-xl border backdrop-blur-md transition-all duration-200 overflow-hidden ${
+                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                     focusedField === "email"
-                      ? "border-[#0071e3] bg-white/[0.08] ring-2 ring-[#0071e3]/40 shadow-[0_0_20px_rgba(0,113,227,0.3)]"
+                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
                       : email.length > 0
                       ? "border-white/[0.2] bg-white/[0.05]"
                       : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
                   }`}
                 >
                   <Mail
-                    className={`absolute left-3.5 w-4 h-4 transition-all duration-200 ${
+                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
                       focusedField === "email"
-                        ? "text-[#2997ff] scale-110 drop-shadow-[0_0_8px_rgba(0,113,227,0.8)]"
+                        ? "text-brand-400"
                         : email.length > 0
                         ? "text-slate-200"
                         : "text-slate-400"
@@ -401,9 +398,6 @@ export default function RegisterPage() {
                     required
                     className="w-full bg-transparent pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
                   />
-                  {focusedField === "email" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2997ff] to-transparent animate-pulse" />
-                  )}
                 </div>
               </div>
 
@@ -420,18 +414,18 @@ export default function RegisterPage() {
                   )}
                 </div>
                 <div
-                  className={`relative flex items-center rounded-xl border backdrop-blur-md transition-all duration-200 overflow-hidden ${
+                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                     focusedField === "password"
-                      ? "border-[#0071e3] bg-white/[0.08] ring-2 ring-[#0071e3]/40 shadow-[0_0_20px_rgba(0,113,227,0.3)]"
+                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
                       : password.length > 0
                       ? "border-white/[0.2] bg-white/[0.05]"
                       : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
                   }`}
                 >
                   <Lock
-                    className={`absolute left-3.5 w-4 h-4 transition-all duration-200 ${
+                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
                       focusedField === "password"
-                        ? "text-[#2997ff] scale-110 drop-shadow-[0_0_8px_rgba(0,113,227,0.8)]"
+                        ? "text-brand-400"
                         : password.length > 0
                         ? "text-slate-200"
                         : "text-slate-400"
@@ -452,14 +446,11 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 p-1 text-slate-400 hover:text-white transition-all duration-200 hover:scale-110 active:scale-90"
+                    className="absolute right-3 p-1 text-slate-400 hover:text-white transition-all duration-150"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4 text-cyan-400" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 text-slate-300" /> : <Eye className="w-4 h-4" />}
                   </button>
-                  {focusedField === "password" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2997ff] to-transparent animate-pulse" />
-                  )}
                 </div>
 
                 {/* Password Strength Meter */}
@@ -491,18 +482,18 @@ export default function RegisterPage() {
                   )}
                 </div>
                 <div
-                  className={`relative flex items-center rounded-xl border backdrop-blur-md transition-all duration-200 overflow-hidden ${
+                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                     focusedField === "confirmPassword"
-                      ? "border-[#0071e3] bg-white/[0.08] ring-2 ring-[#0071e3]/40 shadow-[0_0_20px_rgba(0,113,227,0.3)]"
+                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
                       : confirmPassword.length > 0
                       ? "border-white/[0.2] bg-white/[0.05]"
                       : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
                   }`}
                 >
                   <Lock
-                    className={`absolute left-3.5 w-4 h-4 transition-all duration-200 ${
+                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
                       focusedField === "confirmPassword"
-                        ? "text-[#2997ff] scale-110 drop-shadow-[0_0_8px_rgba(0,113,227,0.8)]"
+                        ? "text-brand-400"
                         : confirmPassword.length > 0
                         ? "text-slate-200"
                         : "text-slate-400"
@@ -522,14 +513,11 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 p-1 text-slate-400 hover:text-white transition-all duration-200 hover:scale-110 active:scale-90"
+                    className="absolute right-3 p-1 text-slate-400 hover:text-white transition-all duration-150"
                     tabIndex={-1}
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-cyan-400" /> : <Eye className="w-4 h-4" />}
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-300" /> : <Eye className="w-4 h-4" />}
                   </button>
-                  {focusedField === "confirmPassword" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2997ff] to-transparent animate-pulse" />
-                  )}
                 </div>
               </div>
 

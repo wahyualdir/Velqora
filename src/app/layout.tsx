@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/context/language-context";
 import { ThemeAccentProvider } from "@/context/theme-accent-context";
+import { ExperienceProvider } from "@/context/experience-context";
 import { PwaRegister } from "@/components/layout/pwa-register";
 import { Toaster } from "sonner";
 
@@ -111,9 +112,11 @@ export default function RootLayout({
         <ThemeProvider>
           <ThemeAccentProvider>
             <LanguageProvider>
-              {children}
-              <PwaRegister />
-              <Toaster position="top-right" richColors />
+              <ExperienceProvider>
+                {children}
+                <PwaRegister />
+                <Toaster position="top-right" richColors />
+              </ExperienceProvider>
             </LanguageProvider>
           </ThemeAccentProvider>
         </ThemeProvider>

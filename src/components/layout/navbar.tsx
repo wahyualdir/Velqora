@@ -104,7 +104,7 @@ export function Navbar({
 
           {/* Status Badge */}
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 h-10 rounded-xl border border-border bg-surface text-xs text-text-secondary">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span className="font-mono text-[10px] font-semibold text-emerald-400 uppercase">{t("statusOnline")}</span>
           </div>
 

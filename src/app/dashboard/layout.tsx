@@ -1,44 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
-import { Navbar } from "@/components/layout/navbar";
+import { DesktopTopBar } from "@/components/layout/desktop/desktop-top-bar";
+import { MobileTopBar } from "@/components/layout/mobile/mobile-top-bar";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { TechBackground } from "@/components/ui/tech-background";
 import { DashboardFooter, MinimalCopyright } from "@/components/layout/watermark-footer";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { trackUserVisit } from "@/lib/track-visit";
+import { useExperience } from "@/context/experience-context";
 import { cn } from "@/lib/utils";
-
-function SubpageBackButton() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const isSubPage = pathname !== "/dashboard" && pathname !== "/";
-
-  if (!isSubPage) return null;
-
-  return (
-    <div className="mb-3.5 flex items-center justify-start">
-      <button
-        type="button"
-        onClick={() => {
-          if (typeof window !== "undefined" && window.history.length > 2) {
-            router.back();
-          } else {
-            router.push("/dashboard");
-          }
-        }}
-        className="h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-surface hover:bg-surface-secondary border border-border text-text-secondary hover:text-text-primary transition-all active:scale-95 group shadow-2xs cursor-pointer"
-        title="Kembali"
-        aria-label="Kembali"
-      >
-        <ArrowLeft className="w-4 h-4 text-text-secondary group-hover:text-text-primary group-hover:-translate-x-0.5 transition-transform" />
-      </button>
-    </div>
-  );
-}
 
 export default function DashboardLayout({
   children,
@@ -46,6 +19,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { isDesktop, isMounted } = useExperience();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,7 +66,7 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="relative min-h-screen flex bg-transparent pb-6 overflow-x-hidden">
+    <div className="relative min-h-screen flex bg-transparent overflow-x-hidden">
       {/* Precision technical canvas background */}
       <TechBackground />
 
@@ -102,7 +76,7 @@ export default function DashboardLayout({
         onClose={() => setCommandPaletteOpen(false)}
       />
 
-      {/* Fixed Desktop Sidebar & Responsive Mobile Drawer */}
+      {/* Fixed Desktop Sidebar (>= 1024px) & Tablet Drawer */}
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -110,24 +84,31 @@ export default function DashboardLayout({
         onToggleCollapse={handleToggleCollapse}
       />
 
-      {/* Main Content Area (Offset for fixed desktop sidebar) */}
+      {/* Main Content Area: Desktop Workspace on >=1024px, Mobile App Shell on <1024px */}
       <div
         className={cn(
           "flex-1 flex flex-col min-w-0 z-10 transition-all duration-200 ease-out",
-          sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[240px]"
+          sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]"
         )}
       >
-        <Navbar
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-        />
-        <main className="flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-4 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-4rem)] pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-6">
-          <div className="flex-1">
-            <SubpageBackButton />
-            {children}
-          </div>
+        {/* Responsive Header: Desktop Top Bar on Desktop, Mobile Top Bar on Mobile */}
+        <div className="hidden lg:block">
+          <DesktopTopBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          />
+        </div>
+
+        <div className="block lg:hidden">
+          <MobileTopBar
+            onOpenSearch={() => setCommandPaletteOpen(true)}
+            onOpenMenu={() => setSidebarOpen(true)}
+          />
+        </div>
+
+        <main className="flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-3.5 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-3.5rem)] pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-6">
+          <div className="flex-1 min-w-0">{children}</div>
           {isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />}
         </main>
       </div>

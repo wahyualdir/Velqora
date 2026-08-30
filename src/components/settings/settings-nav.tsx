@@ -16,7 +16,8 @@ export type SettingsSectionId =
   | "learning"
   | "notifications"
   | "privacy"
-  | "account";
+  | "account"
+  | "application";
 
 interface SettingsNavProps {
   activeSection: SettingsSectionId;
@@ -29,6 +30,7 @@ const SECTIONS = [
   { id: "learning", label: "Preferensi Belajar", icon: BookOpen },
   { id: "notifications", label: "Notifikasi", icon: Bell },
   { id: "privacy", label: "Privasi & Keamanan", icon: ShieldCheck },
+  { id: "application", label: "Aplikasi & PWA", icon: KeyRound },
   { id: "account", label: "Akun", icon: KeyRound },
 ] as const;
 

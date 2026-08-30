@@ -15,6 +15,8 @@ import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { ModuleHeader } from "@/components/modul/module-header";
 import { ModuleFilters } from "@/components/modul/module-filters";
 import { ModuleListItem } from "@/components/modul/module-list-item";
+import { MobileModuleList } from "@/components/modul/mobile-module-list";
+import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import { ModuleDriveFile } from "@/types/module-drive";
@@ -336,22 +338,32 @@ function ModulDanProjectContent() {
             }
           />
         ) : (
-          /* List of Modules & Projects */
-          <div className="space-y-3">
-            {filteredModules.map((mod) => (
-              <ModuleListItem
-                key={mod.id}
-                module={mod}
-                currentUserId={currentUserId}
-                isAdmin={isAdmin}
-                isBookmarked={Boolean(bookmarkMap[mod.id])}
+          <ExperienceAdaptive
+            desktop={
+              <div className="space-y-3">
+                {filteredModules.map((mod) => (
+                  <ModuleListItem
+                    key={mod.id}
+                    module={mod}
+                    currentUserId={currentUserId}
+                    isAdmin={isAdmin}
+                    isBookmarked={Boolean(bookmarkMap[mod.id])}
+                    onToggleBookmark={handleToggleBookmark}
+                    onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
+                    onDelete={handleDeleteModule}
+                    onFilePreview={(file) => setPreviewFile(file)}
+                  />
+                ))}
+              </div>
+            }
+            mobile={
+              <MobileModuleList
+                modules={filteredModules}
+                bookmarkMap={bookmarkMap}
                 onToggleBookmark={handleToggleBookmark}
-                onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
-                onDelete={handleDeleteModule}
-                onFilePreview={(file) => setPreviewFile(file)}
               />
-            ))}
-          </div>
+            }
+          />
         )}
       </section>
 

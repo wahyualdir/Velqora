@@ -6,14 +6,9 @@ import { getDashboardStats } from "@/actions/study-actions";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
-
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { DashboardFocus } from "@/components/dashboard/dashboard-focus";
-import { DashboardMetrics } from "@/components/dashboard/dashboard-metrics";
-import { DashboardModulesList } from "@/components/dashboard/dashboard-modules-list";
-import { DashboardRecentViews } from "@/components/dashboard/dashboard-recent-views";
-import { DashboardTasksList } from "@/components/dashboard/dashboard-tasks-list";
-import { DashboardQuickTools } from "@/components/dashboard/dashboard-quick-tools";
+import { DesktopDashboardView } from "@/components/dashboard/desktop-dashboard-view";
+import { MobileDashboardView } from "@/components/dashboard/mobile-dashboard-view";
+import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
 
 interface DashboardStatsState {
   totalMateri: number;
@@ -85,13 +80,10 @@ export default function DashboardPage() {
     stats.totalFile === 0;
 
   return (
-    <PageContainer className="space-y-6 sm:space-y-7 pb-14">
-      {/* ─── 1. Header & Human Greeting ─── */}
-      <DashboardHeader userName={userName} />
-
+    <PageContainer className="p-0 sm:p-0 lg:p-0 max-w-none">
       {/* ─── Error State (Humane & Actionable) ─── */}
       {error && (
-        <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 flex items-center justify-between gap-3 text-xs sm:text-sm text-rose-600 dark:text-rose-400">
+        <div className="mb-4 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 flex items-center justify-between gap-3 text-xs sm:text-sm text-rose-600 dark:text-rose-400">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
@@ -108,49 +100,25 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ─── 2. Primary Focus (What is most important right now?) ─── */}
-      <DashboardFocus
-        loading={loading}
-        recentModules={stats.recentModules}
-        recentTasks={stats.recentTasks}
-        recentViews={stats.recentViews}
-        isBrandNew={isBrandNewWorkspace}
+      {/* ─── Seamless Experience Separation ─── */}
+      <ExperienceAdaptive
+        desktop={
+          <DesktopDashboardView
+            userName={userName}
+            stats={stats}
+            loading={loading}
+            isBrandNewWorkspace={isBrandNewWorkspace}
+          />
+        }
+        mobile={
+          <MobileDashboardView
+            userName={userName}
+            stats={stats}
+            loading={loading}
+            onRefresh={loadData}
+          />
+        }
       />
-
-      {/* ─── 3. Compact Metrics Summary ─── */}
-      <DashboardMetrics
-        loading={loading}
-        totalModul={stats.totalModul}
-        totalMateri={stats.totalMateri}
-        totalTugas={stats.totalTugas}
-        totalFile={stats.totalFile}
-      />
-
-      {/* ─── 4. Main 2-Column Academic Workspace Hub ─── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column (8 cols): Active Learning Modules & Recent Readings */}
-        <div className="lg:col-span-8 space-y-6">
-          <DashboardModulesList
-            loading={loading}
-            modules={stats.recentModules}
-          />
-
-          <DashboardRecentViews
-            loading={loading}
-            views={stats.recentViews}
-          />
-        </div>
-
-        {/* Right Column (4 cols): Active Tasks / Deadlines & Quick Academic Tools */}
-        <div className="lg:col-span-4 space-y-6">
-          <DashboardTasksList
-            loading={loading}
-            tasks={stats.recentTasks}
-          />
-
-          <DashboardQuickTools />
-        </div>
-      </div>
     </PageContainer>
   );
 }

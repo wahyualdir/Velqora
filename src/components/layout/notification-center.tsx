@@ -95,11 +95,11 @@ export function NotificationCenter() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         title="Lonceng Notifikasi"
-        className="relative p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/[0.08] hover:border-[#0071e3]/40 border border-white/[0.08] transition-all duration-200"
+        className="relative p-2 rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-border transition-all duration-150"
       >
         <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#0071e3] text-[9px] font-mono font-bold text-white shadow-[0_0_8px_#0071e3]">
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[9px] font-mono font-bold text-white shadow-2xs">
             {unreadCount}
           </span>
         )}
@@ -107,13 +107,13 @@ export function NotificationCenter() {
 
       {/* Popover Card */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 rounded-3xl border border-white/[0.1] bg-[#0b0f19]/95 backdrop-blur-2xl shadow-2xl z-50 overflow-hidden animate-fade-in">
+        <div className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl border border-border bg-surface shadow-xl z-50 overflow-hidden animate-fade-in">
           {/* Popover Header */}
-          <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
+          <div className="p-4 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-white tracking-tight">Notifikasi Sistem</span>
+              <span className="text-xs font-bold text-text-primary tracking-tight">Notifikasi Sistem</span>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#0071e3]/15 text-[#2997ff] border border-[#0071e3]/30">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-500/15 text-brand-500 border border-brand-500/25">
                   {unreadCount} Baru
                 </span>
               )}
@@ -185,7 +185,7 @@ export function NotificationCenter() {
                     </div>
 
                     {!item.read && (
-                      <span className="w-2 h-2 rounded-full bg-[#0071e3] shadow-[0_0_6px_#0071e3] shrink-0 mt-1" />
+                      <span className="w-2 h-2 rounded-full bg-brand-500 shrink-0 mt-1" />
                     )}
                   </div>
                 );

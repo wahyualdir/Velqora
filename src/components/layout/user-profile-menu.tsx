@@ -12,6 +12,7 @@ import {
   Sparkles,
   Loader2,
   ChevronDown,
+  Download,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { STORAGE_BUCKET } from "@/lib/constants";
@@ -255,13 +256,13 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
         </button>
 
         {isOpen && (
-          <div className="absolute left-0 bottom-full mb-2.5 w-72 sm:w-80 rounded-3xl bg-[#0b0f19]/98 backdrop-blur-2xl border border-white/[0.1] shadow-2xl p-4 z-50 animate-fade-in space-y-4">
-            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.06]">
+          <div className="absolute left-0 bottom-full mb-2.5 w-72 sm:w-80 rounded-2xl bg-surface border border-border shadow-xl p-4 z-50 animate-fade-in space-y-4">
+            <div className="flex items-center gap-3.5 p-3 rounded-xl bg-surface-secondary/70 border border-border/80">
               <div className="relative group/avatar shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#0071e3] via-[#8b5cf6] to-[#ec4899] p-[2px] shadow-[0_0_15px_rgba(0,113,227,0.35)]">
-                  <div className="w-full h-full rounded-[14px] bg-[#0b0f19] flex items-center justify-center text-white font-bold text-lg overflow-hidden">
+                <div className="w-13 h-13 rounded-xl border-2 border-brand-500/30 bg-surface flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-full bg-surface flex items-center justify-center text-text-primary font-bold text-base overflow-hidden">
                     {uploadingPhoto ? (
-                      <Loader2 className="w-6 h-6 animate-spin text-[#2997ff]" />
+                      <Loader2 className="w-5 h-5 animate-spin text-brand-500" />
                     ) : avatarUrl ? (
                       <img
                         src={avatarUrl}
@@ -385,10 +386,10 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
         className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-200 active:scale-95 group focus:outline-none"
       >
         <div className="relative shrink-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-[#0071e3] via-[#8b5cf6] to-[#ec4899] p-[1.5px] shadow-[0_0_12px_rgba(0,113,227,0.3)]">
-            <div className="w-full h-full rounded-full bg-[#0b0f19] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-brand-500/30 bg-surface flex items-center justify-center overflow-hidden">
+            <div className="w-full h-full rounded-full bg-surface flex items-center justify-center text-text-primary font-bold text-xs overflow-hidden">
               {uploadingPhoto ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#2997ff]" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-500" />
               ) : avatarUrl ? (
                 <img
                   src={avatarUrl}
@@ -401,33 +402,33 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
               )}
             </div>
           </div>
-          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0b0f19] shadow-[0_0_6px_#10b981]" />
+          <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-surface" />
         </div>
 
         <div className="hidden sm:flex flex-col text-left max-w-[120px]">
-          <span className="text-xs font-semibold text-white truncate group-hover:text-[#2997ff] transition-colors">
+          <span className="text-xs font-semibold text-text-primary truncate group-hover:text-brand-500 transition-colors">
             {userName}
           </span>
-          <span className="text-[10px] text-slate-400 font-mono truncate">
+          <span className="text-[10px] text-text-tertiary font-mono truncate">
             {isOwner ? "Owner" : isAdmin ? "Admin" : isGoogleUser ? "Google" : "Pelajar"}
           </span>
         </div>
 
         <ChevronDown
-          className={`hidden sm:block w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180 text-white" : ""
+          className={`hidden sm:block w-3.5 h-3.5 text-text-tertiary transition-transform duration-200 ${
+            isOpen ? "rotate-180 text-text-primary" : ""
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2.5 w-72 sm:w-80 rounded-3xl bg-[#0b0f19]/98 backdrop-blur-2xl border border-white/[0.1] shadow-2xl p-4 z-50 animate-fade-in space-y-4">
-          <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.06]">
+        <div className="absolute right-0 mt-2.5 w-72 sm:w-80 rounded-2xl bg-surface border border-border shadow-xl p-4 z-50 animate-fade-in space-y-4">
+          <div className="flex items-center gap-3.5 p-3 rounded-xl bg-surface-secondary/70 border border-border/80">
             <div className="relative group/avatar shrink-0">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#0071e3] via-[#8b5cf6] to-[#ec4899] p-[2px] shadow-[0_0_15px_rgba(0,113,227,0.35)]">
-                <div className="w-full h-full rounded-[14px] bg-[#0b0f19] flex items-center justify-center text-white font-bold text-lg overflow-hidden">
+              <div className="w-13 h-13 rounded-xl border-2 border-brand-500/30 bg-surface flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-surface flex items-center justify-center text-text-primary font-bold text-base overflow-hidden">
                   {uploadingPhoto ? (
-                    <Loader2 className="w-6 h-6 animate-spin text-[#2997ff]" />
+                    <Loader2 className="w-5 h-5 animate-spin text-brand-500" />
                   ) : avatarUrl ? (
                     <img
                       src={avatarUrl}
@@ -513,6 +514,20 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                 <Settings className="w-3.5 h-3.5 text-white" />
               </div>
               <span>Pengaturan Akun & Profil</span>
+            </Link>
+
+            <Link
+              href="/download"
+              onClick={() => {
+                setIsOpen(false);
+                if (onCloseParent) onCloseParent();
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-medium text-white hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.15] transition-all"
+            >
+              <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
+                <Download className="w-3.5 h-3.5 text-brand-400" />
+              </div>
+              <span>Unduh / Pasang Aplikasi</span>
             </Link>
           </div>
 

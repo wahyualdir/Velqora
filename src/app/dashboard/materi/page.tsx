@@ -12,6 +12,8 @@ import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { MaterialHeader } from "@/components/materi/material-header";
 import { MaterialFilters } from "@/components/materi/material-filters";
 import { MaterialListItem } from "@/components/materi/material-list-item";
+import { MobileMaterialList } from "@/components/materi/mobile-material-list";
+import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
 import { toast } from "sonner";
 
 function MateriContent() {
@@ -249,18 +251,29 @@ function MateriContent() {
             }
           />
         ) : (
-          /* Scannable Document List */
-          <div className="space-y-3">
-            {filteredMaterials.map((mat) => (
-              <MaterialListItem
-                key={mat.id}
-                material={mat}
-                isBookmarked={Boolean(bookmarkMap[mat.id])}
+          <ExperienceAdaptive
+            desktop={
+              <div className="space-y-3">
+                {filteredMaterials.map((mat) => (
+                  <MaterialListItem
+                    key={mat.id}
+                    material={mat}
+                    isBookmarked={Boolean(bookmarkMap[mat.id])}
+                    onToggleBookmark={handleToggleBookmark}
+                    onDelete={handleDeleteMaterial}
+                  />
+                ))}
+              </div>
+            }
+            mobile={
+              <MobileMaterialList
+                materials={filteredMaterials}
+                bookmarkMap={bookmarkMap}
                 onToggleBookmark={handleToggleBookmark}
                 onDelete={handleDeleteMaterial}
               />
-            ))}
-          </div>
+            }
+          />
         )}
       </section>
     </PageContainer>

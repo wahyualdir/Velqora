@@ -16,6 +16,7 @@ import { LearningPreferences } from "@/components/settings/learning-preferences"
 import { NotificationSettings } from "@/components/settings/notification-settings";
 import { PrivacySecuritySettings } from "@/components/settings/privacy-security-settings";
 import { AccountSettings } from "@/components/settings/account-settings";
+import { ApplicationSettings } from "@/components/settings/application-settings";
 
 export default function PengaturanPage() {
   const { theme, setTheme } = useTheme();
@@ -187,6 +188,8 @@ export default function PengaturanPage() {
                 onResetSettings={handleResetAllSettings}
               />
             )}
+
+            {activeSection === "application" && <ApplicationSettings />}
           </div>
         </div>
       </div>

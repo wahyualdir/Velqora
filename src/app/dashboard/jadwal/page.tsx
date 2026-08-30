@@ -18,6 +18,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ScheduleHeader } from "@/components/schedule/schedule-header";
 import { ScheduleNavigation } from "@/components/schedule/schedule-navigation";
 import { ScheduleListItem } from "@/components/schedule/schedule-list-item";
+import { MobileScheduleAgenda } from "@/components/schedule/mobile-schedule-agenda";
+import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
 import { ScheduleFormModal } from "@/components/schedule/schedule-form-modal";
 import { ScheduleImportModal } from "@/components/schedule/schedule-import-modal";
 import { ScheduleGeneratorModal } from "@/components/schedule/schedule-generator-modal";
@@ -410,20 +412,39 @@ function JadwalContent() {
             }
           />
         ) : (
-          <div className="space-y-3">
-            {filteredItems.map((item) => (
-              <ScheduleListItem
-                key={item.id}
-                item={item}
-                onToggleComplete={handleToggleComplete}
+          <ExperienceAdaptive
+            desktop={
+              <div className="space-y-3">
+                {filteredItems.map((item) => (
+                  <ScheduleListItem
+                    key={item.id}
+                    item={item}
+                    onToggleComplete={handleToggleComplete}
+                    onEdit={(s) => {
+                      setEditingItem(s);
+                      setShowAddModal(true);
+                    }}
+                    onDelete={handleDeleteItem}
+                  />
+                ))}
+              </div>
+            }
+            mobile={
+              <MobileScheduleAgenda
+                items={scheduleItems}
+                onAdd={() => {
+                  setEditingItem(null);
+                  setShowAddModal(true);
+                }}
                 onEdit={(s) => {
                   setEditingItem(s);
                   setShowAddModal(true);
                 }}
                 onDelete={handleDeleteItem}
+                onFeedback={(s) => setFeedbackSession(s)}
               />
-            ))}
-          </div>
+            }
+          />
         )}
       </section>
 

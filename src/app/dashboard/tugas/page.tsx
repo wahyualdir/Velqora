@@ -14,6 +14,9 @@ import { TaskHeader } from "@/components/tasks/task-header";
 import { TaskOverview } from "@/components/tasks/task-overview";
 import { TaskToolbar } from "@/components/tasks/task-toolbar";
 import { TaskListItem } from "@/components/tasks/task-list-item";
+import { DesktopTaskWorkspace } from "@/components/tasks/desktop-task-workspace";
+import { MobileTaskList } from "@/components/tasks/mobile-task-list";
+import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
 import { EditTaskModal } from "@/components/tasks/edit-task-modal";
 import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
 import { toast } from "sonner";
@@ -309,18 +312,24 @@ function TugasContent() {
             }
           />
         ) : (
-          /* Scannable Task List Rows */
-          <div className="space-y-3">
-            {filteredTasks.map((t) => (
-              <TaskListItem
-                key={t.id}
-                task={t}
+          <ExperienceAdaptive
+            desktop={
+              <DesktopTaskWorkspace
+                tasks={filteredTasks}
                 onUpdateStatus={handleUpdateStatus}
                 onEdit={(item) => setEditingTask(item)}
                 onDelete={handleDeleteTask}
               />
-            ))}
-          </div>
+            }
+            mobile={
+              <MobileTaskList
+                tasks={filteredTasks}
+                onUpdateStatus={handleUpdateStatus}
+                onEdit={(item) => setEditingTask(item)}
+                onDelete={handleDeleteTask}
+              />
+            }
+          />
         )}
       </section>
 
