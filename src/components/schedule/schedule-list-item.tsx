@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface ScheduleListItemProps {
   item: any;
@@ -40,11 +41,12 @@ export function ScheduleListItem({
 
   return (
     <div
-      className={`rounded-xl border transition-colors shadow-2xs overflow-hidden ${
+      className={cn(
+        "rounded-xl border transition-colors shadow-2xs overflow-hidden",
         isCompleted
           ? "bg-surface/50 border-border/60 opacity-75"
           : "bg-surface border-border hover:border-brand-500/40"
-      }`}
+      )}
     >
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         {/* Left: Time Timeline & Info */}
