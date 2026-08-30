@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { UnifiedContentForm } from "@/components/modul/unified-content-form";
 import { createClient } from "@/lib/supabase/client";
-import { Skeleton } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Module } from "@/types";
 
