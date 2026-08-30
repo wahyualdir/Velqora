@@ -133,6 +133,7 @@ export const SIDEBAR_CATEGORIES = [
         ],
       },
       { label: "Panduan", href: "/dashboard/panduan", icon: "Compass" },
+      { label: "Pasang Aplikasi", href: "/download", icon: "Download" },
     ],
   },
 ] as const;
