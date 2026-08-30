@@ -1,58 +1,54 @@
 # Velqora — Intelligent Academic Workspace & Learning Platform
 
-Velqora adalah platform manajemen pembelajaran dan produktivitas akademik berbasis AI yang dirancang untuk mengorganisasi silabus kuliah, tugas, catatan, jadwal terotomasi, modul pembelajaran interaktif, serta repositori dokumen perkuliahan dalam satu lingkungan kerja yang modern, terstruktur, dan aman.
+Velqora adalah platform manajemen pembelajaran dan produktivitas akademik modern yang memadukan dua pengalaman teroptimasi: **Professional Learning Workspace** untuk Web Desktop dan **Personal Learning App** untuk perangkat seluler.
+
+---
+
+## 🏛️ Arsitektur Produk
+
+```text
+Velqora
+│
+├── Web Experience (Desktop Workspace >= 1024px)
+│   ├── Information-Dense Multi-Column Workspace
+│   ├── Collapsible Sidebar (245px / 68px)
+│   ├── Spotlight Search Palette (Ctrl + K)
+│   └── Structured Desktop Data Tables
+│
+├── Mobile App Experience (Personal Learning App < 768px)
+│   ├── Thumb-Friendly Single-Hand Navigation
+│   ├── 5-Destination Bottom Nav (Beranda, Materi, Tugas, Modul, Menu)
+│   ├── Slide-Over Menu Drawer
+│   └── Modal Bottom Sheets & Time-Aware Feed
+│
+├── Shared Backend Core
+│   ├── Supabase PostgreSQL Database & Strict RLS Policies
+│   ├── Supabase SSR Authentication & Authorization
+│   ├── High-Performance Server Actions & REST API
+│   ├── Multimodal AI & Heuristic OCR Pipelines
+│   └── Deterministic Schedule Conflict & Intelligence Engines
+│
+├── Documentation (/docs)
+│   ├── /docs/architecture (Protected Core & Boundary Specs)
+│   ├── /docs/audits (Phase Reports & Forensic Audits)
+│   └── /docs/archive (Historical Documentation)
+│
+└── Testing Engine
+    └── 25 Test Suites (185+ Automated Scenarios, 100% Pass Rate)
+```
 
 ---
 
 ## 🛠️ Stack Teknologi
 
-- **Frontend & App Framework**: [Next.js 15.5](https://nextjs.org/) (App Router, Server Actions)
+- **Frontend Framework**: [Next.js 15.5](https://nextjs.org/) (App Router, Server Actions)
 - **UI & Runtime**: [React 19](https://react.dev/) & TypeScript 5
-- **Design System & Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Styling**: Tailwind CSS & Design Token System (Precision Blue `#2563EB`, Neutral Surfaces)
 - **Iconography**: [Lucide React](https://lucide.dev/)
-- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Supabase Auth SSR, Storage, RLS)
+- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, SSR Cookies, Storage, RLS)
 - **Document Processing**: jsPDF, docx, jszip, pdf-parse, xlsx, qrcode
-- **PWA**: Web App Manifest, Service Worker (Stale-While-Revalidate caching)
-- **Testing Engine**: Built-in NodeJS Test Runner via `tsx`
-
----
-
-## 📁 Struktur Folder Utama
-
-```
-velqora/
-├── src/
-│   ├── app/                 # Next.js App Router (35 routes: auth, dashboard, api)
-│   ├── components/          # 123 Presentation components grouped by domain
-│   │   ├── ai/              # AI Tutor, Context & Memory components
-│   │   ├── classes/         # Classroom management & collaboration
-│   │   ├── converter/       # Document format converter workbench
-│   │   ├── dashboard/       # Central workspace focus, metrics & lists
-│   │   ├── files/           # File repository & direct upload hub
-│   │   ├── layout/          # Sidebar, Navbar, CommandPalette, Footers
-│   │   ├── materi/          # Learning materials & PDF reader
-│   │   ├── modul/           # Course modules, syllabus & drive explorer
-│   │   ├── playground/      # Interactive code runner sandbox
-│   │   ├── quiz/            # AI Quiz generator & session runner
-│   │   ├── schedule/        # Academic schedule intelligence & controls
-│   │   ├── settings/        # Profile, appearance, security & learning prefs
-│   │   ├── tasks/           # Task management & deadline tracking
-│   │   └── ui/              # Reusable design system primitives
-│   ├── actions/             # Next.js Server Actions (study, schedule, ai, quiz, auth)
-│   ├── lib/                 # Core domain logic, AI engines, schedule pipelines, Supabase
-│   ├── context/             # Global providers (LanguageContext, ThemeAccentContext)
-│   └── types/               # Core TypeScript definitions and contracts
-├── docs/                    # Centralized project documentation
-│   ├── architecture/        # System design & component architecture specs
-│   ├── audits/              # Project audit reports (Phase 0 Audit, Phase 1 Report)
-│   ├── implementation/      # Implementation logs & engineering guides
-│   ├── testing/             # Test strategy & validation suites
-│   └── archive/             # Archived phase reports & historical logs
-├── public/                  # Static assets, PWA manifest, service worker & icons
-├── scripts/                 # Test runners, fixture generators, icon tools
-├── supabase/                # Database migrations (001 to 007) & RLS policies
-└── fixtures/                # Real-world academic schedule documents for testing
-```
+- **PWA & Distribution**: Progressive Web App Manifest, Service Worker Caching, `/download` Hub
+- **Testing Engine**: Node.js Test Runner via `tsx`
 
 ---
 
@@ -95,38 +91,20 @@ Akses aplikasi melalui browser di `http://localhost:3000`.
 
 ## 🧪 Pengujian (Testing)
 
-Velqora dilengkapi dengan 23 automated test suites yang mencakup unit test, integration test, conflict engine, schedule import, heuristic parser, dan product experience scenarios.
+Velqora dilengkapi dengan 25 automated test suites yang mencakup unit test, integration test, conflict engine, schedule import, heuristic parser, dan product experience scenarios.
 
 Jalankan seluruh test suite dengan:
+
 ```bash
 npm test
 ```
 
 ---
 
-## 📦 Build & Production Verification
+## 📚 Dokumentasi Arsitektur
 
-Untuk memvalidasi type check, server actions, dan kompilasi 35 route produksi:
-
-```bash
-npm run build
-```
-
-Untuk menjalankan static analysis linter:
-```bash
-npm run lint
-```
-
----
-
-## 📚 Dokumentasi Terkait
-
-- [Comprehensive Phase 0 Audit Report](docs/audits/AUDIT_REPORT.md)
-- [Phase 1 Repository Hygiene Report](docs/audits/PHASE_1_REPORT.md)
-- [Production Release Checklist](PRODUCTION_RELEASE_CHECKLIST.md)
-- [Historical Phase Archives](docs/archive/)
-
----
-
-## 📄 Lisensi
-Hak Cipta © 2026 Velqora. All rights reserved.
+- [Protected Core Specification](docs/architecture/PROTECTED_CORE.md)
+- [Web vs Mobile Boundary Specification](docs/architecture/WEB_MOBILE_BOUNDARY.md)
+- [Design System Boundary Specification](docs/architecture/DESIGN_SYSTEM_BOUNDARY.md)
+- [Phase 0 Forensic Audit](docs/audits/PHASE_0_FORENSIC_AUDIT.md)
+- [Product Acceptance Report](docs/audits/PRODUCT_ACCEPTANCE_REPORT.md)
