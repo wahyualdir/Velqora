@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/context/language-context";
 import { ThemeAccentProvider } from "@/context/theme-accent-context";
 import { ExperienceProvider } from "@/context/experience-context";
+import { SurfaceProvider } from "@/context/surface-context";
 import { PwaRegister } from "@/components/layout/pwa-register";
 import { Toaster } from "sonner";
 
@@ -108,15 +109,35 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                    (window.navigator && window.navigator.standalone === true) ||
+                    (document.referrer && document.referrer.indexOf('android-app://') !== -1);
+                  var surface = isStandalone ? 'app' : 'web';
+                  document.documentElement.dataset.surface = surface;
+                  document.documentElement.setAttribute('data-surface', surface);
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider>
           <ThemeAccentProvider>
             <LanguageProvider>
-              <ExperienceProvider>
-                {children}
-                <PwaRegister />
-                <Toaster position="top-right" richColors />
-              </ExperienceProvider>
+              <SurfaceProvider>
+                <ExperienceProvider>
+                  {children}
+                  <PwaRegister />
+                  <Toaster position="top-right" richColors />
+                </ExperienceProvider>
+              </SurfaceProvider>
             </LanguageProvider>
           </ThemeAccentProvider>
         </ThemeProvider>
