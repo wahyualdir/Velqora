@@ -1,4 +1,4 @@
-import { OptimizationProposal, WhatIfSimulationResult } from "./types";
+import { OptimizationProposal } from "./types";
 
 export interface ExplanationAnswerItem {
   questionNumber: number;

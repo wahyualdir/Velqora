@@ -3,8 +3,7 @@ import { analyzeWorkload } from "../schedule-intelligence/workload-analyzer";
 import { analyzeTaskDeadlines } from "../schedule-intelligence/deadline-analyzer";
 import { analyzeDeadlineCoverage } from "../schedule-intelligence/deadline-coverage";
 import { analyzeScheduleRealism } from "../schedule-intelligence/schedule-realism";
-import { isStudySession } from "./schedule-snapshot";
-import { EarlyWarningItem, SnapshotDiff, WarningSeverity } from "./types";
+import { EarlyWarningItem, SnapshotDiff } from "./types";
 
 /**
  * Early Warning System for Academic Schedules

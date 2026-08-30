@@ -1,6 +1,5 @@
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
-import { UserSchedulePreference, WorkloadLevel } from "../schedule-intelligence/types";
-import { OptimizationProposal, ScheduleSnapshot } from "../schedule-orchestration/types";
+import { ScheduleItem, Task } from "@/types";
+import { UserSchedulePreference } from "../schedule-intelligence/types";
 import { SessionOutcome, RecommendationOutcomeRecord } from "../schedule-outcomes/types";
 
 // =========================================================================

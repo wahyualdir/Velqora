@@ -1,6 +1,6 @@
 import { ScheduleItem, Task, ScheduleDay } from "@/types";
 import { detectAllScheduleConflicts } from "../schedule-import/conflict-engine";
-import { analyzeWorkload, calculateItemDurationMinutes } from "../schedule-intelligence/workload-analyzer";
+import { analyzeWorkload } from "../schedule-intelligence/workload-analyzer";
 import { analyzeDeadlineCoverage } from "../schedule-intelligence/deadline-coverage";
 import { analyzeFreeTimeSlots } from "../schedule-intelligence/free-time-analyzer";
 import { computeStableSnapshotHash } from "./schedule-snapshot";

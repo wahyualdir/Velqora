@@ -1,7 +1,6 @@
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
+import { ScheduleItem, Task } from "@/types";
 import { ScheduleRecommendation, WorkloadSummary } from "../schedule-intelligence/types";
 import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
-import { calculateRecommendationQuality } from "../schedule-intelligence/recommendation-quality";
 import { RecommendationValidationReport, RecommendationValidationVerdict } from "./types";
 
 /**
@@ -21,7 +20,7 @@ export function validateRecommendation(
   rec: ScheduleRecommendation,
   existingSchedules: ScheduleItem[],
   tasks: Task[] = [],
-  workload: WorkloadSummary | null = null,
+  _workload: WorkloadSummary | null = null,
   parentSnapshotHash?: string,
   currentSnapshotHash?: string
 ): RecommendationValidationReport {

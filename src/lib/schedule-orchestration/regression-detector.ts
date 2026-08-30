@@ -1,6 +1,6 @@
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
+import { ScheduleItem, Task } from "@/types";
 import { detectAllScheduleConflicts } from "../schedule-import/conflict-engine";
-import { analyzeWorkload, calculateItemDurationMinutes } from "../schedule-intelligence/workload-analyzer";
+import { analyzeWorkload } from "../schedule-intelligence/workload-analyzer";
 import { analyzeDeadlineCoverage } from "../schedule-intelligence/deadline-coverage";
 import { analyzeScheduleRealism } from "../schedule-intelligence/schedule-realism";
 import { UserSchedulePreference } from "../schedule-intelligence/types";
@@ -19,7 +19,7 @@ export function detectScheduleRegression(
   originalSchedules: ScheduleItem[],
   proposedSchedules: ScheduleItem[],
   tasks: Task[] = [],
-  preferences?: UserSchedulePreference
+  _preferences?: UserSchedulePreference
 ): RegressionAnalysis {
   const reasons: string[] = [];
   const tradeOffs: TradeOffItem[] = [];
