@@ -38,6 +38,7 @@ import { DAYS } from "./schedule-navigation";
 import { ScheduleImportHistoryItem } from "@/types/schedule";
 import { ScheduleItem } from "@/types";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { diffScheduleCollections } from "@/lib/schedule-intelligence/schedule-diff";
 import { ScheduleDiffResult } from "@/lib/schedule-intelligence/types";
 import { ScheduleChangeReview } from "./schedule-change-review";
@@ -447,13 +448,14 @@ export function ScheduleImportModal({
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 ${
+              className={cn(
+                "border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200",
                 dragOver
                   ? "border-primary bg-primary/5 scale-[0.99]"
                   : selectedFile
                   ? "border-emerald-500/50 bg-emerald-500/5"
                   : "border-border hover:border-primary/50 hover:bg-muted/30"
-              }`}
+              )}
             >
               <input
                 ref={fileInputRef}
@@ -602,34 +604,40 @@ export function ScheduleImportModal({
             {/* Filter Tabs */}
             <div className="flex items-center gap-2 border-b border-border pb-3 overflow-x-auto">
               <button
+                type="button"
                 onClick={() => setFilterTab("all")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer",
                   filterTab === "all"
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
+                )}
               >
                 Semua ({items.length})
               </button>
               <button
+                type="button"
                 onClick={() => setFilterTab("valid")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer",
                   filterTab === "valid"
                     ? "bg-emerald-600 text-white"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
+                )}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Siap ({verifiedCount})
               </button>
               {reviewCount > 0 && (
                 <button
+                  type="button"
                   onClick={() => setFilterTab("review")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer",
                     filterTab === "review"
                       ? "bg-amber-500 text-white"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                  )}
                 >
                   <AlertTriangle className="w-3.5 h-3.5" />
                   Perlu Review ({reviewCount})
@@ -637,12 +645,14 @@ export function ScheduleImportModal({
               )}
               {conflictCount > 0 && (
                 <button
+                  type="button"
                   onClick={() => setFilterTab("conflict")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer",
                     filterTab === "conflict"
                       ? "bg-rose-500 text-white"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                  )}
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
                   Bentrok / Duplikat ({conflictCount})
@@ -781,22 +791,24 @@ export function ScheduleImportModal({
                   return (
                     <div
                       key={item.id}
-                      className={`p-4 rounded-xl border transition-all ${
+                      className={cn(
+                        "p-4 rounded-xl border transition-all",
                         item.selected
                           ? "bg-card border-border shadow-xs"
                           : "bg-muted/20 border-border/40 opacity-70"
-                      }`}
+                      )}
                     >
                       <div className="flex items-start gap-3">
                         {/* Checkbox */}
                         <button
                           type="button"
                           onClick={() => handleToggleSelect(item.id)}
-                          className={`mt-1 w-5 h-5 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
+                          className={cn(
+                            "mt-1 w-5 h-5 rounded-md border flex items-center justify-center transition-colors shrink-0 cursor-pointer",
                             item.selected
                               ? "bg-primary border-primary text-primary-foreground"
                               : "border-input bg-background hover:bg-accent"
-                          }`}
+                          )}
                         >
                           {item.selected && <Check className="w-3.5 h-3.5" />}
                         </button>

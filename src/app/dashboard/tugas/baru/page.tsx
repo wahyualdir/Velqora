@@ -206,11 +206,11 @@ export default function TambahTugasPage() {
         {/* ─── 4. Actions ─── */}
         <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
           <Link href="/dashboard/tugas">
-            <Button variant="ghost" type="button" size="sm" className="text-xs">
+            <Button variant="ghost" type="button" size="sm" className="text-xs cursor-pointer">
               Batal
             </Button>
           </Link>
-          <Button type="submit" loading={loading} size="sm" className="text-xs font-semibold">
+          <Button type="submit" loading={loading} size="sm" className="text-xs font-semibold cursor-pointer">
             Simpan Tugas
           </Button>
         </div>
