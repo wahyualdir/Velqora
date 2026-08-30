@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface DesktopWorkspaceProps {
@@ -54,12 +55,12 @@ export function DesktopWorkspaceHeader({
             <React.Fragment key={idx}>
               {idx > 0 && <span className="text-text-tertiary/60">/</span>}
               {crumb.href ? (
-                <a
+                <Link
                   href={crumb.href}
                   className="hover:text-text-primary transition-colors hover:underline"
                 >
                   {crumb.label}
-                </a>
+                </Link>
               ) : (
                 <span className="text-text-secondary font-medium">{crumb.label}</span>
               )}

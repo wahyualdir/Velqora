@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { daysUntilDeadline } from "@/lib/utils";
 
 interface DashboardFocusProps {
@@ -28,10 +29,10 @@ export function DashboardFocus({
 }: DashboardFocusProps) {
   if (loading) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface-secondary/40 animate-pulse">
-        <div className="h-4 w-32 bg-border/60 rounded mb-2" />
-        <div className="h-6 w-3/4 bg-border/60 rounded mb-2" />
-        <div className="h-3 w-1/2 bg-border/60 rounded" />
+      <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface-secondary/40 space-y-2.5">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
       </div>
     );
   }
