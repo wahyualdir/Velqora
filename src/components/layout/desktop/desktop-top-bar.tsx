@@ -9,7 +9,7 @@ import { useExperience } from "@/context/experience-context";
 import { useLanguage } from "@/context/language-context";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
-import { isAdminUser } from "@/lib/utils";
+import { isAdminUser, cn } from "@/lib/utils";
 
 interface DesktopTopBarProps {
   searchQuery?: string;
@@ -59,11 +59,12 @@ export function DesktopTopBar({
 
   return (
     <header
-      className={`sticky top-0 z-30 border-b transition-colors duration-200 ${
+      className={cn(
+        "sticky top-0 z-30 border-b transition-colors duration-200",
         isLight
           ? "bg-white/95 backdrop-blur-xl border-slate-200 shadow-2xs"
           : "bg-surface/90 backdrop-blur-xl border-border"
-      }`}
+      )}
     >
       <div className="flex items-center justify-between gap-4 px-6 py-2.5 max-w-[1600px] mx-auto w-full">
         {/* Left: Spotlight Search / Command Palette Bar */}
@@ -79,11 +80,12 @@ export function DesktopTopBar({
               value={searchQuery}
               onClick={onOpenCommandPalette}
               placeholder="Cari materi, modul, tugas, atau tindakan... (Ctrl + K)"
-              className={`w-full pl-9 pr-14 h-9 rounded-lg border text-xs transition-all duration-150 cursor-pointer truncate ${
+              className={cn(
+                "w-full pl-9 pr-14 h-9 rounded-lg border text-xs transition-all duration-150 cursor-pointer truncate",
                 isLight
                   ? "placeholder:text-slate-400 text-slate-900 border-slate-200 bg-slate-50/90 group-hover:border-slate-300 focus:outline-none"
                   : "placeholder:text-text-tertiary text-text-primary border-border bg-surface/80 group-hover:border-brand-500/50 focus:outline-none"
-              }`}
+              )}
             />
             <div className="flex items-center gap-0.5 absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded border border-border bg-surface-secondary text-[10px] font-mono text-text-tertiary group-hover:text-text-primary transition-colors">
               <Command className="w-2.5 h-2.5" />
