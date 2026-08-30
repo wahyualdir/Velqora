@@ -5,20 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Plus,
   Sparkles,
   Upload,
-  X,
-  Code,
   BookOpen,
-  Trash2,
-  Layers,
   Image as ImageIcon,
-  FolderOpen,
   CheckCircle2,
-  File,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, Select } from "@/components/ui/input";
 import { ContentContainer } from "@/components/ui/section";
@@ -40,77 +32,19 @@ import {
 } from "@/types/module-drive";
 import { createClient } from "@/lib/supabase/client";
 import { STORAGE_BUCKET, SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
-import { formatFileSize } from "@/lib/utils";
 import { validateAcademicText } from "@/lib/academic-content-filter";
 import { toast } from "sonner";
 
-const COMMON_TECH_SUGGESTIONS = [
-  "Python",
-  "Jupyter",
-  "TypeScript",
-  "JavaScript",
-  "Next.js",
-  "React",
-  "Machine Learning",
-  "PyTorch",
-  "Scikit-Learn",
-  "Pandas",
-  "FastAPI",
-  "SQL",
-  "PostgreSQL",
-  "Node.js",
-  "Docker",
-  "Tailwind CSS",
-  "C++",
-  "Java",
-];
+import {
+  DEFAULT_MODULE_CHAPTER_PRESETS,
+  DEFAULT_PROJECT_SECTION_PRESETS,
+} from "./unified-content-form/constants";
+import { ModeSelector } from "./unified-content-form/mode-selector";
+import { CurriculumSectionManager } from "./unified-content-form/curriculum-section-manager";
+import { AttachedFilesManager } from "./unified-content-form/attached-files-manager";
+import { ProjectFields } from "./unified-content-form/project-fields";
 
-const PROGRAMMING_LANGUAGES = [
-  { value: "Python", label: "Python" },
-  { value: "JavaScript", label: "JavaScript" },
-  { value: "TypeScript", label: "TypeScript" },
-  { value: "SQL", label: "SQL" },
-  { value: "C++", label: "C++" },
-  { value: "Java", label: "Java" },
-  { value: "HTML/CSS", label: "HTML & CSS" },
-  { value: "Rust", label: "Rust" },
-  { value: "Go", label: "Go (Golang)" },
-  { value: "PHP", label: "PHP" },
-  { value: "R", label: "R (Statistics)" },
-  { value: "Lainnya", label: "Lainnya / Multi-Bahasa" },
-];
-
-const PROJECT_TYPES = [
-  { value: "Data Science", label: "Data Science & Analisis" },
-  { value: "AI / Machine Learning", label: "AI & Machine Learning" },
-  { value: "Web Application", label: "Aplikasi Web (Fullstack / Frontend)" },
-  { value: "Backend API", label: "Backend API & Microservices" },
-  { value: "Mobile App", label: "Aplikasi Mobile" },
-  { value: "Desktop App", label: "Aplikasi Desktop" },
-  { value: "Automation / Script", label: "Automasi & Scripting" },
-  { value: "Academic Research", label: "Riset & Eksperimen Akademik" },
-  { value: "Other", label: "Lainnya" },
-];
-
-const DEFAULT_MODULE_CHAPTER_PRESETS = [
-  "Pengenalan & Konsep Dasar",
-  "Sintaks & Struktur Fundamental",
-  "Logika Pemrograman & Kondisional",
-  "Pengulangan & Struktur Data",
-  "Fungsi, Modul, dan Reusable Code",
-  "Studi Kasus & Latihan Terapan",
-];
-
-const DEFAULT_PROJECT_SECTION_PRESETS = [
-  "1. Tujuan & Arsitektur Project",
-  "2. Persiapan Data & Lingkungan Kerja",
-  "3. Pemrosesan Data & Exploratory Analysis",
-  "4. Implementasi Logika / Training Model",
-  "5. Pengujian & Evaluasi Hasil",
-  "6. Kesimpulan & Panduan Menjalankan Kode",
-];
-
-interface UnifiedContentFormProps {
+export interface UnifiedContentFormProps {
   initialKind?: "module" | "project";
   initialData?: Module | null;
   isEditing?: boolean;
@@ -140,9 +74,7 @@ export function UnifiedContentForm({
   // Core Information
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(initialData?.description || "");
-  const [authorName, setAuthorName] = useState(
-    initialData?.author_name || ""
-  );
+  const [authorName, setAuthorName] = useState(initialData?.author_name || "");
   const [coverUrl, setCoverUrl] = useState("");
   const [coverUploading, setCoverUploading] = useState(false);
 
@@ -170,8 +102,6 @@ export function UnifiedContentForm({
   }[]>([]);
 
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const folderInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing data if editing
@@ -228,8 +158,8 @@ export function UnifiedContentForm({
           });
         });
 
-        // Also add any custom user-created categories not in system presets
-        list.forEach((dbCat: any) => {
+        // Add any custom categories
+        list?.forEach((dbCat: any) => {
           if (!mergedCategories.some((c) => c.name.toLowerCase().trim() === dbCat.name.toLowerCase().trim())) {
             mergedCategories.push(dbCat);
           }
@@ -243,7 +173,6 @@ export function UnifiedContentForm({
           setLevel(initialData.level || "pemula");
           setCategoryId(initialData.category_id || "");
 
-          // Find parent category if category has parent_id
           if (initialData.category_id) {
             const foundCat = mergedCategories.find((c: any) => c.id === initialData.category_id);
             if (foundCat && foundCat.parent_id) {
@@ -251,7 +180,6 @@ export function UnifiedContentForm({
             }
           }
 
-          // Extract drive metadata from notes
           const drive = extractModuleDriveFromNotes(initialData.notes);
           if (drive.kind) setKind(drive.kind);
           if (drive.techStack) setTechStackList(drive.techStack);
@@ -263,14 +191,12 @@ export function UnifiedContentForm({
           if (drive.coverUrl) setCoverUrl(drive.coverUrl);
           if (drive.files) setExistingFiles(drive.files);
 
-          // Extract chapters or sections
           if (initialData.chapters && initialData.chapters.length > 0) {
             setSections(initialData.chapters.map((c) => c.title));
           } else if (drive.sections && drive.sections.length > 0) {
             setSections(drive.sections.map((s) => s.title));
           }
         } else {
-          // Initialize default preset sections for new content
           setSections(
             initialKind === "project"
               ? DEFAULT_PROJECT_SECTION_PRESETS
@@ -278,13 +204,13 @@ export function UnifiedContentForm({
           );
         }
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load module categories/data:", err);
       }
     }
     loadData();
   }, [initialData, initialKind]);
 
-  // Derived subcategories based on selected parent category
+  // Derived categories
   const parentCategories = categories.filter((c) => !c.parent_id);
   const childCategories = categories.filter((c) => {
     if (!parentCategory) return true;
@@ -315,7 +241,6 @@ export function UnifiedContentForm({
     setTechStackList((prev) => prev.filter((t) => t !== tag));
   };
 
-  // Section / Chapter management
   const handleAddSection = () => {
     const clean = newSectionInput.trim();
     if (!clean) return;
@@ -336,7 +261,6 @@ export function UnifiedContentForm({
     toast.success("Preset struktur isi berhasil diterapkan");
   };
 
-  // Cover Image Upload Handler
   const handleCoverSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -363,7 +287,6 @@ export function UnifiedContentForm({
         setCoverUrl(publicUrlData.publicUrl);
         toast.success("Cover berhasil diunggah");
       } else {
-        // Fallback to data URL
         const reader = new FileReader();
         reader.onload = () => {
           setCoverUrl(reader.result as string);
@@ -378,7 +301,6 @@ export function UnifiedContentForm({
     }
   };
 
-  // Multiple File Selection & Directory Upload Handler
   const handleFilesSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
     isFolder = false
@@ -396,14 +318,12 @@ export function UnifiedContentForm({
         continue;
       }
 
-      // Check validation against current mode (Module vs Project)
       const validation = validateContentFile(f.name, kind);
       if (!validation.isValid) {
         toast.error(validation.reason);
         continue;
       }
 
-      // Preserve relative path if dropped from folder
       const relPath = (f as any).webkitRelativePath || f.name;
       validNewFiles.push({ file: f, relativePath: relPath });
     }
@@ -411,9 +331,7 @@ export function UnifiedContentForm({
     if (validNewFiles.length > 0) {
       setNewUploadedFiles((prev) => [...prev, ...validNewFiles]);
       toast.success(
-        `${validNewFiles.length} berkas ${
-          isFolder ? "dari folder " : ""
-        }siap diunggah!`
+        `${validNewFiles.length} berkas ${isFolder ? "dari folder " : ""}siap diunggah!`
       );
 
       if (!title.trim() && validNewFiles[0]) {
@@ -439,7 +357,6 @@ export function UnifiedContentForm({
     toast.info("Berkas ditandai untuk dihapus saat disimpan.");
   };
 
-  // Quick Auto-Sort NLP
   const handleQuickClassify = async () => {
     const textToClassify = `${title}\n${description}`.trim();
     if (!textToClassify) {
@@ -475,7 +392,6 @@ export function UnifiedContentForm({
     }
   };
 
-  // Form Submit (Create or Update)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -495,9 +411,7 @@ export function UnifiedContentForm({
     setLoading(true);
     try {
       const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
       const effectiveAuthor =
         authorName.trim() ||
@@ -508,7 +422,7 @@ export function UnifiedContentForm({
 
       const uploadedDriveFiles: ModuleDriveFile[] = [...existingFiles];
 
-      // 1. Process and upload all new files
+      // Process and upload new files
       if (newUploadedFiles.length > 0) {
         for (const item of newUploadedFiles) {
           const file = item.file;
@@ -520,7 +434,6 @@ export function UnifiedContentForm({
             let fileUrl = "";
             let initialTextContent: string | undefined = undefined;
 
-            // Extract text/preview content for code/notebook/csv/markdown
             if (
               catInfo.category === "jupyter" ||
               catInfo.category === "python" ||
@@ -607,7 +520,7 @@ export function UnifiedContentForm({
         }
       }
 
-      // 2. Format Structured Sections
+      // Format sections
       const structuredSections: ModuleSection[] = sections
         .filter((s) => s.trim().length > 0)
         .map((title, idx) => ({
@@ -617,7 +530,7 @@ export function UnifiedContentForm({
           isCompleted: false,
         }));
 
-      // 3. Serialize Drive Notes & Metadata
+      // Serialize notes
       const serializedNotes = injectModuleDriveIntoNotes(
         initialData?.notes || "",
         [],
@@ -641,7 +554,6 @@ export function UnifiedContentForm({
       let targetId = initialData?.id;
 
       if (isEditing && initialData?.id) {
-        // UPDATE Existing Content
         await updateModule(initialData.id, {
           title,
           description,
@@ -656,7 +568,6 @@ export function UnifiedContentForm({
             : "Modul berhasil diperbarui!"
         );
       } else {
-        // CREATE New Content
         const created = await createModule({
           title,
           description,
@@ -671,7 +582,6 @@ export function UnifiedContentForm({
 
         if (created?.id) {
           targetId = created.id;
-          // Seed chapter checklist rows in database if present
           if (sections.length > 0) {
             await addModuleChapters(created.id, sections);
           }
@@ -703,7 +613,7 @@ export function UnifiedContentForm({
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/modul"
-            className="w-9 h-9 rounded-xl bg-surface-secondary hover:bg-surface-tertiary border border-border flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
+            className="w-9 h-9 rounded-xl bg-surface-secondary hover:bg-surface-tertiary border border-border flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -724,52 +634,33 @@ export function UnifiedContentForm({
             </p>
           </div>
         </div>
-
-        {/* Mode Switcher (only when creating new) */}
-        {!isEditing && (
-          <div className="flex p-1 bg-surface-secondary rounded-xl border border-border self-start sm:self-auto">
-            <button
-              type="button"
-              onClick={() => handleKindSwitch("module")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                kind === "module"
-                  ? "bg-brand-600 text-white shadow-sm"
-                  : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Modul</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleKindSwitch("project")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                kind === "project"
-                  ? "bg-brand-600 text-white shadow-sm"
-                  : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              <Code className="w-3.5 h-3.5" />
-              <span>Project</span>
-            </button>
-          </div>
-        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* ─── 2. Informasi Dasar (Informasi Utama) ─── */}
-        <Card className="p-5 sm:p-6 rounded-2xl bg-surface border-border space-y-4 shadow-sm w-full">
-          <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-            {kind === "project" ? (
-              <Code className="w-4 h-4 text-brand-400" />
-            ) : (
-              <BookOpen className="w-4 h-4 text-brand-400" />
-            )}
-            <span>
-              Informasi {kind === "project" ? "Project" : "Modul"}
-            </span>
-          </h3>
+        {/* ─── 2. Mode Selector (New Content) ─── */}
+        {!isEditing && (
+          <ModeSelector
+            kind={kind}
+            onChangeKind={handleKindSwitch}
+            disabled={loading}
+          />
+        )}
+
+        {/* ─── 3. Basic Information ─── */}
+        <div className="p-4 sm:p-5 rounded-2xl border border-border bg-surface shadow-2xs space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b border-border/70">
+            <div className="w-7 h-7 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500">
+              <BookOpen className="w-3.5 h-3.5" />
+            </div>
+            <div>
+              <h3 className="text-xs sm:text-sm font-bold text-text-primary">
+                Informasi Utama {kind === "project" ? "Proyek" : "Modul"}
+              </h3>
+              <p className="text-[11px] text-text-secondary">
+                Judul kurikulum, deskripsi materi, kategori, dan tingkat kesulitan.
+              </p>
+            </div>
+          </div>
 
           <div className="space-y-4">
             {/* Title */}
@@ -783,6 +674,7 @@ export function UnifiedContentForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
+              disabled={loading}
             />
 
             {/* Description */}
@@ -796,12 +688,13 @@ export function UnifiedContentForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              disabled={loading}
             />
 
-            {/* Kategori & Subkategori (Hierarchy) */}
+            {/* Category Hierarchy */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-text-secondary">
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-semibold text-text-secondary">
                   Kategori Utama
                 </label>
                 <Select
@@ -810,6 +703,7 @@ export function UnifiedContentForm({
                     setParentCategory(e.target.value);
                     setCategoryId(e.target.value);
                   }}
+                  disabled={loading}
                   options={[
                     { value: "", label: "Semua Kategori Utama" },
                     ...parentCategories.map((c) => ({
@@ -821,16 +715,16 @@ export function UnifiedContentForm({
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 text-left">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-text-secondary">
+                  <label className="block text-xs font-semibold text-text-secondary">
                     Subkategori Spesifik
                   </label>
                   <button
                     type="button"
                     onClick={handleQuickClassify}
-                    disabled={autoSorting}
-                    className="text-[11px] text-brand-400 hover:underline inline-flex items-center gap-1 font-semibold"
+                    disabled={autoSorting || loading}
+                    className="text-[11px] text-brand-500 hover:text-brand-600 inline-flex items-center gap-1 font-semibold cursor-pointer"
                   >
                     <Sparkles className="w-3 h-3" /> Auto-Sortir AI
                   </button>
@@ -838,6 +732,7 @@ export function UnifiedContentForm({
                 <Select
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
+                  disabled={loading}
                   options={childCategories.map((c) => ({
                     value: c.id,
                     label: c.name,
@@ -853,6 +748,7 @@ export function UnifiedContentForm({
                 label="Tingkat Kesulitan"
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
+                disabled={loading}
                 options={Object.entries(MODULE_LEVEL_LABELS).map(([k, v]) => ({
                   value: k,
                   label: v,
@@ -864,21 +760,23 @@ export function UnifiedContentForm({
                 placeholder="Nama penyusun atau author project"
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
+                disabled={loading}
               />
             </div>
 
             {/* Thumbnail / Cover */}
-            <div className="space-y-2 p-4 rounded-xl bg-surface-secondary/40 border border-border">
+            <div className="space-y-2 p-3.5 rounded-xl bg-surface-secondary/40 border border-border">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
-                  <ImageIcon className="w-3.5 h-3.5 text-brand-400" />
+                  <ImageIcon className="w-3.5 h-3.5 text-brand-500" />
                   <span>Thumbnail / Cover (Opsional)</span>
                 </label>
                 {coverUrl && (
                   <button
                     type="button"
                     onClick={() => setCoverUrl("")}
-                    className="text-[11px] text-danger-400 hover:underline"
+                    disabled={loading}
+                    className="text-[11px] text-rose-500 hover:underline cursor-pointer"
                   >
                     Hapus Cover
                   </button>
@@ -907,7 +805,8 @@ export function UnifiedContentForm({
                     size="sm"
                     loading={coverUploading}
                     onClick={() => coverInputRef.current?.click()}
-                    className="text-xs gap-1.5"
+                    disabled={loading}
+                    className="text-xs gap-1.5 cursor-pointer"
                   >
                     <Upload className="w-3.5 h-3.5" /> Unggah Gambar
                   </Button>
@@ -922,439 +821,66 @@ export function UnifiedContentForm({
                     placeholder="Atau tempel URL gambar..."
                     value={coverUrl}
                     onChange={(e) => setCoverUrl(e.target.value)}
+                    disabled={loading}
                     className="text-xs flex-1"
                   />
                 </div>
               </div>
             </div>
           </div>
-        </Card>
+        </div>
 
-        {/* ─── 3. Metadata Khusus Project (Only if kind === "project") ─── */}
+        {/* ─── 4. Project Specific Fields (Conditional) ─── */}
         {kind === "project" && (
-          <Card className="p-5 sm:p-6 rounded-2xl bg-surface border-border space-y-4 shadow-sm w-full animate-fade-in">
-            <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-              <Code className="w-4 h-4 text-purple-400" />
-              <span>Metadata & Teknologi Proyek</span>
-            </h3>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Select
-                  label="Bahasa Pemrograman Utama"
-                  value={programmingLanguage}
-                  onChange={(e) => setProgrammingLanguage(e.target.value)}
-                  options={PROGRAMMING_LANGUAGES}
-                />
-
-                <Select
-                  label="Tipe Project"
-                  value={projectType}
-                  onChange={(e) => setProjectType(e.target.value)}
-                  options={PROJECT_TYPES}
-                />
-              </div>
-
-              {/* Tech Stack Chips */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-text-secondary block">
-                  Framework & Library (Tech Stack)
-                </label>
-                <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                  {techStackList.map((t) => (
-                    <span
-                      key={t}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-brand-500/15 text-brand-400 border border-brand-500/30"
-                    >
-                      <span>{t}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTechTag(t)}
-                        className="hover:text-white"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Ketik nama teknologi (contoh: FastAPI, PyTorch, Docker)..."
-                    value={techStackInput}
-                    onChange={(e) => setTechStackInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddTechTag(techStackInput);
-                      }
-                    }}
-                    className="text-xs"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleAddTechTag(techStackInput)}
-                    className="text-xs shrink-0"
-                  >
-                    + Tambah Tag
-                  </Button>
-                </div>
-
-                {/* Suggestions */}
-                <div className="flex flex-wrap items-center gap-1 pt-1">
-                  <span className="text-[10px] text-text-tertiary mr-1">
-                    Rekomendasi:
-                  </span>
-                  {COMMON_TECH_SUGGESTIONS.slice(0, 8).map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => handleAddTechTag(s)}
-                      className="text-[10px] px-2 py-0.5 rounded bg-surface hover:bg-surface-secondary text-text-tertiary hover:text-text-primary border border-border/80 transition-colors"
-                    >
-                      +{s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Repositories & Demo Links */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <Input
-                  label="GitHub / Git Repository URL"
-                  placeholder="https://github.com/username/project-repo"
-                  value={repositoryUrl}
-                  onChange={(e) => setRepositoryUrl(e.target.value)}
-                />
-                <Input
-                  label="Live Preview / Demo URL"
-                  placeholder="https://demo-project.app"
-                  value={demoUrl}
-                  onChange={(e) => setDemoUrl(e.target.value)}
-                />
-              </div>
-            </div>
-          </Card>
+          <ProjectFields
+            programmingLanguage={programmingLanguage}
+            onChangeProgrammingLanguage={setProgrammingLanguage}
+            projectType={projectType}
+            onChangeProjectType={setProjectType}
+            repositoryUrl={repositoryUrl}
+            onChangeRepositoryUrl={setRepositoryUrl}
+            demoUrl={demoUrl}
+            onChangeDemoUrl={setDemoUrl}
+            techStackList={techStackList}
+            techStackInput={techStackInput}
+            onChangeTechStackInput={setTechStackInput}
+            onAddTechTag={handleAddTechTag}
+            onRemoveTechTag={handleRemoveTechTag}
+            disabled={loading}
+          />
         )}
 
-        {/* ─── 4. Struktur Isi Pembelajaran (Chapters / Sections) ─── */}
-        <Card className="p-5 sm:p-6 rounded-2xl bg-surface border-border space-y-4 shadow-sm w-full">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
-            <div>
-              <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                <Layers className="w-4 h-4 text-brand-400" />
-                <span>
-                  {kind === "project"
-                    ? "Isi Project (Alur Pembelajaran Proyek)"
-                    : "Isi Modul (Daftar Bab Silabus)"}
-                </span>
-              </h3>
-              <p className="text-xs text-text-secondary">
-                {kind === "project"
-                  ? "Tentukan langkah-langkah pembelajaran project (Tujuan, Dataset, Preprocessing, Model, Evaluasi)."
-                  : "Tentukan bab atau silabus pembelajaran modul akademik."}
-              </p>
-            </div>
+        {/* ─── 5. Curriculum / Chapters Section Manager ─── */}
+        <CurriculumSectionManager
+          kind={kind}
+          sections={sections}
+          newSectionInput={newSectionInput}
+          onChangeNewSectionInput={setNewSectionInput}
+          onAddSection={handleAddSection}
+          onRemoveSection={handleRemoveSection}
+          onApplyDefaultPresets={handleApplyDefaultPresets}
+          disabled={loading}
+        />
 
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleApplyDefaultPresets}
-              className="text-xs gap-1 self-start sm:self-auto"
-            >
-              <Sparkles className="w-3 h-3 text-brand-400" /> Gunakan Preset Standar
-            </Button>
-          </div>
+        {/* ─── 6. Attached Files & Drive Manager ─── */}
+        <AttachedFilesManager
+          kind={kind}
+          existingFiles={existingFiles}
+          newUploadedFiles={newUploadedFiles}
+          onFilesSelect={handleFilesSelect}
+          onRemoveNewFile={handleRemoveNewFile}
+          onRemoveExistingFile={handleRemoveExistingFile}
+          disabled={loading}
+        />
 
-          {/* Section Items List */}
-          <div className="space-y-2">
-            {sections.length === 0 ? (
-              <div className="p-4 rounded-xl border border-dashed border-border text-center text-xs text-text-tertiary">
-                Belum ada bab/tahap pembelajaran. Tambahkan bab atau gunakan preset standar di atas.
-              </div>
-            ) : (
-              sections.map((sec, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-3 rounded-xl border border-border bg-surface-secondary/40 hover:bg-surface-secondary transition-all gap-2"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="w-6 h-6 rounded-md bg-surface border border-border flex items-center justify-center text-[10px] font-mono font-bold text-text-tertiary shrink-0">
-                      {idx + 1}
-                    </span>
-                    <span className="text-xs font-semibold text-text-primary truncate">
-                      {sec}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSection(idx)}
-                    className="p-1 text-text-tertiary hover:text-danger-400 transition-colors"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Add Section Input */}
-          <div className="flex items-center gap-2 pt-2">
-            <Input
-              placeholder={
-                kind === "project"
-                  ? "Tambah tahap project (contoh: 4. Hyperparameter Tuning)..."
-                  : "Tambah bab modul (contoh: Bab 5: Pemrograman Berorientasi Objek)..."
-              }
-              value={newSectionInput}
-              onChange={(e) => setNewSectionInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddSection();
-                }
-              }}
-              className="text-xs"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleAddSection}
-              className="text-xs shrink-0"
-            >
-              + Tambah Bab / Tahap
-            </Button>
-          </div>
-        </Card>
-
-        {/* ─── 5. Berkas Lampiran (File Modul / Project Files) ─── */}
-        <Card className="p-5 sm:p-6 rounded-2xl bg-surface border-border space-y-4 shadow-sm w-full">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                  <Upload className="w-4 h-4 text-brand-400" />
-                  <span>
-                    {kind === "project"
-                      ? `Berkas Proyek & Source Code (${existingFiles.length + newUploadedFiles.length})`
-                      : `Berkas Materi Modul (${existingFiles.length + newUploadedFiles.length})`}
-                  </span>
-                </h3>
-                <span
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                    kind === "project"
-                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                      : "bg-brand-500/10 text-brand-400 border border-brand-500/20"
-                  }`}
-                >
-                  {kind === "project" ? "MODE PROJECT" : "MODE MODUL"}
-                </span>
-              </div>
-              <p className="text-xs text-text-secondary mt-1">
-                {kind === "project"
-                  ? "Khusus file kode & proyek: Jupyter Notebook (.ipynb), Python (.py), Web (.tsx/.js/.html), Dataset (.csv/.json), Arsip (.zip/.tar.gz), dsb."
-                  : "Khusus dokumen bahan ajar: PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx), E-Book (.epub), dan Teks (.txt)."}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              {/* Add Files */}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-xs gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" /> + Tambah File {kind === "project" ? "Project" : "Dokumen"}
-              </Button>
-
-              {/* Upload Folder (for Project mode) */}
-              {kind === "project" && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => folderInputRef.current?.click()}
-                  className="text-xs gap-1.5"
-                  title="Unggah seluruh folder project dengan struktur foldernya"
-                >
-                  <FolderOpen className="w-3.5 h-3.5 text-text-tertiary" /> Folder Project
-                </Button>
-              )}
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept={
-                  kind === "project"
-                    ? "*/*"
-                    : ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.epub,.odt,.rtf,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,application/epub+zip"
-                }
-                onChange={(e) => handleFilesSelect(e, false)}
-                className="hidden"
-              />
-              <input
-                ref={folderInputRef}
-                type="file"
-                // @ts-expect-error - webkitdirectory is a non-standard browser attribute
-                webkitdirectory=""
-                directory=""
-                multiple
-                onChange={(e) => handleFilesSelect(e, true)}
-                className="hidden"
-              />
-            </div>
-          </div>
-
-          {/* Type Guidance Pill Badges */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <span className="text-[11px] font-semibold text-text-tertiary mr-1">Format Didukung:</span>
-            {kind === "project" ? (
-              <>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  🪐 Jupyter (.ipynb)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                  🐍 Python (.py)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  ⚛️ Web (.tsx / .js / .html)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  🗄️ Dataset (.csv / .json)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                  📦 Arsip ZIP (.zip / .rar)
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                  📄 PDF (.pdf)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  📝 Word (.docx / .doc)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                  📊 PowerPoint (.pptx / .ppt)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  📑 Excel (.xlsx / .xls)
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-slate-500/10 text-slate-300 border border-slate-500/20">
-                  📖 E-Book & Text (.epub / .txt)
-                </span>
-              </>
-            )}
-          </div>
-
-          {/* File Cards (Vertical Stack, No Wide Overflow) */}
-          {existingFiles.length === 0 && newUploadedFiles.length === 0 ? (
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="p-8 rounded-2xl border-2 border-dashed border-border hover:border-brand-500/50 bg-surface-secondary/30 text-center cursor-pointer transition-all space-y-2"
-            >
-              <Upload className="w-8 h-8 text-text-tertiary mx-auto" />
-              <p className="text-xs font-semibold text-text-primary">
-                {kind === "project"
-                  ? "Klik untuk memilih file source code, notebook Jupyter, atau arsip ZIP project"
-                  : "Klik untuk memilih dokumen bahan ajar (PDF, Word, PPT, Excel, TXT)"}
-              </p>
-              <p className="text-[11px] text-text-tertiary">
-                {kind === "project"
-                  ? "Mendukung multi-file & folder project. Kode dan notebook otomatis diekstrak pratinjaunya."
-                  : "Mendukung upload banyak dokumen sekaligus. Teks materi otomatis diproses ke viewer."}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2 w-full">
-              {/* Existing Stored Files */}
-              {existingFiles.map((file) => {
-                const info = getFileCategory(file.name);
-                return (
-                  <div
-                    key={file.id}
-                    className="flex items-center justify-between p-3 rounded-xl border border-border bg-surface-secondary/60 hover:bg-surface-secondary transition-all gap-3 w-full"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center text-brand-400 shrink-0 font-mono text-[10px] font-bold uppercase">
-                        {file.extension || "FILE"}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-text-primary truncate">
-                          {file.path || file.name}
-                        </p>
-                        <p className="text-[10px] text-text-tertiary font-mono">
-                          {formatFileSize(file.size)} • {info.label} (Tersimpan)
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveExistingFile(file.id)}
-                      className="p-1.5 rounded-lg text-text-tertiary hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
-                      title="Hapus berkas ini"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                );
-              })}
-
-              {/* Newly Uploaded Files */}
-              {newUploadedFiles.map((item, idx) => {
-                const file = item.file;
-                const info = getFileCategory(file.name);
-                return (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-3 rounded-xl border border-brand-500/30 bg-brand-500/5 hover:bg-brand-500/10 transition-all gap-3 w-full"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface border border-brand-500/30 flex items-center justify-center text-brand-400 shrink-0 font-mono text-[10px] font-bold uppercase">
-                        {info.extension || "FILE"}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-text-primary truncate">
-                          {item.relativePath || file.name}
-                        </p>
-                        <p className="text-[10px] text-text-tertiary font-mono">
-                          {formatFileSize(file.size)} • {info.label} (Siap diunggah)
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveNewFile(idx)}
-                      className="p-1.5 rounded-lg text-text-tertiary hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
-                      title="Batalkan berkas ini"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </Card>
-
-        {/* ─── 6. Action Submit Buttons ─── */}
+        {/* ─── 7. Action Submit Buttons ─── */}
         <div className="flex items-center justify-end gap-3 pt-4">
           <Link href="/dashboard/modul">
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" disabled={loading} className="cursor-pointer">
               Batal
             </Button>
           </Link>
-          <Button type="submit" loading={loading} className="gap-2 px-6">
+          <Button type="submit" loading={loading} className="gap-2 px-6 cursor-pointer">
             <CheckCircle2 className="w-4 h-4" />
             <span>
               {isEditing
