@@ -24,6 +24,7 @@ import {
 } from "@/actions/ai-memory-actions";
 import { MemoryCategory, MemoryItem, UserMemoryProfile } from "@/lib/ai/types";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface MemoryModalProps {
   isOpen: boolean;
@@ -181,7 +182,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors"
+            className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -206,7 +207,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="px-3 py-1.5 rounded-lg bg-surface-secondary hover:bg-surface-tertiary border border-border text-text-primary font-medium flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-surface-secondary hover:bg-surface-tertiary border border-border text-text-primary font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Tambah Manual</span>
@@ -215,7 +216,7 @@ export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {
               <button
                 disabled={isClearingAll}
                 onClick={handleClearAll}
-                className="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-500 font-medium flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-500 font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Hapus Semua</span>
