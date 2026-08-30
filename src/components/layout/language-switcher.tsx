@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/context/language-context";
 import { Globe, ChevronDown, Check } from "lucide-react";
 import { Language } from "@/lib/i18n/translations";
+import { cn } from "@/lib/utils";
 
 export function LanguageSwitcher() {
   const { language, setLanguage, t } = useLanguage();
@@ -41,7 +42,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 h-10 min-h-[40px] rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-semibold text-text-primary transition-all duration-150 shadow-xs focus:outline-none active:scale-95"
+        className="flex items-center gap-1.5 px-3 h-10 min-h-[40px] rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-semibold text-text-primary transition-all duration-150 shadow-xs focus:outline-none active:scale-95 cursor-pointer"
         aria-expanded={isOpen}
         aria-haspopup="true"
         title={t("selectLanguage")}
@@ -51,9 +52,10 @@ export function LanguageSwitcher() {
           {currentLang.short}
         </span>
         <ChevronDown
-          className={`w-3 h-3 text-text-tertiary transition-transform duration-150 ${
-            isOpen ? "rotate-180 text-brand-500" : ""
-          }`}
+          className={cn(
+            "w-3 h-3 text-text-tertiary transition-transform duration-150",
+            isOpen && "rotate-180 text-brand-500"
+          )}
         />
       </button>
 
@@ -74,11 +76,12 @@ export function LanguageSwitcher() {
                     setLanguage(item.code);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
+                  className={cn(
+                    "w-full flex items-center justify-between min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer",
                     isSelected
                       ? "bg-brand-500/15 text-brand-400 border border-brand-500/30 font-semibold"
                       : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
-                  }`}
+                  )}
                 >
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-[11px] font-bold opacity-75">{item.short}</span>
