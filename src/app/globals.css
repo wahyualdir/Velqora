@@ -285,7 +285,7 @@ button, a, input, select, textarea {
 }
 
 /* ========================================
-   5. FUNCTIONAL MICRO-ANIMATIONS (150-250ms)
+   5. FUNCTIONAL MICRO-ANIMATIONS & EDITORIAL MOTION
    ======================================== */
 
 @keyframes fade-in {
@@ -298,17 +298,49 @@ button, a, input, select, textarea {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes editorial-entrance {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-in-up 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-editorial-entrance {
+  animation: editorial-entrance 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Functional Transitions */
+.transition-micro {
+  transition: all 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.transition-ui {
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.transition-page {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Subtle Shimmer for Skeleton UI */
