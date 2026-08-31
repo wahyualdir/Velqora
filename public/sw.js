@@ -26,7 +26,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate Event: Invalidate and purge old caches (v1, etc.)
+// Activate Event: Invalidate and purge old caches (v1, v2, etc.)
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -38,6 +38,13 @@ self.addEventListener("activate", (event) => {
     })
   );
   self.clients.claim();
+});
+
+// Message Event: Handle client-triggered immediate activation (SKIP_WAITING)
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 // Fetch Event (Safe network-first with static cache fallback)
