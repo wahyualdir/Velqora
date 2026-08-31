@@ -1,4 +1,12 @@
 "use server";
 
-// Domain Server Actions for Velqora Study & Workspace
-export * from "../study-actions";
+export * from "./helpers";
+export * from "./dashboard";
+export * from "./materials";
+export * from "./tasks";
+export * from "./modules";
+export * from "./module-drive";
+export * from "./categories";
+export * from "./tags";
+export * from "./files";
+export * from "./backup";
