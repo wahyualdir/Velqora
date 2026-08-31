@@ -171,4 +171,43 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
       });
     });
   });
+
+  // ─── Group F: Surface Identity vs Viewport Width Reconciliation ───
+  describe("Group F: Surface vs Viewport Width Reconciliation", () => {
+    it("Scenario EXP-13: SurfaceAdaptive exists and gates presentation strictly based on useSurface()", () => {
+      const surfaceAdaptivePath = path.join(
+        process.cwd(),
+        "src/components/layout/surface-adaptive.tsx"
+      );
+      assert.ok(fs.existsSync(surfaceAdaptivePath), "surface-adaptive.tsx must exist");
+      const content = fs.readFileSync(surfaceAdaptivePath, "utf-8");
+
+      assert.ok(content.includes("useSurface"), "Must use useSurface hook");
+      assert.ok(content.includes("surface === \"app\""), "Must check surface === 'app'");
+      assert.ok(content.includes("export function SurfaceAdaptive"), "Must export SurfaceAdaptive");
+      assert.ok(content.includes("export function WebOnly"), "Must export WebOnly");
+      assert.ok(content.includes("export function AppOnly"), "Must export AppOnly");
+    });
+
+    it("Scenario EXP-14: PWA standalone detection delegates to detectSurface as single source of truth", () => {
+      const expLibPath = path.join(process.cwd(), "src/lib/experience.ts");
+      assert.ok(fs.existsSync(expLibPath), "experience.ts must exist");
+      const content = fs.readFileSync(expLibPath, "utf-8");
+
+      assert.ok(content.includes("detectSurface"), "experience.ts must import detectSurface");
+      assert.ok(
+        content.includes("return detectSurface() === \"app\""),
+        "checkIsPwaStandalone must delegate directly to detectSurface"
+      );
+    });
+
+    it("Scenario EXP-15: MobileBottomNav in dashboard layout is conditionally rendered only when isApp is true", () => {
+      const layoutPath = path.join(process.cwd(), "src/app/dashboard/layout.tsx");
+      assert.ok(fs.existsSync(layoutPath), "dashboard/layout.tsx must exist");
+      const content = fs.readFileSync(layoutPath, "utf-8");
+
+      assert.ok(content.includes("const { isApp } = useSurface();"), "Layout must consume isApp from useSurface");
+      assert.ok(content.includes("isApp &&"), "MobileBottomNav must be gated with isApp");
+    });
+  });
 });

@@ -13,7 +13,7 @@ import { MaterialHeader } from "@/components/materi/material-header";
 import { MaterialFilters } from "@/components/materi/material-filters";
 import { MaterialListItem } from "@/components/materi/material-list-item";
 import { MobileMaterialList } from "@/components/materi/mobile-material-list";
-import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
+import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { toast } from "sonner";
 
 function MateriContent() {
@@ -251,8 +251,8 @@ function MateriContent() {
             }
           />
         ) : (
-          <ExperienceAdaptive
-            desktop={
+          <SurfaceAdaptive
+            web={
               <div className="space-y-3">
                 {filteredMaterials.map((mat) => (
                   <MaterialListItem
@@ -265,7 +265,7 @@ function MateriContent() {
                 ))}
               </div>
             }
-            mobile={
+            app={
               <MobileMaterialList
                 materials={filteredMaterials}
                 bookmarkMap={bookmarkMap}

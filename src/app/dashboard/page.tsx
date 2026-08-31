@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { DesktopDashboardView } from "@/components/dashboard/desktop-dashboard-view";
 import { MobileDashboardView } from "@/components/dashboard/mobile-dashboard-view";
-import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
+import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 
 interface DashboardStatsState {
   totalMateri: number;
@@ -100,9 +100,9 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ─── Seamless Experience Separation ─── */}
-      <ExperienceAdaptive
-        desktop={
+      {/* ─── Seamless Surface Separation (Web Workspace vs App Experience) ─── */}
+      <SurfaceAdaptive
+        web={
           <DesktopDashboardView
             userName={userName}
             stats={stats}
@@ -110,7 +110,7 @@ export default function DashboardPage() {
             isBrandNewWorkspace={isBrandNewWorkspace}
           />
         }
-        mobile={
+        app={
           <MobileDashboardView
             userName={userName}
             stats={stats}

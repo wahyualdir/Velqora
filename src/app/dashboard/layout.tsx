@@ -11,6 +11,7 @@ import { DashboardFooter, MinimalCopyright } from "@/components/layout/watermark
 import { CommandPalette } from "@/components/layout/command-palette";
 import { trackUserVisit } from "@/lib/track-visit";
 import { useExperience } from "@/context/experience-context";
+import { useSurface } from "@/context/surface-context";
 import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
@@ -20,6 +21,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { isDesktop, isMounted } = useExperience();
+  const { isApp } = useSurface();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -107,14 +109,23 @@ export default function DashboardLayout({
           />
         </div>
 
-        <main className="flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-3.5 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-3.5rem)] pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-6">
+        <main
+          className={cn(
+            "flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-3.5 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-3.5rem)]",
+            isApp
+              ? "pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-6"
+              : "pb-6"
+          )}
+        >
           <div className="flex-1 min-w-0">{children}</div>
           {isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />}
         </main>
       </div>
 
-      {/* Mobile App Experience: 5-Destination Bottom Navigation Bar */}
-      <MobileBottomNav onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+      {/* Mobile App Experience: 5-Destination Bottom Navigation Bar (ONLY in App Surface / Installed PWA) */}
+      {isApp && (
+        <MobileBottomNav onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+      )}
     </div>
   );
 }

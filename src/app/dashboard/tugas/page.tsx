@@ -16,7 +16,7 @@ import { TaskToolbar } from "@/components/tasks/task-toolbar";
 import { TaskListItem } from "@/components/tasks/task-list-item";
 import { DesktopTaskWorkspace } from "@/components/tasks/desktop-task-workspace";
 import { MobileTaskList } from "@/components/tasks/mobile-task-list";
-import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
+import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { EditTaskModal } from "@/components/tasks/edit-task-modal";
 import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
 import { toast } from "sonner";
@@ -312,8 +312,8 @@ function TugasContent() {
             }
           />
         ) : (
-          <ExperienceAdaptive
-            desktop={
+          <SurfaceAdaptive
+            web={
               <DesktopTaskWorkspace
                 tasks={filteredTasks}
                 onUpdateStatus={handleUpdateStatus}
@@ -321,7 +321,7 @@ function TugasContent() {
                 onDelete={handleDeleteTask}
               />
             }
-            mobile={
+            app={
               <MobileTaskList
                 tasks={filteredTasks}
                 onUpdateStatus={handleUpdateStatus}

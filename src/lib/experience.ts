@@ -37,17 +37,13 @@ export function resolveExperienceType(width: number): ExperienceType {
   return "desktop";
 }
 
+import { detectSurface } from "@/context/surface-context";
+
 /**
- * Checks if running inside PWA standalone mode (iOS / Android / Desktop)
+ * Checks if running inside PWA standalone mode (delegates to detectSurface as single source of truth)
  */
 export function checkIsPwaStandalone(): boolean {
-  if (typeof window === "undefined") return false;
-
-  const isStandaloneMatch = window.matchMedia("(display-mode: standalone)").matches;
-  const isNavigatorStandalone = (window.navigator as any).standalone === true;
-  const isDocumentReferrerPwa = document.referrer.includes("android-app://");
-
-  return isStandaloneMatch || isNavigatorStandalone || isDocumentReferrerPwa;
+  return detectSurface() === "app";
 }
 
 /**

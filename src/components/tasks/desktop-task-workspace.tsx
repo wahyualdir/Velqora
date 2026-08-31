@@ -105,7 +105,7 @@ export function DesktopTaskWorkspace({
 
   return (
     <div className="w-full">
-      <DesktopTable>
+      <DesktopTable className="min-w-[720px]">
         <DesktopTableHeader>
           <tr>
             <DesktopTableHead className="w-[35%]">Nama Tugas & Deskripsi</DesktopTableHead>

@@ -16,7 +16,7 @@ import { ModuleHeader } from "@/components/modul/module-header";
 import { ModuleFilters } from "@/components/modul/module-filters";
 import { ModuleListItem } from "@/components/modul/module-list-item";
 import { MobileModuleList } from "@/components/modul/mobile-module-list";
-import { ExperienceAdaptive } from "@/components/layout/experience-adaptive";
+import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import { ModuleDriveFile } from "@/types/module-drive";
@@ -338,8 +338,8 @@ function ModulDanProjectContent() {
             }
           />
         ) : (
-          <ExperienceAdaptive
-            desktop={
+          <SurfaceAdaptive
+            web={
               <div className="space-y-3">
                 {filteredModules.map((mod) => (
                   <ModuleListItem
@@ -356,7 +356,7 @@ function ModulDanProjectContent() {
                 ))}
               </div>
             }
-            mobile={
+            app={
               <MobileModuleList
                 modules={filteredModules}
                 bookmarkMap={bookmarkMap}
