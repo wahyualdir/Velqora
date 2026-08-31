@@ -15,7 +15,8 @@ import { cn } from "@/lib/utils";
 export interface VelqoraMarkProps {
   size?: number;
   className?: string;
-  variant?: "primary" | "monochrome" | "white" | "dark" | "outline";
+  variant?: "primary" | "monochrome" | "white" | "dark" | "outline" | "tile";
+  withTile?: boolean;
 }
 
 /**
@@ -26,7 +27,10 @@ export function VelqoraMark({
   size = 32,
   className = "",
   variant = "primary",
+  withTile = false,
 }: VelqoraMarkProps) {
+  const showTile = withTile || variant === "tile";
+
   // Theme & variant color mapping
   const getColors = () => {
     switch (variant) {
@@ -54,6 +58,7 @@ export function VelqoraMark({
           right: "stroke-current text-brand-300 fill-none stroke-[2]",
           node: "fill-brand-400",
         };
+      case "tile":
       case "primary":
       default:
         return {
@@ -77,6 +82,14 @@ export function VelqoraMark({
       aria-label="Velqora Brand Mark"
       role="img"
     >
+      {/* Optional Obsidian Squircle Tile Background */}
+      {showTile && (
+        <>
+          <rect width="32" height="32" rx="8" fill="#0b0f19" />
+          <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#1e293b" strokeWidth="1" />
+        </>
+      )}
+
       {/* Left Foundation Pillar */}
       <path
         d="M6 6.5C6 5.67 6.67 5 7.5 5H12.2C12.87 5 13.46 5.43 13.65 6.07L18.45 22.07C18.74 23.03 18.02 24 17.02 24H12.8C12.13 24 11.54 23.57 11.35 22.93L6.15 7.43C6.05 7.14 6 6.83 6 6.5Z"
@@ -106,7 +119,8 @@ export interface LogoProps {
   className?: string;
   variant?: "full" | "sidebar" | "navbar" | "icon" | "stacked" | "monochrome";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  markVariant?: "primary" | "monochrome" | "white" | "dark";
+  markVariant?: "primary" | "monochrome" | "white" | "dark" | "outline" | "tile";
+  withTile?: boolean;
   showSubtitle?: boolean;
   hideText?: boolean;
 }
@@ -116,6 +130,7 @@ export function Logo({
   variant = "full",
   size = "md",
   markVariant = "primary",
+  withTile = false,
   showSubtitle = true,
   hideText = false,
 }: LogoProps) {
@@ -150,7 +165,7 @@ export function Logo({
   if (variant === "icon" || hideText) {
     return (
       <div className={cn("inline-flex items-center justify-center", className)}>
-        <VelqoraMark size={currentMarkSize} variant={markVariant} />
+        <VelqoraMark size={currentMarkSize} variant={markVariant} withTile={withTile} />
       </div>
     );
   }
@@ -159,7 +174,7 @@ export function Logo({
   if (variant === "sidebar") {
     return (
       <div className={cn("flex items-center gap-2.5 min-w-0 select-none", className)}>
-        <VelqoraMark size={24} variant={markVariant} className="shrink-0" />
+        <VelqoraMark size={24} variant={markVariant} withTile={withTile} className="shrink-0" />
         <div className="flex flex-col min-w-0">
           <span className="text-sm font-bold text-text-primary leading-tight font-display tracking-tight">
             Vel<span className="text-brand-500">qora</span>
