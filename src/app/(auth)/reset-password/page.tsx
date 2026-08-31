@@ -59,13 +59,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4">
+    <div className="relative min-h-screen flex items-center justify-center p-3.5 sm:p-6">
       {/* Background (Bold Variant) */}
       <TechBackground variant="bold" />
 
       {/* Reset Card */}
       <div className="relative z-10 w-full max-w-[400px] space-y-6">
-        <div className="rounded-2xl border border-border bg-surface shadow-xl p-6 sm:p-7 space-y-6 transition-all duration-200">
+        <div className="rounded-2xl border border-border bg-surface shadow-xl p-5 sm:p-7 space-y-6 transition-all duration-200">
           
           {/* Header */}
           <div className="space-y-1 text-center">

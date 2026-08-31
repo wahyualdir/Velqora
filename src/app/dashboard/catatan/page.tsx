@@ -260,7 +260,7 @@ export default function CatatanPage() {
           </div>
 
           {/* Category / Type Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-lg bg-surface-secondary border border-border overflow-x-auto text-xs sm:text-sm shrink-0">
+          <div className="flex items-center gap-1.5 p-1 rounded-lg bg-surface-secondary border border-border overflow-x-auto scrollbar-none touch-pan-x max-w-full text-xs sm:text-sm shrink-0">
             <button
               type="button"
               onClick={() => setSelectedTab("all")}
@@ -334,7 +334,7 @@ export default function CatatanPage() {
             }
           />
         ) : (
-          <div className="card-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 auto-rows-fr">
             {filteredNotes.map((note) => {
               const colorCfg = COLOR_CONFIG[note.color || "blue"] || COLOR_CONFIG.blue;
 
@@ -342,7 +342,7 @@ export default function CatatanPage() {
                 <Card
                   key={note.id}
                   onClick={() => handleOpenEdit(note)}
-                  className={`p-4 sm:p-5 rounded-xl border transition-all duration-150 shadow-2xs hover:shadow-xs flex flex-col justify-between space-y-3 cursor-pointer group relative overflow-hidden ${colorCfg.bg} ${colorCfg.border} ${colorCfg.accent}`}
+                  className={`p-4 sm:p-5 rounded-xl border transition-all duration-150 shadow-2xs hover:shadow-xs flex flex-col justify-between space-y-3 cursor-pointer group relative overflow-hidden h-full ${colorCfg.bg} ${colorCfg.border} ${colorCfg.accent}`}
                 >
                   {/* Pinned Marker Indicator */}
                   {note.pinned && (
@@ -478,6 +478,7 @@ export default function CatatanPage() {
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
+        size="lg"
         title={editingNoteId ? "Edit Catatan Belajar" : "Tulis Catatan Baru"}
       >
         <form onSubmit={handleSave} className="space-y-4">
@@ -501,7 +502,7 @@ export default function CatatanPage() {
               <label className="text-xs font-semibold text-text-primary block mb-1.5">
                 Warna Catatan
               </label>
-              <div className="flex items-center gap-2 p-1.5 rounded-xl bg-surface-secondary border border-border">
+              <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-xl bg-surface-secondary border border-border flex-wrap">
                 {(Object.keys(COLOR_CONFIG) as NoteColor[]).map((colorKey) => (
                   <button
                     key={colorKey}
@@ -537,28 +538,29 @@ export default function CatatanPage() {
               placeholder="Tulis ringkasan, instruksi, rumus, atau catatan kode di sini..."
               value={noteContent}
               onChange={(e) => setNoteContent(e.target.value)}
-              rows={8}
+              rows={7}
               required
             />
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-border">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-border">
             <Checkbox
               checked={notePinned}
               onChange={(e) => setNotePinned(e.target.checked)}
               label="Sematkan catatan ini di urutan paling atas"
             />
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
+                className="w-full sm:w-auto"
                 onClick={() => setShowModal(false)}
               >
                 Batal
               </Button>
-              <Button type="submit" size="sm">
+              <Button type="submit" size="sm" className="w-full sm:w-auto">
                 Simpan Catatan
               </Button>
             </div>

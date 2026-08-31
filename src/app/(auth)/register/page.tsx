@@ -245,11 +245,11 @@ export default function RegisterPage() {
       </header>
 
       {/* Main Register Card Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8 sm:py-12 z-10">
+      <main className="flex-1 flex flex-col items-center justify-center px-3.5 sm:px-6 py-6 sm:py-10 z-10 w-full">
         <div className="w-full max-w-[440px] text-center space-y-4">
 
           {/* 1. Primary Card: Register Form with Doodle Wallpaper Inside */}
-          <div className="relative rounded-3xl border border-white/[0.18] bg-[#070b14]/80 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl text-left transition-all duration-300 hover:border-brand-500/40 overflow-hidden animate-fade-in-up">
+          <div className="relative rounded-3xl border border-white/[0.18] bg-[#070b14]/80 backdrop-blur-2xl p-5 sm:p-7 shadow-2xl text-left transition-all duration-300 hover:border-brand-500/40 overflow-hidden animate-fade-in-up">
 
             {/* ─── DOODLE ART WALLPAPER INSIDE REGISTER BOX ─── */}
             <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-3xl select-none">

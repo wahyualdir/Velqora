@@ -155,4 +155,58 @@ describe("FASE 42: Full Breakpoint Responsiveness Matrix Suite (Fase 5)", () => 
       assert.ok(schedNavContent.includes("overflow-x-auto"), "ScheduleNavigation must allow horizontal overflow scroll");
     });
   });
+
+  // ─── Group E: Catatan Page & Long Forms Responsiveness (Fase 5B) ───
+  describe("Group E: Catatan Page & Long Forms Responsiveness", () => {
+    it("Scenario RESP-13: Catatan page enforces swipeable tabs, symmetrical grid, and responsive modal footer", () => {
+      const catatanPath = path.join(
+        process.cwd(),
+        "src/app/dashboard/catatan/page.tsx"
+      );
+      assert.ok(fs.existsSync(catatanPath), "catatan/page.tsx must exist");
+      const content = fs.readFileSync(catatanPath, "utf-8");
+
+      assert.ok(content.includes("overflow-x-auto scrollbar-none touch-pan-x"), "Filter tabs must support horizontal touch pan without scrollbar clutter");
+      assert.ok(content.includes("auto-rows-fr"), "Note cards grid must enforce auto-rows-fr for symmetric height");
+      assert.ok(content.includes("flex-col-reverse sm:flex-row"), "Note edit modal footer must adapt stack order on mobile");
+    });
+
+    it("Scenario RESP-14: Tugas Baru and Materi Baru long forms enforce bounded container and sticky actions bar", () => {
+      const tugasPath = path.join(
+        process.cwd(),
+        "src/app/dashboard/tugas/baru/page.tsx"
+      );
+      const materiPath = path.join(
+        process.cwd(),
+        "src/app/dashboard/materi/baru/page.tsx"
+      );
+
+      assert.ok(fs.existsSync(tugasPath), "tugas/baru/page.tsx must exist");
+      assert.ok(fs.existsSync(materiPath), "materi/baru/page.tsx must exist");
+
+      const tugasContent = fs.readFileSync(tugasPath, "utf-8");
+      const materiContent = fs.readFileSync(materiPath, "utf-8");
+
+      assert.ok(tugasContent.includes("ContentContainer"), "Tugas baru must use ContentContainer to cap max-width");
+      assert.ok(materiContent.includes("ContentContainer"), "Materi baru must use ContentContainer to cap max-width");
+      assert.ok(tugasContent.includes("sticky bottom-4"), "Tugas baru action bar must be sticky for easy reach");
+      assert.ok(materiContent.includes("sticky bottom-4"), "Materi baru action bar must be sticky for easy reach");
+    });
+
+    it("Scenario RESP-15: Auth pages enforce bounded max-width and edge protection on 360px screens", () => {
+      const loginPath = path.join(process.cwd(), "src/app/(auth)/login/page.tsx");
+      const registerPath = path.join(process.cwd(), "src/app/(auth)/register/page.tsx");
+      const resetPath = path.join(process.cwd(), "src/app/(auth)/reset-password/page.tsx");
+
+      assert.ok(fs.existsSync(loginPath), "login/page.tsx must exist");
+      assert.ok(fs.existsSync(registerPath), "register/page.tsx must exist");
+      assert.ok(fs.existsSync(resetPath), "reset-password/page.tsx must exist");
+
+      const registerContent = fs.readFileSync(registerPath, "utf-8");
+      const resetContent = fs.readFileSync(resetPath, "utf-8");
+
+      assert.ok(registerContent.includes("px-3.5 sm:px-6"), "Register page must have safe mobile edge padding");
+      assert.ok(resetContent.includes("p-3.5 sm:p-6"), "Reset password page must have safe mobile edge padding");
+    });
+  });
 });

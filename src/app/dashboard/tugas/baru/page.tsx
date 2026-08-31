@@ -203,10 +203,10 @@ export default function TambahTugasPage() {
           </div>
         </section>
 
-        {/* ─── 4. Actions ─── */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
+        {/* ─── 4. Actions (Sticky Bottom Bar for Easy Reach) ─── */}
+        <div className="sticky bottom-4 z-20 flex items-center justify-end gap-3 p-3.5 sm:p-4 rounded-xl border border-border bg-surface/95 backdrop-blur-md shadow-md">
           <Link href="/dashboard/tugas">
-            <Button variant="ghost" type="button" size="sm" className="text-xs cursor-pointer">
+            <Button variant="outline" type="button" size="sm" className="text-xs cursor-pointer">
               Batal
             </Button>
           </Link>
