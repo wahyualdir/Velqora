@@ -19,7 +19,6 @@ import {
 import {
   ImportUpdateModePayload,
   ImportUpdateModeResult,
-  UserSchedulePreference,
 } from "@/lib/schedule-intelligence";
 import { getUserSchedules } from "./crud";
 
@@ -168,14 +167,14 @@ export async function saveImportedSchedulesAction(
         start_time: item.start_time || null,
         end_time: item.end_time || null,
         time: item.time.trim(),
-      location: item.location?.trim() || "",
-      lecturer: item.lecturer?.trim() || "",
-      type: item.type || "jadwal",
-      priority: item.priority || "sedang",
-      is_completed: false,
-      source: item.source || "imported",
-      source_file: item.source_file || null,
-    }));
+        location: item.location?.trim() || "",
+        lecturer: item.lecturer?.trim() || "",
+        type: item.type || "jadwal",
+        priority: item.priority || "sedang",
+        is_completed: false,
+        source: item.source || "imported",
+        source_file: item.source_file || null,
+      }));
 
     // 4. Batch Insert into Supabase
     const { data: inserted, error: insertError } = await supabase
@@ -322,12 +321,8 @@ export async function importScheduleAction(
 }
 
 // ==========================================
-// 7. SCHEDULE INTELLIGENCE SERVER ACTIONS (FASE 30)
+// 5. IMPORT SCHEDULE WITH UPDATE MODE ACTION
 // ==========================================
-
-/**
- * Fetches user's academic intelligence context (workload, deadlines, free slots)
- */
 
 export async function importScheduleWithUpdateModeAction(
   payload: ImportUpdateModePayload
@@ -452,12 +447,3 @@ export async function importScheduleWithUpdateModeAction(
     };
   }
 }
-
-// ==========================================
-// 9. FASE 32: PERSONALIZED ASSISTANT & OPTIMIZATION ACTIONS
-// ==========================================
-
-/**
- * In-memory / Safe User Preferences Store fallback with RLS authentication
- */
-let userPreferencesMemoryStore = new Map<string, UserSchedulePreference>();

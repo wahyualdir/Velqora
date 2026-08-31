@@ -172,9 +172,9 @@ export default function DownloadAppPage() {
                     <span className="w-6 h-6 rounded-full bg-brand-500/20 text-brand-500 font-bold font-mono flex items-center justify-center text-xs">
                       2
                     </span>
-                    <h4 className="font-semibold text-text-primary">Pilih "Instal Aplikasi"</h4>
+                    <h4 className="font-semibold text-text-primary">Pilih &quot;Instal Aplikasi&quot;</h4>
                     <p className="text-text-secondary leading-relaxed">
-                      Pilih menu "Instal aplikasi" atau "Tambahkan ke Layar Utama".
+                      Pilih menu &quot;Instal aplikasi&quot; atau &quot;Tambahkan ke Layar Utama&quot;.
                     </p>
                   </div>
 
@@ -240,7 +240,7 @@ export default function DownloadAppPage() {
                       <h4>Add to Home Screen</h4>
                     </div>
                     <p className="text-text-secondary leading-relaxed">
-                      Gulir ke bawah dan pilih opsi "Tambah ke Layar Utama" (Add to Home Screen).
+                      Gulir ke bawah dan pilih opsi &quot;Tambah ke Layar Utama&quot; (Add to Home Screen).
                     </p>
                   </div>
 
@@ -250,7 +250,7 @@ export default function DownloadAppPage() {
                     </span>
                     <h4 className="font-semibold text-text-primary">Konfirmasi & Pasang</h4>
                     <p className="text-text-secondary leading-relaxed">
-                      Ketuk "Tambah" di pojok kanan atas. Velqora siap dibuka sebagai aplikasi.
+                      Ketuk &quot;Tambah&quot; di pojok kanan atas. Velqora siap dibuka sebagai aplikasi.
                     </p>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export default function DownloadAppPage() {
                     </span>
                     <h4 className="font-semibold text-text-primary">Konfirmasi Pemasangan</h4>
                     <p className="text-text-secondary leading-relaxed">
-                      Klik "Instal" pada jendela konfirmasi yang muncul.
+                      Klik &quot;Instal&quot; pada jendela konfirmasi yang muncul.
                     </p>
                   </div>
 

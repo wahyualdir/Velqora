@@ -68,7 +68,7 @@ export function AttachedFilesManager({
           <input
             ref={folderInputRef}
             type="file"
-            // @ts-ignore
+            // @ts-expect-error React types don't include non-standard webkitdirectory attribute
             webkitdirectory="true"
             directory="true"
             className="hidden"

@@ -81,7 +81,7 @@ export function MissedSessionRecoveryModal({
         <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 space-y-1 text-amber-900 dark:text-amber-200">
           <div className="flex items-center gap-2 font-bold">
             <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-            <span>Sesi Belajar '{session.title}' Terlewat</span>
+            <span>Sesi Belajar &apos;{session.title}&apos; Terlewat</span>
           </div>
           <p className="text-text-secondary leading-relaxed">{explanation}</p>
         </div>
