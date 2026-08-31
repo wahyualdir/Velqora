@@ -237,7 +237,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-[#0071e3] selection:text-white">
+    <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-brand-500 selection:text-white">
 
       {/* Subtle Background */}
       <TechBackground />

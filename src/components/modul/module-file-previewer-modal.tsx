@@ -197,7 +197,7 @@ export function ModuleFilePreviewerModal({
       <div className="relative flex flex-col w-full max-w-5xl h-[92vh] max-h-[850px] rounded-3xl bg-[#020409] border border-white/[0.12] shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden">
         
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.08] bg-[#060a14]/90 backdrop-blur shrink-0">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border bg-surface shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div
               className="w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0 shadow-inner"
@@ -283,7 +283,7 @@ export function ModuleFilePreviewerModal({
                 target="_blank"
                 rel="noopener noreferrer"
                 download={file.name}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#0071e3] text-white hover:bg-[#0077ED] shadow-sm shadow-[#0071e3]/40 transition-all"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white hover:bg-brand-500 shadow-xs transition-all"
               >
                 <Download className="w-3.5 h-3.5" /> Unduh
               </a>
@@ -680,9 +680,9 @@ export function ModuleFilePreviewerModal({
                     href={`https://docs.google.com/viewer?url=${encodeURIComponent(file.url)}&embedded=false`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-white/[0.08] text-white hover:bg-white/[0.15] border border-white/[0.12] transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-medium bg-white/[0.08] text-white hover:bg-white/[0.15] border border-white/[0.12] transition-all"
                   >
-                    <ExternalLink className="w-4 h-4 text-cyan-400" /> Buka via Google Docs Viewer
+                    <ExternalLink className="w-4 h-4 text-brand-400" /> Buka via Google Docs Viewer
                   </a>
 
                   <a
@@ -690,7 +690,7 @@ export function ModuleFilePreviewerModal({
                     download={file.name}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-[#0071e3] text-white hover:bg-[#0077ED] shadow-lg shadow-[#0071e3]/40 transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-semibold bg-brand-600 text-white hover:bg-brand-500 shadow-xs transition-all"
                   >
                     <Download className="w-4 h-4" /> Unduh Dokumen ({formatFileSize(file.size)})
                   </a>
@@ -716,7 +716,7 @@ export function ModuleFilePreviewerModal({
                     download={file.name}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold bg-[#0071e3] text-white hover:bg-[#0077ED] shadow-lg shadow-[#0071e3]/40 transition-all"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold bg-brand-600 text-white hover:bg-brand-500 shadow-xs transition-all"
                   >
                     <Download className="w-4 h-4" /> Unduh Berkas ({formatFileSize(file.size)})
                   </a>

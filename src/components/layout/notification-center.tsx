@@ -158,13 +158,7 @@ export function NotificationCenter() {
                   >
                     {/* Icon container */}
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
-                        item.type === "quiz"
-                          ? "bg-[#0071e3]/10 border-[#0071e3]/30 text-[#2997ff]"
-                          : item.type === "class"
-                          ? "bg-purple-500/10 border-purple-500/30 text-purple-400"
-                          : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                      }`}
+                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border bg-brand-500/10 border-brand-500/30 text-brand-400"
                     >
                       {item.type === "quiz" ? (
                         <Sparkles className="w-4 h-4" />

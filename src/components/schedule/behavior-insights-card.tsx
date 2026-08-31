@@ -102,7 +102,7 @@ export function BehaviorInsightsCard({
         <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Durasi Efektif Rata-Rata</span>
-            <TrendingUp className="w-3.5 h-3.5 text-sky-500" />
+            <TrendingUp className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="text-sm font-bold font-mono text-text-primary">
             {signals.preferredEffectiveDurationMinutes} Menit
@@ -116,7 +116,7 @@ export function BehaviorInsightsCard({
         <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Hari Paling Konsisten</span>
-            <Calendar className="w-3.5 h-3.5 text-emerald-500" />
+            <Calendar className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="text-sm font-bold text-text-primary truncate">
             {consistentDays || "Semua Hari"}
@@ -130,7 +130,7 @@ export function BehaviorInsightsCard({
         <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Indeks Kepatuhan Jadwal</span>
-            <CheckCircle2 className="w-3.5 h-3.5 text-purple-500" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="text-sm font-bold font-mono text-text-primary">
             {completedRatio}

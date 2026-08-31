@@ -157,7 +157,7 @@ export function MobileDashboardView({
           href="/dashboard/tugas"
           className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
         >
-          <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <CheckSquare className="w-5 h-5" />
           </div>
           <span className="text-[11px] font-medium text-text-primary leading-tight">
@@ -169,7 +169,7 @@ export function MobileDashboardView({
           href="/dashboard/jadwal"
           className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
         >
-          <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <Calendar className="w-5 h-5" />
           </div>
           <span className="text-[11px] font-medium text-text-primary leading-tight">
@@ -181,7 +181,7 @@ export function MobileDashboardView({
           href="/dashboard/konversi"
           className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
         >
-          <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <ScanLine className="w-5 h-5" />
           </div>
           <span className="text-[11px] font-medium text-text-primary leading-tight">

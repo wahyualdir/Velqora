@@ -245,7 +245,7 @@ export default function LandingPage() {
 
               {/* Feature 2 */}
               <div className="p-5 rounded-2xl border border-border bg-surface space-y-3">
-                <div className="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
                   <Bot className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-bold font-display text-text-primary">
@@ -258,7 +258,7 @@ export default function LandingPage() {
 
               {/* Feature 3 */}
               <div className="p-5 rounded-2xl border border-border bg-surface space-y-3">
-                <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
                   <Layers className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-bold font-display text-text-primary">
@@ -271,7 +271,7 @@ export default function LandingPage() {
 
               {/* Feature 4 */}
               <div className="p-5 rounded-2xl border border-border bg-surface space-y-3">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
                   <Code2 className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-bold font-display text-text-primary">

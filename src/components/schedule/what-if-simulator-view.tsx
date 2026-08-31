@@ -222,7 +222,7 @@ export function WhatIfSimulatorView({
             <div
               className={`p-4 rounded-xl border bg-surface space-y-3 transition-all ${
                 best === "SCENARIO_C_RECOVERY"
-                  ? "border-purple-500/60 ring-1 ring-purple-500/20"
+                  ? "border-brand-500/60 ring-1 ring-brand-500/20"
                   : "border-border/60"
               }`}
             >

@@ -315,11 +315,11 @@ export function SmartModuleSorterModal({
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-center gap-2 text-xs border-dashed border-white/20 hover:border-[#0071e3]"
+                className="w-full justify-center gap-2 text-xs border-dashed border-border hover:border-brand-500"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={analyzing || saving}
               >
-                <UploadCloud className="w-4 h-4 text-[#2997ff]" />
+                <UploadCloud className="w-4 h-4 text-brand-400" />
                 <span>Pilih Berkas</span>
               </Button>
             </div>
@@ -365,7 +365,7 @@ export function SmartModuleSorterModal({
 
         {/* AI Analysis Result Panel */}
         {result && (
-          <div className="p-5 rounded-2xl border border-white/[0.12] bg-[#0c1322]/80 backdrop-blur-xl space-y-5 animate-fade-in shadow-xl shadow-black/40">
+          <div className="p-5 rounded-2xl border border-border bg-surface-secondary/40 space-y-5 animate-fade-in">
             {/* Header Result */}
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
               <div className="flex items-center gap-2.5">
@@ -448,7 +448,7 @@ export function SmartModuleSorterModal({
             <div className="space-y-2">
               <label className="text-xs font-medium text-text-secondary flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-[#2997ff]" />
+                  <Layers className="w-3.5 h-3.5 text-brand-400" />
                   <span>Bab & Silabus Pembelajaran Terdeteksi ({finalChapters.length})</span>
                 </span>
                 <span className="text-[11px] text-slate-500">Dapat diedit / ditambah</span>
@@ -458,10 +458,10 @@ export function SmartModuleSorterModal({
                 {finalChapters.map((chap, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-slate-200"
+                    className="flex items-center justify-between gap-2 p-2 rounded-xl bg-surface border border-border/80 text-xs text-text-primary"
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <span className="w-5 h-5 rounded-full bg-[#0071e3]/20 text-[#2997ff] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                      <span className="w-5 h-5 rounded-full bg-brand-500/20 text-brand-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                         {idx + 1}
                       </span>
                       <span className="truncate">{chap}</span>

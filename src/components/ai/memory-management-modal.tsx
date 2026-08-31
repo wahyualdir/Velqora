@@ -32,12 +32,12 @@ interface MemoryModalProps {
 }
 
 const CATEGORY_LABELS: Record<MemoryCategory, { title: string; icon: any; color: string }> = {
-  learning_preferences: { title: "Preferensi Belajar", icon: Sliders, color: "text-blue-500" },
-  preferred_topics: { title: "Topik Favorit", icon: Sparkles, color: "text-purple-500" },
-  skill_level: { title: "Tingkat Keahlian", icon: GraduationCap, color: "text-emerald-500" },
-  communication_preferences: { title: "Gaya Komunikasi", icon: Sliders, color: "text-amber-500" },
-  ongoing_projects: { title: "Proyek Berjalan", icon: FolderKanban, color: "text-indigo-500" },
-  important_context: { title: "Konteks Penting", icon: Brain, color: "text-rose-500" },
+  learning_preferences: { title: "Preferensi Belajar", icon: Sliders, color: "text-brand-500" },
+  preferred_topics: { title: "Topik Favorit", icon: Sparkles, color: "text-brand-500" },
+  skill_level: { title: "Tingkat Keahlian", icon: GraduationCap, color: "text-brand-500" },
+  communication_preferences: { title: "Gaya Komunikasi", icon: Sliders, color: "text-brand-500" },
+  ongoing_projects: { title: "Proyek Berjalan", icon: FolderKanban, color: "text-brand-500" },
+  important_context: { title: "Konteks Penting", icon: Brain, color: "text-brand-500" },
 };
 
 export function MemoryManagementModal({ isOpen, onClose }: MemoryModalProps) {

@@ -293,7 +293,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                   {isOwner ? (
                     <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   ) : isAdmin ? (
-                    <Shield className="w-3.5 h-3.5 text-[#2997ff] shrink-0" />
+                    <Shield className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                   ) : null}
                 </div>
 
@@ -305,7 +305,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                       <Crown className="w-3 h-3" /> Owner
                     </span>
                   ) : isAdmin ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#0071e3]/15 text-[#2997ff] border border-[#0071e3]/30">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand-500/15 text-brand-400 border border-brand-500/30">
                       <Shield className="w-3 h-3" /> Admin
                     </span>
                   ) : (
@@ -459,7 +459,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                 {isOwner ? (
                   <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 ) : isAdmin ? (
-                  <Shield className="w-3.5 h-3.5 text-[#2997ff] shrink-0" />
+                  <Shield className="w-3.5 h-3.5 text-brand-400 shrink-0" />
                 ) : null}
               </div>
 
@@ -471,7 +471,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                     <Crown className="w-3 h-3" /> Owner
                   </span>
                 ) : isAdmin ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#0071e3]/15 text-[#2997ff] border border-[#0071e3]/30">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand-500/15 text-brand-400 border border-brand-500/30">
                     <Shield className="w-3 h-3" /> Admin
                   </span>
                 ) : (

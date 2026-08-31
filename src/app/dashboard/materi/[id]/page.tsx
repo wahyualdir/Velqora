@@ -250,11 +250,11 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
           href={`/dashboard/kuis-ai?topic=${encodeURIComponent(material.title)}`}
           className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-surface hover:border-brand-500/40 hover:bg-surface-secondary/60 transition-all shadow-2xs group"
         >
-          <div className="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 border border-purple-500/20">
+          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0 border border-brand-500/20">
             <Sparkles className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold text-text-primary group-hover:text-purple-400 transition-colors">
+            <p className="text-xs font-bold text-text-primary group-hover:text-brand-500 transition-colors">
               Uji Pemahaman (Kuis AI)
             </p>
             <p className="text-[11px] text-text-tertiary truncate">

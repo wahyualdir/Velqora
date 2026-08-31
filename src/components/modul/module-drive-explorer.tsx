@@ -1073,7 +1073,7 @@ export function ModuleDriveExplorer({
                 <button
                   type="submit"
                   disabled={creatingFolder}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0071e3] text-white hover:bg-[#0077ED] shadow-sm disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white hover:bg-brand-500 shadow-xs disabled:opacity-50"
                 >
                   {creatingFolder ? "Membuat..." : "Buat Folder"}
                 </button>
@@ -1124,7 +1124,7 @@ export function ModuleDriveExplorer({
                 <button
                   type="submit"
                   disabled={renaming}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0071e3] text-white hover:bg-[#0077ED] shadow-sm disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white hover:bg-brand-500 shadow-xs disabled:opacity-50"
                 >
                   {renaming ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>

@@ -115,7 +115,7 @@ export function CurrentAcademicStateCard({
         <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Beban Mingguan</span>
-            <Calendar className="w-3.5 h-3.5 text-sky-500" />
+            <Calendar className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl font-bold font-mono text-text-primary">
@@ -132,7 +132,7 @@ export function CurrentAcademicStateCard({
         <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Tenggat Waktu</span>
-            <Clock className="w-3.5 h-3.5 text-amber-500" />
+            <Clock className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl font-bold font-mono text-text-primary">
@@ -149,7 +149,7 @@ export function CurrentAcademicStateCard({
         <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Integritas Jadwal</span>
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+            <ShieldCheck className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl font-bold font-mono text-text-primary">
@@ -166,7 +166,7 @@ export function CurrentAcademicStateCard({
         <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1 col-span-2 md:col-span-1">
           <div className="flex items-center justify-between text-text-tertiary">
             <span className="text-[11px] font-medium">Keseimbangan</span>
-            <Scale className="w-3.5 h-3.5 text-purple-500" />
+            <Scale className="w-3.5 h-3.5 text-brand-500" />
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl font-bold font-mono text-text-primary">

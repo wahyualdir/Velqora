@@ -858,7 +858,7 @@ export function ScheduleImportModal({
                               )}
 
                               {item.isDuplicate && (
-                                <Badge variant="outline" className="text-[11px] bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30">
+                                <Badge variant="outline" className="text-[11px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30">
                                   Duplikat
                                 </Badge>
                               )}

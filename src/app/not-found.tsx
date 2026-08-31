@@ -59,21 +59,21 @@ export default function NotFound() {
               href="/dashboard/modul"
               className="p-3 rounded-xl bg-surface-secondary/70 hover:bg-surface-secondary border border-border text-xs font-semibold text-text-primary flex items-center gap-2 transition-colors group"
             >
-              <Layers className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <Layers className="w-4 h-4 text-brand-400 group-hover:scale-110 transition-transform" />
               <span>Modul & Project</span>
             </Link>
             <Link
               href="/dashboard/materi"
               className="p-3 rounded-xl bg-surface-secondary/70 hover:bg-surface-secondary border border-border text-xs font-semibold text-text-primary flex items-center gap-2 transition-colors group"
             >
-              <BookOpen className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+              <BookOpen className="w-4 h-4 text-brand-400 group-hover:scale-110 transition-transform" />
               <span>Materi</span>
             </Link>
             <Link
               href="/dashboard/ai-tutor"
               className="p-3 rounded-xl bg-surface-secondary/70 hover:bg-surface-secondary border border-border text-xs font-semibold text-text-primary flex items-center gap-2 transition-colors group"
             >
-              <Bot className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
+              <Bot className="w-4 h-4 text-brand-400 group-hover:scale-110 transition-transform" />
               <span>AI Tutor</span>
             </Link>
           </div>

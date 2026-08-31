@@ -217,7 +217,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-[#0071e3] selection:text-white">
+    <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-brand-500 selection:text-white">
 
       {/* Subtle Background */}
       <TechBackground />
@@ -249,7 +249,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-[440px] text-center space-y-4">
 
           {/* 1. Primary Card: Register Form with Doodle Wallpaper Inside */}
-          <div className="relative rounded-3xl border border-white/[0.18] bg-[#070b14]/80 backdrop-blur-2xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.7)] text-left transition-all duration-300 hover:border-blue-500/40 hover:shadow-[0_24px_70px_rgba(0,113,227,0.22)] overflow-hidden animate-fade-in-up">
+          <div className="relative rounded-3xl border border-white/[0.18] bg-[#070b14]/80 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl text-left transition-all duration-300 hover:border-brand-500/40 overflow-hidden animate-fade-in-up">
 
             {/* ─── DOODLE ART WALLPAPER INSIDE REGISTER BOX ─── */}
             <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-3xl select-none">
@@ -555,7 +555,7 @@ export default function RegisterPage() {
             Sudah memiliki akun?{" "}
             <Link
               href="/login"
-              className="font-bold text-[#2997ff] hover:text-blue-300 underline underline-offset-4 transition-all duration-200 ml-1 inline-flex items-center gap-1 group"
+              className="font-bold text-brand-400 hover:text-brand-300 underline underline-offset-4 transition-all duration-200 ml-1 inline-flex items-center gap-1 group"
             >
               <span>Masuk ke Akun</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />

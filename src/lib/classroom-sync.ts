@@ -123,8 +123,8 @@ export function calculateDeadlineUrgency(
       hoursRemaining: diffHours,
       daysRemaining: diffDays,
       formattedCountdown: `${diffDays} hari lagi (pukul ${dueTime})`,
-      colorClass: "text-[#2997ff] border-[#0071e3]/40 bg-[#0071e3]/10",
-      badgeBg: "bg-[#0071e3]/20 text-[#2997ff] border-[#0071e3]/40",
+      colorClass: "text-brand-400 border-brand-500/40 bg-brand-500/10",
+      badgeBg: "bg-brand-500/20 text-brand-400 border-brand-500/40",
     };
   }
 

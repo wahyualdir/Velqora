@@ -11,28 +11,28 @@ export function DashboardQuickTools() {
       description: "Monaco Editor & live code runner",
       href: "/dashboard/playground",
       icon: Code2,
-      color: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+      color: "text-brand-500 bg-brand-500/10 border-brand-500/20",
     },
     {
       title: "Velqora AI Tutor",
       description: "Tanya konsep & pemecahan masalah",
       href: "/dashboard/ai-tutor",
       icon: Bot,
-      color: "text-purple-500 bg-purple-500/10 border-purple-500/20",
+      color: "text-brand-500 bg-brand-500/10 border-brand-500/20",
     },
     {
       title: "Kuis AI Interaktif",
       description: "Uji pemahaman topik belajar",
       href: "/dashboard/kuis-ai",
       icon: GraduationCap,
-      color: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+      color: "text-brand-500 bg-brand-500/10 border-brand-500/20",
     },
     {
       title: "Konversi & OCR Berkas",
       description: "Ekstrak teks dari foto & dokumen",
       href: "/dashboard/konversi",
       icon: ScanLine,
-      color: "text-cyan-500 bg-cyan-500/10 border-cyan-500/20",
+      color: "text-brand-500 bg-brand-500/10 border-brand-500/20",
     },
   ];
 

@@ -111,7 +111,7 @@ export function ScheduleIntelligenceSummary({
               size="sm"
               variant="outline"
               onClick={onOpenOptimization}
-              className="gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 border-purple-500/30 hover:bg-purple-500/10 h-8 px-2.5 shadow-2xs"
+              className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10 h-8 px-2.5 shadow-2xs"
             >
               <Scale className="w-3.5 h-3.5" />
               <span>Optimasi Mingguan</span>
@@ -132,7 +132,7 @@ export function ScheduleIntelligenceSummary({
             size="sm"
             variant="outline"
             onClick={onOpenWeeklyPlan}
-            className="gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10 h-8 px-2.5 shadow-2xs"
+            className="gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 border-brand-500/30 hover:bg-brand-500/10 h-8 px-2.5 shadow-2xs"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Susun Minggu</span>
@@ -146,7 +146,7 @@ export function ScheduleIntelligenceSummary({
         <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
           <div className="flex items-center justify-between text-[11px] text-text-tertiary">
             <span className="flex items-center gap-1">
-              <BookOpen className="w-3.5 h-3.5 text-blue-500" /> Kuliah
+              <BookOpen className="w-3.5 h-3.5 text-brand-500" /> Kuliah
             </span>
           </div>
           <div className="text-base sm:text-lg font-bold text-text-primary font-mono">
@@ -161,7 +161,7 @@ export function ScheduleIntelligenceSummary({
         <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
           <div className="flex items-center justify-between text-[11px] text-text-tertiary">
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-emerald-500" /> Belajar
+              <Clock className="w-3.5 h-3.5 text-brand-500" /> Belajar
             </span>
           </div>
           <div className="text-base sm:text-lg font-bold text-text-primary font-mono">
@@ -191,7 +191,7 @@ export function ScheduleIntelligenceSummary({
         <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
           <div className="flex items-center justify-between text-[11px] text-text-tertiary">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-purple-500" /> Mingguan
+              <Calendar className="w-3.5 h-3.5 text-brand-500" /> Mingguan
             </span>
           </div>
           <div className="text-base sm:text-lg font-bold text-text-primary font-mono">
