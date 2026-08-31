@@ -1,5 +1,5 @@
-// Service Worker for Velqora PWA — Cache Hardening v2
-const CACHE_NAME = "velqora-cache-v2";
+// Service Worker for Velqora PWA — Cache Hardening v3
+const CACHE_NAME = "velqora-cache-v3";
 const OFFLINE_URL = "/dashboard";
 
 // Safe, non-sensitive static assets only
