@@ -128,22 +128,22 @@ export function MobileMaterialList({
 
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-surface-secondary text-text-tertiary">
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-secondary text-text-secondary border border-border/60">
                       {typeInfo.label}
                     </span>
                     {mat.category?.name && (
-                      <span className="text-[10px] font-mono text-text-tertiary">
+                      <span className="text-[10px] font-mono font-medium text-text-secondary">
                         · {mat.category.name}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-xs font-semibold text-text-primary truncate">
+                  <h3 className="text-xs font-bold text-text-primary truncate">
                     {mat.title}
                   </h3>
 
                   {mat.description && (
-                    <p className="text-[11px] text-text-tertiary truncate leading-snug">
+                    <p className="text-[11.5px] text-text-secondary truncate leading-snug">
                       {mat.description}
                     </p>
                   )}
@@ -157,15 +157,15 @@ export function MobileMaterialList({
                     e.stopPropagation();
                     onToggleBookmark(mat);
                   }}
-                  className="p-1 rounded-lg text-text-tertiary hover:text-brand-500 active:scale-95"
+                  className="p-1 rounded-lg text-text-secondary hover:text-brand-600 active:scale-95"
                 >
                   {isBookmarked ? (
-                    <BookmarkCheck className="w-4 h-4 text-brand-500 fill-brand-500/20" />
+                    <BookmarkCheck className="w-4 h-4 text-brand-600 fill-brand-500/20" />
                   ) : (
                     <Bookmark className="w-4 h-4" />
                   )}
                 </button>
-                <ChevronRight className="w-4 h-4 text-text-tertiary" />
+                <ChevronRight className="w-4 h-4 text-text-secondary" />
               </div>
             </div>
           );

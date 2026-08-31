@@ -91,16 +91,16 @@ export function MobileScheduleAgenda({
         groupedDays.map((group) => (
           <div key={group.day} className="space-y-2">
             <div className="flex items-center gap-2 px-1">
-              <span className="w-2 h-2 rounded-full bg-brand-500" />
+              <span className="w-2 h-2 rounded-full bg-brand-600" />
               <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider font-mono">
                 {group.day}
               </h3>
-              <span className="text-[10px] font-mono text-text-tertiary">
+              <span className="text-[10.5px] font-mono font-medium text-text-secondary">
                 ({group.items.length} sesi)
               </span>
             </div>
 
-            <Card padding="none" className="divide-y divide-border/60">
+            <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
               {group.items.map((item) => (
                 <div
                   key={item.id}
@@ -113,23 +113,23 @@ export function MobileScheduleAgenda({
                         {item.title}
                       </span>
                       {item.type && (
-                        <span className="text-[9.5px] font-mono px-1.5 py-0.2 rounded bg-surface-secondary text-text-tertiary uppercase">
+                        <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-secondary text-text-secondary uppercase border border-border/60">
                           {item.type}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 text-[11px] text-text-tertiary flex-wrap font-mono">
-                      <div className="flex items-center gap-1 text-brand-500 font-semibold">
-                        <Clock className="w-3 h-3" />
+                    <div className="flex items-center gap-3 text-[11px] text-text-secondary flex-wrap font-mono">
+                      <div className="flex items-center gap-1 text-brand-700 font-bold">
+                        <Clock className="w-3.5 h-3.5" />
                         <span>
                           {item.start_time} - {item.end_time}
                         </span>
                       </div>
                       {item.location && (
-                        <div className="flex items-center gap-1 text-text-secondary">
-                          <MapPin className="w-3 h-3" />
-                          <span className="truncate max-w-[100px]">{item.location}</span>
+                        <div className="flex items-center gap-1 text-text-secondary font-medium">
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span className="truncate max-w-[120px]">{item.location}</span>
                         </div>
                       )}
                     </div>
@@ -142,7 +142,7 @@ export function MobileScheduleAgenda({
                         e.stopPropagation();
                         setSelectedItem(item);
                       }}
-                      className="p-1 rounded-lg text-text-tertiary hover:text-text-primary"
+                      className="p-1 rounded-lg text-text-secondary hover:text-text-primary"
                     >
                       <MoreVertical className="w-4 h-4" />
                     </button>

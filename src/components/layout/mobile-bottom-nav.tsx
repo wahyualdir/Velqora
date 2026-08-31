@@ -70,14 +70,14 @@ export function MobileBottomNav({ onToggleSidebar }: MobileBottomNavProps) {
                 className={cn(
                   "flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-lg text-[10.5px] font-medium transition-all duration-150 active:scale-95 cursor-pointer",
                   isActive
-                    ? "text-brand-500 dark:text-brand-400 bg-brand-500/10 border border-brand-500/25 font-semibold"
-                    : "text-text-secondary hover:text-text-primary border border-transparent"
+                    ? "text-brand-600 bg-brand-500/10 border border-brand-500/25 font-bold"
+                    : "text-text-secondary hover:text-text-primary border border-transparent font-medium"
                 )}
               >
                 <Icon
                   className={cn(
                     "w-4 h-4 shrink-0 transition-transform",
-                    isActive ? "text-brand-500 dark:text-brand-400 scale-105" : "text-text-tertiary"
+                    isActive ? "text-brand-600 scale-105" : "text-text-secondary"
                   )}
                 />
                 <span className="truncate max-w-[64px] font-sans mt-0.5">{item.label}</span>
@@ -90,7 +90,7 @@ export function MobileBottomNav({ onToggleSidebar }: MobileBottomNavProps) {
             onClick={handleMenuClick}
             className="flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-lg text-[10.5px] font-medium text-text-secondary hover:text-text-primary active:scale-95 transition-all duration-150 border border-transparent hover:bg-surface-secondary cursor-pointer"
           >
-            <Menu className="w-4 h-4 shrink-0 text-text-tertiary" />
+            <Menu className="w-4 h-4 shrink-0 text-text-secondary" />
             <span className="font-sans mt-0.5">Menu</span>
           </button>
         </div>

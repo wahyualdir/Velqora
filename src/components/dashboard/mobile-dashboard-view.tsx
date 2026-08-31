@@ -57,7 +57,7 @@ export function MobileDashboardView({
     <div className="space-y-5 pb-8 animate-fade-in">
       {/* ─── 1. App Greeting Header ─── */}
       <div className="px-1 pt-1">
-        <p className="text-xs font-mono text-text-tertiary uppercase tracking-wider">
+        <p className="text-xs font-mono text-text-secondary uppercase tracking-wider font-semibold">
           {getGreeting()},
         </p>
         <h1 className="text-xl font-bold text-text-primary tracking-tight font-display">
@@ -76,11 +76,11 @@ export function MobileDashboardView({
       ) : primaryModule ? (
         <Card padding="md" className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-brand-500/10 text-brand-600 border border-brand-500/20">
               <Sparkles className="w-3 h-3" />
               Lanjutkan Belajar
             </span>
-            <span className="text-[11px] text-text-tertiary font-mono">
+            <span className="text-[11px] text-text-secondary font-mono font-medium">
               {primaryModule.category?.name || "Modul"}
             </span>
           </div>
@@ -90,22 +90,22 @@ export function MobileDashboardView({
               {primaryModule.title}
             </h2>
             {primaryModule.description && (
-              <p className="text-xs text-text-secondary line-clamp-2 mt-0.5 leading-snug">
+              <p className="text-xs text-text-secondary line-clamp-2 mt-0.5 leading-snug font-normal">
                 {primaryModule.description}
               </p>
             )}
           </div>
 
           <div className="space-y-1.5 pt-1">
-            <div className="flex items-center justify-between text-[11px] text-text-tertiary">
+            <div className="flex items-center justify-between text-[11px] text-text-secondary font-medium">
               <span>Progres pembelajaran</span>
-              <span className="font-mono font-semibold text-brand-500">
+              <span className="font-mono font-bold text-brand-600">
                 {primaryModule.level ? `${primaryModule.level}` : "Aktif"}
               </span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden border border-border/40">
               <div
-                className="h-full bg-brand-500 rounded-full"
+                className="h-full bg-brand-600 rounded-full"
                 style={{ width: "65%" }}
               />
             </div>
@@ -123,13 +123,13 @@ export function MobileDashboardView({
         </Card>
       ) : (
         <Card padding="md" variant="subtle" className="text-center space-y-2.5">
-          <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center mx-auto">
+          <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center mx-auto">
             <BookOpen className="w-5 h-5" />
           </div>
           <h2 className="text-sm font-bold text-text-primary font-display">
             Mulai Belajar Sekarang
           </h2>
-          <p className="text-xs text-text-secondary max-w-xs mx-auto">
+          <p className="text-xs text-text-secondary max-w-xs mx-auto font-normal">
             Tambahkan modul atau materi perkuliahan pertama Anda.
           </p>
           <Link href="/dashboard/modul" className="inline-block pt-1">
@@ -146,10 +146,10 @@ export function MobileDashboardView({
           href="/dashboard/ai-tutor"
           className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
             <Bot className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             AI Tutor
           </span>
         </Link>
@@ -158,10 +158,10 @@ export function MobileDashboardView({
           href="/dashboard/tugas"
           className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
             <CheckSquare className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             Tugas
           </span>
         </Link>
@@ -170,10 +170,10 @@ export function MobileDashboardView({
           href="/dashboard/jadwal"
           className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
             <Calendar className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             Jadwal
           </span>
         </Link>
@@ -182,10 +182,10 @@ export function MobileDashboardView({
           href="/dashboard/konversi"
           className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
             <ScanLine className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             Scanner
           </span>
         </Link>
@@ -199,7 +199,7 @@ export function MobileDashboardView({
           </h3>
           <Link
             href="/dashboard/tugas"
-            className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-0.5 hover:underline"
+            className="text-[11px] font-bold text-brand-600 flex items-center gap-0.5 hover:underline"
           >
             <span>Semua</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -239,10 +239,10 @@ export function MobileDashboardView({
                   className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-3"
                 >
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="text-xs font-semibold text-text-primary truncate">
+                    <p className="text-xs font-bold text-text-primary truncate">
                       {task.title}
                     </p>
-                    <p className="text-[11px] text-text-tertiary truncate">
+                    <p className="text-[11px] font-medium text-text-secondary truncate">
                       {task.subject || "Tugas Kuliah"}
                     </p>
                   </div>
@@ -253,12 +253,12 @@ export function MobileDashboardView({
                         className={cn(
                           "px-2 py-0.5 rounded-full text-[10px] font-semibold font-mono whitespace-nowrap shrink-0",
                           isOverdue
-                            ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                            ? "bg-rose-500/15 text-rose-700 border border-rose-500/30 font-bold"
                             : isDueToday
-                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-bold"
+                            ? "bg-amber-500/15 text-amber-800 border border-amber-500/30 font-bold"
                             : isDueTomorrow
-                            ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30"
-                            : "bg-surface-secondary text-text-secondary border border-border/60"
+                            ? "bg-blue-500/15 text-blue-700 border border-blue-500/30 font-bold"
+                            : "bg-surface-secondary text-text-secondary border border-border/60 font-medium"
                         )}
                       >
                         {isOverdue
@@ -270,7 +270,7 @@ export function MobileDashboardView({
                           : `${daysLeft} hari lagi`}
                       </span>
                     )}
-                    <ChevronRight className="w-3.5 h-3.5 text-text-tertiary" />
+                    <ChevronRight className="w-3.5 h-3.5 text-text-secondary" />
                   </div>
                 </Link>
               );
@@ -278,7 +278,7 @@ export function MobileDashboardView({
           </Card>
         ) : (
           <Card padding="md" variant="subtle" className="text-center">
-            <p className="text-xs text-text-secondary">
+            <p className="text-xs font-medium text-text-secondary">
               Tidak ada tugas yang mendesak.
             </p>
           </Card>
@@ -293,7 +293,7 @@ export function MobileDashboardView({
           </h3>
           <Link
             href="/dashboard/materi"
-            className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-0.5 hover:underline"
+            className="text-[11px] font-bold text-brand-600 flex items-center gap-0.5 hover:underline"
           >
             <span>Materi</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -309,25 +309,25 @@ export function MobileDashboardView({
                 className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-3"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
                     <BookOpen className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="text-xs font-semibold text-text-primary truncate">
+                    <p className="text-xs font-bold text-text-primary truncate">
                       {item.title}
                     </p>
-                    <p className="text-[10.5px] text-text-tertiary truncate">
+                    <p className="text-[10.5px] font-medium text-text-secondary truncate">
                       {item.subtitle || item.category || "Materi Pelajaran"}
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
+                <ChevronRight className="w-3.5 h-3.5 text-text-secondary shrink-0" />
               </Link>
             ))}
           </Card>
         ) : (
           <Card padding="md" variant="subtle" className="text-center">
-            <p className="text-xs text-text-secondary">
+            <p className="text-xs font-medium text-text-secondary">
               Belum ada aktivitas baru.
             </p>
           </Card>

@@ -55,11 +55,11 @@ export function MobileModuleList({
 
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-mono font-semibold px-2 py-0.2 rounded bg-surface-secondary text-text-tertiary uppercase">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-secondary text-text-secondary uppercase border border-border/60">
                         {mod.category?.name || "Modul"}
                       </span>
                       {mod.level && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-brand-500/10 text-brand-500">
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-600 border border-brand-500/20">
                           {mod.level}
                         </span>
                       )}
@@ -70,29 +70,29 @@ export function MobileModuleList({
                     </h3>
 
                     {mod.description && (
-                      <p className="text-[11px] text-text-tertiary line-clamp-2 leading-relaxed">
+                      <p className="text-[11.5px] text-text-secondary line-clamp-2 leading-relaxed">
                         {mod.description}
                       </p>
                     )}
 
                     {/* Progress Bar & Lesson Count */}
                     <div className="pt-2 space-y-1">
-                      <div className="flex items-center justify-between text-[10.5px] text-text-tertiary font-mono">
+                      <div className="flex items-center justify-between text-[11px] text-text-secondary font-mono font-medium">
                         <span>
                           {totalChapters > 0
                             ? `${completedChapters} / ${totalChapters} Bab Selesai`
                             : "Kurikulum Aktif"}
                         </span>
                         {totalChapters > 0 && (
-                          <span className="font-semibold text-brand-500">
+                          <span className="font-bold text-brand-600">
                             {progressPercent}%
                           </span>
                         )}
                       </div>
                       {totalChapters > 0 && (
-                        <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden border border-border/40">
                           <div
-                            className="h-full bg-brand-500 rounded-full transition-all duration-300"
+                            className="h-full bg-brand-600 rounded-full transition-all duration-300"
                             style={{ width: `${progressPercent}%` }}
                           />
                         </div>

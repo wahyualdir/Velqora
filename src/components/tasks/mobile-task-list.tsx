@@ -39,7 +39,7 @@ export function MobileTaskList({
 
     if (status === "selesai") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-500/15 text-emerald-500 dark:text-emerald-400">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
           <CheckCircle2 className="w-3 h-3" />
           Selesai
         </span>
@@ -48,7 +48,7 @@ export function MobileTaskList({
 
     if (isOverdue) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-rose-500/15 text-rose-500 dark:text-rose-400 font-mono">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-500/15 text-rose-700 border border-rose-500/30 font-mono">
           <AlertTriangle className="w-3 h-3" />
           Terlambat
         </span>
@@ -57,7 +57,7 @@ export function MobileTaskList({
 
     if (status === "sedang_dikerjakan") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-blue-500/15 text-blue-500 dark:text-blue-400">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-500/15 text-blue-700 border border-blue-500/30">
           <Clock className="w-3 h-3" />
           Proses
         </span>
@@ -65,7 +65,7 @@ export function MobileTaskList({
     }
 
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-surface-secondary text-text-tertiary">
+      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-surface-secondary text-text-secondary border border-border/60">
         Belum Mulai
       </span>
     );
@@ -74,7 +74,7 @@ export function MobileTaskList({
   return (
     <div className="space-y-3 pb-8">
       {/* List Container */}
-      <Card padding="none" className="divide-y divide-border/60">
+      <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
         {tasks.map((task) => {
           const daysLeft = task.deadline ? daysUntilDeadline(task.deadline) : null;
 
@@ -86,12 +86,12 @@ export function MobileTaskList({
             >
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-semibold text-text-primary truncate font-sans">
+                  <h3 className="text-xs font-bold text-text-primary truncate font-sans">
                     {task.title}
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-2 text-[11px] text-text-tertiary truncate">
+                <div className="flex items-center gap-2 text-[11px] text-text-secondary truncate">
                   <span className="font-medium text-text-secondary">
                     {task.subject || "Tugas"}
                   </span>
@@ -100,12 +100,12 @@ export function MobileTaskList({
                       <span>·</span>
                       <span
                         className={cn(
-                          "font-mono",
+                          "font-mono font-medium",
                           daysLeft !== null && daysLeft < 0 && task.status !== "selesai"
-                            ? "text-rose-500 font-semibold"
+                            ? "text-rose-700 font-bold"
                             : daysLeft === 0
-                            ? "text-amber-500 font-semibold"
-                            : "text-text-tertiary"
+                            ? "text-amber-800 font-bold"
+                            : "text-text-secondary"
                         )}
                       >
                         {formatDate(task.deadline)}
@@ -123,7 +123,7 @@ export function MobileTaskList({
                     e.stopPropagation();
                     setSelectedTask(task);
                   }}
-                  className="p-1 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary active:scale-95"
+                  className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:scale-95"
                 >
                   <MoreVertical className="w-4 h-4" />
                 </button>
