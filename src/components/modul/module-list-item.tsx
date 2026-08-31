@@ -24,6 +24,8 @@ import { toggleChapterComplete } from "@/actions/study-actions";
 import { ModuleDriveFile, extractModuleDriveFromNotes } from "@/types/module-drive";
 import { toast } from "sonner";
 
+import { Card } from "@/components/ui/card";
+
 interface ModuleListItemProps {
   module: any;
   currentUserId?: string | null;
@@ -83,7 +85,7 @@ export function ModuleListItem({
   };
 
   return (
-    <div className="rounded-xl border border-border bg-surface hover:border-brand-500/40 transition-colors shadow-2xs overflow-hidden">
+    <Card padding="none" hover className="overflow-hidden">
       {/* Main List Item Header */}
       <div className="p-4 sm:p-5 space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
@@ -341,6 +343,6 @@ export function ModuleListItem({
         message={`Apakah Anda yakin ingin menghapus "${module.title}"? Semua bab dan riwayat terkait akan terhapus secara permanen.`}
         confirmText="Hapus Modul"
       />
-    </div>
+    </Card>
   );
 }

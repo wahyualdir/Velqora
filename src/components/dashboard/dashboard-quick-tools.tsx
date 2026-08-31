@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { Code2, Bot, GraduationCap, ScanLine, ChevronRight } from "lucide-react";
 
+import { Card } from "@/components/ui/card";
+
 export function DashboardQuickTools() {
   const tools = [
     {
@@ -44,7 +46,7 @@ export function DashboardQuickTools() {
         </h2>
       </div>
 
-      <div className="divide-y divide-border/60 rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
+      <Card padding="none" className="divide-y divide-border/60">
         {tools.map((tool) => {
           const Icon = tool.icon;
           return (
@@ -72,7 +74,7 @@ export function DashboardQuickTools() {
             </Link>
           );
         })}
-      </div>
+      </Card>
     </section>
   );
 }

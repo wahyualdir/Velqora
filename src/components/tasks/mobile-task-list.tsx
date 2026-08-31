@@ -16,6 +16,8 @@ import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-shee
 import { Button } from "@/components/ui/button";
 import { cn, daysUntilDeadline, formatDate } from "@/lib/utils";
 
+import { Card } from "@/components/ui/card";
+
 interface MobileTaskListProps {
   tasks: any[];
   onUpdateStatus: (taskId: string, newStatus: string) => void;
@@ -72,7 +74,7 @@ export function MobileTaskList({
   return (
     <div className="space-y-3 pb-8">
       {/* List Container */}
-      <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/60 overflow-hidden shadow-2xs">
+      <Card padding="none" className="divide-y divide-border/60">
         {tasks.map((task) => {
           const daysLeft = task.deadline ? daysUntilDeadline(task.deadline) : null;
 
@@ -129,7 +131,7 @@ export function MobileTaskList({
             </div>
           );
         })}
-      </div>
+      </Card>
 
       {/* Floating Add Task CTA on Mobile */}
       <div className="fixed bottom-20 right-4 z-30 md:hidden">

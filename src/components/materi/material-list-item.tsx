@@ -17,6 +17,8 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { MATERIAL_TYPE_LABELS, MaterialType } from "@/types";
 import { formatDate, formatFileSize } from "@/lib/utils";
 
+import { Card } from "@/components/ui/card";
+
 interface MaterialListItemProps {
   material: any;
   isBookmarked: boolean;
@@ -54,7 +56,7 @@ export function MaterialListItem({
     : FileText;
 
   return (
-    <div className="rounded-xl border border-border bg-surface hover:border-brand-500/40 transition-colors shadow-2xs overflow-hidden">
+    <Card padding="none" hover className="overflow-hidden">
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Left: Icon, Metadata & Title */}
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
@@ -162,6 +164,6 @@ export function MaterialListItem({
         message={`Apakah Anda yakin ingin menghapus "${material.title}"? Berkas dan catatan terkait akan dihapus.`}
         confirmText="Hapus Materi"
       />
-    </div>
+    </Card>
   );
 }

@@ -13,6 +13,7 @@ import {
   Minus,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardStat } from "@/components/ui/card";
 import { AcademicHealthScore } from "@/lib/schedule-orchestration/types";
 import { HealthTrendReport } from "@/lib/schedule-outcomes/types";
 import { WorkloadSummary, DeadlineAnalysisItem } from "@/lib/schedule-intelligence/types";
@@ -33,17 +34,16 @@ export function CurrentAcademicStateCard({
   conflictsCount,
 }: CurrentAcademicStateCardProps) {
   const healthScore = health ? health.overallScore : null;
-  const overloadedDays = workload ? workload.overloadedDaysCount : 0;
   const urgentDeadlinesCount = deadlines.filter(
-    (d) => d.urgency === "CRITICAL" || d.urgency === "URGENT"
+    (d) => d.urgency === "URGENT" || d.urgency === "OVERDUE"
   ).length;
+  const overloadedDays = workload ? workload.overloadedDaysCount : 0;
 
   const getHealthStatus = () => {
-    if (healthScore === null) return { label: "Belum Dihitung", variant: "neutral" as const };
-    if (healthScore >= 85) return { label: "Sangat Sehat", variant: "success" as const };
-    if (healthScore >= 70) return { label: "Sehat & Stabil", variant: "success" as const };
-    if (healthScore >= 50) return { label: "Perlu Penyesuaian", variant: "warning" as const };
-    return { label: "Risiko Beban", variant: "danger" as const };
+    if (healthScore === null) return { label: "Menganalisis", variant: "neutral" as const };
+    if (healthScore >= 80) return { label: "Prima", variant: "success" as const };
+    if (healthScore >= 60) return { label: "Perhatian", variant: "warning" as const };
+    return { label: "Kritis", variant: "danger" as const };
   };
 
   const getWorkloadStatus = () => {
@@ -57,7 +57,7 @@ export function CurrentAcademicStateCard({
   const workloadStatus = getWorkloadStatus();
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-surface/90 backdrop-blur-sm p-5 space-y-4 shadow-2xs">
+    <Card padding="md" className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
         <div>
           <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
@@ -93,92 +93,74 @@ export function CurrentAcademicStateCard({
       </div>
 
       {/* 5 Compact Metric Columns */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 auto-rows-fr">
         {/* Metric 1: Academic Health */}
-        <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Academic Health</span>
-            <Activity className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-text-primary">
-              {healthScore !== null ? healthScore : "--"}
-            </span>
-            <span className="text-xs text-text-tertiary">/ 100</span>
-          </div>
-          <Badge variant={healthStatus.variant} size="sm">
-            {healthStatus.label}
-          </Badge>
-        </div>
+        <CardStat
+          icon={Activity}
+          label="Academic Health"
+          value={healthScore !== null ? healthScore : "--"}
+          badge={
+            <Badge variant={healthStatus.variant} size="sm">
+              {healthStatus.label}
+            </Badge>
+          }
+          isMono
+        />
 
         {/* Metric 2: Workload */}
-        <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Beban Mingguan</span>
-            <Calendar className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-text-primary">
-              {workload ? `${Math.round(workload.totalWeeklyMinutes / 60)}j` : "--"}
-            </span>
-            <span className="text-xs text-text-tertiary">/ pekan</span>
-          </div>
-          <Badge variant={workloadStatus.variant} size="sm">
-            {workloadStatus.label}
-          </Badge>
-        </div>
+        <CardStat
+          icon={Calendar}
+          label="Beban Mingguan"
+          value={workload ? `${Math.round(workload.totalWeeklyMinutes / 60)}j` : "--"}
+          badge={
+            <Badge variant={workloadStatus.variant} size="sm">
+              {workloadStatus.label}
+            </Badge>
+          }
+          isMono
+        />
 
         {/* Metric 3: Deadline Risk */}
-        <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Tenggat Waktu</span>
-            <Clock className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-text-primary">
-              {deadlines.length}
-            </span>
-            <span className="text-xs text-text-tertiary">tugas</span>
-          </div>
-          <Badge variant={urgentDeadlinesCount > 0 ? "warning" : "success"} size="sm">
-            {urgentDeadlinesCount > 0 ? `${urgentDeadlinesCount} Mendesak` : "Terkendali"}
-          </Badge>
-        </div>
+        <CardStat
+          icon={Clock}
+          label="Tenggat Waktu"
+          value={deadlines.length}
+          badge={
+            <Badge variant={urgentDeadlinesCount > 0 ? "warning" : "success"} size="sm">
+              {urgentDeadlinesCount > 0 ? `${urgentDeadlinesCount} Mendesak` : "Terkendali"}
+            </Badge>
+          }
+          isMono
+        />
 
         {/* Metric 4: Conflict Status */}
-        <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Integritas Jadwal</span>
-            <ShieldCheck className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-text-primary">
-              {conflictsCount}
-            </span>
-            <span className="text-xs text-text-tertiary">bentrok</span>
-          </div>
-          <Badge variant={conflictsCount === 0 ? "success" : "danger"} size="sm">
-            {conflictsCount === 0 ? "Nol Bentrok" : `${conflictsCount} Perlu Ditangani`}
-          </Badge>
-        </div>
+        <CardStat
+          icon={ShieldCheck}
+          label="Integritas Jadwal"
+          value={conflictsCount}
+          badge={
+            <Badge variant={conflictsCount === 0 ? "success" : "danger"} size="sm">
+              {conflictsCount === 0 ? "Nol Bentrok" : `${conflictsCount} Bentrok`}
+            </Badge>
+          }
+          isMono
+        />
 
         {/* Metric 5: Balance & Pacing */}
-        <div className="p-3 rounded-xl border border-border/60 bg-surface-secondary/40 space-y-1 col-span-2 md:col-span-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Keseimbangan</span>
-            <Scale className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-text-primary">
-              {workload ? `${Math.round(workload.averageDailyMinutes / 60 * 10) / 10}j` : "--"}
-            </span>
-            <span className="text-xs text-text-tertiary">/ hari</span>
-          </div>
-          <Badge variant={overloadedDays === 0 ? "success" : "neutral"} size="sm">
-            {overloadedDays === 0 ? "Seimbang" : "Distribusi Diperlukan"}
-          </Badge>
+        <div className="col-span-2 md:col-span-1 h-full">
+          <CardStat
+            icon={Scale}
+            label="Keseimbangan"
+            value={workload ? `${Math.round(workload.averageDailyMinutes / 60 * 10) / 10}j` : "--"}
+            badge={
+              <Badge variant={overloadedDays === 0 ? "success" : "neutral"} size="sm">
+                {overloadedDays === 0 ? "Seimbang" : "Perlu Distribusi"}
+              </Badge>
+            }
+            isMono
+          />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

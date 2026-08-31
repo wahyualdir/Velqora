@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 
+import { Card } from "@/components/ui/card";
+
 interface DashboardModulesListProps {
   loading: boolean;
   modules: any[];
@@ -51,7 +53,7 @@ export function DashboardModulesList({ loading, modules }: DashboardModulesListP
           }
         />
       ) : (
-        <div className="divide-y divide-border/60 rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
+        <Card padding="none" className="divide-y divide-border/60">
           {modules.map((mod) => (
             <Link
               key={mod.id}
@@ -82,7 +84,7 @@ export function DashboardModulesList({ loading, modules }: DashboardModulesListP
               </div>
             </Link>
           ))}
-        </div>
+        </Card>
       )}
     </section>
   );

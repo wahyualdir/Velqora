@@ -14,6 +14,7 @@ import {
   Edit2,
   Trash2,
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
 import { ScheduleItem } from "@/types";
@@ -38,24 +39,29 @@ export function MobileScheduleAgenda({
 
   // Group items by Day
   const groupedDays = useMemo(() => {
-    const daysOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-    const groups: { day: string; items: ScheduleItem[] }[] = [];
+    const dayOrder = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+    const map = new Map<string, ScheduleItem[]>();
 
-    daysOrder.forEach((day) => {
-      const dayItems = items.filter(
-        (it) => it.day.toLowerCase() === day.toLowerCase()
-      );
+    dayOrder.forEach((day) => map.set(day, []));
+
+    items.forEach((item) => {
+      const day = item.day || "Lainnya";
+      if (!map.has(day)) {
+        map.set(day, []);
+      }
+      map.get(day)!.push(item);
+    });
+
+    const groups: { day: string; items: ScheduleItem[] }[] = [];
+    dayOrder.forEach((day) => {
+      const dayItems = map.get(day) || [];
       if (dayItems.length > 0) {
-        // sort by startTime
         dayItems.sort((a, b) => (a.start_time || "").localeCompare(b.start_time || ""));
         groups.push({ day, items: dayItems });
       }
     });
 
-    // Capture items with other days
-    const otherItems = items.filter(
-      (it) => !daysOrder.some((d) => d.toLowerCase() === it.day.toLowerCase())
-    );
+    const otherItems = map.get("Lainnya") || [];
     if (otherItems.length > 0) {
       groups.push({ day: "Lainnya", items: otherItems });
     }
@@ -66,7 +72,7 @@ export function MobileScheduleAgenda({
   return (
     <div className="space-y-4 pb-8">
       {groupedDays.length === 0 ? (
-        <div className="p-6 rounded-2xl border border-border bg-surface text-center space-y-3">
+        <Card padding="md" variant="subtle" className="text-center space-y-3">
           <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center mx-auto">
             <Calendar className="w-5 h-5" />
           </div>
@@ -80,7 +86,7 @@ export function MobileScheduleAgenda({
             <Plus className="w-3.5 h-3.5" />
             <span>Tambah Jadwal</span>
           </Button>
-        </div>
+        </Card>
       ) : (
         groupedDays.map((group) => (
           <div key={group.day} className="space-y-2">
@@ -94,7 +100,7 @@ export function MobileScheduleAgenda({
               </span>
             </div>
 
-            <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/60 overflow-hidden shadow-2xs">
+            <Card padding="none" className="divide-y divide-border/60">
               {group.items.map((item) => (
                 <div
                   key={item.id}
@@ -143,7 +149,7 @@ export function MobileScheduleAgenda({
                   </div>
                 </div>
               ))}
-            </div>
+            </Card>
           </div>
         ))
       )}

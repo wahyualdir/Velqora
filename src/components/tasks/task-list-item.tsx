@@ -15,6 +15,8 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { formatDate, daysUntilDeadline } from "@/lib/utils";
 import { TASK_PRIORITY_LABELS, TASK_STATUS_LABELS } from "@/types";
 
+import { Card } from "@/components/ui/card";
+
 interface TaskListItemProps {
   task: any;
   onUpdateStatus: (taskId: string, newStatus: string) => void;
@@ -79,14 +81,13 @@ export function TaskListItem({
       : "neutral";
 
   return (
-    <div
-      className={`rounded-xl border transition-colors shadow-2xs overflow-hidden ${
-        isCompleted
-          ? "bg-surface/50 border-border/60 opacity-80"
-          : "bg-surface border-border hover:border-brand-500/40"
-      }`}
+    <Card
+      padding="md"
+      variant={isCompleted ? "subtle" : "default"}
+      hover={!isCompleted}
+      className={isCompleted ? "opacity-80" : ""}
     >
-      <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         {/* Left: Checkbox & Task Info */}
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
           {/* Status Checkbox / Cycle Button */}
@@ -235,6 +236,6 @@ export function TaskListItem({
         message={`Apakah Anda yakin ingin menghapus "${task.title}"? Tindakan ini tidak dapat dibatalkan.`}
         confirmText="Hapus Tugas"
       />
-    </div>
+    </Card>
   );
 }

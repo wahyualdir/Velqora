@@ -6,6 +6,8 @@ import { Clock, FileText, ChevronRight, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/lib/utils";
 
+import { Card } from "@/components/ui/card";
+
 interface DashboardRecentViewsProps {
   loading: boolean;
   views: any[];
@@ -34,14 +36,14 @@ export function DashboardRecentViews({ loading, views }: DashboardRecentViewsPro
           <Skeleton className="h-12 rounded-xl" />
         </div>
       ) : views.length === 0 ? (
-        <div className="p-4 rounded-xl border border-dashed border-border text-center bg-surface-secondary/20 space-y-1">
+        <Card padding="md" variant="subtle" className="border-dashed text-center space-y-1">
           <p className="text-xs text-text-secondary font-medium">Belum ada riwayat bacaan.</p>
           <p className="text-[11px] text-text-tertiary">
             Materi dan dokumen yang Anda buka akan tercatat di sini secara otomatis.
           </p>
-        </div>
+        </Card>
       ) : (
-        <div className="divide-y divide-border/60 rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
+        <Card padding="none" className="divide-y divide-border/60">
           {views.map((item) => {
             const mat = item.material;
             if (!mat) return null;
@@ -68,7 +70,7 @@ export function DashboardRecentViews({ loading, views }: DashboardRecentViewsPro
               </Link>
             );
           })}
-        </div>
+        </Card>
       )}
     </section>
   );

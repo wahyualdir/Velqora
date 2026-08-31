@@ -13,13 +13,16 @@ export type { SkeletonProps } from "./skeleton";
 export { EmptyState } from "./empty-state";
 export type { EmptyStateProps } from "./empty-state";
 
+import Link from "next/link";
+
 // ========== Card Component (Flat-First Academic Container) ==========
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   className?: string;
   hover?: boolean;
   interactive?: boolean;
-  variant?: "default" | "subtle" | "elevated" | "outline" | "secondary" | "dossier";
+  padding?: "none" | "sm" | "md" | "lg";
+  variant?: "default" | "subtle" | "elevated" | "outline" | "secondary" | "interactive" | "dossier";
   onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
   style?: React.CSSProperties;
 }
@@ -29,12 +32,13 @@ export function Card({
   className,
   hover = false,
   interactive = false,
+  padding = "none",
   variant = "default",
   onClick,
   style,
   ...props
 }: CardProps) {
-  const isClickable = Boolean(onClick || hover || interactive);
+  const isClickable = Boolean(onClick || hover || interactive || variant === "interactive");
 
   const variantStyles = {
     default: "bg-surface border-border shadow-2xs",
@@ -42,7 +46,15 @@ export function Card({
     elevated: "bg-surface border-border shadow-xs dark:shadow-black/30",
     outline: "bg-transparent border-border",
     secondary: "bg-surface-secondary border-border",
+    interactive: "bg-surface border-border shadow-2xs hover:border-brand-500/40 hover:bg-surface-secondary/40",
     dossier: "bg-surface border-border",
+  };
+
+  const paddingStyles = {
+    none: "",
+    sm: "p-3 sm:p-3.5",
+    md: "p-4 sm:p-5",
+    lg: "p-5 sm:p-6",
   };
 
   return (
@@ -65,13 +77,96 @@ export function Card({
         "rounded-xl border transition-all duration-150 text-text-primary",
         "relative overflow-hidden",
         variantStyles[variant],
+        paddingStyles[padding],
         isClickable &&
-          "cursor-pointer hover:border-border-hover hover:bg-surface-hover/40 active:scale-[0.998] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500",
+          "cursor-pointer hover:border-brand-500/40 hover:bg-surface-secondary/30 active:scale-[0.998] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500",
         className
       )}
       {...props}
     >
       {children}
+    </div>
+  );
+}
+
+// ========== CardStat (Symmetrical Metric/KPI Primitive) ==========
+export interface CardStatProps extends React.HTMLAttributes<HTMLDivElement> {
+  icon?: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: React.ReactNode;
+  hint?: React.ReactNode;
+  badge?: React.ReactNode;
+  href?: string;
+  variant?: "default" | "subtle" | "secondary";
+  className?: string;
+  isMono?: boolean;
+}
+
+export function CardStat({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  badge,
+  href,
+  variant = "default",
+  className,
+  isMono = false,
+  ...props
+}: CardStatProps) {
+  const content = (
+    <div className="h-full flex flex-col justify-between space-y-2 select-none">
+      {/* Header: Label & Icon */}
+      <div className="flex items-center justify-between gap-1.5 text-text-tertiary">
+        <span className="text-xs font-medium text-text-secondary truncate">
+          {label}
+        </span>
+        {Icon && <Icon className="w-4 h-4 shrink-0 text-brand-500" />}
+      </div>
+
+      {/* Body: Value, Hint, or Badge */}
+      <div className="pt-1 flex items-baseline justify-between gap-2 flex-wrap">
+        <div className="flex items-baseline gap-1.5">
+          <span
+            className={cn(
+              "text-xl sm:text-2xl font-bold tracking-tight text-text-primary",
+              isMono ? "font-mono" : "font-display"
+            )}
+          >
+            {value}
+          </span>
+        </div>
+
+        {badge ? (
+          <div className="shrink-0">{badge}</div>
+        ) : hint ? (
+          <span className="text-[11px] text-text-secondary leading-tight truncate">
+            {hint}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  const cardClasses = cn(
+    "p-3.5 sm:p-4 rounded-xl border border-border bg-surface transition-all shadow-2xs h-full flex flex-col justify-between",
+    href && "group hover:border-brand-500/40 hover:bg-surface-secondary/40 cursor-pointer active:scale-[0.995]",
+    variant === "subtle" && "bg-surface-secondary/60 border-border/70",
+    variant === "secondary" && "bg-surface-secondary border-border",
+    className
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={cardClasses}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div className={cardClasses} {...props}>
+      {content}
     </div>
   );
 }

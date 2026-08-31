@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+import { Card } from "@/components/ui/card";
+
 interface ScheduleListItemProps {
   item: any;
   onToggleComplete?: (id: string) => void;
@@ -40,15 +42,13 @@ export function ScheduleListItem({
       : "neutral";
 
   return (
-    <div
-      className={cn(
-        "rounded-xl border transition-colors shadow-2xs overflow-hidden",
-        isCompleted
-          ? "bg-surface/50 border-border/60 opacity-75"
-          : "bg-surface border-border hover:border-brand-500/40"
-      )}
+    <Card
+      padding="md"
+      variant={isCompleted ? "subtle" : "default"}
+      hover={!isCompleted}
+      className={isCompleted ? "opacity-75" : ""}
     >
-      <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         {/* Left: Time Timeline & Info */}
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
           {/* Time Slot Box */}
@@ -169,6 +169,6 @@ export function ScheduleListItem({
         message={`Apakah Anda yakin ingin menghapus "${item.title}"? Tindakan ini tidak dapat dibatalkan.`}
         confirmText="Hapus Agenda"
       />
-    </div>
+    </Card>
   );
 }

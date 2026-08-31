@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { daysUntilDeadline } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 interface DashboardTasksListProps {
   loading: boolean;
@@ -37,7 +38,7 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
           <Skeleton className="h-14 rounded-xl" />
         </div>
       ) : tasks.length === 0 ? (
-        <div className="p-4 sm:p-5 rounded-xl border border-dashed border-border text-center bg-surface-secondary/20 space-y-2">
+        <Card padding="md" variant="subtle" className="border-dashed text-center space-y-2">
           <p className="text-xs font-semibold text-text-secondary">Semua tugas telah selesai.</p>
           <p className="text-[11.5px] text-text-tertiary">
             Tidak ada tenggat waktu mendesak yang menunggu dikerjakan.
@@ -50,9 +51,9 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
               </Button>
             </Link>
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="divide-y divide-border/60 rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
+        <Card padding="none" className="divide-y divide-border/60">
           {tasks.map((task) => {
             const days = task.deadline ? daysUntilDeadline(task.deadline) : null;
             const isUrgent = days !== null && days <= 2 && days >= 0;
@@ -98,11 +99,14 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
                   <h3 className="text-xs font-semibold text-text-primary group-hover:text-brand-500 transition-colors truncate">
                     {task.title}
                   </h3>
+                  <p className="text-[11px] text-text-secondary truncate">
+                    {task.subject || "Tugas Mandiri"}
+                  </p>
                 </div>
               </Link>
             );
           })}
-        </div>
+        </Card>
       )}
     </section>
   );

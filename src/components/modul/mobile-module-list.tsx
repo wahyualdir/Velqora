@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { BookOpen, Code2, ChevronRight, Bookmark, CheckCircle2, Play } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,7 @@ export function MobileModuleList({
 }: MobileModuleListProps) {
   return (
     <div className="space-y-3 pb-8">
-      <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/60 overflow-hidden shadow-2xs">
+      <Card padding="none" className="divide-y divide-border/60">
         {modules.map((mod) => {
           const isProject = mod.kind === "project";
           const chapters = mod.chapters || [];
@@ -107,7 +108,7 @@ export function MobileModuleList({
             </Link>
           );
         })}
-      </div>
+      </Card>
     </div>
   );
 }

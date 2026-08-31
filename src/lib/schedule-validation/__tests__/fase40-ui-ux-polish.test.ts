@@ -193,4 +193,35 @@ describe("FASE 40: Professional Product UI, Visual System & UX Polish Suite", ()
       assert.ok(content.includes("bg-brand-600"), "Buttons must use standard brand-600");
     });
   });
+
+  // ─── Group F: Symmetrical Card System & Primitives Contract ───
+  describe("Group F: Symmetrical Card System & Primitives Contract", () => {
+    it("Scenario POLISH-11: Card and CardStat components exist with standardized padding and variants", () => {
+      const cardPath = path.join(process.cwd(), "src/components/ui/card.tsx");
+      assert.ok(fs.existsSync(cardPath), "card.tsx must exist");
+      const content = fs.readFileSync(cardPath, "utf-8");
+
+      assert.ok(content.includes("export function Card"), "Must export Card");
+      assert.ok(content.includes("export function CardStat"), "Must export CardStat");
+      assert.ok(content.includes("padding?: \"none\" | \"sm\" | \"md\" | \"lg\""), "Must support standard padding scale");
+      assert.ok(content.includes("h-full flex flex-col justify-between"), "CardStat must stretch symmetrically with flex column");
+    });
+
+    it("Scenario POLISH-12: Metric grids enforce auto-rows-fr across Web and App views", () => {
+      const filesWithGrids = [
+        "src/components/dashboard/dashboard-metrics.tsx",
+        "src/components/dashboard/mobile-dashboard-view.tsx",
+        "src/components/schedule/behavior-insights-card.tsx",
+        "src/components/schedule/current-academic-state-card.tsx",
+        "src/components/schedule/schedule-intelligence-summary.tsx",
+      ];
+
+      filesWithGrids.forEach((rel) => {
+        const fullPath = path.join(process.cwd(), rel);
+        assert.ok(fs.existsSync(fullPath), `${rel} must exist`);
+        const content = fs.readFileSync(fullPath, "utf-8");
+        assert.ok(content.includes("auto-rows-fr"), `${rel} must enforce auto-rows-fr for symmetric card heights`);
+      });
+    });
+  });
 });

@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, daysUntilDeadline } from "@/lib/utils";
@@ -66,14 +67,14 @@ export function MobileDashboardView({
 
       {/* ─── 2. Continue Learning Hero Block ─── */}
       {loading ? (
-        <div className="p-4 rounded-2xl border border-border bg-surface space-y-3">
+        <Card padding="md" variant="subtle" className="space-y-3">
           <Skeleton className="h-4 w-28 rounded" />
           <Skeleton className="h-6 w-3/4 rounded" />
           <Skeleton className="h-2 w-full rounded-full" />
           <Skeleton className="h-9 w-full rounded-xl" />
-        </div>
+        </Card>
       ) : primaryModule ? (
-        <div className="p-4 rounded-2xl border border-border/80 bg-surface shadow-2xs space-y-3">
+        <Card padding="md" className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
               <Sparkles className="w-3 h-3" />
@@ -119,13 +120,13 @@ export function MobileDashboardView({
               <span>Lanjutkan Belajar</span>
             </Button>
           </Link>
-        </div>
+        </Card>
       ) : (
-        <div className="p-4 rounded-2xl border border-border bg-surface text-center space-y-2.5">
+        <Card padding="md" variant="subtle" className="text-center space-y-2.5">
           <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center mx-auto">
             <BookOpen className="w-5 h-5" />
           </div>
-          <h2 className="text-sm font-bold text-text-primary">
+          <h2 className="text-sm font-bold text-text-primary font-display">
             Mulai Belajar Sekarang
           </h2>
           <p className="text-xs text-text-secondary max-w-xs mx-auto">
@@ -136,14 +137,14 @@ export function MobileDashboardView({
               Jelajahi Modul
             </Button>
           </Link>
-        </div>
+        </Card>
       )}
 
       {/* ─── 3. Quick Academic Shortcuts (4 Icons) ─── */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2 auto-rows-fr">
         <Link
           href="/dashboard/ai-tutor"
-          className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
+          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
           <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <Bot className="w-5 h-5" />
@@ -155,7 +156,7 @@ export function MobileDashboardView({
 
         <Link
           href="/dashboard/tugas"
-          className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
+          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
           <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <CheckSquare className="w-5 h-5" />
@@ -167,7 +168,7 @@ export function MobileDashboardView({
 
         <Link
           href="/dashboard/jadwal"
-          className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
+          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
           <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <Calendar className="w-5 h-5" />
@@ -179,7 +180,7 @@ export function MobileDashboardView({
 
         <Link
           href="/dashboard/konversi"
-          className="p-3 rounded-xl border border-border/80 bg-surface flex flex-col items-center justify-center text-center gap-1.5 active:scale-95 transition-all shadow-2xs"
+          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
           <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
             <ScanLine className="w-5 h-5" />
@@ -208,20 +209,21 @@ export function MobileDashboardView({
         {loading ? (
           <div className="space-y-2">
             {[1, 2].map((i) => (
-              <div
+              <Card
                 key={i}
-                className="p-3 rounded-xl border border-border bg-surface flex items-center justify-between"
+                padding="sm"
+                className="flex items-center justify-between"
               >
                 <div className="space-y-1 flex-1">
                   <Skeleton className="h-4 w-32 rounded" />
                   <Skeleton className="h-3 w-20 rounded" />
                 </div>
                 <Skeleton className="h-5 w-16 rounded" />
-              </div>
+              </Card>
             ))}
           </div>
         ) : upcomingTasks.length > 0 ? (
-          <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/60 overflow-hidden shadow-2xs">
+          <Card padding="none" className="divide-y divide-border/60">
             {upcomingTasks.map((task) => {
               const daysLeft = task.deadline
                 ? daysUntilDeadline(task.deadline)
@@ -273,13 +275,13 @@ export function MobileDashboardView({
                 </Link>
               );
             })}
-          </div>
+          </Card>
         ) : (
-          <div className="p-3.5 rounded-xl border border-border bg-surface text-center">
+          <Card padding="sm" variant="subtle" className="text-center">
             <p className="text-xs text-text-secondary">
               Tidak ada tugas yang mendesak.
             </p>
-          </div>
+          </Card>
         )}
       </div>
 
@@ -299,7 +301,7 @@ export function MobileDashboardView({
         </div>
 
         {recentViews.length > 0 ? (
-          <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/60 overflow-hidden shadow-2xs">
+          <Card padding="none" className="divide-y divide-border/60">
             {recentViews.map((item) => (
               <Link
                 key={item.id}
@@ -322,13 +324,13 @@ export function MobileDashboardView({
                 <ChevronRight className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
               </Link>
             ))}
-          </div>
+          </Card>
         ) : (
-          <div className="p-3.5 rounded-xl border border-border bg-surface text-center">
+          <Card padding="sm" variant="subtle" className="text-center">
             <p className="text-xs text-text-secondary">
               Belum ada aktivitas baru.
             </p>
-          </div>
+          </Card>
         )}
       </div>
     </div>

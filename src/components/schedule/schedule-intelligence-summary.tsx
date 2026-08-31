@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardStat } from "@/components/ui/card";
 import { ScheduleIntelligenceContext, WorkloadLevel } from "@/lib/schedule-intelligence/types";
 import { ScheduleDay } from "@/types";
 
@@ -35,12 +36,12 @@ interface ScheduleIntelligenceSummaryProps {
 
 const LEVEL_CONFIG: Record<
   WorkloadLevel,
-  { label: string; badgeVariant: "success" | "neutral" | "warning" | "danger"; colorClass: string }
+  { label: string; badgeVariant: "success" | "neutral" | "warning" | "danger" }
 > = {
-  RINGAN: { label: "Beban Ringan", badgeVariant: "success", colorClass: "text-emerald-500" },
-  NORMAL: { label: "Beban Optimal", badgeVariant: "neutral", colorClass: "text-sky-500" },
-  PADAT: { label: "Beban Padat", badgeVariant: "warning", colorClass: "text-amber-500" },
-  SANGAT_PADAT: { label: "Sangat Padat", badgeVariant: "danger", colorClass: "text-rose-500" },
+  RINGAN: { label: "Beban Ringan", badgeVariant: "success" },
+  NORMAL: { label: "Beban Normal", badgeVariant: "neutral" },
+  PADAT: { label: "Beban Padat", badgeVariant: "warning" },
+  SANGAT_PADAT: { label: "Beban Kritis", badgeVariant: "danger" },
 };
 
 export function ScheduleIntelligenceSummary({
@@ -64,7 +65,7 @@ export function ScheduleIntelligenceSummary({
   const urgentDeadlines = deadlines.filter((d) => d.urgency === "CRITICAL" || d.urgency === "URGENT");
 
   return (
-    <section className="rounded-2xl border border-border/80 bg-surface/70 backdrop-blur-md p-4 sm:p-5 space-y-4 shadow-2xs">
+    <Card padding="md" className="space-y-4">
       {/* Header with Title & Action Buttons */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-border/60">
         <div className="space-y-0.5">
@@ -141,66 +142,42 @@ export function ScheduleIntelligenceSummary({
       </div>
 
       {/* Grid: 4 Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 auto-rows-fr">
         {/* Metric 1: Kuliah */}
-        <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-text-tertiary">
-            <span className="flex items-center gap-1">
-              <BookOpen className="w-3.5 h-3.5 text-brand-500" /> Kuliah
-            </span>
-          </div>
-          <div className="text-base sm:text-lg font-bold text-text-primary font-mono">
-            {parseFloat((dayBreakdown.lecturesMinutes / 60).toFixed(1))} <span className="text-xs font-sans font-normal text-text-tertiary">Jam</span>
-          </div>
-          <p className="text-[10px] text-text-tertiary truncate">
-            {dayBreakdown.activities.filter((a) => a.category === "kuliah").length} mata kuliah
-          </p>
-        </div>
+        <CardStat
+          icon={BookOpen}
+          label="Kuliah"
+          value={`${parseFloat((dayBreakdown.lecturesMinutes / 60).toFixed(1))} Jam`}
+          hint={`${dayBreakdown.activities.filter((a) => a.category === "kuliah").length} mata kuliah`}
+          isMono
+        />
 
         {/* Metric 2: Belajar Mandiri */}
-        <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-text-tertiary">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-brand-500" /> Belajar
-            </span>
-          </div>
-          <div className="text-base sm:text-lg font-bold text-text-primary font-mono">
-            {parseFloat((dayBreakdown.studyMinutes / 60).toFixed(1))} <span className="text-xs font-sans font-normal text-text-tertiary">Jam</span>
-          </div>
-          <p className="text-[10px] text-text-tertiary truncate">
-            {dayBreakdown.activities.filter((a) => a.category === "belajar").length} sesi terencana
-          </p>
-        </div>
+        <CardStat
+          icon={Clock}
+          label="Belajar Mandiri"
+          value={`${parseFloat((dayBreakdown.studyMinutes / 60).toFixed(1))} Jam`}
+          hint={`${dayBreakdown.activities.filter((a) => a.category === "belajar").length} sesi terencana`}
+          isMono
+        />
 
         {/* Metric 3: Deadline Kritis */}
-        <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-text-tertiary">
-            <span className="flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 text-rose-500" /> Deadline
-            </span>
-          </div>
-          <div className="text-base sm:text-lg font-bold text-rose-500 font-mono">
-            {urgentDeadlines.length} <span className="text-xs font-sans font-normal text-text-tertiary">Tugas</span>
-          </div>
-          <p className="text-[10px] text-text-tertiary truncate">
-            {urgentDeadlines.length > 0 ? "Perlu segera dikerjakan" : "Tidak ada tenggat mendesak"}
-          </p>
-        </div>
+        <CardStat
+          icon={Flame}
+          label="Deadline"
+          value={`${urgentDeadlines.length} Tugas`}
+          hint={urgentDeadlines.length > 0 ? "Perlu segera dikerjakan" : "Tidak ada tenggat mendesak"}
+          isMono
+        />
 
         {/* Metric 4: Total Beban Mingguan */}
-        <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/60 space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-text-tertiary">
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-brand-500" /> Mingguan
-            </span>
-          </div>
-          <div className="text-base sm:text-lg font-bold text-text-primary font-mono">
-            {workload.totalWeeklyHours} <span className="text-xs font-sans font-normal text-text-tertiary">Jam</span>
-          </div>
-          <p className="text-[10px] text-text-tertiary truncate">
-            Rata-rata {workload.averageDailyHours} jam/hari
-          </p>
-        </div>
+        <CardStat
+          icon={Calendar}
+          label="Beban Mingguan"
+          value={`${workload.totalWeeklyHours} Jam`}
+          hint={`Rata-rata ${workload.averageDailyHours} jam/hari`}
+          isMono
+        />
       </div>
 
       {/* Urgent Task Warning Banner if any */}
@@ -222,6 +199,6 @@ export function ScheduleIntelligenceSummary({
           </button>
         </div>
       )}
-    </section>
+    </Card>
   );
 }

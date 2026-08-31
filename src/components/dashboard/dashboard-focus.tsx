@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { daysUntilDeadline } from "@/lib/utils";
 
+import { Card } from "@/components/ui/card";
+
 interface DashboardFocusProps {
   loading: boolean;
   recentModules: any[];
@@ -29,18 +31,18 @@ export function DashboardFocus({
 }: DashboardFocusProps) {
   if (loading) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface-secondary/40 space-y-2.5">
+      <Card padding="md" variant="subtle" className="space-y-2.5">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-3 w-1/2" />
-      </div>
+      </Card>
     );
   }
 
   // 1. Brand new workspace
   if (isBrandNew) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl border border-brand-500/30 bg-brand-500/5 space-y-3">
+      <Card padding="md" className="border-brand-500/30 bg-brand-500/5 space-y-3">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 shrink-0 mt-0.5">
             <Sparkles className="w-4 h-4" />
@@ -72,7 +74,7 @@ export function DashboardFocus({
             </Button>
           </Link>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -87,7 +89,7 @@ export function DashboardFocus({
 
   if (activeModule) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface hover:border-brand-500/40 transition-colors shadow-2xs">
+      <Card padding="md" hover className="transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -129,13 +131,13 @@ export function DashboardFocus({
             </Link>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (activeView) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface hover:border-brand-500/40 transition-colors shadow-2xs">
+      <Card padding="md" hover className="transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -162,7 +164,7 @@ export function DashboardFocus({
             </Link>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 

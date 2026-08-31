@@ -19,6 +19,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatFileSize, formatDate, cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -103,7 +104,7 @@ export function MobileMaterialList({
 
   return (
     <div className="space-y-3 pb-8">
-      <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/60 overflow-hidden shadow-2xs">
+      <Card padding="none" className="divide-y divide-border/60">
         {materials.map((mat) => {
           const typeInfo = getFileTypeIcon(mat.type, mat.file_url);
           const Icon = typeInfo.icon;
@@ -169,7 +170,7 @@ export function MobileMaterialList({
             </div>
           );
         })}
-      </div>
+      </Card>
 
       {/* Mobile Material Action Sheet */}
       {selectedMaterial && (

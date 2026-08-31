@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardStat } from "@/components/ui/card";
 import { BehaviorSignal2, ActualVsPlannedReport } from "@/lib/schedule-outcomes/types";
 import { TimePatternType } from "@/lib/schedule-outcomes/types";
 
@@ -32,21 +33,20 @@ const TIME_PATTERN_LABEL: Record<TimePatternType, string> = {
 export function BehaviorInsightsCard({
   signals,
   adherence,
-  onOpenPreferences,
 }: BehaviorInsightsCardProps) {
   const isSufficientData = signals ? signals.isSufficientData : false;
 
   if (!signals || !isSufficientData) {
     return (
-      <div className="rounded-2xl border border-border/80 bg-surface/90 backdrop-blur-sm p-6 text-center space-y-3 shadow-2xs">
-        <div className="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center mx-auto">
-          <Layers className="w-5 h-5" />
+      <Card padding="md" variant="subtle" className="text-center space-y-2">
+        <div className="w-9 h-9 rounded-xl bg-surface-secondary flex items-center justify-center mx-auto text-text-tertiary">
+          <HelpCircle className="w-4 h-4" />
         </div>
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-text-primary">
-            Belum Cukup Data untuk Mengenali Pola Belajar
+          <h3 className="text-sm font-bold text-text-primary">
+            Belum Cukup Data Kebiasaan Belajar
           </h3>
-          <p className="text-xs text-text-tertiary max-w-md mx-auto leading-relaxed">
+          <p className="text-xs text-text-secondary max-w-md mx-auto leading-relaxed">
             Sistem membutuhkan minimal 5 catatan hasil sesi belajar aktual untuk memetakan jendela waktu paling konsisten dan durasi belajar optimal Anda secara akurat.
           </p>
         </div>
@@ -55,7 +55,7 @@ export function BehaviorInsightsCard({
             {signals?.evaluatedSessionsCount || 0} / 5 Sesi Terkumpul
           </Badge>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -66,7 +66,7 @@ export function BehaviorInsightsCard({
     : `${signals.adherenceIndex}%`;
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-surface/90 backdrop-blur-sm p-5 space-y-4 shadow-2xs">
+    <Card padding="md" className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
         <div>
           <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
@@ -83,63 +83,41 @@ export function BehaviorInsightsCard({
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
         {/* Metric 1: Preferred Window */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Jendela Waktu Teraktif</span>
-            <Clock className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="text-sm font-bold text-text-primary">
-            {signals.observedTimePattern !== "UNKNOWN" ? signals.observedTimePattern : "Variatif"}
-          </div>
-          <p className="text-[11px] text-text-secondary leading-tight">
-            {windowLabel}
-          </p>
-        </div>
+        <CardStat
+          icon={Clock}
+          label="Jendela Waktu Teraktif"
+          value={signals.observedTimePattern !== "UNKNOWN" ? signals.observedTimePattern : "Variatif"}
+          hint={windowLabel}
+        />
 
         {/* Metric 2: Effective Duration */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Durasi Efektif Rata-Rata</span>
-            <TrendingUp className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="text-sm font-bold font-mono text-text-primary">
-            {signals.preferredEffectiveDurationMinutes} Menit
-          </div>
-          <p className="text-[11px] text-text-secondary leading-tight">
-            Durasi fokus riil per sesi belajar
-          </p>
-        </div>
+        <CardStat
+          icon={TrendingUp}
+          label="Durasi Efektif Rata-Rata"
+          value={`${signals.preferredEffectiveDurationMinutes} Menit`}
+          hint="Durasi fokus riil per sesi belajar"
+          isMono
+        />
 
         {/* Metric 3: Most Consistent Days */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Hari Paling Konsisten</span>
-            <Calendar className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="text-sm font-bold text-text-primary truncate">
-            {consistentDays || "Semua Hari"}
-          </div>
-          <p className="text-[11px] text-text-secondary leading-tight">
-            Tingkat eksekusi sesi tertinggi
-          </p>
-        </div>
+        <CardStat
+          icon={Calendar}
+          label="Hari Paling Konsisten"
+          value={consistentDays || "Semua Hari"}
+          hint="Tingkat eksekusi sesi tertinggi"
+        />
 
         {/* Metric 4: Adherence Index */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-surface space-y-1">
-          <div className="flex items-center justify-between text-text-tertiary">
-            <span className="text-[11px] font-medium">Indeks Kepatuhan Jadwal</span>
-            <CheckCircle2 className="w-3.5 h-3.5 text-brand-500" />
-          </div>
-          <div className="text-sm font-bold font-mono text-text-primary">
-            {completedRatio}
-          </div>
-          <p className="text-[11px] text-text-secondary leading-tight">
-            Rasio penyelesaian rencana vs realisasi
-          </p>
-        </div>
+        <CardStat
+          icon={CheckCircle2}
+          label="Indeks Kepatuhan Jadwal"
+          value={completedRatio}
+          hint="Rasio penyelesaian rencana vs realisasi"
+          isMono
+        />
       </div>
-    </div>
+    </Card>
   );
 }
