@@ -4,6 +4,7 @@ export * from "./staleness-engine";
 export * from "./regression-detector";
 export * from "./continuous-optimizer";
 export * from "./what-if-engine";
+export * from "./explanation-engine";
 export * from "./explanation-engine-3";
 export * from "./approval-gate";
 export * from "./proposal-versioning";

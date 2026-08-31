@@ -4,6 +4,7 @@ export * from "./recommendation-outcome";
 export * from "./personalization-feedback";
 export * from "./recommendation-calibration";
 export * from "./health-trends";
+export * from "./pattern-early-warning";
 export * from "./early-warning-2";
 export * from "./what-if-outcome-simulator";
 export * from "./explanation-engine-4";
