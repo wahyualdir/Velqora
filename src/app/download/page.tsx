@@ -189,15 +189,26 @@ export default function DownloadAppPage() {
                   </div>
                 </div>
 
-                {canInstallPwa && (
-                  <Button
-                    onClick={handleInstallClick}
-                    className="w-full h-11 rounded-xl text-xs font-semibold gap-2"
+                <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                  {canInstallPwa && (
+                    <Button
+                      onClick={handleInstallClick}
+                      className="flex-1 h-11 rounded-xl text-xs font-semibold gap-2 bg-brand-600 hover:bg-brand-500 text-white cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Pasang Cepat PWA</span>
+                    </Button>
+                  )}
+                  <a
+                    href="https://github.com/wahyualdir/Velqora/actions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl border border-border bg-surface-secondary hover:bg-surface text-xs font-semibold text-text-primary transition-colors"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Luncurkan Prompt Pemasangan</span>
-                  </Button>
-                )}
+                    <Smartphone className="w-4 h-4 text-emerald-400" />
+                    <span>Download Paket APK Android (.apk)</span>
+                  </a>
+                </div>
               </div>
             )}
 

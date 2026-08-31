@@ -1,0 +1,40 @@
+{
+  "packageId": "id.web.velqora.twa",
+  "host": "velqora.web.id",
+  "name": "Velqora — Learning Platform",
+  "launcherName": "Velqora",
+  "display": "standalone",
+  "themeColor": "#0b0f19",
+  "navigationColor": "#0b0f19",
+  "backgroundColor": "#0b0f19",
+  "enableNotifications": true,
+  "startUrl": "/dashboard",
+  "iconUrl": "https://velqora.web.id/icons/icon-512.png",
+  "maskableIconUrl": "https://velqora.web.id/icons/icon-maskable-512.png",
+  "appVersionCode": 1,
+  "appVersionName": "1.1.0",
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://velqora.web.id/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": false
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://velqora.web.id/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [],
+  "additionalSearchEngine": false,
+  "retainedAssetNames": []
+}
