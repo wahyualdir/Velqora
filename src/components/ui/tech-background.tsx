@@ -3,6 +3,7 @@
 import React from "react";
 import { useThemeAccent, BackgroundStyle } from "@/context/theme-accent-context";
 import { useTheme } from "next-themes";
+import { useSurface } from "@/context/surface-context";
 import { cn } from "@/lib/utils";
 
 function useResolvedTheme() {
@@ -25,10 +26,20 @@ export const TechBackground = React.memo(function TechBackground({
   variant,
   styleOverride,
 }: TechBackgroundProps) {
+  const { isApp } = useSurface();
   const { bgStyle: contextBgStyle, bgIntensity: contextIntensity } = useThemeAccent();
   const { resolvedTheme } = useResolvedTheme();
   const activeStyle = styleOverride || contextBgStyle || "tech-canvas";
   const activeIntensity = variant || contextIntensity || "subtle";
+
+  if (isApp) {
+    return (
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10 bg-white select-none"
+      />
+    );
+  }
 
   const isLight = resolvedTheme === "light";
   const isMinimal = activeIntensity === "minimal" || activeStyle === "minimal-dark";

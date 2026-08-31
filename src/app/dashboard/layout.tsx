@@ -107,7 +107,6 @@ export default function DashboardLayout({
         <div className="block lg:hidden">
           <MobileTopBar
             onOpenSearch={() => setCommandPaletteOpen(true)}
-            onOpenMenu={() => setSidebarOpen(true)}
           />
         </div>
 

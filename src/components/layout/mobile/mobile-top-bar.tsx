@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Menu, Search } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 interface MobileTopBarProps {
   title?: string;
   onOpenSearch?: () => void;
-  onOpenMenu?: () => void;
   showBack?: boolean;
   actions?: React.ReactNode;
 }
@@ -20,7 +19,6 @@ interface MobileTopBarProps {
 export function MobileTopBar({
   title,
   onOpenSearch,
-  onOpenMenu,
   showBack,
   actions,
 }: MobileTopBarProps) {
@@ -40,7 +38,7 @@ export function MobileTopBar({
   return (
     <header className="sticky top-0 z-30 w-full bg-surface/95 backdrop-blur-md border-b border-border/80 pt-[env(safe-area-inset-top,0px)] transition-colors">
       <div className="flex items-center justify-between h-13 px-3.5 sm:px-6 w-full mx-auto">
-        {/* Left Side: Back Button or Menu + Brand Logo */}
+        {/* Left Side: Back Button or Brand Logo */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {shouldShowBack ? (
             <button
@@ -52,24 +50,12 @@ export function MobileTopBar({
               <ArrowLeft className="w-5 h-5 text-text-primary" />
             </button>
           ) : (
-            <>
-              {onOpenMenu && (
-                <button
-                  type="button"
-                  onClick={onOpenMenu}
-                  aria-label="Buka menu navigasi"
-                  className="h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:scale-95 transition-all -ml-1 cursor-pointer"
-                >
-                  <Menu className="w-5 h-5 text-text-primary" />
-                </button>
-              )}
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 focus:outline-none"
-              >
-                <Logo variant="sidebar" hideText={false} />
-              </Link>
-            </>
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 focus:outline-none"
+            >
+              <Logo variant="sidebar" hideText={false} />
+            </Link>
           )}
 
           {title && shouldShowBack && (
@@ -93,18 +79,6 @@ export function MobileTopBar({
                   className="h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:scale-95 transition-all cursor-pointer"
                 >
                   <Search className="w-4 h-4" />
-                </button>
-              )}
-
-              {/* Menu Button on subpages when left is back button */}
-              {shouldShowBack && onOpenMenu && (
-                <button
-                  type="button"
-                  onClick={onOpenMenu}
-                  aria-label="Buka menu navigasi"
-                  className="h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:scale-95 transition-all cursor-pointer"
-                >
-                  <Menu className="w-4 h-4 text-text-secondary" />
                 </button>
               )}
 

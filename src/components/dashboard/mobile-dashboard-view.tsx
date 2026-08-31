@@ -141,51 +141,51 @@ export function MobileDashboardView({
       )}
 
       {/* ─── 3. Quick Academic Shortcuts (4 Icons) ─── */}
-      <div className="grid grid-cols-4 gap-2 auto-rows-fr">
+      <div className="grid grid-cols-4 gap-2.5 auto-rows-fr">
         <Link
           href="/dashboard/ai-tutor"
-          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
             <Bot className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight">
+          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
             AI Tutor
           </span>
         </Link>
 
         <Link
           href="/dashboard/tugas"
-          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
             <CheckSquare className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight">
+          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
             Tugas
           </span>
         </Link>
 
         <Link
           href="/dashboard/jadwal"
-          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
             <Calendar className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight">
+          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
             Jadwal
           </span>
         </Link>
 
         <Link
           href="/dashboard/konversi"
-          className="p-3 rounded-xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
             <ScanLine className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-medium text-text-primary leading-tight">
+          <span className="text-[11px] font-medium text-text-primary leading-tight truncate w-full px-0.5">
             Scanner
           </span>
         </Link>
@@ -199,7 +199,7 @@ export function MobileDashboardView({
           </h3>
           <Link
             href="/dashboard/tugas"
-            className="text-[11px] font-semibold text-brand-500 flex items-center gap-0.5"
+            className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-0.5 hover:underline"
           >
             <span>Semua</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -223,7 +223,7 @@ export function MobileDashboardView({
             ))}
           </div>
         ) : upcomingTasks.length > 0 ? (
-          <Card padding="none" className="divide-y divide-border/60">
+          <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
             {upcomingTasks.map((task) => {
               const daysLeft = task.deadline
                 ? daysUntilDeadline(task.deadline)
@@ -236,7 +236,7 @@ export function MobileDashboardView({
                 <Link
                   key={task.id}
                   href="/dashboard/tugas"
-                  className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-2.5"
+                  className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-3"
                 >
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <p className="text-xs font-semibold text-text-primary truncate">
@@ -251,14 +251,14 @@ export function MobileDashboardView({
                     {task.deadline && (
                       <span
                         className={cn(
-                          "px-2 py-0.5 rounded-full text-[10px] font-semibold font-mono",
+                          "px-2 py-0.5 rounded-full text-[10px] font-semibold font-mono whitespace-nowrap shrink-0",
                           isOverdue
-                            ? "bg-rose-500/15 text-rose-500 border border-rose-500/30"
+                            ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
                             : isDueToday
-                            ? "bg-amber-500/15 text-amber-500 border border-amber-500/30 font-bold"
+                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-bold"
                             : isDueTomorrow
-                            ? "bg-blue-500/15 text-blue-500 border border-blue-500/30"
-                            : "bg-surface-secondary text-text-tertiary"
+                            ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30"
+                            : "bg-surface-secondary text-text-secondary border border-border/60"
                         )}
                       >
                         {isOverdue
@@ -277,7 +277,7 @@ export function MobileDashboardView({
             })}
           </Card>
         ) : (
-          <Card padding="sm" variant="subtle" className="text-center">
+          <Card padding="md" variant="subtle" className="text-center">
             <p className="text-xs text-text-secondary">
               Tidak ada tugas yang mendesak.
             </p>
@@ -293,7 +293,7 @@ export function MobileDashboardView({
           </h3>
           <Link
             href="/dashboard/materi"
-            className="text-[11px] font-semibold text-brand-500 flex items-center gap-0.5"
+            className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-0.5 hover:underline"
           >
             <span>Materi</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -301,19 +301,19 @@ export function MobileDashboardView({
         </div>
 
         {recentViews.length > 0 ? (
-          <Card padding="none" className="divide-y divide-border/60">
+          <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
             {recentViews.map((item) => (
               <Link
                 key={item.id}
                 href={item.url || `/dashboard/materi/${item.target_id || item.id}`}
-                className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-2.5"
+                className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-3"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-surface-secondary flex items-center justify-center text-text-secondary shrink-0">
-                    <BookOpen className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+                    <BookOpen className="w-4 h-4" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-medium text-text-primary truncate">
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <p className="text-xs font-semibold text-text-primary truncate">
                       {item.title}
                     </p>
                     <p className="text-[10.5px] text-text-tertiary truncate">
@@ -326,7 +326,7 @@ export function MobileDashboardView({
             ))}
           </Card>
         ) : (
-          <Card padding="sm" variant="subtle" className="text-center">
+          <Card padding="md" variant="subtle" className="text-center">
             <p className="text-xs text-text-secondary">
               Belum ada aktivitas baru.
             </p>

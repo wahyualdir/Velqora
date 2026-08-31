@@ -90,9 +90,12 @@
 }
 
 /* ========================================
-   1.1 APP SURFACE THEME (Standalone PWA — Formal, Clean, Minimal)
+   1.1 APP SURFACE THEME (Standalone PWA — Formal, Clean, Pure White)
    ======================================== */
 
+html[data-surface="app"],
+html.dark[data-surface="app"],
+html.light[data-surface="app"],
 [data-surface="app"] {
   --color-background: #ffffff;
   --color-surface: #f8fafc;
@@ -118,6 +121,7 @@
   --color-brand-700: #1d4ed8;
 
   --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-2xs: 0 1px 2px rgba(15, 23, 42, 0.05);
   --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04);
 
   --density-card-p: 1rem;
@@ -125,6 +129,7 @@
   --radius-btn: 0.5rem;
 }
 
+html[data-surface="app"] body,
 [data-surface="app"] body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
