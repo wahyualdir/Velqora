@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, Sparkles, UploadCloud, ChevronDown, CalendarPlus, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GoogleClassroomIcon } from "@/components/ui/brand-logos";
+import { PageHeader } from "@/components/layout/page-header";
 
 interface ScheduleHeaderProps {
   onOpenAddModal: () => void;
@@ -20,7 +21,7 @@ interface ScheduleHeaderProps {
 export function ScheduleHeader({
   onOpenAddModal,
   onOpenImportModal,
-  onOpenGeneratorModal,
+  onOpenGeneratorModal: _onOpenGeneratorModal,
   onOpenDailyPlan,
   onOpenWeeklyPlan,
   onOpenHistoryModal,
@@ -41,24 +42,12 @@ export function ScheduleHeader({
   }, []);
 
   return (
-    <header className="space-y-4 border-b border-border/70 pb-5">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase font-mono bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-              Jadwal Akademik
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary tracking-tight font-display">
-            Jadwal
-          </h1>
-          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl">
-            Kelola agenda perkuliahan, import berkas jadwal otomatis, dan susun waktu belajar bebas bentrok.
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
+    <PageHeader
+      eyebrow="Jadwal Akademik"
+      title="Jadwal"
+      description="Kelola agenda perkuliahan, import berkas jadwal otomatis, dan susun waktu belajar bebas bentrok."
+      actions={
+        <>
           <Link href="/dashboard/jadwal/intelligence">
             <Button
               size="sm"
@@ -200,8 +189,8 @@ export function ScheduleHeader({
             <Plus className="w-3.5 h-3.5" />
             <span>+ Tambah Manual</span>
           </Button>
-        </div>
-      </div>
-    </header>
+        </>
+      }
+    />
   );
 }

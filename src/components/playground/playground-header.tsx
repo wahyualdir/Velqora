@@ -3,6 +3,7 @@
 import React from "react";
 import { Play, RotateCcw, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
 
 interface PlaygroundHeaderProps {
   lang?: "javascript" | "python";
@@ -22,24 +23,12 @@ export function PlaygroundHeader({
   copied,
 }: PlaygroundHeaderProps) {
   return (
-    <header className="space-y-4 border-b border-border/70 pb-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase font-mono bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-              Ruang Praktik
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary tracking-tight font-display">
-            Ruang Praktik Kode
-          </h1>
-          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl">
-            Lingkungan eksekusi kode interaktif di browser untuk menguji algoritma, fungsi, dan latihan praktikum akademik.
-          </p>
-        </div>
-
-        {/* Top Actions */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
+    <PageHeader
+      eyebrow="Ruang Praktik"
+      title="Ruang Praktik Kode"
+      description="Lingkungan eksekusi kode interaktif di browser untuk menguji algoritma, fungsi, dan latihan praktikum akademik."
+      actions={
+        <>
           <Button
             size="sm"
             variant="outline"
@@ -84,8 +73,8 @@ export function PlaygroundHeader({
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>{isRunning ? "Mengeksekusi..." : "Jalankan Kode"}</span>
           </Button>
-        </div>
-      </div>
-    </header>
+        </>
+      }
+    />
   );
 }

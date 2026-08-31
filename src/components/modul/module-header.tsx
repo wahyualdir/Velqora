@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Plus, BookOpen, Code2, Layers, FolderCode, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
 
 interface ModuleHeaderProps {
   contentMode: "all" | "module" | "project";
@@ -21,24 +22,12 @@ export function ModuleHeader({
   onOpenSorter,
 }: ModuleHeaderProps) {
   return (
-    <header className="space-y-4 border-b border-border/70 pb-5">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase font-mono bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-              Kurikulum & Repositori
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary tracking-tight font-display">
-            Modul & Project
-          </h1>
-          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl">
-            Kelola modul pembelajaran berstruktur silabus dan repositori proyek kode Anda secara terorganisir.
-          </p>
-        </div>
-
-        {/* Primary Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
+    <PageHeader
+      eyebrow="Kurikulum & Repositori"
+      title="Modul & Project"
+      description="Kelola modul pembelajaran berstruktur silabus dan repositori proyek kode Anda secara terorganisir."
+      actions={
+        <>
           {onOpenSorter && (
             <Button
               size="sm"
@@ -64,9 +53,9 @@ export function ModuleHeader({
               <span>Project Baru</span>
             </Button>
           </Link>
-        </div>
-      </div>
-
+        </>
+      }
+    >
       {/* Mode Switcher Tabs */}
       <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-secondary/70 border border-border w-fit max-w-full overflow-x-auto">
         <button
@@ -108,6 +97,6 @@ export function ModuleHeader({
           <span>Proyek Kode ({totalProjects})</span>
         </button>
       </div>
-    </header>
+    </PageHeader>
   );
 }
