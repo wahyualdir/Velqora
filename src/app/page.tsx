@@ -18,6 +18,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 
 export const metadata = {
   title: "Velqora — Platform Belajar & Manajemen Kuliah Terpadu Mahasiswa",
@@ -32,18 +33,8 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-sm shadow-xs transition-transform group-hover:scale-105">
-                V
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-base tracking-tight text-text-primary leading-tight">
-                  VELQORA
-                </span>
-                <span className="text-[10px] text-text-tertiary hidden sm:inline leading-tight">
-                  Ruang Belajar Mahasiswa
-                </span>
-              </div>
+            <Link href="/" className="group focus-visible:outline-hidden">
+              <Logo variant="sidebar" withTile />
             </Link>
           </div>
 
@@ -607,14 +598,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded bg-brand-600 flex items-center justify-center text-white font-bold text-xs">
-                  V
-                </div>
-                <span className="font-display font-bold text-sm text-text-primary">
-                  VELQORA
-                </span>
-              </div>
+              <Logo variant="sidebar" withTile showSubtitle={false} />
               <p className="text-xs text-text-tertiary">
                 Platform Pembelajaran & Manajemen Kuliah Mahasiswa.
               </p>
