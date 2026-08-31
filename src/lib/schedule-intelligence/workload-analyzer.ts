@@ -73,7 +73,7 @@ export function classifyWorkloadLevel(totalMinutes: number): WorkloadLevel {
  */
 export function analyzeWorkload(
   schedules: ScheduleItem[] = [],
-  tasks: Task[] = []
+  _tasks: Task[] = []
 ): WorkloadSummary {
   const dailyBreakdown: Record<ScheduleDay, DayWorkloadBreakdown> = {
     Senin: createEmptyDayBreakdown("Senin"),

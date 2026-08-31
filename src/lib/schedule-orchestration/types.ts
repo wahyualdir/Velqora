@@ -1,5 +1,5 @@
 import { ScheduleItem, Task, ScheduleDay } from "@/types";
-import { UserSchedulePreference, WorkloadLevel } from "../schedule-intelligence/types";
+import { UserSchedulePreference } from "../schedule-intelligence/types";
 
 // ==========================================
 // 1. SCHEDULE SNAPSHOT & DIFF TYPES

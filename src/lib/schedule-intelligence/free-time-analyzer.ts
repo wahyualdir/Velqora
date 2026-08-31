@@ -1,7 +1,7 @@
 import { ScheduleItem, ScheduleDay } from "@/types";
 import { FreeTimeSlot } from "./types";
 import { timeToMinutes } from "../schedule-import/normalizer";
-import { checkIntervalOverlap } from "../schedule-import/conflict-engine";
+
 
 export interface TimeInterval {
   start: number; // minutes from 00:00

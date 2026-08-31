@@ -2,7 +2,6 @@ import { ScheduleItem, Task, ScheduleDay } from "@/types";
 import {
   RescheduleImpactReport,
   RescheduleAlternative,
-  FreeTimeSlot,
 } from "./types";
 import { analyzeFreeTimeSlots } from "./free-time-analyzer";
 import { calculateRecommendationQuality } from "./recommendation-quality";

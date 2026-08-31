@@ -7,7 +7,6 @@ import {
   ScheduleRecommendation,
   RescheduleImpact,
   RescheduleProposal,
-  FreeTimeSlot,
 } from "./types";
 import { analyzeWorkload } from "./workload-analyzer";
 import { analyzeTaskDeadlines } from "./deadline-analyzer";
@@ -21,16 +20,6 @@ import {
 } from "./safety-rules";
 import { timeToMinutes } from "../schedule-import/normalizer";
 import { checkIntervalOverlap } from "../schedule-import/conflict-engine";
-
-const ALL_DAYS: ScheduleDay[] = [
-  "Senin",
-  "Selasa",
-  "Rabu",
-  "Kamis",
-  "Jumat",
-  "Sabtu",
-  "Minggu",
-];
 
 /**
  * Maps date string (YYYY-MM-DD) to Indonesian ScheduleDay
@@ -381,7 +370,7 @@ export function detectRescheduleImpact(
     newEndTime: string;
   },
   existingSchedules: ScheduleItem[] = [],
-  tasks: Task[] = []
+  _tasks: Task[] = []
 ): RescheduleImpact {
   const proposals: RescheduleProposal[] = [];
   const warnings: string[] = [];

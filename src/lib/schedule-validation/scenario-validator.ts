@@ -33,9 +33,9 @@ export function validateScenario(scenario: ValidationScenario): ScenarioValidati
   const health = calculateAcademicHealthScore(scenario.initialSchedules, scenario.tasks);
   const workload = analyzeWorkload(scenario.initialSchedules, scenario.tasks);
   const deadlines = analyzeTaskDeadlines(scenario.tasks);
-  const deadlineCoverages = scenario.tasks.map((t) => analyzeDeadlineCoverage(t, scenario.initialSchedules));
-  const behaviorSignals = extractBehaviorSignals2(userId, scenario.initialSchedules, scenario.outcomes || []);
-  const earlyWarnings = generatePatternEarlyWarnings(
+  const _deadlineCoverages = scenario.tasks.map((t) => analyzeDeadlineCoverage(t, scenario.initialSchedules));
+  const _behaviorSignals = extractBehaviorSignals2(userId, scenario.initialSchedules, scenario.outcomes || []);
+  const _earlyWarnings = generatePatternEarlyWarnings(
     scenario.initialSchedules,
     scenario.tasks,
     scenario.outcomes || [],

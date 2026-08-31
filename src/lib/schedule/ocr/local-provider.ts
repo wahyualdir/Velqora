@@ -149,7 +149,7 @@ export class MockTestOCRProvider implements OCRProvider {
     };
   }
 
-  async processPdfPages(buffer: Buffer, options: OCRProcessOptions = {}): Promise<MultiPageOCRResult> {
+  async processPdfPages(buffer: Buffer, _options: OCRProcessOptions = {}): Promise<MultiPageOCRResult> {
     const startTime = Date.now();
     // Check if buffer contains hint or default to multi_page fixture
     const fixtureKey = buffer.toString().includes("partial")

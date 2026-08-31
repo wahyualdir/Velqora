@@ -1,4 +1,4 @@
-import { ScheduleItem, ScheduleDay } from "@/types";
+import { ScheduleItem } from "@/types";
 import { ACADEMIC_CONSTANTS } from "../schedule/academic-constants";
 import { UserSchedulePreference } from "../schedule-intelligence/types";
 import { InvariantValidationCheck } from "./types";

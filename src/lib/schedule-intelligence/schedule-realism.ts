@@ -20,7 +20,7 @@ const ALL_DAYS: ScheduleDay[] = [
  */
 export function analyzeScheduleRealism(
   schedules: ScheduleItem[] = [],
-  targetStudyMinutesPerDay: number = 180
+  _targetStudyMinutesPerDay: number = 180
 ): ScheduleRealismReport {
   const issues: ScheduleRealismIssue[] = [];
 

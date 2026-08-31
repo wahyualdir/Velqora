@@ -80,7 +80,7 @@ export function applyProposalWithRollback(
  */
 export function rollbackAppliedProposal(
   proposal: OptimizationProposal,
-  currentSnapshot: ScheduleSnapshot
+  _currentSnapshot?: ScheduleSnapshot
 ): {
   success: boolean;
   restoredSchedules: ScheduleItem[];

@@ -4,25 +4,19 @@ import {
   generateProductExperienceScenarios,
   checkScheduleDataIntegrity,
   validateScheduleInvariants,
-  validateRecommendation,
   createMockScheduleItem,
-  createMockTask,
 } from "../index";
 import {
   generateScheduleSnapshot,
   calculateAcademicHealthScore,
   evaluateApprovalGate,
-  generateContinuousOptimizationProposal,
 } from "../../schedule-orchestration";
 import { analyzeWorkload } from "../../schedule-intelligence/workload-analyzer";
 import { analyzeTaskDeadlines } from "../../schedule-intelligence/deadline-analyzer";
-import { extractBehaviorSignals2 } from "../../schedule-intelligence/behavior-signals";
 import {
-  calculateCalibrationMultipliers,
   generate12QuestionExplanation,
   generatePatternEarlyWarnings,
 } from "../../schedule-outcomes";
-import { ACADEMIC_CONSTANTS } from "../../schedule/academic-constants";
 
 describe("FASE 38: Product Maturity, UX & End-to-End Experience Suite", () => {
   const allScenarios = generateProductExperienceScenarios();
@@ -49,8 +43,8 @@ describe("FASE 38: Product Maturity, UX & End-to-End Experience Suite", () => {
           assert.ok(snapshot.snapshotHash);
 
           // 2. Health Score & Workload
-          const workload = analyzeWorkload(scenario.schedules);
-          const deadlines = analyzeTaskDeadlines(scenario.tasks);
+          const _workload = analyzeWorkload(scenario.schedules);
+          const _deadlines = analyzeTaskDeadlines(scenario.tasks);
           const health = calculateAcademicHealthScore(scenario.schedules, scenario.tasks);
           assert.ok(health.overallScore >= 0 && health.overallScore <= 100);
 

@@ -4,8 +4,6 @@ import { ScheduleItem, Task, ScheduleDay } from "@/types";
 import {
   generateScheduleSnapshot,
   diffScheduleSnapshots,
-  computeStableSnapshotHash,
-  isStudySession,
 } from "../schedule-snapshot";
 import {
   evaluateContextStaleness,
@@ -22,7 +20,6 @@ import {
 } from "../proposal-versioning";
 import { calculateAcademicHealthScore } from "../academic-health";
 import { generateEarlyWarnings } from "../early-warning";
-import { sanitizeSchedulePreferences } from "../../schedule-intelligence/personal-profile";
 
 describe("FASE 33: Autonomous Academic Schedule Orchestrator Test Suite", () => {
   const sampleUserId = "user_test_fase33";

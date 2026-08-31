@@ -7,7 +7,7 @@ import { ValidationMasterReport, ScenarioValidationResult } from "./types";
 
 export function generateMarkdownValidationReport(
   report: ValidationMasterReport,
-  sampleResults: ScenarioValidationResult[] = []
+  _sampleResults: ScenarioValidationResult[] = []
 ): string {
   const lines: string[] = [];
 

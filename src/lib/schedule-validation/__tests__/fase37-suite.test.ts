@@ -4,24 +4,11 @@ import {
   ScenarioEngine,
   generateRealWorldScenarios,
   validateScenario,
-  validateScheduleInvariants,
-  validateRecommendation,
-  createMockScheduleItem,
-  createMockTask,
 } from "../index";
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
 import {
-  calculateAcademicHealthScore,
-  simulateScheduleModification,
   evaluateApprovalGate,
 } from "../../schedule-orchestration";
-import { analyzeWorkload } from "../../schedule-intelligence/workload-analyzer";
-import { analyzeDeadlineCoverage } from "../../schedule-intelligence/deadline-coverage";
 import { extractBehaviorSignals2 } from "../../schedule-intelligence/behavior-signals";
-import {
-  calculateCalibrationMultipliers,
-  generate12QuestionExplanation,
-} from "../../schedule-outcomes";
 
 describe("FASE 37: Real-World Academic Intelligence Validation & Hardening Suite", () => {
   const engine = new ScenarioEngine();

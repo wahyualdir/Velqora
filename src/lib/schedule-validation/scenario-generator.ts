@@ -1,5 +1,5 @@
 import { ScheduleItem, Task, ScheduleDay } from "@/types";
-import { ValidationScenario, ScenarioCategory } from "./types";
+import { ValidationScenario } from "./types";
 
 /**
  * Scenario Generator for Real-World Academic Validation

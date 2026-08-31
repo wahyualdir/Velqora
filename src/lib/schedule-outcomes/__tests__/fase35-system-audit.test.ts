@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { ScheduleItem, Task, ScheduleDay, ScheduleType } from "@/types";
 import { ACADEMIC_CONSTANTS } from "../../schedule/academic-constants";
 import {
-  ExtractedScheduleItem,
   normalizeExtractedScheduleItem,
   detectAllScheduleConflicts,
   checkIntervalOverlap,
@@ -20,7 +19,6 @@ import {
   analyzeTaskDeadlines,
   analyzeFreeTimeSlots,
   generateAdaptiveDailyPlan,
-  DEFAULT_SCHEDULE_PREFERENCE,
   sanitizeSchedulePreferences,
   extractBehaviorSignals2,
   analyzeScheduleRealism,
@@ -39,7 +37,6 @@ import {
   calculateAcademicHealthScore,
   generateEarlyWarnings,
   simulateScheduleModification,
-  SimulationModification,
 } from "../../schedule-orchestration";
 import {
   SessionOutcome,

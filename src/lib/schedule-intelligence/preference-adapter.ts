@@ -1,4 +1,3 @@
-import { ScheduleDay } from "@/types";
 import {
   UserSchedulePreference,
   ScheduleBehaviorSignal,
