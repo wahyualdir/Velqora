@@ -12,7 +12,7 @@ export function DesktopTable({ children, className, ...props }: DesktopTableProp
   return (
     <div className="w-full overflow-x-auto rounded-lg border border-border bg-surface shadow-2xs">
       <table
-        className={cn("w-full text-left border-collapse text-xs", className)}
+        className={cn("w-full text-left border-collapse text-xs min-w-[700px]", className)}
         {...props}
       >
         {children}

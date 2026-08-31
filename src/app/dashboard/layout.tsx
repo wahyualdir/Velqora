@@ -90,32 +90,40 @@ export default function DashboardLayout({
       <div
         className={cn(
           "flex-1 flex flex-col min-w-0 z-10 transition-all duration-200 ease-out",
-          sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]"
+          !isApp && (sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]")
         )}
       >
-        {/* Responsive Header: Desktop Top Bar on Desktop, Mobile Top Bar on Mobile */}
-        <div className="hidden lg:block">
-          <DesktopTopBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-            onToggleSidebar={handleToggleCollapse}
-            isSidebarCollapsed={sidebarCollapsed}
-          />
-        </div>
-
-        <div className="block lg:hidden">
+        {/* Responsive Header: Desktop Top Bar on Desktop Web, Mobile Top Bar on Mobile & App */}
+        {isApp ? (
           <MobileTopBar
             onOpenSearch={() => setCommandPaletteOpen(true)}
           />
-        </div>
+        ) : (
+          <>
+            <div className="hidden lg:block">
+              <DesktopTopBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+                onToggleSidebar={handleToggleCollapse}
+                isSidebarCollapsed={sidebarCollapsed}
+              />
+            </div>
+
+            <div className="block lg:hidden">
+              <MobileTopBar
+                onOpenSearch={() => setCommandPaletteOpen(true)}
+              />
+            </div>
+          </>
+        )}
 
         <main
           className={cn(
-            "flex-1 px-3 sm:px-5 lg:px-7 xl:px-8 py-3.5 sm:py-5 lg:py-6 max-w-[1560px] w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-3.5rem)]",
+            "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-3.5rem)]",
             isApp
-              ? "pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-6"
-              : "pb-6"
+              ? "max-w-2xl px-3 sm:px-5 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]"
+              : "max-w-[1560px] px-3 sm:px-5 lg:px-7 xl:px-8 py-3.5 sm:py-5 lg:py-6 pb-6"
           )}
         >
           <div className="flex-1 min-w-0">{children}</div>

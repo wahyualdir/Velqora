@@ -69,8 +69,8 @@ export function RecommendationHistoryTable({
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
+      <div className="overflow-x-auto scrollbar-thin">
+        <table className="w-full text-left text-xs border-collapse min-w-[500px]">
           <thead>
             <tr className="border-b border-border/60 text-text-tertiary font-mono text-[11px]">
               <th className="py-2.5 px-3 font-semibold">Usulan Rekomendasi</th>

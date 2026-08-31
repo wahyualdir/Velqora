@@ -18,6 +18,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
 import { isAdminUser, OWNER_EMAIL } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
+import { useSurface } from "@/context/surface-context";
 import { TranslationKey } from "@/lib/i18n/translations";
 import { iconMap, categoryTitleMap, linkLabelMap } from "./navigation-config";
 
@@ -37,6 +38,7 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { isApp } = useSurface();
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
@@ -355,14 +357,15 @@ export function Sidebar({
       </aside>
 
       {/* ─── 3. DESKTOP FIXED SIDEBAR (EXPANDED ↔ COLLAPSED) ─── */}
-      <aside
-        aria-label="Sidebar Desktop"
-        className={cn(
-          "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-surface border-r border-border select-none",
-          "flex-col transition-all duration-200 ease-out",
-          isCollapsed ? "w-[68px]" : "w-[245px]"
-        )}
-      >
+      {!isApp && (
+        <aside
+          aria-label="Sidebar Desktop"
+          className={cn(
+            "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-surface border-r border-border select-none",
+            "flex-col transition-all duration-200 ease-out",
+            isCollapsed ? "w-[68px]" : "w-[245px]"
+          )}
+        >
         {/* Desktop Header: Brand + Toggle Button */}
         <div
           className={cn(
@@ -684,7 +687,8 @@ export function Sidebar({
             </div>
           )}
         </nav>
-      </aside>
+        </aside>
+      )}
     </>
   );
 }
