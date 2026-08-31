@@ -10,12 +10,8 @@ import {
 } from "@/lib/schedule-orchestration/types";
 import { simulateWhatIfAction } from "@/actions/schedule-actions";
 import {
-  Sparkles,
-  ArrowRight,
   ShieldCheck,
   AlertTriangle,
-  Clock,
-  Calendar,
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -46,8 +42,6 @@ export function WhatIfModal({ isOpen, onClose, schedules }: WhatIfModalProps) {
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
   const [simulationResult, setSimulationResult] =
     useState<WhatIfSimulationResult | null>(null);
-
-  const selectedItem = schedules.find((s) => s.id === selectedItemId);
 
   const handleRunSimulation = async () => {
     if (!selectedItemId) {

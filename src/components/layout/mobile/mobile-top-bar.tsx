@@ -7,7 +7,6 @@ import { ArrowLeft, Search } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
-import { cn } from "@/lib/utils";
 
 interface MobileTopBarProps {
   title?: string;

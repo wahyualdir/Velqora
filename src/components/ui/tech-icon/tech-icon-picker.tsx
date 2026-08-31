@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TechIconPickerProps, TechIconKey } from "./types";
+import { TechIconPickerProps } from "./types";
 import { TECH_ICONS } from "./brand-icons-registry";
 import { TechIcon } from "./tech-icon";
 

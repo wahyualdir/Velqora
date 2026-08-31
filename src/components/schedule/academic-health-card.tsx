@@ -3,9 +3,6 @@
 import React from "react";
 import {
   Activity,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
   TrendingUp,
   TrendingDown,
   Minus,

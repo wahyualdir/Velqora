@@ -12,9 +12,7 @@ import {
   Settings,
   HelpCircle,
   Download,
-  Info,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
 import { MobileBottomSheet } from "./mobile-bottom-sheet";
 import { useExperience } from "@/context/experience-context";

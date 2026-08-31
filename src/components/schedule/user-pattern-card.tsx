@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  BehaviorSignal2,
   ActualVsPlannedReport,
   HealthTrendReport,
   PersonalizationFeedbackPrompt,
@@ -20,7 +19,6 @@ import {
   Minus,
   AlertCircle,
   Sparkles,
-  Calendar,
   Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

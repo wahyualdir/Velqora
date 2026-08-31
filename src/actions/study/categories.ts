@@ -2,9 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { CategoryFormData } from "@/lib/validations";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
-import { isOwnerUser } from "@/lib/utils";
+import type { CategoryFormData } from "@/lib/validations";
 
 export async function sanitizeAndMigrateCategories() {
   const supabase = await createClient();

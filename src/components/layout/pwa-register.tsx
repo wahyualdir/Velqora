@@ -27,10 +27,10 @@ export function PwaRegister() {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("/sw.js")
-          .then((reg) => {
+          .then(() => {
             // Service worker successfully registered
           })
-          .catch((err) => {
+          .catch(() => {
             // Ignore SW register errors in dev
           });
       });

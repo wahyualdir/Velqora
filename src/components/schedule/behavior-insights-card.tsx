@@ -6,7 +6,6 @@ import {
   Clock,
   Calendar,
   CheckCircle2,
-  AlertCircle,
   HelpCircle,
   TrendingUp,
 } from "lucide-react";

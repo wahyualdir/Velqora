@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
 import {
   X,
   Download,
@@ -419,16 +420,22 @@ export function ModuleFilePreviewerModal({
                                     </pre>
                                   )}
                                   {pngBase64 && (
-                                    <img
+                                    <Image
                                       src={`data:image/png;base64,${pngBase64}`}
                                       alt="Notebook Output Chart"
+                                      width={600}
+                                      height={400}
+                                      unoptimized
                                       className="rounded-xl border border-white/[0.1] max-w-full bg-white p-2"
                                     />
                                   )}
                                   {jpegBase64 && (
-                                    <img
+                                    <Image
                                       src={`data:image/jpeg;base64,${jpegBase64}`}
                                       alt="Notebook Output Chart"
+                                      width={600}
+                                      height={400}
+                                      unoptimized
                                       className="rounded-xl border border-white/[0.1] max-w-full bg-white p-2"
                                     />
                                   )}
@@ -628,9 +635,12 @@ export function ModuleFilePreviewerModal({
           {/* 5. High-Res Image Viewer */}
           {fileInfo.category === "image" && file.url && (
             <div className="flex items-center justify-center h-full min-h-[400px]">
-              <img
+              <Image
                 src={file.url}
                 alt={file.name}
+                width={1200}
+                height={800}
+                unoptimized
                 className="max-h-[70vh] max-w-full rounded-2xl object-contain shadow-2xl border border-white/[0.1]"
               />
             </div>

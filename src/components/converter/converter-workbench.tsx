@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ConversionOption, CamScannerFilterMode } from "@/lib/file-converter";
-import { formatFileSize, cn } from "@/lib/utils";
+import { formatFileSize } from "@/lib/utils";
 
 interface ConverterWorkbenchProps {
   selectedOption: ConversionOption;

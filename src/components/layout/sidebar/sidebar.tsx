@@ -19,7 +19,6 @@ import { Logo } from "@/components/ui/logo";
 import { isAdminUser, OWNER_EMAIL } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { useSurface } from "@/context/surface-context";
-import { TranslationKey } from "@/lib/i18n/translations";
 import { iconMap, categoryTitleMap, linkLabelMap } from "./navigation-config";
 
 

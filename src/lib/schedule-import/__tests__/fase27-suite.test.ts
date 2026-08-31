@@ -1,10 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { classifyScheduleDocument } from "../classifier";
-import { analyzeTableStructure, classifyColumnHeader, extractItemsFromTableStructure } from "../table-structuring";
+import { analyzeTableStructure, extractItemsFromTableStructure } from "../table-structuring";
 import {
   normalizeTimeRange,
-  normalizeDate,
   normalizeDayName,
   validateDayDateMatch,
   parseMultiLecturers,
@@ -12,17 +11,14 @@ import {
   extractLocationFromTitle,
   normalizeExtractedScheduleItem,
 } from "../normalizer";
-import { buildFieldEvidence } from "../evidence";
-import { evaluateConfidence2 } from "../confidence-engine";
 import {
   checkIntervalOverlap,
   isNearDuplicateTitle,
   detectAllScheduleConflicts,
   analyzeItemConflict,
 } from "../conflict-engine";
-import { validateScheduleFile, sanitizeFileName } from "../parser";
-import { parseCsvDocument, parseCsvRows } from "../csv-parser";
-import { parseTextDocument } from "../text-parser";
+import { validateScheduleFile } from "../parser";
+import { parseCsvRows } from "../csv-parser";
 import { scheduleBatchSaveRequestSchema } from "../schema";
 import { heuristicTextScheduleExtractor } from "../ai-structuring";
 

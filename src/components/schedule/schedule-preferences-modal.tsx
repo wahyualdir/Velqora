@@ -2,18 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Sliders,
   Sparkles,
-  Clock,
-  Calendar,
   ShieldCheck,
   CheckCircle2,
-  Coffee,
-  Brain,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { UserSchedulePreference, PlanningStyle } from "@/lib/schedule-intelligence/types";
 import { ScheduleDay } from "@/types";
 import {
@@ -53,19 +47,16 @@ export function SchedulePreferencesModal({
     planningStyle: "BALANCED",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setIsLoading(true);
       getUserSchedulePreferencesAction()
         .then((res) => {
           if (res.success && res.preferences) {
             setPrefs(res.preferences);
           }
-        })
-        .finally(() => setIsLoading(false));
+        });
     }
   }, [isOpen]);
 

@@ -11,8 +11,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-
 import { Card } from "@/components/ui/card";
 
 interface ScheduleListItemProps {

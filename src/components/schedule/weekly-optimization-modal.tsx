@@ -2,13 +2,9 @@
 
 import React, { useState } from "react";
 import {
-  Sparkles,
   ArrowRight,
   CheckCircle2,
-  Calendar,
-  Layers,
   Scale,
-  ShieldCheck,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";

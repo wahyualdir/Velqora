@@ -2,17 +2,13 @@
 
 import React, { useState } from "react";
 import {
-  Sparkles,
-  Clock,
-  Calendar,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MissedSessionRecoveryReport, MissedSessionRecoveryOption } from "@/lib/schedule-intelligence/types";
+import { MissedSessionRecoveryReport } from "@/lib/schedule-intelligence/types";
 import { applyMissedSessionRecoveryAction } from "@/actions/schedule-actions";
 import { toast } from "sonner";
 
@@ -34,7 +30,7 @@ export function MissedSessionRecoveryModal({
 
   if (!recoveryReport) return null;
 
-  const { session, missedDay, missedTime, options, explanation, hasSafeRecoverySlot } = recoveryReport;
+  const { session, options, explanation, hasSafeRecoverySlot } = recoveryReport;
 
   const selectedOption = options.find((o) => o.optionId === selectedOptionId) || options[0];
 

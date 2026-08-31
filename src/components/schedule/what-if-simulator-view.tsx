@@ -3,14 +3,7 @@
 import React, { useState } from "react";
 import {
   Sliders,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight,
   ShieldCheck,
-  Activity,
-  Calendar,
-  Clock,
-  Sparkles,
   Info,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

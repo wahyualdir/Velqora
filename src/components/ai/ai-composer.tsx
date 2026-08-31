@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
+import Image from "next/image";
 import {
   Send,
   Paperclip,
@@ -84,9 +85,12 @@ export function AIComposer({
           <div className="flex items-center gap-2 flex-wrap pb-1 border-b border-border/60">
             {selectedImage && (
               <div className="relative inline-flex items-center gap-1.5 p-1 rounded-lg border border-border bg-surface-secondary">
-                <img
+                <Image
                   src={selectedImage.previewUrl}
                   alt="Preview"
+                  width={32}
+                  height={32}
+                  unoptimized
                   className="w-8 h-8 rounded object-cover"
                 />
                 <span className="text-[11px] text-text-secondary font-mono">Gambar</span>

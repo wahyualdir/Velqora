@@ -2,12 +2,10 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   analyzeWorkload,
-  classifyWorkloadLevel,
   calculateItemDurationMinutes,
 } from "../workload-analyzer";
 import {
   analyzeTaskDeadlines,
-  classifyDeadlineUrgency,
 } from "../deadline-analyzer";
 import {
   analyzeFreeTimeSlots,

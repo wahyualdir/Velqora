@@ -156,6 +156,23 @@ export function SessionFeedbackModal({
           </button>
         </div>
 
+        {/* Optional Partial Duration */}
+        {selectedStatus === "PARTIALLY_COMPLETED" && (
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-text-secondary">
+              Durasi Terlaksana (Menit)
+            </label>
+            <input
+              type="number"
+              min={5}
+              max={300}
+              value={actualDuration}
+              onChange={(e) => setActualDuration(Number(e.target.value) || 0)}
+              className="w-full text-xs px-3 py-2 rounded-xl border border-border bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        )}
+
         {/* Optional Skip Reason */}
         {selectedStatus === "SKIPPED" && (
           <div className="space-y-1.5">
@@ -200,6 +217,20 @@ export function SessionFeedbackModal({
             </select>
           </div>
         )}
+
+        {/* Optional Notes */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-text-secondary">
+            Catatan Tambahan (Opsional)
+          </label>
+          <input
+            type="text"
+            placeholder="Mis. selesai sampai bab 2"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="w-full text-xs px-3 py-2 rounded-xl border border-border bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-text-tertiary"
+          />
+        </div>
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">

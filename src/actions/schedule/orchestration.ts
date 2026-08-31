@@ -2,29 +2,23 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
+import { ScheduleItem, Task } from "@/types";
 import { getUserSchedules } from "./crud";
 import {
   generateCorrelationId,
   logger,
   logIntelligenceEvent,
-  IntelligenceEvent,
 } from "@/lib/observability";
 import {
   generateScheduleSnapshot,
-  diffScheduleSnapshots,
-  evaluateContextStaleness,
-  detectScheduleRegression,
   generateContinuousOptimizationProposal,
   simulateScheduleModification,
-  generateComprehensiveExplanation,
   evaluateApprovalGate,
   applyProposalWithRollback,
   rollbackAppliedProposal,
   calculateAcademicHealthScore,
   generateEarlyWarnings,
   ScheduleSnapshot,
-  SnapshotDiff,
   OptimizationProposal,
   WhatIfSimulationResult,
   AcademicHealthScore,
@@ -32,16 +26,13 @@ import {
   SimulationModification,
 } from "@/lib/schedule-orchestration";
 import {
-  UserSchedulePreference,
-  DayWorkloadBreakdown,
-} from "@/lib/schedule-intelligence/types";
-import {
   sanitizeSchedulePreferences,
   DEFAULT_SCHEDULE_PREFERENCE,
   analyzeDeadlineCoverage,
+  type UserSchedulePreference,
 } from "@/lib/schedule-intelligence";
+import { type AcademicIntelligenceCenterData } from "./types";
 import { getUserSchedulePreferencesAction } from "./intelligence";
-import { AcademicIntelligenceCenterData } from "./types";
 import { generate12QuestionExplanation } from "@/lib/schedule-outcomes/explanation-engine-4";
 import { evaluateHistoricalRecommendations } from "@/lib/schedule-outcomes/recommendation-outcome";
 import { evaluateHealthTrend } from "@/lib/schedule-outcomes/health-trends";
@@ -49,7 +40,6 @@ import { generatePatternEarlyWarnings } from "@/lib/schedule-outcomes/early-warn
 import { analyzeActualVsPlanned } from "@/lib/schedule-outcomes/actual-vs-planned";
 import {
   RecommendationOutcomeRecord,
-  EarlyWarning2Item,
   SessionOutcome,
 } from "@/lib/schedule-outcomes/types";
 import { calculateRecommendationQuality } from "@/lib/schedule-intelligence/recommendation-quality";

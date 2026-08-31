@@ -1,22 +1,17 @@
 import React from "react";
 import Link from "next/link";
 import {
-  BookOpen,
   Calendar,
   Bot,
   Sparkles,
   Layers,
   ArrowRight,
   CheckCircle2,
-  ShieldCheck,
-  Cpu,
   Smartphone,
   Laptop,
   Code2,
   Download,
   Compass,
-  FileText,
-  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

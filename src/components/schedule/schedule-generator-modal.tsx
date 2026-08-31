@@ -8,7 +8,6 @@ import {
   RefreshCw,
   Clock,
   Calendar,
-  CheckCircle2,
   HelpCircle,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";

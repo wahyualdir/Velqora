@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { User, Copy, Check, FileText, Sparkles } from "lucide-react";
 
 export interface MessageAttachment {
@@ -57,9 +58,12 @@ export function AIMessageItem({ message, onCopy, isCopied }: AIMessageItemProps)
         {/* Attached Image Preview if any */}
         {message.imageUrl && (
           <div className="rounded-lg overflow-hidden border border-border max-w-xs">
-            <img
+            <Image
               src={message.imageUrl}
               alt="Lampiran visual"
+              width={320}
+              height={192}
+              unoptimized
               className="max-h-48 w-auto object-cover"
             />
           </div>

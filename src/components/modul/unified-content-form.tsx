@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   Sparkles,
@@ -115,14 +116,13 @@ export function UnifiedContentForm({
         ]);
         if (user) {
           setCurrentUser(user);
-          if (!authorName) {
-            setAuthorName(
-              user.user_metadata?.full_name ||
-                user.user_metadata?.name ||
-                user.email?.split("@")[0] ||
-                "Pengguna"
-            );
-          }
+          setAuthorName((prev) =>
+            prev ||
+            user.user_metadata?.full_name ||
+            user.user_metadata?.name ||
+            user.email?.split("@")[0] ||
+            "Pengguna"
+          );
         }
 
         // Merge DB categories with SYSTEM_PRIMARY_CATEGORIES
@@ -786,9 +786,12 @@ export function UnifiedContentForm({
               <div className="flex items-center gap-3">
                 {coverUrl ? (
                   <div className="w-16 h-12 rounded-lg bg-surface border border-border overflow-hidden shrink-0">
-                    <img
+                    <Image
                       src={coverUrl}
                       alt="Cover Pratinjau"
+                      width={64}
+                      height={48}
+                      unoptimized
                       className="w-full h-full object-cover"
                     />
                   </div>

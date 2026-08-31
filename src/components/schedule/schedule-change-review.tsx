@@ -7,11 +7,7 @@ import {
   RefreshCw,
   MinusCircle,
   CheckCircle2,
-  AlertTriangle,
   ArrowRight,
-  Clock,
-  MapPin,
-  User,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

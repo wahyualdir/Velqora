@@ -3,9 +3,6 @@
 import React, { useState } from "react";
 import {
   Sparkles,
-  Calendar,
-  Clock,
-  CheckCircle2,
   AlertCircle,
   ArrowRight,
   RefreshCw,

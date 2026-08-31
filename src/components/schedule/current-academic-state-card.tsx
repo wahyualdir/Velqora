@@ -4,7 +4,6 @@ import React from "react";
 import {
   Activity,
   Calendar,
-  AlertTriangle,
   Clock,
   ShieldCheck,
   Scale,

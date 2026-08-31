@@ -4,11 +4,6 @@ import React from "react";
 import {
   Calendar,
   Clock,
-  BookOpen,
-  AlertTriangle,
-  Flame,
-  CheckCircle2,
-  HelpCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { WorkloadSummary, WorkloadLevel } from "@/lib/schedule-intelligence/types";

@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Layers, Plus, Trash2, Sparkles, X } from "lucide-react";
+import { Layers, Plus, Trash2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface CurriculumSectionManagerProps {
   kind: "module" | "project";

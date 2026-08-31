@@ -3,11 +3,7 @@
 import React from "react";
 import {
   Clock,
-  AlertTriangle,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  Calendar,
   Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

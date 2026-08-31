@@ -5,10 +5,6 @@ import {
   HelpCircle,
   X,
   CheckCircle2,
-  ShieldCheck,
-  Clock,
-  Sparkles,
-  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

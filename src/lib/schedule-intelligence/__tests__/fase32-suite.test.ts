@@ -2,7 +2,6 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   sanitizeSchedulePreferences,
-  DEFAULT_SCHEDULE_PREFERENCE,
 } from "../personal-profile";
 import {
   extractBehaviorSignals,

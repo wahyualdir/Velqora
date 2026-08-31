@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { PageContainer } from "@/components/ui/section";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { executeJavaScript, executePython, ExecutionResult } from "@/lib/code-runner";
@@ -81,7 +81,7 @@ export default function PlaygroundPage() {
   const [result, setResult] = useState<ExecutionResult | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const handleRun = async () => {
+  const handleRun = useCallback(async () => {
     if (!code.trim()) {
       toast.error("Kode tidak boleh kosong.");
       return;
@@ -106,7 +106,7 @@ export default function PlaygroundPage() {
     } finally {
       setIsRunning(false);
     }
-  };
+  }, [code, lang]);
 
   // Keyboard shortcut Ctrl+Enter / Cmd+Enter to run
   useEffect(() => {
@@ -118,7 +118,7 @@ export default function PlaygroundPage() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [code, lang]);
+  }, [handleRun]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);

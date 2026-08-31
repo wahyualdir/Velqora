@@ -1,8 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
-import { ScheduleItem, Task } from "@/types";
+import { Task } from "@/types";
 import { getUserSchedules } from "./crud";
 import {
   generateAcademicSchedulePlan,
@@ -16,10 +15,10 @@ import {
 import {
   generateDailyPlan,
   generateWeeklyPlan,
-  DailyPlanRequest,
   DailyPlanResult,
-  WeeklyPlanRequest,
   WeeklyPlanResult,
+  type DailyPlanRequest,
+  type WeeklyPlanRequest,
 } from "@/lib/schedule-intelligence";
 
 export async function generateAutoScheduleAction(

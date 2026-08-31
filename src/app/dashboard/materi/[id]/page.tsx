@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useCallback, use } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -298,9 +299,12 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
           {canPreview && (
             <div className="mt-4 border border-border rounded-xl overflow-hidden bg-surface-secondary/40">
               {material.file_type?.startsWith("image/") ? (
-                <img
+                <Image
                   src={material.file_url}
                   alt={material.title}
+                  width={1000}
+                  height={550}
+                  unoptimized
                   className="w-full max-h-[550px] object-contain mx-auto"
                 />
               ) : (
@@ -392,18 +396,18 @@ function PersonalMaterialNotesWidget({ material }: { material: any }) {
   const [noteContent, setNoteContent] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const loadNotes = () => {
+  const loadNotes = useCallback(() => {
     if (material?.id) {
       setPersonalNotes(getNotesForTarget(material.id));
     }
-  };
+  }, [material?.id]);
 
   useEffect(() => {
     loadNotes();
     const handleUpdate = () => loadNotes();
     window.addEventListener("notes-updated", handleUpdate);
     return () => window.removeEventListener("notes-updated", handleUpdate);
-  }, [material?.id]);
+  }, [loadNotes]);
 
   const handleOpenCreate = () => {
     setEditingId(null);

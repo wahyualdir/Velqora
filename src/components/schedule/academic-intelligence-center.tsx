@@ -10,17 +10,12 @@ import {
   Sliders,
   RefreshCw,
   ArrowLeft,
-  ShieldCheck,
   TrendingUp,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
-  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   getAcademicIntelligenceCenterDataAction,
   simulateThreeWayOutcomeAction,

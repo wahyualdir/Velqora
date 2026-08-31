@@ -5,9 +5,7 @@ import {
   AlertTriangle,
   AlertCircle,
   Info,
-  ShieldAlert,
   ArrowRight,
-  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EarlyWarning2Item } from "@/lib/schedule-outcomes/types";

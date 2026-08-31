@@ -2,21 +2,20 @@
 
 import React from "react";
 import Link from "next/link";
-import { BookOpen, Code2, ChevronRight, Bookmark, CheckCircle2, Play } from "lucide-react";
+import { BookOpen, Code2, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface MobileModuleListProps {
   modules: any[];
-  bookmarkMap: { [id: string]: boolean };
-  onToggleBookmark: (mod: any) => void;
+  bookmarkMap?: { [id: string]: boolean };
+  onToggleBookmark?: (mod: any) => void;
 }
 
 export function MobileModuleList({
   modules,
-  bookmarkMap,
-  onToggleBookmark,
+  bookmarkMap: _bookmarkMap,
+  onToggleBookmark: _onToggleBookmark,
 }: MobileModuleListProps) {
   return (
     <div className="space-y-3 pb-8">

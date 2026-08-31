@@ -5,10 +5,7 @@ import {
   Calendar,
   Clock,
   MapPin,
-  User,
   Plus,
-  Sparkles,
-  ChevronRight,
   CheckCircle2,
   MoreVertical,
   Edit2,
@@ -18,7 +15,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
 import { ScheduleItem } from "@/types";
-import { cn } from "@/lib/utils";
 
 interface MobileScheduleAgendaProps {
   items: ScheduleItem[];

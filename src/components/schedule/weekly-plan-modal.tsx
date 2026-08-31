@@ -3,9 +3,6 @@
 import React, { useState } from "react";
 import {
   Sparkles,
-  Calendar,
-  Clock,
-  CheckCircle2,
   AlertCircle,
   ArrowRight,
   RefreshCw,
@@ -13,7 +10,7 @@ import {
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { Input, Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   generateWeeklyPlanAction,
@@ -56,7 +53,7 @@ export function WeeklyPlanModal({
     "Kamis",
     "Jumat",
   ]);
-  const [maxDailyMinutes, setMaxDailyMinutes] = useState(240);
+  const [maxDailyMinutes] = useState(240);
   const [timePreference, setTimePreference] = useState<"pagi" | "siang" | "sore" | "malam" | "fleksibel">("malam");
 
   const [sessions, setSessions] = useState<ScheduleRecommendation[]>([]);

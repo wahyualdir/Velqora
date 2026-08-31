@@ -10,7 +10,6 @@ import { TechBackground } from "@/components/ui/tech-background";
 import { DashboardFooter, MinimalCopyright } from "@/components/layout/watermark-footer";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { trackUserVisit } from "@/lib/track-visit";
-import { useExperience } from "@/context/experience-context";
 import { useSurface } from "@/context/surface-context";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { isDesktop, isMounted } = useExperience();
   const { isApp } = useSurface();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

@@ -2,15 +2,9 @@
 
 import React, { useState } from "react";
 import {
-  CheckCircle2,
-  Clock,
-  Calendar,
-  AlertTriangle,
-  FileText,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { OutcomeStatus } from "@/lib/schedule-outcomes/types";
 import { ScheduleItem } from "@/types";
 import { toast } from "sonner";

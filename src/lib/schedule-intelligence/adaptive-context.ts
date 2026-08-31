@@ -1,9 +1,6 @@
 import { ScheduleItem, Task, ScheduleDay } from "@/types";
 import {
   AdaptiveScheduleContext,
-  DayWorkloadBreakdown,
-  DeadlineAnalysisItem,
-  FreeTimeSlot,
 } from "./types";
 import { analyzeWorkload } from "./workload-analyzer";
 import { analyzeTaskDeadlines } from "./deadline-analyzer";

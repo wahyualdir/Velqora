@@ -1,6 +1,6 @@
 import { ScheduleItem } from "@/types";
 import { GeneratedScheduleCandidate } from "./types";
-import { checkIntervalOverlap, calculateClashDurationMinutes } from "../schedule-import/conflict-engine";
+import { checkIntervalOverlap } from "../schedule-import/conflict-engine";
 import { timeToMinutes } from "../schedule-import/normalizer";
 
 /**

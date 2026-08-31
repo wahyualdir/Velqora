@@ -2,12 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
+import { ScheduleItem, Task, type ScheduleDay } from "@/types";
 import {
   generateCorrelationId,
   logger,
   logIntelligenceEvent,
-  IntelligenceEvent,
+  type IntelligenceEvent,
 } from "@/lib/observability";
 import { getUserSchedules } from "./crud";
 import { generate12QuestionExplanation } from "@/lib/schedule-outcomes/explanation-engine-4";
@@ -21,33 +21,25 @@ import {
   buildAdaptiveScheduleContext,
   diffScheduleCollections,
   planSmartReschedule,
-  generateAdaptiveDailyPlan,
   sanitizeSchedulePreferences,
-  extractBehaviorSignals,
   analyzeScheduleRealism,
   explainDayWorkload,
-  analyzeDeadlineCoverage,
   planMissedSessionRecovery,
   optimizeWeeklySchedule,
-  rankScheduleRecommendations,
-  RescheduleImpact,
   ScheduleIntelligenceContext,
-  ScheduleRecommendation,
-  PersistenceResult,
   AdaptiveScheduleContext,
   ScheduleDiffResult,
-  ScheduleDiffItem,
   RescheduleImpactReport,
   UserSchedulePreference,
   ScheduleRealismReport,
   WeeklyOptimizationResult,
-  WeeklyOptimizationProposal,
   MissedSessionRecoveryReport,
   WorkloadExplanation,
+  type RescheduleImpact,
+  type ScheduleRecommendation,
+  type PersistenceResult,
+  type WeeklyOptimizationProposal,
 } from "@/lib/schedule-intelligence";
-import {
-  generateComprehensiveExplanation,
-} from "@/lib/schedule-orchestration";
 
 export async function getScheduleIntelligenceContextAction(): Promise<{
   success: boolean;
@@ -343,7 +335,7 @@ export async function getUserSchedulePreferencesAction(): Promise<{
     const stored = userPreferencesMemoryStore.get(userId);
     const sanitized = sanitizeSchedulePreferences(stored);
     return { success: true, preferences: sanitized };
-  } catch (err: any) {
+  } catch {
     return { success: true, preferences: sanitizeSchedulePreferences(null) };
   }
 }

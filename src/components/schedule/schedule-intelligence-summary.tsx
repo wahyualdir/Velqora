@@ -8,13 +8,10 @@ import {
   Calendar,
   AlertTriangle,
   Flame,
-  CheckCircle2,
   CalendarCheck,
   ChevronRight,
-  Info,
   Sliders,
   Scale,
-  ShieldAlert,
   Activity,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -51,7 +48,7 @@ export function ScheduleIntelligenceSummary({
   onOpenWeeklyPlan,
   onOpenPreferences,
   onOpenOptimization,
-  onOpenRealism,
+  onOpenRealism: _onOpenRealism,
 }: ScheduleIntelligenceSummaryProps) {
   if (!context) {
     return null;

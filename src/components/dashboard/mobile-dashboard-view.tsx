@@ -9,10 +9,7 @@ import {
   Bot,
   ScanLine,
   ChevronRight,
-  Clock,
   Calendar,
-  Layers,
-  ArrowRight,
   Sparkles,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";

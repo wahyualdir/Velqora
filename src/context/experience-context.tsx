@@ -14,7 +14,6 @@ import {
   resolveExperienceType,
   checkIsPwaStandalone,
   checkIsTouchDevice,
-  BREAKPOINTS,
 } from "@/lib/experience";
 
 interface BeforeInstallPromptEvent extends Event {

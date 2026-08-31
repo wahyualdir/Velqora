@@ -45,8 +45,7 @@ export default function FileConverterPage() {
   const [scannedPages, setScannedPages] = useState<
     { id: string; blob: Blob; url: string; preview: string; name: string }[]
   >([]);
-  const [activeScannedIndex, setActiveScannedIndex] = useState<number>(0);
-  const [scannerWatermark, setScannerWatermark] = useState<string>("");
+  const [scannerWatermark] = useState<string>("");
   // Advanced Photo Controls State
   const [photoBgColor, setPhotoBgColor] = useState<string>("none");
   const [pasfotoRatio, setPasfotoRatio] = useState<"3x4" | "4x6" | "2x3">("3x4");
@@ -153,7 +152,6 @@ export default function FileConverterPage() {
           name: file.name,
         };
         setScannedPages((prev) => [...prev, newPage]);
-        setActiveScannedIndex(scannedPages.length);
         toast.success(`Halaman "${file.name}" berhasil dipindai.`);
       } catch (err) {
         console.error(err);
@@ -264,7 +262,6 @@ export default function FileConverterPage() {
             name: `Halaman ${pageNum}`,
           };
           setScannedPages((prev) => [...prev, newPage]);
-          setActiveScannedIndex(scannedPages.length);
           toast.success(`Halaman ${pageNum} berhasil dipindai`);
         } else {
           stopCamera();

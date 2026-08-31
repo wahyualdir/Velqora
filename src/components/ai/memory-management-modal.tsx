@@ -24,7 +24,6 @@ import {
 } from "@/actions/ai-memory-actions";
 import { MemoryCategory, MemoryItem, UserMemoryProfile } from "@/lib/ai/types";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 interface MemoryModalProps {
   isOpen: boolean;

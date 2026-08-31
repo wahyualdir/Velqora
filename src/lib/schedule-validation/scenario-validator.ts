@@ -8,9 +8,6 @@ import {
 } from "../schedule-orchestration";
 import { analyzeWorkload } from "../schedule-intelligence/workload-analyzer";
 import { analyzeTaskDeadlines } from "../schedule-intelligence/deadline-analyzer";
-import { analyzeDeadlineCoverage } from "../schedule-intelligence/deadline-coverage";
-import { extractBehaviorSignals2 } from "../schedule-intelligence/behavior-signals";
-import { generatePatternEarlyWarnings } from "../schedule-outcomes";
 import {
   sanitizeSchedulePreferences,
   DEFAULT_SCHEDULE_PREFERENCE,
@@ -33,14 +30,6 @@ export function validateScenario(scenario: ValidationScenario): ScenarioValidati
   const health = calculateAcademicHealthScore(scenario.initialSchedules, scenario.tasks);
   const workload = analyzeWorkload(scenario.initialSchedules, scenario.tasks);
   const deadlines = analyzeTaskDeadlines(scenario.tasks);
-  const _deadlineCoverages = scenario.tasks.map((t) => analyzeDeadlineCoverage(t, scenario.initialSchedules));
-  const _behaviorSignals = extractBehaviorSignals2(userId, scenario.initialSchedules, scenario.outcomes || []);
-  const _earlyWarnings = generatePatternEarlyWarnings(
-    scenario.initialSchedules,
-    scenario.tasks,
-    scenario.outcomes || [],
-    scenario.recommendationHistory || []
-  );
 
   // 2. Continuous Optimization Proposal
   const proposal = generateContinuousOptimizationProposal(

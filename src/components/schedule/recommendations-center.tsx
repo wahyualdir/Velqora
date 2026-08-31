@@ -7,8 +7,6 @@ import {
   ShieldCheck,
   CheckCircle2,
   HelpCircle,
-  Clock,
-  Layers,
   ArrowUpRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

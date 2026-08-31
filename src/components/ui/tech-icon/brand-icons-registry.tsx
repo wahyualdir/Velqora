@@ -19,7 +19,7 @@ import {
   Binary,
   Calculator,
 } from "lucide-react";
-import { TechIconKey, TechIconOption } from "./types";
+import { TechIconOption } from "./types";
 
 export const TECH_ICONS: TechIconOption[] = [
   // Bahasa Pemrograman

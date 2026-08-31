@@ -43,8 +43,10 @@ describe("FASE 38: Product Maturity, UX & End-to-End Experience Suite", () => {
           assert.ok(snapshot.snapshotHash);
 
           // 2. Health Score & Workload
-          const _workload = analyzeWorkload(scenario.schedules);
-          const _deadlines = analyzeTaskDeadlines(scenario.tasks);
+          const workload = analyzeWorkload(scenario.schedules);
+          const deadlines = analyzeTaskDeadlines(scenario.tasks);
+          assert.ok(workload);
+          assert.ok(deadlines);
           const health = calculateAcademicHealthScore(scenario.schedules, scenario.tasks);
           assert.ok(health.overallScore >= 0 && health.overallScore <= 100);
 

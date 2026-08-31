@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Download, Smartphone, Laptop, CheckCircle2, Shield, RefreshCw } from "lucide-react";
+import { Download, Smartphone, Laptop, CheckCircle2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useExperience } from "@/context/experience-context";
 import { toast } from "sonner";

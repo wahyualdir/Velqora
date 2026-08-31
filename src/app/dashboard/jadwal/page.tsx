@@ -6,7 +6,6 @@ import {
   Plus,
   AlertCircle,
   RefreshCw,
-  Sparkles,
   UploadCloud,
   CalendarCheck,
   CalendarDays,

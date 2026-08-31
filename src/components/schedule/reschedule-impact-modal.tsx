@@ -2,19 +2,15 @@
 
 import React, { useState } from "react";
 import {
-  Sparkles,
   AlertTriangle,
   ArrowRight,
-  Clock,
   CheckCircle2,
-  Calendar,
-  HelpCircle,
   ShieldCheck,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RescheduleImpactReport, RescheduleAlternative } from "@/lib/schedule-intelligence/types";
+import { RescheduleImpactReport } from "@/lib/schedule-intelligence/types";
 import { applyRescheduleProposalAction } from "@/actions/schedule-actions";
 import { toast } from "sonner";
 

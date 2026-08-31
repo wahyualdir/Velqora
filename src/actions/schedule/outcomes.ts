@@ -2,8 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { ScheduleItem, Task, ScheduleDay } from "@/types";
-import { getUserSchedules } from "./crud";
+import { Task } from "@/types";
 import { getUserSchedulePreferencesAction } from "./intelligence";
 import { getAcademicHealthAction, getScheduleSnapshotAction } from "./orchestration";
 import {
@@ -16,18 +15,12 @@ import {
   PersonalizationFeedbackPrompt,
   HealthTrendReport,
   ThreeWayWhatIfResult,
-  RecommendationOutcomeRecord,
 } from "@/lib/schedule-outcomes/types";
 import { analyzeActualVsPlanned } from "@/lib/schedule-outcomes/actual-vs-planned";
 import { evaluatePersonalizationFeedback } from "@/lib/schedule-outcomes/personalization-feedback";
-import { calculateCalibrationMultipliers } from "@/lib/schedule-outcomes/recommendation-calibration";
 import { evaluateHealthTrend } from "@/lib/schedule-outcomes/health-trends";
-import { generatePatternEarlyWarnings } from "@/lib/schedule-outcomes/early-warning-2";
 import { simulateThreeWayOutcome } from "@/lib/schedule-outcomes/what-if-outcome-simulator";
 import {
-  ScheduleSnapshot,
-  AcademicHealthScore,
-  OptimizationProposal,
   SimulationModification,
 } from "@/lib/schedule-orchestration";
 
@@ -129,7 +122,7 @@ export async function getSessionOutcomesAction(): Promise<{
     }));
 
     return { success: true, outcomes };
-  } catch (err: any) {
+  } catch {
     return { success: true, outcomes: [] };
   }
 }

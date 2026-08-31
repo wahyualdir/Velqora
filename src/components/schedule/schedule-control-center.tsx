@@ -12,13 +12,9 @@ import {
 } from "@/actions/schedule-actions";
 import { Button } from "@/components/ui/button";
 import {
-  Activity,
   AlertTriangle,
   Sparkles,
   Sliders,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
   TrendingUp,
 } from "lucide-react";
 
@@ -39,11 +35,9 @@ export function ScheduleControlCenter({
 }: ScheduleControlCenterProps) {
   const [health, setHealth] = useState<AcademicHealthScore | null>(null);
   const [warnings, setWarnings] = useState<EarlyWarningItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function loadControlData() {
-      setIsLoading(true);
       try {
         const [healthRes, warnRes] = await Promise.all([
           getAcademicHealthAction(),
@@ -57,8 +51,6 @@ export function ScheduleControlCenter({
         }
       } catch (err) {
         console.error("Failed to load control center data", err);
-      } finally {
-        setIsLoading(false);
       }
     }
     loadControlData();

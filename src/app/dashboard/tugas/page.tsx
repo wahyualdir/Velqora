@@ -13,7 +13,6 @@ import { getClassroomState, ClassroomSyncState } from "@/lib/classroom-sync";
 import { TaskHeader } from "@/components/tasks/task-header";
 import { TaskOverview } from "@/components/tasks/task-overview";
 import { TaskToolbar } from "@/components/tasks/task-toolbar";
-import { TaskListItem } from "@/components/tasks/task-list-item";
 import { DesktopTaskWorkspace } from "@/components/tasks/desktop-task-workspace";
 import { MobileTaskList } from "@/components/tasks/mobile-task-list";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";

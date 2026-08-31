@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   LogOut,
   Settings,
@@ -213,11 +214,13 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                   {uploadingPhoto ? (
                     <Loader2 className="w-4 h-4 animate-spin text-brand-500" />
                   ) : avatarUrl ? (
-                    <img
+                    <Image
                       src={avatarUrl}
                       alt={userName}
+                      width={40}
+                      height={40}
+                      unoptimized
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
                     />
                   ) : (
                     <span>{initialLetter}</span>
@@ -264,11 +267,13 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                     {uploadingPhoto ? (
                       <Loader2 className="w-5 h-5 animate-spin text-brand-500" />
                     ) : avatarUrl ? (
-                      <img
+                      <Image
                         src={avatarUrl}
                         alt={userName}
+                        width={52}
+                        height={52}
+                        unoptimized
                         className="w-full h-full object-cover"
-                        referrerPolicy="no-referrer"
                       />
                     ) : (
                       <span>{initialLetter}</span>
@@ -391,11 +396,13 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
               {uploadingPhoto ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-500" />
               ) : avatarUrl ? (
-                <img
+                <Image
                   src={avatarUrl}
                   alt={userName}
+                  width={32}
+                  height={32}
+                  unoptimized
                   className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
                 />
               ) : (
                 <span>{initialLetter}</span>
@@ -430,11 +437,13 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                   {uploadingPhoto ? (
                     <Loader2 className="w-5 h-5 animate-spin text-brand-500" />
                   ) : avatarUrl ? (
-                    <img
+                    <Image
                       src={avatarUrl}
                       alt={userName}
+                      width={52}
+                      height={52}
+                      unoptimized
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
                     />
                   ) : (
                     <span>{initialLetter}</span>

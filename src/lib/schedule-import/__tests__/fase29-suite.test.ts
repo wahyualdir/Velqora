@@ -17,9 +17,6 @@ import {
 import { classifyScheduleDocument } from "../classifier";
 import { analyzeTableStructure, extractItemsFromTableStructure } from "../table-structuring";
 import {
-  normalizeTimeRange,
-  normalizeDate,
-  normalizeDayName,
   normalizeExtractedScheduleItem,
 } from "../normalizer";
 import {

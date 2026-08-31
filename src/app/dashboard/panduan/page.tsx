@@ -19,7 +19,6 @@ import {
   Mail,
   Copy,
   Check,
-  MessageCircle,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -1,17 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import {
   MoreHorizontal,
   CheckCircle2,
   Clock,
-  AlertCircle,
   ExternalLink,
   Edit2,
   Trash2,
-  Plus,
-  Calendar,
   AlertTriangle,
 } from "lucide-react";
 import {
@@ -21,7 +17,6 @@ import {
   DesktopTableRow,
   DesktopTableCell,
 } from "@/components/layout/desktop/desktop-table";
-import { Button } from "@/components/ui/button";
 import { cn, daysUntilDeadline, formatDate } from "@/lib/utils";
 
 interface DesktopTaskWorkspaceProps {

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   FileText,
-  FileCode,
   FileSpreadsheet,
   FileImage,
   Video,
@@ -16,12 +15,11 @@ import {
   Share2,
   Trash2,
   Eye,
-  ExternalLink,
 } from "lucide-react";
 import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatFileSize, formatDate, cn } from "@/lib/utils";
+import { formatFileSize, cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface MobileMaterialListProps {
@@ -91,7 +89,7 @@ export function MobileMaterialList({
           text: mat.description || "Materi Velqora",
           url: window.location.origin + `/dashboard/materi/${mat.id}`,
         });
-      } catch (err) {
+      } catch {
         // cancelled
       }
     } else {
