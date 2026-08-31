@@ -99,6 +99,8 @@ export default function DashboardLayout({
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+            onToggleSidebar={handleToggleCollapse}
+            isSidebarCollapsed={sidebarCollapsed}
           />
         </div>
 

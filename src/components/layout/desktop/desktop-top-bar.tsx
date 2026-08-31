@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Command, Crown, Download, CheckCircle2 } from "lucide-react";
+import { Search, Command, Crown, Download, CheckCircle2, Menu } from "lucide-react";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
 import { useExperience } from "@/context/experience-context";
@@ -15,11 +15,15 @@ interface DesktopTopBarProps {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   onOpenCommandPalette: () => void;
+  onToggleSidebar?: () => void;
+  isSidebarCollapsed?: boolean;
 }
 
 export function DesktopTopBar({
   searchQuery = "",
   onOpenCommandPalette,
+  onToggleSidebar,
+  isSidebarCollapsed = false,
 }: DesktopTopBarProps) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -67,8 +71,25 @@ export function DesktopTopBar({
       )}
     >
       <div className="flex items-center justify-between gap-4 px-6 py-2.5 max-w-[1600px] mx-auto w-full">
-        {/* Left: Spotlight Search / Command Palette Bar */}
+        {/* Left: Menu Toggle Button & Spotlight Search */}
         <div className="flex items-center gap-3 flex-1 min-w-0 max-w-xl">
+          {onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              aria-label="Toggle menu sidebar"
+              className={cn(
+                "h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg border text-text-secondary hover:text-text-primary transition-all active:scale-95 cursor-pointer shrink-0",
+                isLight
+                  ? "bg-slate-50 border-slate-200 hover:bg-slate-100"
+                  : "bg-surface border-border hover:bg-surface-secondary"
+              )}
+              title={isSidebarCollapsed ? "Buka Menu Sidebar" : "Kecilkan Menu Sidebar"}
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          )}
+
           <div
             onClick={onOpenCommandPalette}
             className="relative flex-1 min-w-0 cursor-pointer group"
