@@ -200,13 +200,12 @@ export default function DownloadAppPage() {
                     </Button>
                   )}
                   <a
-                    href="https://github.com/wahyualdir/Velqora/actions"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl border border-border bg-surface-secondary hover:bg-surface text-xs font-semibold text-text-primary transition-colors"
+                    href="/api/download/apk"
+                    download="Velqora-v1.1.0.apk"
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-semibold text-emerald-400 transition-colors cursor-pointer"
                   >
-                    <Smartphone className="w-4 h-4 text-emerald-400" />
-                    <span>Download Paket APK Android (.apk)</span>
+                    <Download className="w-4 h-4" />
+                    <span>Unduh File .APK Langsung</span>
                   </a>
                 </div>
               </div>
