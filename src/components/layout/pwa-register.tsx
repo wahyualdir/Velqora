@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Download, X } from "lucide-react";
+import { Download, Share, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -14,6 +14,7 @@ export function PwaRegister() {
   const pathname = usePathname();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [showIosPrompt, setShowIosPrompt] = useState(false);
 
   const isAuthPage =
     pathname === "/login" ||
@@ -36,12 +37,13 @@ export function PwaRegister() {
       });
     }
 
-    // 2. Handle PWA Install Prompt with persistent dismiss state
+    // 2. Persistent dismissal check
     const isDismissed =
       typeof window !== "undefined"
         ? localStorage.getItem("pwa_install_dismissed") === "true"
         : false;
 
+    // 3. Handle PWA Install Prompt for Chromium / Desktop / Android
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -51,6 +53,21 @@ export function PwaRegister() {
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    // 4. Handle iOS Safari manual instruction (beforeinstallprompt is not supported on iOS)
+    if (typeof window !== "undefined" && !isDismissed) {
+      const ua = window.navigator.userAgent.toLowerCase();
+      const isIos =
+        /iphone|ipad|ipod/.test(ua) ||
+        (window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
+      const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        Boolean((window.navigator as unknown as { standalone?: boolean }).standalone);
+
+      if (isIos && !isStandalone) {
+        setShowIosPrompt(true);
+      }
+    }
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -69,12 +86,51 @@ export function PwaRegister() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    setShowIosPrompt(false);
     if (typeof window !== "undefined") {
       localStorage.setItem("pwa_install_dismissed", "true");
     }
   };
 
-  if (!showPrompt || isAuthPage) return null;
+  if (isAuthPage) return null;
+
+  // iOS Safari specific manual installation guidance
+  if (showIosPrompt && !showPrompt) {
+    return (
+      <div
+        role="region"
+        aria-label="Petunjuk Pemasangan Aplikasi Velqora di iOS"
+        className="fixed bottom-20 md:bottom-6 right-4 z-50 max-w-sm w-[calc(100vw-2rem)] p-3.5 rounded-xl border border-brand-500/30 bg-surface/95 backdrop-blur-md shadow-2xl animate-fade-in flex items-center justify-between gap-3 text-text-primary"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 shrink-0">
+            <Share className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-bold leading-tight font-display truncate">
+              Pasang di iPhone / iPad
+            </p>
+            <p className="text-[11px] text-text-secondary leading-snug">
+              Ketuk tombol <span className="font-semibold text-text-primary">Share</span> lalu pilih <span className="font-semibold text-text-primary">&apos;Add to Home Screen&apos;</span>.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={handleDismiss}
+            aria-label="Tutup petunjuk instalasi"
+            className="p-1 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!showPrompt) return null;
 
   return (
     <div

@@ -1,5 +1,3 @@
-"use server";
-
 export * from "./crud";
 export * from "./import";
 export * from "./generator";

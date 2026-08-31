@@ -8,10 +8,10 @@ const ASSETS_TO_CACHE = [
   "/dashboard",
   "/manifest.json",
   "/logo.svg",
-  "/favicon.jpg",
   "/icons/icon.svg",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
+  "/icons/icon-maskable-512.png",
 ];
 
 // Install Event: Cache essential shell

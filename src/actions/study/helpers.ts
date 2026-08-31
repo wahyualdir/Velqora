@@ -1,5 +1,3 @@
-"use server";
-
 import { createClient } from "@/lib/supabase/server";
 
 export function sanitizePgText(str?: string | null): string {
