@@ -39,10 +39,9 @@ export function PwaRegister() {
             };
             document.addEventListener("visibilitychange", checkForUpdate);
 
-            // If a worker is already waiting (new version installed in background)
+            // If a worker is already waiting, activate it immediately
             if (reg.waiting) {
-              setWaitingWorker(reg.waiting);
-              setShowUpdatePrompt(true);
+              reg.waiting.postMessage({ type: "SKIP_WAITING" });
             }
 
             reg.addEventListener("updatefound", () => {
@@ -50,8 +49,8 @@ export function PwaRegister() {
               if (newWorker) {
                 newWorker.addEventListener("statechange", () => {
                   if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-                    setWaitingWorker(newWorker);
-                    setShowUpdatePrompt(true);
+                    // Activate immediately without requiring manual button click
+                    newWorker.postMessage({ type: "SKIP_WAITING" });
                   }
                 });
               }
