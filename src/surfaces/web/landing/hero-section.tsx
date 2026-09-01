@@ -22,14 +22,12 @@ import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
 
 /**
- * World-Class 360° Interactive 3D Lanyard Card
- * - Continuous momentum drag & velocity-based inertial decay
- * - Spring-damper physics loop (2-3 natural oscillations before settling)
- * - Lanyard strap dynamic skew/flex following card rotation
- * - Scale-down dip at 90° for realistic physical card thickness
- * - Dynamic 3D lighting glare & adaptive directional shadow
- * - Dual-sided faces: Front (Schedule Widget) | Back (Digital Academic ID & QR Pass)
- * - Ambient organic wind-sway idle animation
+ * Physically Unified 360° Interactive 3D Lanyard Card Assembly
+ * - Real structural tuck-in connections at top clamp & bottom clasp (zero floating gaps)
+ * - Metallic grommet ring (eyelet) anchored to phone card loop
+ * - Thick, solid woven fabric webbing with cylindrical volume lighting & edge stitches
+ * - Momentum velocity drag with spring-damper settling physics
+ * - Dual-sided 3D faces: Front (Schedule Widget) | Back (Academic ID & QR Pass)
  */
 function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const [rotX, setRotX] = useState(4);
@@ -179,8 +177,8 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const sinY = Math.sin(radY);
 
   // 1. Strap skew flex (simulates flexible ribbon bending with card)
-  const strapSkew = sinY * 9;
-  const strapRotate = (rotX * 0.25);
+  const strapSkew = sinY * 8;
+  const strapRotate = rotX * 0.25;
 
   // 2. Physical scale dip at 90 degrees (thin card turning edge-on)
   const cardScale = 0.94 + 0.06 * Math.abs(cosY);
@@ -213,65 +211,76 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           willChange: "transform",
         }}
       >
-        {/* 1. 3D Metal Top Window Clamp */}
-        <div className="relative z-30 flex flex-col items-center -mt-2.5 [transform-style:preserve-3d]">
-          {/* Chrome Metal Clamp with 3D Bevel Highlight */}
-          <div className="px-3.5 py-1 rounded-t-sm bg-gradient-to-b from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_10px_rgba(0,0,0,0.28)] flex items-center justify-center">
-            <div className="w-4 h-1 bg-stone-700 rounded-full shadow-inner" />
+        {/* ── 1. SOLID CHROME TOP WINDOW CLAMP (Anchored firmly to window frame) ── */}
+        <div className="relative z-30 flex flex-col items-center -mt-3 [transform-style:preserve-3d]">
+          {/* Chrome Metal Clamp Bracket (Firmly gripping frame & tucking fabric strap inside) */}
+          <div className="w-9 sm:w-10 px-2 py-1 rounded-t-sm bg-gradient-to-b from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_10px_rgba(0,0,0,0.35),inset_0_-2px_4px_rgba(0,0,0,0.3)] flex items-center justify-between">
+            <div className="w-1.5 h-1.5 rounded-full bg-stone-700 shadow-inner" />
+            <div className="w-3 h-0.5 bg-stone-800 rounded-full opacity-60" />
+            <div className="w-1.5 h-1.5 rounded-full bg-stone-700 shadow-inner" />
           </div>
-          {/* 3D Anchor Ring */}
+          {/* Swivel Top Ring */}
           <div className="w-4.5 h-4.5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-300 via-white to-stone-400 shadow-sm -mt-1 flex items-center justify-center">
             <div className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-xs" />
           </div>
         </div>
 
-        {/* 2. Realistic Flexible Woven Lanyard Strap (Skews dynamically with rotation) */}
+        {/* ── 2. SOLID WOVEN FABRIC LANYARD STRAP (Tucked seamlessly into top & bottom clamps) ── */}
         <div
-          className="flex-1 w-7 sm:w-8 relative flex flex-col items-center justify-center -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x-2 border-brand-800/80 shadow-[0_8px_24px_rgba(194,85,58,0.35),0_4px_8px_rgba(0,0,0,0.18)] [transform-style:preserve-3d]"
+          className="flex-1 w-8 sm:w-9 relative flex flex-col items-center justify-center -my-1 overflow-hidden rounded-xs border-x-2 border-brand-900/80 shadow-[0_8px_24px_rgba(194,85,58,0.38),0_4px_10px_rgba(0,0,0,0.22)] [transform-style:preserve-3d]"
           style={{
+            background:
+              "linear-gradient(90deg, #993822 0%, #ba462b 12%, #d95e3f 45%, #ea6f50 55%, #ba462b 88%, #993822 100%)",
             transform: `skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
             transformOrigin: "top center",
             transition: isDragging ? "none" : "transform 200ms ease-out",
             willChange: "transform",
           }}
         >
-          {/* Left & Right Crisp Double Stitches */}
-          <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/50" />
-          <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/50" />
+          {/* Top & Bottom Deep Inset Connection Shadows (Proves physical tuck-in) */}
+          <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-20" />
+          <div className="absolute bottom-0 inset-x-0 h-2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-20" />
 
-          {/* Woven Fabric Texture Overlay */}
+          {/* Left & Right Double Stitches (Full Length) */}
+          <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/60" />
+          <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/60" />
+
+          {/* High-Density Tactile Woven Webbing Texture */}
           <div
-            className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
+            className="absolute inset-0 opacity-35 mix-blend-overlay pointer-events-none"
             style={{
               backgroundImage:
-                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,1) 2px, rgba(255,255,255,1) 4px)",
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.4) 2px, rgba(255,255,255,0.4) 3px, rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px)",
             }}
           />
 
           {/* Solid 3D Woven Monogram */}
-          <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none">
-            <span className="text-[8.5px] font-mono font-extrabold tracking-[0.3em] text-white uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]">
+          <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none z-10">
+            <span className="text-[9px] font-mono font-extrabold tracking-[0.32em] text-white uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
               VELQORA
             </span>
           </div>
         </div>
 
-        {/* 3. 3D Metallic Lobster Clasp & Swivel Hardware */}
-        <div className="relative z-30 flex flex-col items-center -my-0.5 [transform-style:preserve-3d]">
-          {/* Chrome Crimp Collar with 3D Bevel */}
-          <div className="w-8 h-3 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_6px_rgba(0,0,0,0.25)] flex items-center justify-around px-1">
-            <div className="w-1 h-1.5 bg-stone-700 rounded-full shadow-inner" />
-            <div className="w-1 h-1.5 bg-stone-700 rounded-full shadow-inner" />
+        {/* ── 3. METALLIC CRIMP COLLAR & LOBSTER CLASP HARDWARE (Directly locking into Card Grommet) ── */}
+        <div className="relative z-30 flex flex-col items-center -my-1 [transform-style:preserve-3d]">
+          {/* Silver Crimp Collar (Clamping down on strap bottom) */}
+          <div className="w-8.5 h-3.5 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_8px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.8)] flex items-center justify-around px-1.5">
+            <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
+            <div className="w-2.5 h-0.5 bg-stone-600 rounded-full opacity-70" />
+            <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
           </div>
 
           {/* Swivel D-Ring */}
-          <div className="w-4.5 h-4.5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
-            {/* Lobster Clasp Spring Hook */}
-            <div className="w-2.5 h-4 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-sm -mb-2.5 shadow-sm" />
+          <div className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
+            {/* Lobster Clasp Spring Hook (Descends directly into the card grommet) */}
+            <div className="w-3 h-5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md -mb-3 shadow-md flex items-end justify-center pb-0.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
+            </div>
           </div>
         </div>
 
-        {/* 4. TRUE 360° ROTATABLE 3D CARD (DUAL-SIDED: FRONT & BACK) */}
+        {/* ── 4. TRUE 360° ROTATABLE 3D CARD WITH INTEGRATED GROMMET RING ── */}
         <div
           onPointerEnter={() => setIsHovered(true)}
           onPointerLeave={() => setIsHovered(false)}
@@ -280,7 +289,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
           title="Geser 360° untuk memutar kartu"
-          className="w-56 sm:w-64 h-64 sm:h-70 relative mt-1 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
+          className="w-56 sm:w-64 h-64 sm:h-70 relative mt-0.5 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
           style={{
             transform: `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
             willChange: "transform",
@@ -302,10 +311,13 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
               }}
             />
 
-            {/* Top Badge Loop */}
+            {/* Top Physical Metallic Grommet Ring (Eyelet) */}
             <div className="flex justify-center -mt-5 mb-1 relative z-30">
-              <div className="px-4 py-1 rounded-full bg-gradient-to-b from-stone-100 to-stone-300 border border-stone-400 shadow-sm flex items-center justify-center">
-                <div className="w-4 h-1.5 rounded-full bg-stone-900 border border-stone-700 shadow-inner" />
+              <div className="px-4 py-1 rounded-full bg-gradient-to-b from-stone-200 via-white to-stone-300 border border-stone-400 shadow-[0_2px_6px_rgba(0,0,0,0.25)] flex items-center justify-center">
+                {/* Hollow Grommet Eyelet (Through which the lobster clasp hooks) */}
+                <div className="w-5 h-2 rounded-full bg-stone-900 border-[1.5px] border-stone-600 shadow-inner flex items-center justify-center">
+                  <div className="w-2 h-1 rounded-full bg-stone-950" />
+                </div>
               </div>
             </div>
 
@@ -372,10 +384,12 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
               boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.1})`,
             }}
           >
-            {/* Top Badge Loop */}
+            {/* Top Physical Metallic Grommet Ring (Eyelet Back View) */}
             <div className="flex justify-center -mt-5 mb-1 relative z-30">
-              <div className="px-4 py-1 rounded-full bg-stone-800 border border-stone-600 shadow-sm flex items-center justify-center">
-                <div className="w-4 h-1.5 rounded-full bg-stone-950 border border-stone-800 shadow-inner" />
+              <div className="px-4 py-1 rounded-full bg-stone-800 border border-stone-600 shadow-[0_2px_6px_rgba(0,0,0,0.35)] flex items-center justify-center">
+                <div className="w-5 h-2 rounded-full bg-stone-950 border-[1.5px] border-stone-700 shadow-inner flex items-center justify-center">
+                  <div className="w-2 h-1 rounded-full bg-black" />
+                </div>
               </div>
             </div>
 
