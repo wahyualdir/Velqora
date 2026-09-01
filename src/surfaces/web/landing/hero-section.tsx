@@ -22,12 +22,52 @@ import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
 
 /**
- * Physically Unified 360° Interactive 3D Lanyard Card Assembly
- * - Real structural tuck-in connections at top clamp & bottom clasp (zero floating gaps)
- * - Metallic grommet ring (eyelet) anchored to phone card loop
- * - Thick, solid woven fabric webbing with cylindrical volume lighting & edge stitches
- * - Momentum velocity drag with spring-damper settling physics
- * - Dual-sided 3D faces: Front (Schedule Widget) | Back (Academic ID & QR Pass)
+ * 3D Physical Grommet & Interlocking Clasp Assembly
+ * Features a real 3D metallic torus eyelet with directional top-left specular lighting,
+ * hollow inner aperture depth, and an interlocking lobster carabiner hook.
+ */
+function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
+  return (
+    <div className="flex justify-center -mt-6 mb-1 relative z-30 [transform-style:preserve-3d]">
+      {/* 3D Tab Base extending from Card */}
+      <div
+        className={`px-5 py-1.5 rounded-full border flex items-center justify-center relative shadow-[0_4px_10px_rgba(0,0,0,0.3)] ${
+          isBack
+            ? "bg-gradient-to-b from-stone-700 via-stone-800 to-stone-900 border-stone-600"
+            : "bg-gradient-to-b from-stone-100 via-stone-200 to-stone-300 border-stone-300"
+        }`}
+      >
+        {/* 3D Metallic Donut / Torus Grommet Ring with Top-Left Directional Lighting */}
+        <div
+          className="w-8 h-4 rounded-full flex items-center justify-center relative shadow-[0_3px_6px_rgba(0,0,0,0.45)]"
+          style={{
+            background:
+              "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #e4e4e7 25%, #71717a 50%, #3f3f46 75%, #ffffff 100%)",
+            boxShadow:
+              "inset 1.5px 1.5px 2px rgba(255,255,255,0.9), inset -1.5px -1.5px 3px rgba(0,0,0,0.6), 0 2px 5px rgba(0,0,0,0.35)",
+          }}
+        >
+          {/* Deep Hollow Inner Eyelet Hole (Aperture with Inset Void Shadow) */}
+          <div
+            className="w-4 h-2 rounded-full bg-stone-950 flex items-center justify-center relative overflow-hidden"
+            style={{
+              boxShadow: "inset 0 3px 5px rgba(0,0,0,0.95), inset 0 -1px 2px rgba(255,255,255,0.25)",
+            }}
+          >
+            {/* Interlocking Lobster Hook Front Latch (Threads through the hole) */}
+            <div className="w-2 h-3 bg-gradient-to-b from-stone-300 via-stone-100 to-stone-500 rounded-b-xs shadow-xs -mt-1 opacity-90" />
+          </div>
+        </div>
+
+        {/* Ambient Occlusion Shadow Under Grommet on Card Surface */}
+        <div className="absolute -bottom-1 inset-x-2 h-1.5 bg-black/40 blur-xs rounded-full pointer-events-none" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * World-Class 360° Interactive 3D Lanyard Card with Physical Thickness & Unified Lighting
  */
 function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const [rotX, setRotX] = useState(4);
@@ -183,7 +223,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   // 2. Physical scale dip at 90 degrees (thin card turning edge-on)
   const cardScale = 0.94 + 0.06 * Math.abs(cosY);
 
-  // 3. Dynamic directional ambient drop shadow
+  // 3. Dynamic directional ambient drop shadow & 3D bevel thickness extrusion
   const shadowOffsetX = -sinY * 24;
   const shadowOffsetY = 24 + Math.abs(cosY) * 12;
   const shadowBlur = 35 + Math.abs(cosY) * 18;
@@ -211,21 +251,21 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           willChange: "transform",
         }}
       >
-        {/* ── 1. SOLID CHROME TOP WINDOW CLAMP (Anchored firmly to window frame) ── */}
+        {/* ── 1. SOLID CHROME TOP WINDOW CLAMP (Unified Top-Left Specular Lighting) ── */}
         <div className="relative z-30 flex flex-col items-center -mt-3 [transform-style:preserve-3d]">
-          {/* Chrome Metal Clamp Bracket (Firmly gripping frame & tucking fabric strap inside) */}
-          <div className="w-9 sm:w-10 px-2 py-1 rounded-t-sm bg-gradient-to-b from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_10px_rgba(0,0,0,0.35),inset_0_-2px_4px_rgba(0,0,0,0.3)] flex items-center justify-between">
+          {/* Chrome Metal Clamp Bracket with Inset Crimp Pressure */}
+          <div className="w-9 sm:w-10 px-2 py-1 rounded-t-sm bg-gradient-to-br from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_10px_rgba(0,0,0,0.35),inset_0_-2px_4px_rgba(0,0,0,0.3)] flex items-center justify-between">
             <div className="w-1.5 h-1.5 rounded-full bg-stone-700 shadow-inner" />
             <div className="w-3 h-0.5 bg-stone-800 rounded-full opacity-60" />
             <div className="w-1.5 h-1.5 rounded-full bg-stone-700 shadow-inner" />
           </div>
           {/* Swivel Top Ring */}
-          <div className="w-4.5 h-4.5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-300 via-white to-stone-400 shadow-sm -mt-1 flex items-center justify-center">
+          <div className="w-4.5 h-4.5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-br from-stone-300 via-white to-stone-400 shadow-sm -mt-1 flex items-center justify-center">
             <div className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-xs" />
           </div>
         </div>
 
-        {/* ── 2. SOLID WOVEN FABRIC LANYARD STRAP (Tucked seamlessly into top & bottom clamps) ── */}
+        {/* ── 2. SOLID WOVEN FABRIC LANYARD STRAP (Tucked seamlessly into clamps) ── */}
         <div
           className="flex-1 w-8 sm:w-9 relative flex flex-col items-center justify-center -my-1 overflow-hidden rounded-xs border-x-2 border-brand-900/80 shadow-[0_8px_24px_rgba(194,85,58,0.38),0_4px_10px_rgba(0,0,0,0.22)] [transform-style:preserve-3d]"
           style={{
@@ -237,7 +277,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             willChange: "transform",
           }}
         >
-          {/* Top & Bottom Deep Inset Connection Shadows (Proves physical tuck-in) */}
+          {/* Top & Bottom Deep Inset Connection Shadows (Tuck-in depth) */}
           <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-20" />
           <div className="absolute bottom-0 inset-x-0 h-2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-20" />
 
@@ -272,15 +312,15 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           </div>
 
           {/* Swivel D-Ring */}
-          <div className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
+          <div className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-br from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
             {/* Lobster Clasp Spring Hook (Descends directly into the card grommet) */}
-            <div className="w-3 h-5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md -mb-3 shadow-md flex items-end justify-center pb-0.5">
+            <div className="w-3 h-5.5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md -mb-3 shadow-md flex items-end justify-center pb-0.5">
               <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
             </div>
           </div>
         </div>
 
-        {/* ── 4. TRUE 360° ROTATABLE 3D CARD WITH INTEGRATED GROMMET RING ── */}
+        {/* ── 4. TRUE 360° ROTATABLE 3D CARD WITH 3D PHYSICAL THICKNESS & GROMMET ── */}
         <div
           onPointerEnter={() => setIsHovered(true)}
           onPointerLeave={() => setIsHovered(false)}
@@ -295,11 +335,11 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             willChange: "transform",
           }}
         >
-          {/* ── FRONT FACE (rotateY 0deg) ── */}
+          {/* ── FRONT FACE (rotateY 0deg) WITH 3D CHASSIS THICKNESS RIM ── */}
           <div
-            className="absolute inset-0 rounded-3xl bg-white p-2.5 border-[2.5px] border-stone-200 border-b-[5px] border-r-[4px] border-stone-400/80 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between transition-shadow duration-300"
+            className="absolute inset-0 rounded-3xl bg-white p-2.5 border-[2px] border-stone-200 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between transition-shadow duration-300"
             style={{
-              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 10px 20px rgba(194,85,58,0.12)`,
+              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 1px 0 1px #e7e5e4, 0 2.5px 0 1.5px #d6d3d1, 0 4px 0 2px #a8a29e, 0 5.5px 0 2.5px #78716c, 0 10px 20px rgba(194,85,58,0.12)`,
             }}
           >
             {/* Dynamic Specular Light Glare Overlay */}
@@ -311,15 +351,8 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
               }}
             />
 
-            {/* Top Physical Metallic Grommet Ring (Eyelet) */}
-            <div className="flex justify-center -mt-5 mb-1 relative z-30">
-              <div className="px-4 py-1 rounded-full bg-gradient-to-b from-stone-200 via-white to-stone-300 border border-stone-400 shadow-[0_2px_6px_rgba(0,0,0,0.25)] flex items-center justify-center">
-                {/* Hollow Grommet Eyelet (Through which the lobster clasp hooks) */}
-                <div className="w-5 h-2 rounded-full bg-stone-900 border-[1.5px] border-stone-600 shadow-inner flex items-center justify-center">
-                  <div className="w-2 h-1 rounded-full bg-stone-950" />
-                </div>
-              </div>
-            </div>
+            {/* 3D Physical Torus Grommet Ring */}
+            <Physical3DGrommet isBack={false} />
 
             {/* Inner Phone Screen Content */}
             <div className="rounded-2xl bg-surface-secondary/80 border border-border/80 p-3 space-y-2.5 text-text-primary shadow-inner flex-1 flex flex-col justify-between">
@@ -377,21 +410,15 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             </div>
           </div>
 
-          {/* ── BACK FACE (rotateY 180deg) ── */}
+          {/* ── BACK FACE (rotateY 180deg) WITH 3D CHASSIS THICKNESS RIM ── */}
           <div
-            className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 border-[2.5px] border-stone-700 border-b-[5px] border-r-[4px] border-stone-800 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white transition-shadow duration-300"
+            className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 border-[2px] border-stone-700 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white transition-shadow duration-300"
             style={{
-              boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.1})`,
+              boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.1}), 0 1px 0 1px #44403c, 0 2.5px 0 1.5px #292524, 0 4px 0 2px #1c1917, 0 5.5px 0 2.5px #0c0a09`,
             }}
           >
-            {/* Top Physical Metallic Grommet Ring (Eyelet Back View) */}
-            <div className="flex justify-center -mt-5 mb-1 relative z-30">
-              <div className="px-4 py-1 rounded-full bg-stone-800 border border-stone-600 shadow-[0_2px_6px_rgba(0,0,0,0.35)] flex items-center justify-center">
-                <div className="w-5 h-2 rounded-full bg-stone-950 border-[1.5px] border-stone-700 shadow-inner flex items-center justify-center">
-                  <div className="w-2 h-1 rounded-full bg-black" />
-                </div>
-              </div>
-            </div>
+            {/* 3D Physical Torus Grommet Ring (Back Face View) */}
+            <Physical3DGrommet isBack={true} />
 
             {/* Inner Digital Student Pass */}
             <div className="rounded-2xl bg-stone-800/90 border border-stone-700/80 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
