@@ -19,12 +19,12 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
     <section className="space-y-3">
       <div className="flex items-center justify-between px-0.5">
         <h2 className="text-sm sm:text-base font-bold text-text-primary tracking-tight font-display flex items-center gap-2">
-          <CheckSquare className="w-4 h-4 text-amber-500" />
+          <CheckSquare className="w-4 h-4 text-amber-600" />
           <span>Tugas Aktif & Tenggat</span>
         </h2>
         <Link
           href="/dashboard/tugas"
-          className="text-xs font-semibold text-text-secondary hover:text-brand-500 transition-colors flex items-center gap-1"
+          className="text-xs font-semibold text-text-secondary hover:text-brand-600 transition-colors flex items-center gap-1"
         >
           <span>Kelola</span>
           <ArrowRight className="w-3 h-3" />
@@ -45,7 +45,7 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
           </p>
           <div className="pt-1">
             <Link href="/dashboard/tugas/baru">
-              <Button size="sm" variant="outline" className="text-xs gap-1">
+              <Button size="sm" variant="outline" className="text-xs gap-1.5">
                 <Plus className="w-3.5 h-3.5" />
                 <span>Tambah Tugas</span>
               </Button>
@@ -70,7 +70,7 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
               <Link
                 key={task.id}
                 href="/dashboard/tugas"
-                className="group block p-3 sm:px-3.5 hover:bg-surface-secondary/60 transition-colors"
+                className="group block p-3 sm:px-3.5 hover:bg-surface-secondary/50 transition-colors"
               >
                 <div className="space-y-1">
                   <div className="flex items-center justify-between gap-2">
@@ -82,9 +82,9 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
                       <span
                         className={`text-[10.5px] font-mono ${
                           isLate
-                            ? "text-red-500 font-semibold"
+                            ? "text-red-600 font-semibold"
                             : isUrgent
-                            ? "text-amber-500 font-semibold"
+                            ? "text-amber-600 font-semibold"
                             : "text-text-tertiary"
                         }`}
                       >
@@ -96,7 +96,7 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xs font-semibold text-text-primary group-hover:text-brand-500 transition-colors truncate">
+                  <h3 className="text-xs font-semibold text-text-primary group-hover:text-brand-600 transition-colors truncate">
                     {task.title}
                   </h3>
                   <p className="text-[11px] text-text-secondary truncate">

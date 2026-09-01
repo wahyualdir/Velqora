@@ -49,7 +49,7 @@ export function DashboardMetrics({
       value: totalMateri,
       href: "/dashboard/materi",
       icon: BookOpen,
-      hint: "Dokumen bacaan",
+      hint: "Diktat & slide",
     },
     {
       label: "Tugas Aktif",
@@ -63,7 +63,7 @@ export function DashboardMetrics({
       value: totalFile,
       href: "/dashboard/file",
       icon: Files,
-      hint: "Penyimpanan cloud",
+      hint: "Arsip dokumen",
     },
   ];
 
