@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -22,111 +22,198 @@ import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
 
 /**
- * 360° Interactive 3D Lanyard Card with Front/Back Dual Faces
- * - Full 360-degree pointer drag & touch swipe physics
- * - Inertial spring-settle on release
- * - Two-sided 3D card: Front (Class Schedule Widget) | Back (Digital Student Pass & QR)
- * - Dynamic specular light glare
+ * World-Class 360° Interactive 3D Lanyard Card
+ * - Continuous momentum drag & velocity-based inertial decay
+ * - Spring-damper physics loop (2-3 natural oscillations before settling)
+ * - Lanyard strap dynamic skew/flex following card rotation
+ * - Scale-down dip at 90° for realistic physical card thickness
+ * - Dynamic 3D lighting glare & adaptive directional shadow
+ * - Dual-sided faces: Front (Schedule Widget) | Back (Digital Academic ID & QR Pass)
+ * - Ambient organic wind-sway idle animation
  */
 function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
-  const [rotation, setRotation] = useState<{ x: number; y: number }>({ x: 4, y: -6 });
+  const [rotX, setRotX] = useState(4);
+  const [rotY, setRotY] = useState(-6);
   const [isDragging, setIsDragging] = useState(false);
-  const [isIdle, setIsIdle] = useState(true);
-  const [glare, setGlare] = useState<{ x: number; y: number }>({ x: 50, y: 30 });
-
-  const dragStartRef = useRef<{ x: number; y: number; rotX: number; rotY: number }>({
-    x: 0,
-    y: 0,
-    rotX: 4,
-    rotY: -6,
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [glare, setGlare] = useState<{ x: number; y: number; opacity: number }>({
+    x: 50,
+    y: 30,
+    opacity: 0.35,
   });
 
-  const cardContainerRef = useRef<HTMLDivElement>(null);
+  // Physics animation loop refs
+  const animFrameRef = useRef<number | null>(null);
+  const velocityRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const lastPointerRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
+  const rotRef = useRef<{ x: number; y: number }>({ x: 4, y: -6 });
+  const isDraggingRef = useRef(false);
 
-  // Handle pointer drag start (mouse or touch)
+  // Sync ref with state
+  useEffect(() => {
+    rotRef.current = { x: rotX, y: rotY };
+  }, [rotX, rotY]);
+
+  // Spring physics decay loop on pointer release
+  const startSpringDecay = useCallback((targetFaceY: number, initialVelY: number) => {
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+
+    let currentY = rotRef.current.y;
+    let currentX = rotRef.current.x;
+    let velY = initialVelY;
+    let velX = (4 - currentX) * 0.1;
+
+    const stiffness = 0.075; // Spring tension
+    const damping = 0.82;    // Damping friction (allows 2-3 smooth oscillations)
+
+    const step = () => {
+      if (isDraggingRef.current) return;
+
+      const forceY = (targetFaceY - currentY) * stiffness;
+      velY = (velY + forceY) * damping;
+      currentY += velY;
+
+      const forceX = (4 - currentX) * stiffness;
+      velX = (velX + forceX) * damping;
+      currentX += velX;
+
+      setRotX(currentX);
+      setRotY(currentY);
+
+      // Continue until settled
+      if (Math.abs(velY) > 0.05 || Math.abs(targetFaceY - currentY) > 0.1 || Math.abs(velX) > 0.05) {
+        animFrameRef.current = requestAnimationFrame(step);
+      } else {
+        setRotX(4);
+        setRotY(targetFaceY);
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(step);
+  }, []);
+
+  // Handle pointer down (mouse or touch)
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+
     setIsDragging(true);
-    setIsIdle(false);
-    dragStartRef.current = {
+    isDraggingRef.current = true;
+    setHasInteracted(true);
+
+    lastPointerRef.current = {
       x: e.clientX,
       y: e.clientY,
-      rotX: rotation.x,
-      rotY: rotation.y,
+      time: performance.now(),
     };
+    velocityRef.current = { x: 0, y: 0 };
+
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
-  // Handle pointer drag move
+  // Handle pointer move
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    const deltaX = e.clientX - dragStartRef.current.x;
-    const deltaY = e.clientY - dragStartRef.current.y;
+    if (!isDraggingRef.current) return;
 
-    // Calculate free 360-degree Y rotation and clamped X pitch
-    const nextRotY = dragStartRef.current.rotY + deltaX * 0.85;
-    const nextRotX = Math.max(-28, Math.min(28, dragStartRef.current.rotX - deltaY * 0.45));
+    const now = performance.now();
+    const dt = Math.max(1, now - lastPointerRef.current.time);
+    const deltaX = e.clientX - lastPointerRef.current.x;
+    const deltaY = e.clientY - lastPointerRef.current.y;
 
-    setRotation({ x: nextRotX, y: nextRotY });
+    // Calculate instantaneous velocity (deg/frame equivalent)
+    const instVelY = (deltaX / dt) * 16;
+    const instVelX = (deltaY / dt) * 16;
+    velocityRef.current = {
+      x: instVelX * 0.4 + velocityRef.current.x * 0.6,
+      y: instVelY * 0.4 + velocityRef.current.y * 0.6,
+    };
 
-    if (cardContainerRef.current) {
-      const rect = cardContainerRef.current.getBoundingClientRect();
-      const normX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-      const normY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-      setGlare({ x: normX, y: normY });
-    }
+    lastPointerRef.current = { x: e.clientX, y: e.clientY, time: now };
+
+    const nextRotY = rotRef.current.y + deltaX * 0.75;
+    const nextRotX = Math.max(-26, Math.min(26, rotRef.current.x - deltaY * 0.4));
+
+    setRotX(nextRotX);
+    setRotY(nextRotY);
+
+    // Calculate light glare coordinates
+    const rect = e.currentTarget.getBoundingClientRect();
+    const normX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const normY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    setGlare({ x: normX, y: normY, opacity: 0.65 });
   };
 
-  // Handle pointer drag release with spring dampening
+  // Handle pointer up with momentum & spring physics
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
+
     setIsDragging(false);
+    isDraggingRef.current = false;
     (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
 
-    // Spring settle: snap smoothly to closest face (0° or 180° or 360°)
-    const normalizedY = ((rotation.y % 360) + 360) % 360;
+    // Projected landing angle based on release velocity
+    const projectedY = rotRef.current.y + velocityRef.current.y * 8;
+    const normalizedY = ((projectedY % 360) + 360) % 360;
     const isCloserToBack = normalizedY > 90 && normalizedY < 270;
-    const baseTurns = Math.round((rotation.y - (isCloserToBack ? 180 : 0)) / 360) * 360;
+
+    // Find nearest target face (0°, 180°, 360°, etc.)
+    const baseTurns = Math.round((projectedY - (isCloserToBack ? 180 : 0)) / 360) * 360;
     const targetY = baseTurns + (isCloserToBack ? 180 : -6);
 
-    setRotation({ x: 4, y: targetY });
-
-    // Re-enable idle breathing after settling
-    setTimeout(() => {
-      setIsIdle(true);
-    }, 1200);
+    // Launch spring-decay loop
+    startSpringDecay(targetY, velocityRef.current.y * 1.4);
+    setGlare((prev) => ({ ...prev, opacity: 0.35 }));
   };
 
-  // Quick 360-degree flip trigger button
+  // Quick button flip trigger
   const handleQuickFlip = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsIdle(false);
-    setRotation((prev) => ({
-      x: 6,
-      y: prev.y + 180,
-    }));
-    setTimeout(() => {
-      setIsIdle(true);
-    }, 1200);
+    setHasInteracted(true);
+    const nextTargetY = rotRef.current.y + 180;
+    startSpringDecay(nextTargetY, 14);
   };
+
+  // Calculate dynamic 3D visual metrics
+  const radY = (rotY * Math.PI) / 180;
+  const cosY = Math.cos(radY);
+  const sinY = Math.sin(radY);
+
+  // 1. Strap skew flex (simulates flexible ribbon bending with card)
+  const strapSkew = sinY * 9;
+  const strapRotate = (rotX * 0.25);
+
+  // 2. Physical scale dip at 90 degrees (thin card turning edge-on)
+  const cardScale = 0.94 + 0.06 * Math.abs(cosY);
+
+  // 3. Dynamic directional ambient drop shadow
+  const shadowOffsetX = -sinY * 24;
+  const shadowOffsetY = 24 + Math.abs(cosY) * 12;
+  const shadowBlur = 35 + Math.abs(cosY) * 18;
+  const shadowAlpha = 0.16 + Math.abs(cosY) * 0.16;
+
+  // Cleanup animation frame
+  useEffect(() => {
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, []);
 
   return (
     <div
-      className={`absolute top-0 -left-2 sm:-left-6 bottom-[-42px] z-30 pointer-events-none flex flex-col items-center [perspective:1200px] transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+      className={`absolute top-0 -left-2 sm:-left-6 bottom-[-44px] z-30 pointer-events-none flex flex-col items-center [perspective:1300px] transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-48"
       }`}
       style={{ transitionDelay: "450ms" }}
     >
       <div
-        className={`flex flex-col items-center origin-top h-full [transform-style:preserve-3d] ${
-          isIdle && !isDragging ? "animate-rope-sway" : ""
-        }`}
+        className="flex flex-col items-center origin-top h-full [transform-style:preserve-3d]"
         style={{
-          transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) translateZ(28px)`,
-          transition: isDragging ? "none" : "transform 750ms cubic-bezier(0.16, 1, 0.3, 1)",
+          transform: `translate3d(0, ${isHovered && !isDragging ? -4 : 0}px, 28px)`,
+          transition: isDragging ? "none" : "transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
           willChange: "transform",
         }}
       >
-        {/* 1. 3D Polished Metallic Top Window Clamp */}
+        {/* 1. 3D Metal Top Window Clamp */}
         <div className="relative z-30 flex flex-col items-center -mt-2.5 [transform-style:preserve-3d]">
           {/* Chrome Metal Clamp with 3D Bevel Highlight */}
           <div className="px-3.5 py-1 rounded-t-sm bg-gradient-to-b from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_10px_rgba(0,0,0,0.28)] flex items-center justify-center">
@@ -138,8 +225,16 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           </div>
         </div>
 
-        {/* 2. 3D Solid Woven Lanyard Ribbon with Depth Shadow */}
-        <div className="flex-1 w-7 sm:w-8 relative flex flex-col items-center justify-center -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x-2 border-brand-800/80 shadow-[0_8px_24px_rgba(194,85,58,0.35),0_4px_8px_rgba(0,0,0,0.18)] [transform-style:preserve-3d]">
+        {/* 2. Realistic Flexible Woven Lanyard Strap (Skews dynamically with rotation) */}
+        <div
+          className="flex-1 w-7 sm:w-8 relative flex flex-col items-center justify-center -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x-2 border-brand-800/80 shadow-[0_8px_24px_rgba(194,85,58,0.35),0_4px_8px_rgba(0,0,0,0.18)] [transform-style:preserve-3d]"
+          style={{
+            transform: `skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
+            transformOrigin: "top center",
+            transition: isDragging ? "none" : "transform 200ms ease-out",
+            willChange: "transform",
+          }}
+        >
           {/* Left & Right Crisp Double Stitches */}
           <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/50" />
           <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/50" />
@@ -178,24 +273,32 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
         {/* 4. TRUE 360° ROTATABLE 3D CARD (DUAL-SIDED: FRONT & BACK) */}
         <div
-          ref={cardContainerRef}
+          onPointerEnter={() => setIsHovered(true)}
+          onPointerLeave={() => setIsHovered(false)}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
           title="Geser 360° untuk memutar kartu"
           className="w-56 sm:w-64 h-64 sm:h-70 relative mt-1 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
+          style={{
+            transform: `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
+            willChange: "transform",
+          }}
         >
           {/* ── FRONT FACE (rotateY 0deg) ── */}
           <div
-            className="absolute inset-0 rounded-3xl bg-white p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35),0_10px_20px_rgba(194,85,58,0.15)] border-[2.5px] border-stone-200 border-b-[5px] border-r-[4px] border-stone-400/80 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between"
+            className="absolute inset-0 rounded-3xl bg-white p-2.5 border-[2.5px] border-stone-200 border-b-[5px] border-r-[4px] border-stone-400/80 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between transition-shadow duration-300"
+            style={{
+              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 10px 20px rgba(194,85,58,0.12)`,
+            }}
           >
-            {/* Specular Light Reflection Glare Overlay */}
+            {/* Dynamic Specular Light Glare Overlay */}
             <div
               className="absolute inset-0 pointer-events-none rounded-3xl z-40 transition-opacity duration-150"
               style={{
-                background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 45%, transparent 75%)`,
-                opacity: isDragging ? 1 : 0.35,
+                background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 45%, transparent 75%)`,
+                opacity: glare.opacity,
               }}
             />
 
@@ -242,7 +345,11 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
               </div>
 
               {/* Interactive Rotate Hint & Flip Trigger */}
-              <div className="flex items-center justify-between text-[9px] text-text-tertiary pt-0.5 font-semibold">
+              <div
+                className={`flex items-center justify-between text-[9px] text-text-tertiary pt-0.5 font-semibold transition-opacity duration-300 ${
+                  hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
+                }`}
+              >
                 <span className="flex items-center gap-1">
                   <RotateCw className="w-3 h-3 text-brand-500" />
                   <span>Geser 360°</span>
@@ -250,7 +357,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                 <button
                   type="button"
                   onClick={handleQuickFlip}
-                  className="px-2 py-0.5 rounded bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 border border-brand-500/20 transition-colors cursor-pointer"
+                  className="px-2 py-0.5 rounded bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 border border-brand-500/20 transition-colors cursor-pointer active:scale-95"
                 >
                   Balik Kartu ↺
                 </button>
@@ -260,7 +367,10 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
           {/* ── BACK FACE (rotateY 180deg) ── */}
           <div
-            className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)] border-[2.5px] border-stone-700 border-b-[5px] border-r-[4px] border-stone-800 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white"
+            className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 border-[2.5px] border-stone-700 border-b-[5px] border-r-[4px] border-stone-800 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white transition-shadow duration-300"
+            style={{
+              boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.1})`,
+            }}
           >
             {/* Top Badge Loop */}
             <div className="flex justify-center -mt-5 mb-1 relative z-30">
@@ -271,7 +381,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
             {/* Inner Digital Student Pass */}
             <div className="rounded-2xl bg-stone-800/90 border border-stone-700/80 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
-              {/* Holographic shimmer line */}
+              {/* Holographic shimmer glow */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/15 rounded-full blur-xl pointer-events-none" />
 
               {/* Pass Header */}
@@ -310,7 +420,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                 <button
                   type="button"
                   onClick={handleQuickFlip}
-                  className="px-2 py-0.5 rounded bg-stone-700/80 hover:bg-stone-700 text-stone-200 border border-stone-600 transition-colors cursor-pointer"
+                  className="px-2 py-0.5 rounded bg-stone-700/80 hover:bg-stone-700 text-stone-200 border border-stone-600 transition-colors cursor-pointer active:scale-95"
                 >
                   Sisi Depan ↻
                 </button>
