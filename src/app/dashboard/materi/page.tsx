@@ -12,7 +12,7 @@ import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { MaterialHeader } from "@/components/materi/material-header";
 import { MaterialFilters } from "@/components/materi/material-filters";
 import { MaterialListItem } from "@/components/materi/material-list-item";
-import { MobileMaterialList } from "@/components/materi/mobile-material-list";
+import { MobileMaterialList } from "@/surfaces/app/materi/mobile-material-list";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { toast } from "sonner";
 
