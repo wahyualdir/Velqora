@@ -38,22 +38,22 @@ export function DesktopTaskWorkspace({
     switch (priority) {
       case "tinggi":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-500/10 text-rose-600 border border-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             Tinggi
           </span>
         );
       case "sedang":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
             Sedang
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-500/10 text-text-tertiary border border-border">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-secondary text-text-secondary border border-border">
+            <span className="w-1.5 h-1.5 rounded-full bg-text-tertiary" />
             Rendah
           </span>
         );
@@ -66,8 +66,8 @@ export function DesktopTaskWorkspace({
 
     if (status === "selesai") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-          <CheckCircle2 className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+          <CheckCircle2 className="w-3.5 h-3.5" />
           Selesai
         </span>
       );
@@ -75,8 +75,8 @@ export function DesktopTaskWorkspace({
 
     if (isOverdue) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">
-          <AlertTriangle className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-500/10 text-rose-600 border border-rose-500/20">
+          <AlertTriangle className="w-3.5 h-3.5" />
           Terlambat
         </span>
       );
@@ -84,15 +84,15 @@ export function DesktopTaskWorkspace({
 
     if (status === "sedang_dikerjakan") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20">
-          <Clock className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
+          <Clock className="w-3.5 h-3.5" />
           Dikerjakan
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-surface-secondary text-text-secondary border border-border">
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-secondary text-text-secondary border border-border">
         Belum Mulai
       </span>
     );
@@ -103,12 +103,12 @@ export function DesktopTaskWorkspace({
       <DesktopTable className="min-w-[720px]">
         <DesktopTableHeader>
           <tr>
-            <DesktopTableHead className="w-[35%]">Nama Tugas & Deskripsi</DesktopTableHead>
+            <DesktopTableHead className="w-[36%]">Nama Tugas & Deskripsi</DesktopTableHead>
             <DesktopTableHead className="w-[20%]">Mata Kuliah / Dosen</DesktopTableHead>
             <DesktopTableHead className="w-[15%]">Tenggat Waktu</DesktopTableHead>
             <DesktopTableHead className="w-[12%]">Status</DesktopTableHead>
             <DesktopTableHead className="w-[10%]">Prioritas</DesktopTableHead>
-            <DesktopTableHead className="w-[8%] text-right pr-4">Aksi</DesktopTableHead>
+            <DesktopTableHead className="w-[7%] text-right pr-4">Aksi</DesktopTableHead>
           </tr>
         </DesktopTableHeader>
         <tbody>
@@ -130,7 +130,7 @@ export function DesktopTaskWorkspace({
                           href={task.external_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-brand-500 hover:text-brand-400"
+                          className="text-brand-500 hover:text-brand-600"
                           title="Buka tautan tugas"
                         >
                           <ExternalLink className="w-3 h-3" />
@@ -138,7 +138,7 @@ export function DesktopTaskWorkspace({
                       )}
                     </div>
                     {task.description && (
-                      <p className="text-[11px] text-text-tertiary truncate leading-snug">
+                      <p className="text-[11px] text-text-secondary truncate leading-snug">
                         {task.description}
                       </p>
                     )}
@@ -171,9 +171,9 @@ export function DesktopTaskWorkspace({
                           className={cn(
                             "text-[10px] font-semibold block",
                             daysLeft < 0
-                              ? "text-rose-500"
+                              ? "text-rose-600"
                               : daysLeft <= 1
-                              ? "text-amber-500"
+                              ? "text-amber-600"
                               : "text-text-tertiary"
                           )}
                         >
@@ -230,7 +230,7 @@ export function DesktopTaskWorkspace({
                                 onUpdateStatus(task.id, "selesai");
                                 setActiveMenuId(null);
                               }}
-                              className="w-full px-3 py-2 text-left text-emerald-500 hover:bg-emerald-500/10 flex items-center gap-2"
+                              className="w-full px-3 py-2 text-left text-emerald-700 hover:bg-emerald-500/10 flex items-center gap-2 transition-colors cursor-pointer"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               <span>Tandai Selesai</span>
@@ -242,7 +242,7 @@ export function DesktopTaskWorkspace({
                                 onUpdateStatus(task.id, "belum_dikerjakan");
                                 setActiveMenuId(null);
                               }}
-                              className="w-full px-3 py-2 text-left text-text-secondary hover:bg-surface-secondary flex items-center gap-2"
+                              className="w-full px-3 py-2 text-left text-text-secondary hover:bg-surface-secondary flex items-center gap-2 transition-colors cursor-pointer"
                             >
                               <Clock className="w-3.5 h-3.5" />
                               <span>Buka Kembali</span>
@@ -255,7 +255,7 @@ export function DesktopTaskWorkspace({
                               onEdit(task);
                               setActiveMenuId(null);
                             }}
-                            className="w-full px-3 py-2 text-left text-text-primary hover:bg-surface-secondary flex items-center gap-2"
+                            className="w-full px-3 py-2 text-left text-text-primary hover:bg-surface-secondary flex items-center gap-2 transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-3.5 h-3.5 text-text-tertiary" />
                             <span>Edit Tugas</span>
@@ -269,7 +269,7 @@ export function DesktopTaskWorkspace({
                               onDelete(task.id);
                               setActiveMenuId(null);
                             }}
-                            className="w-full px-3 py-2 text-left text-rose-500 hover:bg-rose-500/10 flex items-center gap-2"
+                            className="w-full px-3 py-2 text-left text-rose-600 hover:bg-rose-500/10 flex items-center gap-2 transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Hapus Tugas</span>
