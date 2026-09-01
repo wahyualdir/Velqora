@@ -196,24 +196,49 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Mobile Companion Overlay */}
-            <div className="absolute -bottom-6 -left-3 sm:-left-6 w-48 rounded-2xl border-2 border-border bg-white p-1.5 shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-300 z-10">
-              <div className="w-12 h-1.5 bg-surface-secondary rounded-full mx-auto mb-2" />
-              <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
-                <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
-                  <span className="font-bold text-text-primary flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-brand-500" />
-                    Velqora Mobile
-                  </span>
-                  <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
-                </div>
-                <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
-                    <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
+            {/* Mobile Companion Overlay with Hanging Rope Descent Animation ("Turun Pakai Tali") */}
+            <div
+              className={`absolute -bottom-8 -left-3 sm:-left-6 w-48 sm:w-52 z-20 origin-top transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+                isVisible
+                  ? "opacity-100 translate-y-0 rotate-[-2deg]"
+                  : "opacity-0 -translate-y-24 rotate-[-9deg] pointer-events-none"
+              }`}
+              style={{ transitionDelay: "450ms" }}
+            >
+              {/* Tali Gantungan (Hanging String & Anchor Pin) */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none select-none z-10">
+                {/* Pin / Paku Anchor di atas */}
+                <div className="w-2.5 h-2.5 rounded-full bg-brand-500 border-2 border-white shadow-xs" />
+                {/* Garis Tali Bertali Halus */}
+                <div
+                  className={`w-[1.5px] bg-gradient-to-b from-brand-500/80 via-brand-500/50 to-brand-500/90 transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+                    isVisible ? "h-12 opacity-100" : "h-0 opacity-0"
+                  }`}
+                  style={{ transitionDelay: "450ms" }}
+                />
+                {/* Ring / Pengait Cincin di atas kartu */}
+                <div className="w-2 h-2 rounded-full border-[1.5px] border-brand-500 -mt-0.5 bg-white shadow-2xs" />
+              </div>
+
+              {/* Card Container with tactile hover sway */}
+              <div className="rounded-2xl border-2 border-border/90 bg-white p-1.5 shadow-2xl transition-all duration-300 hover:rotate-0 hover:scale-[1.02] hover:shadow-brand-500/15 group">
+                <div className="w-12 h-1.5 bg-surface-secondary rounded-full mx-auto mb-2" />
+                <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
+                  <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
+                    <span className="font-bold text-text-primary flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-brand-500" />
+                      Velqora Mobile
+                    </span>
+                    <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
                   </div>
-                  <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
-                  <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+                  <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs group-hover:border-brand-500/40 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
+                      <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
+                    </div>
+                    <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
+                    <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+                  </div>
                 </div>
               </div>
             </div>
