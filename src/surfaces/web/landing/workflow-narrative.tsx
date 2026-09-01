@@ -38,11 +38,13 @@ export function WorkflowNarrative() {
     <section id="alur-kerja" className="py-20 lg:py-28 border-b border-border bg-surface-secondary/40">
       <div
         ref={ref}
-        className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+        className="max-w-[1200px] mx-auto px-6 lg:px-8"
       >
-        <div className="max-w-xl space-y-3 mb-14 text-left">
+        <div
+          className={`max-w-xl space-y-3 mb-14 text-left transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+          }`}
+        >
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-600 text-xs font-semibold uppercase tracking-wider">
             Alur Semester
           </div>
@@ -56,8 +58,13 @@ export function WorkflowNarrative() {
 
         {/* Asymmetric Timeline: Step 1 gets larger visual anchor */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Step 1 — Anchor (5 cols) */}
-          <div className="lg:col-span-5 p-7 sm:p-8 rounded-2xl border border-brand-500/30 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left relative overflow-hidden">
+          {/* Step 1 — Anchor (5 cols, delay 0ms) */}
+          <div
+            className={`lg:col-span-5 p-7 sm:p-8 rounded-2xl border border-brand-500/30 bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 text-left relative overflow-hidden ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "0ms" }}
+          >
             <div className="absolute top-6 right-6 w-16 h-16 rounded-full bg-brand-500/5 flex items-center justify-center pointer-events-none">
               <span className="text-3xl font-bold font-mono text-brand-500/30">01</span>
             </div>
@@ -71,12 +78,15 @@ export function WorkflowNarrative() {
             </p>
           </div>
 
-          {/* Steps 2, 3, 4 — Compact Grid (7 cols) */}
+          {/* Steps 2, 3, 4 — Compact Grid (7 cols, staggered delays) */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-5">
             {workflowSteps.slice(1).map((step, idx) => (
               <div
                 key={step.phase}
-                className="p-5 sm:p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-3 text-left flex flex-col justify-between"
+                className={`p-5 sm:p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-3 text-left flex flex-col justify-between ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`}
+                style={{ transitionDelay: `${(idx + 1) * 90}ms` }}
               >
                 <div className="space-y-3">
                   <div className="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-secondary border border-border text-text-secondary font-mono font-bold text-[11px]">
@@ -93,7 +103,12 @@ export function WorkflowNarrative() {
         </div>
 
         {/* Narrative Flow Indicator */}
-        <div className="hidden lg:flex items-center justify-center gap-3 mt-10 text-text-tertiary select-none">
+        <div
+          className={`hidden lg:flex items-center justify-center gap-3 mt-10 text-text-tertiary select-none transition-all duration-500 ${
+            isVisible ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ transitionDelay: "360ms" }}
+        >
           <div className="w-12 h-px bg-border" />
           <div className="flex items-center gap-2 text-[12px] font-medium text-text-secondary">
             <span>Satu alur terpadu yang berulang dan menyempurnakan setiap semester barumu</span>

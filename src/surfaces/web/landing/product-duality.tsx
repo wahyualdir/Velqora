@@ -11,13 +11,15 @@ export function ProductDuality() {
     <section id="arsitektur" className="py-20 lg:py-28 border-b border-border bg-surface-secondary/40">
       <div
         ref={ref}
-        className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+        className="max-w-[1200px] mx-auto px-6 lg:px-8"
       >
-        <div className="max-w-xl space-y-3 mb-14 text-left">
+        <div
+          className={`max-w-xl space-y-3 mb-14 text-left transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+          }`}
+        >
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-600 text-xs font-semibold uppercase tracking-wider">
-            Web & Mobile
+            Dua Layar
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-[2.2rem] font-bold font-display tracking-tight text-text-primary leading-tight">
             Bekerja serius di laptop, pantau cepat dari ponsel saat jalan ke kampus.
@@ -27,10 +29,15 @@ export function ProductDuality() {
           </p>
         </div>
 
-        {/* Asymmetric Layout: Desktop gets 7 cols, Mobile gets 5 cols */}
+        {/* Asymmetric Layout with Staggered Entrance */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          {/* Web Desktop — larger, workspace focus */}
-          <div className="lg:col-span-7 p-7 lg:p-9 rounded-2xl border border-border bg-white space-y-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+          {/* Web Desktop — larger, workspace focus (delay 50ms) */}
+          <div
+            className={`lg:col-span-7 p-7 lg:p-9 rounded-2xl border border-border bg-white space-y-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "60ms" }}
+          >
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0 border border-brand-500/20">
                 <Laptop className="w-6 h-6" />
@@ -59,8 +66,13 @@ export function ProductDuality() {
             </div>
           </div>
 
-          {/* Mobile App — compact, daily companion */}
-          <div className="lg:col-span-5 p-7 lg:p-8 rounded-2xl border border-border bg-white space-y-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+          {/* Mobile App — compact, daily companion (delay 140ms) */}
+          <div
+            className={`lg:col-span-5 p-7 lg:p-8 rounded-2xl border border-border bg-white space-y-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "140ms" }}
+          >
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
                 <Smartphone className="w-6 h-6" />

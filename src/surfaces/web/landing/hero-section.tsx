@@ -19,30 +19,54 @@ export function HeroSection() {
 
       <div
         ref={ref}
-        className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+        className="max-w-[1200px] mx-auto px-6 lg:px-8"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left: Editorial Human Copy */}
+          {/* Left: Editorial Human Copy with Staggered Transitions */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 text-xs font-semibold tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
-              Workspace Akademis Mahasiswa
+            {/* 1. Kicker Badge */}
+            <div
+              className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+              }`}
+              style={{ transitionDelay: "0ms" }}
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 text-xs font-semibold tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+                Workspace Akademis Mahasiswa
+              </div>
             </div>
 
-            <h1 className="text-[2.4rem] sm:text-[3rem] lg:text-[3.25rem] xl:text-[3.65rem] font-extrabold tracking-[-0.035em] font-display text-text-primary leading-[1.1]">
+            {/* 2. Headline */}
+            <h1
+              className={`text-[2.4rem] sm:text-[3rem] lg:text-[3.25rem] xl:text-[3.65rem] font-extrabold tracking-[-0.035em] font-display text-text-primary leading-[1.1] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+              }`}
+              style={{ transitionDelay: "80ms" }}
+            >
               Kuliah lebih tenang saat jadwal, materi, dan tugas{" "}
               <span className="text-brand-500 underline decoration-brand-500/30 decoration-wavy decoration-1 underline-offset-4">
                 tidak berceceran.
               </span>
             </h1>
 
-            <p className="text-base lg:text-[17px] text-text-secondary leading-relaxed max-w-lg">
+            {/* 3. Subheadline */}
+            <p
+              className={`text-base lg:text-[17px] text-text-secondary leading-relaxed max-w-lg transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+              }`}
+              style={{ transitionDelay: "160ms" }}
+            >
               Susun jadwal semester tanpa drama bentrok jam, arsipkan slide dosen per mata kuliah, dan bedah konsep rumit bareng AI tutor yang paham silabus perkuliahanmu.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            {/* 4. CTA Group */}
+            <div
+              className={`flex flex-wrap items-center gap-3 pt-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+              }`}
+              style={{ transitionDelay: "240ms" }}
+            >
               <Link href="/dashboard" className="focus-visible:outline-hidden">
                 <Button
                   size="lg"
@@ -64,8 +88,13 @@ export function HeroSection() {
               </Link>
             </div>
 
-            {/* Humanized Trust Indicators */}
-            <div className="pt-4 border-t border-border/80 flex flex-wrap items-center gap-y-2 gap-x-5 text-[12px] text-text-tertiary">
+            {/* 5. Trust Indicators */}
+            <div
+              className={`pt-4 border-t border-border/80 flex flex-wrap items-center gap-y-2 gap-x-5 text-[12px] text-text-tertiary transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+              }`}
+              style={{ transitionDelay: "320ms" }}
+            >
               <span className="flex items-center gap-1.5 text-text-secondary font-medium">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 Data terisolasi per akun
@@ -83,9 +112,14 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right: Interactive Desktop & Mobile Product Mockup */}
-          <div className="lg:col-span-6 relative">
-            {/* Desktop Window Mockup with subtle elevation */}
+          {/* Right: Interactive Product Mockup with Smooth Entrance */}
+          <div
+            className={`lg:col-span-6 relative transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-[0.98]"
+            }`}
+            style={{ transitionDelay: "200ms" }}
+          >
+            {/* Desktop Window Mockup */}
             <div className="rounded-2xl border border-border bg-white shadow-xl overflow-hidden transform lg:rotate-1 lg:translate-x-2 transition-transform duration-300 hover:rotate-0">
               {/* Window Chrome */}
               <div className="h-10 px-4 bg-surface-secondary border-b border-border flex items-center justify-between text-[11px] text-text-tertiary select-none">
@@ -162,7 +196,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Mobile Companion Overlay with smooth badge */}
+            {/* Mobile Companion Overlay */}
             <div className="absolute -bottom-6 -left-3 sm:-left-6 w-48 rounded-2xl border-2 border-border bg-white p-1.5 shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-300 z-10">
               <div className="w-12 h-1.5 bg-surface-secondary rounded-full mx-auto mb-2" />
               <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">

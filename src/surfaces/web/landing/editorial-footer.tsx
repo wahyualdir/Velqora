@@ -1,10 +1,20 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
+import { useScrollReveal } from "./use-landing-animation";
 
 export function EditorialFooter() {
+  const { ref, isVisible } = useScrollReveal<HTMLElement>({ threshold: 0.05 });
+
   return (
-    <footer className="py-14 border-t border-border bg-surface-secondary/40 text-text-secondary">
+    <footer
+      ref={ref}
+      className={`py-14 border-t border-border bg-surface-secondary/40 text-text-secondary transition-opacity duration-500 ease-out ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8 space-y-10">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div className="space-y-2 text-left">

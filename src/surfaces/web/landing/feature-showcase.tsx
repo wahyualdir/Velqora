@@ -5,17 +5,19 @@ import { Calendar, Bot, FolderArchive, CheckSquare, Code2, BrainCircuit } from "
 import { useScrollReveal } from "./use-landing-animation";
 
 export function FeatureShowcase() {
-  const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
+  const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.08 });
 
   return (
     <section id="fitur" className="py-20 lg:py-28 border-b border-border">
       <div
         ref={ref}
-        className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+        className="max-w-[1200px] mx-auto px-6 lg:px-8"
       >
-        <div className="max-w-xl space-y-3 mb-14 text-left">
+        <div
+          className={`max-w-xl space-y-3 mb-14 text-left transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+          }`}
+        >
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-600 text-xs font-semibold uppercase tracking-wider">
             Alat Produktivitas Kuliah
           </div>
@@ -29,8 +31,13 @@ export function FeatureShowcase() {
 
         {/* Broken-rhythm Bento Grid — 12 cols total */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Feature 1: Jadwal Kuliah Pintar — FULL WIDTH, Hero Feature */}
-          <div className="lg:col-span-12 p-6 sm:p-8 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          {/* Feature 1: Jadwal Kuliah Pintar — FULL WIDTH (delay 0ms) */}
+          <div
+            className={`lg:col-span-12 p-6 sm:p-8 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "0ms" }}
+          >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-6 space-y-4 text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-brand-500/10 text-brand-700 text-xs font-bold uppercase tracking-wider">
@@ -73,8 +80,13 @@ export function FeatureShowcase() {
             </div>
           </div>
 
-          {/* Feature 2: AI Tutor Kontekstual — 5 cols */}
-          <div className="lg:col-span-5 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left flex flex-col justify-between">
+          {/* Feature 2: AI Tutor Kontekstual — 5 cols (delay 70ms) */}
+          <div
+            className={`lg:col-span-5 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 text-left flex flex-col justify-between ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "70ms" }}
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center border border-purple-500/20">
                 <Bot className="w-5 h-5" />
@@ -94,8 +106,13 @@ export function FeatureShowcase() {
             </div>
           </div>
 
-          {/* Feature 3: Arsip Modul & Dokumen — 3 cols */}
-          <div className="lg:col-span-3 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left flex flex-col justify-between">
+          {/* Feature 3: Arsip Modul & Dokumen — 3 cols (delay 140ms) */}
+          <div
+            className={`lg:col-span-3 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 text-left flex flex-col justify-between ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "140ms" }}
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center border border-amber-500/20">
                 <FolderArchive className="w-5 h-5" />
@@ -113,8 +130,13 @@ export function FeatureShowcase() {
             </div>
           </div>
 
-          {/* Feature 4: Pelacakan Tugas & Deadline — 4 cols */}
-          <div className="lg:col-span-4 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left flex flex-col justify-between">
+          {/* Feature 4: Pelacakan Tugas & Deadline — 4 cols (delay 210ms) */}
+          <div
+            className={`lg:col-span-4 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 text-left flex flex-col justify-between ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "210ms" }}
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center border border-rose-500/20">
                 <CheckSquare className="w-5 h-5" />
@@ -136,8 +158,13 @@ export function FeatureShowcase() {
             </div>
           </div>
 
-          {/* Feature 5: Playground Kode & OCR Catatan — 8 cols */}
-          <div className="lg:col-span-8 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left">
+          {/* Feature 5: Playground Kode & OCR Catatan — 8 cols (delay 280ms) */}
+          <div
+            className={`lg:col-span-8 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 text-left ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "280ms" }}
+          >
             <div className="space-y-2">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center border border-emerald-500/20">
                 <Code2 className="w-5 h-5" />
@@ -165,8 +192,13 @@ export function FeatureShowcase() {
             </div>
           </div>
 
-          {/* Feature 6: Latihan & Kuis AI — 4 cols */}
-          <div className="lg:col-span-4 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left flex flex-col justify-between">
+          {/* Feature 6: Latihan & Kuis AI — 4 cols (delay 350ms) */}
+          <div
+            className={`lg:col-span-4 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-4 text-left flex flex-col justify-between ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: "350ms" }}
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center border border-cyan-500/20">
                 <BrainCircuit className="w-5 h-5" />

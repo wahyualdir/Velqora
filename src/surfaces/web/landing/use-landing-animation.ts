@@ -1,17 +1,59 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 /**
- * Lightweight, zero-dependency scroll-reveal hook using IntersectionObserver.
- * Automatically respects `prefers-reduced-motion`.
+ * Hook to check if the user has requested reduced motion in their OS settings.
+ */
+export function usePrefersReducedMotion(): boolean {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const listener = (event: MediaQueryListEvent) => {
+      setPrefersReducedMotion(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", listener);
+    return () => mediaQuery.removeEventListener("change", listener);
+  }, []);
+
+  return prefersReducedMotion;
+}
+
+/**
+ * Smooth window scroll detection for navbar (transparent to solid/blur on scroll).
+ */
+export function useHeaderScrolled(threshold = 20): boolean {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setIsScrolled(scrollY > threshold);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [threshold]);
+
+  return isScrolled;
+}
+
+/**
+ * Enhanced scroll-reveal hook using native IntersectionObserver.
+ * Supports threshold, rootMargin, delay, and staggered items.
  */
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(options: {
   threshold?: number;
   rootMargin?: string;
   delay?: number;
+  once?: boolean;
 } = {}) {
-  const { threshold = 0.15, rootMargin = "0px 0px -50px 0px", delay = 0 } = options;
+  const { threshold = 0.12, rootMargin = "0px 0px -40px 0px", delay = 0, once = true } = options;
   const ref = useRef<T | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -19,7 +61,6 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(options:
     const element = ref.current;
     if (!element) return;
 
-    // Accessibility: instant reveal if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
       setIsVisible(true);
@@ -34,7 +75,11 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(options:
             return () => clearTimeout(timer);
           }
           setIsVisible(true);
-          observer.unobserve(element);
+          if (once) {
+            observer.unobserve(element);
+          }
+        } else if (!once) {
+          setIsVisible(false);
         }
       },
       { threshold, rootMargin }
@@ -45,13 +90,13 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(options:
     return () => {
       observer.disconnect();
     };
-  }, [threshold, rootMargin, delay]);
+  }, [threshold, rootMargin, delay, once]);
 
   return { ref, isVisible };
 }
 
 /**
- * Smooth count-up hook for numbers when scrolled into view.
+ * Smooth number count-up animation when scrolled into view.
  */
 export function useCountUp(target: number, durationMs = 1200, isVisible = true) {
   const [count, setCount] = useState(0);
@@ -65,14 +110,13 @@ export function useCountUp(target: number, durationMs = 1200, isVisible = true) 
       return;
     }
 
-    let start = 0;
     const startTime = performance.now();
 
     const updateCount = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / durationMs, 1);
 
-      // Natural ease-out quad curve
+      // Custom cubic-bezier(0.16, 1, 0.3, 1) approximation
       const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentVal = Math.round(easedProgress * target);
 
@@ -88,4 +132,20 @@ export function useCountUp(target: number, durationMs = 1200, isVisible = true) 
   }, [target, durationMs, isVisible]);
 
   return count;
+}
+
+/**
+ * Helper to perform smooth anchor scrolling with sticky header offset.
+ */
+export function scrollToAnchor(targetId: string, headerOffset = 80) {
+  const targetElement = document.getElementById(targetId);
+  if (targetElement) {
+    const elementPosition = targetElement.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
 }

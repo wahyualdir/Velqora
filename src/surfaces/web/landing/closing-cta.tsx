@@ -17,7 +17,7 @@ export function ClosingCTA() {
       <div
         ref={ref}
         className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-[0.98]"
         }`}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
@@ -39,7 +39,7 @@ export function ClosingCTA() {
               <Link href="/dashboard" className="focus-visible:outline-hidden">
                 <Button
                   size="lg"
-                  className="text-sm font-semibold gap-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white px-7 shadow-sm hover:shadow-md transition-all duration-150"
+                  className="text-sm font-semibold gap-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white px-7 shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer"
                 >
                   <span>Masuk ke Workspace</span>
                   <ArrowRight className="w-4 h-4" />
@@ -66,9 +66,9 @@ export function ClosingCTA() {
             </div>
           </div>
 
-          {/* Right: Verified Metrics Grid */}
+          {/* Right: Verified Metrics Grid with Subtle Hover Lift */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-200">
               <p className="text-3xl font-extrabold font-display text-text-primary">
                 {stat100}%
               </p>
@@ -76,7 +76,7 @@ export function ClosingCTA() {
               <p className="text-[11px] text-text-tertiary">Privasi penuh per akun</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-200">
               <p className="text-3xl font-extrabold font-display text-brand-600">
                 PWA
               </p>
@@ -84,7 +84,7 @@ export function ClosingCTA() {
               <p className="text-[11px] text-text-tertiary">Tanpa boros memori HP</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-200">
               <p className="text-3xl font-extrabold font-display text-text-primary">
                 RLS
               </p>
@@ -92,7 +92,7 @@ export function ClosingCTA() {
               <p className="text-[11px] text-text-tertiary">Row-Level Security aktif</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="p-5 rounded-2xl bg-surface-secondary/70 border border-border space-y-1 text-left shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-200">
               <p className="text-3xl font-extrabold font-display text-emerald-600">
                 &lt;{latency}ms
               </p>
