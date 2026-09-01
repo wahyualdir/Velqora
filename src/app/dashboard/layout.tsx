@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
-import { DesktopTopBar } from "@/components/layout/desktop/desktop-top-bar";
-import { MobileTopBar } from "@/components/layout/mobile/mobile-top-bar";
-import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { DesktopTopBar } from "@/surfaces/web/layout/desktop-top-bar";
+import { MobileTopBar } from "@/surfaces/app/layout/mobile-top-bar";
+import { MobileBottomNav } from "@/surfaces/app/layout/mobile-bottom-nav";
 import { TechBackground } from "@/components/ui/tech-background";
 import { DashboardFooter, MinimalCopyright } from "@/components/layout/watermark-footer";
 import { CommandPalette } from "@/components/layout/command-palette";

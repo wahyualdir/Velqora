@@ -147,7 +147,7 @@ describe("FASE 40: Professional Product UI, Visual System & UX Polish Suite", ()
   // ─── Group D: Desktop Workspace & Mobile App Separation ───
   describe("Group D: Workspace Refinement & True Separation", () => {
     it("Scenario POLISH-7: Desktop Top Bar has clean spotlight search and non-glowing online indicator", () => {
-      const topBarPath = path.join(process.cwd(), "src/components/layout/desktop/desktop-top-bar.tsx");
+      const topBarPath = path.join(process.cwd(), "src/surfaces/web/layout/desktop-top-bar.tsx");
       assert.ok(fs.existsSync(topBarPath), "desktop-top-bar.tsx must exist");
       const content = fs.readFileSync(topBarPath, "utf-8");
 
@@ -159,7 +159,7 @@ describe("FASE 40: Professional Product UI, Visual System & UX Polish Suite", ()
     });
 
     it("Scenario POLISH-8: Mobile bottom navigation provides single-hand thumb navigation with safe touch targets", () => {
-      const navPath = path.join(process.cwd(), "src/components/layout/mobile-bottom-nav.tsx");
+      const navPath = path.join(process.cwd(), "src/surfaces/app/layout/mobile-bottom-nav.tsx");
       assert.ok(fs.existsSync(navPath), "mobile-bottom-nav.tsx must exist");
       const content = fs.readFileSync(navPath, "utf-8");
 

@@ -12,7 +12,7 @@ import {
   ExternalLink,
   Plus,
 } from "lucide-react";
-import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
+import { MobileBottomSheet } from "@/surfaces/app/layout/mobile-bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { cn, daysUntilDeadline, formatDate } from "@/lib/utils";
 

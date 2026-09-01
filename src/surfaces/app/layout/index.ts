@@ -1,4 +1,5 @@
 export * from "./mobile-app-shell";
+export * from "./mobile-bottom-nav";
 export * from "./mobile-bottom-sheet";
 export * from "./mobile-list";
 export * from "./mobile-menu-drawer";

@@ -42,7 +42,7 @@ describe("FASE 42: Full Breakpoint Responsiveness Matrix Suite (Fase 5)", () => 
     it("Scenario RESP-4: DesktopTable enforces overflow-x-auto and min-w-[700px]", () => {
       const tablePath = path.join(
         process.cwd(),
-        "src/components/layout/desktop/desktop-table.tsx"
+        "src/surfaces/web/layout/desktop-table.tsx"
       );
       assert.ok(fs.existsSync(tablePath), "desktop-table.tsx must exist");
       const content = fs.readFileSync(tablePath, "utf-8");
@@ -81,7 +81,7 @@ describe("FASE 42: Full Breakpoint Responsiveness Matrix Suite (Fase 5)", () => 
     it("Scenario RESP-7: MobileTopBar enforces safe-area-inset-top and responsive padding", () => {
       const topBarPath = path.join(
         process.cwd(),
-        "src/components/layout/mobile/mobile-top-bar.tsx"
+        "src/surfaces/app/layout/mobile-top-bar.tsx"
       );
       assert.ok(fs.existsSync(topBarPath), "mobile-top-bar.tsx must exist");
       const content = fs.readFileSync(topBarPath, "utf-8");
@@ -93,7 +93,7 @@ describe("FASE 42: Full Breakpoint Responsiveness Matrix Suite (Fase 5)", () => 
     it("Scenario RESP-8: MobileBottomNav enforces safe-area-inset-bottom and 48px touch targets", () => {
       const navPath = path.join(
         process.cwd(),
-        "src/components/layout/mobile-bottom-nav.tsx"
+        "src/surfaces/app/layout/mobile-bottom-nav.tsx"
       );
       assert.ok(fs.existsSync(navPath), "mobile-bottom-nav.tsx must exist");
       const content = fs.readFileSync(navPath, "utf-8");

@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
+import { MobileBottomSheet } from "@/surfaces/app/layout/mobile-bottom-sheet";
 import { ScheduleItem } from "@/types";
 
 interface MobileScheduleAgendaProps {

@@ -16,7 +16,7 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
-import { MobileBottomSheet } from "@/components/layout/mobile/mobile-bottom-sheet";
+import { MobileBottomSheet } from "@/surfaces/app/layout/mobile-bottom-sheet";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatFileSize, cn } from "@/lib/utils";

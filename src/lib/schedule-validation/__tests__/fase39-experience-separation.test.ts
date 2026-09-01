@@ -52,7 +52,7 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
     it("Scenario EXP-6: Mobile bottom nav exposes exactly 5 primary destinations", () => {
       const bottomNavPath = path.join(
         process.cwd(),
-        "src/components/layout/mobile-bottom-nav.tsx"
+        "src/surfaces/app/layout/mobile-bottom-nav.tsx"
       );
       assert.ok(fs.existsSync(bottomNavPath), "mobile-bottom-nav.tsx must exist");
       const content = fs.readFileSync(bottomNavPath, "utf-8");
@@ -68,7 +68,7 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
     it("Scenario EXP-7: Mobile menu drawer provides access to secondary features without clutter", () => {
       const drawerPath = path.join(
         process.cwd(),
-        "src/components/layout/mobile/mobile-menu-drawer.tsx"
+        "src/surfaces/app/layout/mobile-menu-drawer.tsx"
       );
       assert.ok(fs.existsSync(drawerPath), "mobile-menu-drawer.tsx must exist");
       const content = fs.readFileSync(drawerPath, "utf-8");
@@ -87,15 +87,15 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
     it("Scenario EXP-8: Desktop workspace components exist with high information density", () => {
       const workspacePath = path.join(
         process.cwd(),
-        "src/components/layout/desktop/desktop-workspace.tsx"
+        "src/surfaces/web/layout/desktop-workspace.tsx"
       );
       const topBarPath = path.join(
         process.cwd(),
-        "src/components/layout/desktop/desktop-top-bar.tsx"
+        "src/surfaces/web/layout/desktop-top-bar.tsx"
       );
       const tablePath = path.join(
         process.cwd(),
-        "src/components/layout/desktop/desktop-table.tsx"
+        "src/surfaces/web/layout/desktop-table.tsx"
       );
 
       assert.ok(fs.existsSync(workspacePath), "DesktopWorkspace must exist");
@@ -153,9 +153,9 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
   describe("Group E: Design Rigor & Anti-Slop Policy", () => {
     it("Scenario EXP-12: Desktop & Mobile components adhere to calm, non-glowing aesthetic", () => {
       const filesToCheck = [
-        "src/components/layout/desktop/desktop-workspace.tsx",
-        "src/components/layout/desktop/desktop-top-bar.tsx",
-        "src/components/layout/mobile/mobile-top-bar.tsx",
+        "src/surfaces/web/layout/desktop-workspace.tsx",
+        "src/surfaces/web/layout/desktop-top-bar.tsx",
+        "src/surfaces/app/layout/mobile-top-bar.tsx",
         "src/surfaces/app/dashboard/mobile-dashboard-view.tsx",
         "src/surfaces/web/tasks/desktop-task-workspace.tsx",
       ];

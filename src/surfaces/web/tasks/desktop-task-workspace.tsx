@@ -16,7 +16,7 @@ import {
   DesktopTableHead,
   DesktopTableRow,
   DesktopTableCell,
-} from "@/components/layout/desktop/desktop-table";
+} from "@/surfaces/web/layout/desktop-table";
 import { cn, daysUntilDeadline, formatDate } from "@/lib/utils";
 
 interface DesktopTaskWorkspaceProps {
