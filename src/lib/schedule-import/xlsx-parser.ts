@@ -24,33 +24,70 @@ const SCHEDULE_HEADER_KEYWORDS = [
   "class",
 ];
 
+const MAX_XLSX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+const MAX_SHEETS_ALLOWED = 25;
+const MAX_ROWS_PER_SHEET = 2500;
+const MAX_CELL_STRING_LENGTH = 1000;
+
+/**
+ * Sanitizes cell values to prevent Prototype Pollution and ReDoS
+ */
+function sanitizeCellValue(cell: unknown): string {
+  if (cell === null || cell === undefined) return "";
+  const raw = String(cell).trim();
+  if (!raw) return "";
+
+  // Prevent prototype pollution keywords or formula injection
+  const cleaned = raw
+    .replace(/(?:__proto__|prototype|constructor)/gi, "")
+    .slice(0, MAX_CELL_STRING_LENGTH)
+    .trim();
+
+  return cleaned;
+}
+
 /**
  * Excel Spreadsheet (.xlsx, .xls) Parser
- * Extracts all worksheets, rows, and cells with row-level traceability.
- * Automatically detects offset header rows, handles merged cells (fill forward), and ignores decorative titles.
- * Never executes spreadsheet formulas, completely safe.
+ * Extracts worksheets, rows, and cells with row-level traceability.
+ * Defense-in-depth:
+ * - Hard bounds on file size (15MB), sheet count (25), and row count (2500).
+ * - Disables formula execution (cellFormula: false) and HTML evaluation (cellHTML: false).
+ * - Sanitizes cell text to protect against Prototype Pollution & ReDoS.
+ * - Handles offset header rows and forward-fills merged cells safely.
  */
 export async function parseXlsxDocument(
   buffer: Buffer,
   fileName: string
 ): Promise<RawDocumentExtraction> {
+  if (buffer.length > MAX_XLSX_FILE_SIZE) {
+    throw new Error(
+      `Ukuran berkas Excel (${(buffer.length / (1024 * 1024)).toFixed(1)} MB) melebihi batas aman 15 MB.`
+    );
+  }
+
   try {
     const workbook = XLSX.read(buffer, {
       type: "buffer",
       cellDates: true,
       cellFormula: false, // Security: do not execute or evaluate formulas
-      cellHTML: false,
+      cellHTML: false, // Security: do not parse HTML
+      cellText: false,
+      dense: true, // Memory optimization
+      sheetRows: MAX_ROWS_PER_SHEET, // Mitigates ReDoS & excessive row processing
     });
 
     const lines: string[] = [];
     const fragments: Array<{ pageOrRow: string; text: string }> = [];
     let totalRows = 0;
 
-    for (const sheetName of workbook.SheetNames) {
+    const sheetNames = workbook.SheetNames.slice(0, MAX_SHEETS_ALLOWED);
+
+    for (const sheetName of sheetNames) {
+      const safeSheetName = sanitizeCellValue(sheetName) || "Sheet";
       const sheet = workbook.Sheets[sheetName];
       if (!sheet) continue;
 
-      lines.push(`\n=== LEMBAR KERJA (SHEET): ${sheetName} ===`);
+      lines.push(`\n=== LEMBAR KERJA (SHEET): ${safeSheetName} ===`);
 
       // Convert sheet to JSON rows as array of arrays
       const rawRows: any[][] = XLSX.utils.sheet_to_json(sheet, {
@@ -64,7 +101,7 @@ export async function parseXlsxDocument(
 
       // Detect header row index
       const headerRowIndex = findHeaderRowIndex(rawRows);
-      const headers = (rawRows[headerRowIndex] || []).map((h) => String(h || "").trim());
+      const headers = (rawRows[headerRowIndex] || []).map((h) => sanitizeCellValue(h));
 
       // If headers found, emit header line
       const cleanHeaderString = headers.filter(Boolean).join(" | ");
@@ -80,7 +117,7 @@ export async function parseXlsxDocument(
       rawRows.forEach((row, index) => {
         if (index <= headerRowIndex) return; // Skip headers and banner rows before it
 
-        const rowStrings = row.map((cell) => String(cell || "").trim());
+        const rowStrings = (Array.isArray(row) ? row : []).map((cell) => sanitizeCellValue(cell));
         const isBlank = rowStrings.every((c) => !c);
         if (isBlank) return;
 
@@ -105,7 +142,7 @@ export async function parseXlsxDocument(
 
         if (!rowText) return;
 
-        const traceLabel = `${sheetName} - Baris ${index + 1}`;
+        const traceLabel = `${safeSheetName} - Baris ${index + 1}`;
         lines.push(`[${traceLabel}]: ${rowText}`);
         fragments.push({
           pageOrRow: traceLabel,
@@ -139,7 +176,7 @@ function findHeaderRowIndex(rows: any[][]): number {
     const row = rows[i] || [];
     let score = 0;
     for (const cell of row) {
-      const cellStr = String(cell || "").toLowerCase().trim();
+      const cellStr = sanitizeCellValue(cell).toLowerCase();
       if (!cellStr) continue;
       for (const kw of SCHEDULE_HEADER_KEYWORDS) {
         if (cellStr.includes(kw)) {

@@ -68,13 +68,26 @@ cp .env.example .env.local
 Isi variabel konfigurasi dengan nilai dari dashboard Supabase & penyedia AI Anda:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+# Supabase (Wajib untuk Auth, Database & Storage)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Multimodal AI (Wajib untuk AI Tutor, AI Kuis & AI Parser)
 GEMINI_API_KEY=your_gemini_api_key
+
+# Opsional
 ANTHROPIC_API_KEY=your_anthropic_api_key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_OWNER_EMAIL=admin@velqora.app
+NEXT_PUBLIC_ADMIN_EMAIL=admin@velqora.app
 ```
 
-> **Catatan Keamanan**: Jangan pernah melakukan commit file `.env.local` atau credential asli ke dalam git repository.
+> [!IMPORTANT]
+> **Catatan Fungsionalitas & Credentials**:
+> Aplikasi **tidak akan berfungsi secara penuh** (login/registrasi, penyimpanan cloud modul/tugas, fitur AI Tutor, dan kuis otomatis) tanpa credential asli yang valid pada `.env.local`. Pastikan Anda telah membuat project Supabase dan memasukkan API Key Gemini yang valid.
+
+> [!WARNING]
+> **Catatan Keamanan**: Jangan pernah melakukan commit file `.env.local` atau credential rahasia ke dalam repository git.
 
 ### 3. Instalasi Dependencies
 ```bash
@@ -91,7 +104,7 @@ Akses aplikasi melalui browser di `http://localhost:3000`.
 
 ## 🧪 Pengujian (Testing)
 
-Velqora dilengkapi dengan 25 automated test suites yang mencakup unit test, integration test, conflict engine, schedule import, heuristic parser, dan product experience scenarios.
+Velqora dilengkapi dengan 28 automated test suites yang mencakup unit test, integration test, conflict engine, schedule import, heuristic parser, dan product experience scenarios.
 
 Jalankan seluruh test suite dengan:
 
@@ -101,10 +114,11 @@ npm test
 
 ---
 
-## 📚 Dokumentasi Arsitektur
+## 📚 Dokumentasi Arsitektur & Keamanan
 
 - [Protected Core Specification](docs/architecture/PROTECTED_CORE.md)
 - [Web vs Mobile Boundary Specification](docs/architecture/WEB_MOBILE_BOUNDARY.md)
 - [Design System Boundary Specification](docs/architecture/DESIGN_SYSTEM_BOUNDARY.md)
+- [Security Advisory & Audit Evaluation](docs/audits/SECURITY_ADVISORY.md)
 - [Phase 0 Forensic Audit](docs/audits/PHASE_0_FORENSIC_AUDIT.md)
 - [Product Acceptance Report](docs/audits/PRODUCT_ACCEPTANCE_REPORT.md)
