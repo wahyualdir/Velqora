@@ -196,107 +196,91 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* REAL ANCHORED HANGING ROPE & MOBILE COMPANION ASSEMBLY */}
-            {/* Clamped firmly to the TOP BEZEL of the desktop window, dropping down into the phone */}
+            {/* REALISTIC LANYARD STRAP & MOBILE COMPANION BADGE ASSEMBLY */}
             <div
-              className={`absolute top-0 -left-2 sm:-left-6 bottom-[-28px] z-20 pointer-events-none flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+              className={`absolute top-0 -left-3 sm:-left-7 bottom-[-32px] z-20 pointer-events-none flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
                 isVisible
                   ? "opacity-100 translate-y-0"
-                  : "opacity-0 -translate-y-40"
+                  : "opacity-0 -translate-y-48"
               }`}
               style={{ transitionDelay: "450ms" }}
             >
-              {/* 1. Metal Top Clamp (Grips securely over the window header top border) */}
-              <div className="relative z-30 flex flex-col items-center -mt-2.5">
-                {/* Clamp Body */}
-                <div className="px-2 py-0.5 rounded-t-sm bg-stone-700 border border-stone-800 shadow-md flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-                  <div className="w-2 h-0.5 bg-brand-500 rounded-full" />
-                </div>
-                {/* Heavy-duty Carabiner Ring */}
-                <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-700 bg-white shadow-xs -mt-0.5 flex items-center justify-center">
-                  <div className="w-1 h-1 rounded-full bg-brand-600" />
-                </div>
-              </div>
-
-              {/* 2. Realistic Braided Hemp/Leather Rope Vector (Runs continuous full distance) */}
-              <div className="flex-1 w-2.5 relative flex justify-center overflow-visible my-0">
-                <svg
-                  className="w-3.5 h-full overflow-visible"
-                  preserveAspectRatio="none"
-                  viewBox="0 0 14 100"
-                >
-                  {/* Subtle Cast Shadow */}
-                  <line
-                    x1="8"
-                    y1="0"
-                    x2="8"
-                    y2="100"
-                    stroke="rgba(0,0,0,0.2)"
-                    strokeWidth="3.5"
-                  />
-                  {/* Base Braided Rope (Warm Terracotta Cord) */}
-                  <line
-                    x1="7"
-                    y1="0"
-                    x2="7"
-                    y2="100"
-                    stroke="#c2553a"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                  />
-                  {/* Twisted Strand Highlights */}
-                  <line
-                    x1="7"
-                    y1="0"
-                    x2="7"
-                    y2="100"
-                    stroke="#fde8e2"
-                    strokeWidth="1.2"
-                    strokeDasharray="4,5"
-                    strokeLinecap="round"
-                  />
-                  {/* Twisted Strand Shadow Creases */}
-                  <line
-                    x1="7"
-                    y1="0"
-                    x2="7"
-                    y2="100"
-                    stroke="#7c2d12"
-                    strokeWidth="1.2"
-                    strokeDasharray="3,6"
-                    strokeDashoffset="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-
-              {/* 3. Bottom Metal Fastener Clip attached to Phone Notch */}
-              <div className="relative z-30 flex flex-col items-center -mb-2">
-                <div className="w-3.5 h-4 rounded-sm border-2 border-stone-700 bg-stone-200 shadow-xs flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
-                </div>
-              </div>
-
-              {/* 4. Mobile Companion Phone Card (Hanging naturally at the bottom of the rope) */}
-              <div className="w-48 sm:w-52 rounded-2xl border-2 border-border bg-white p-1.5 shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-brand-500/20 group pointer-events-auto mt-0">
-                {/* Phone Notch */}
-                <div className="w-12 h-1.5 bg-surface-secondary rounded-full mx-auto mb-2" />
-                <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
-                  <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
-                    <span className="font-bold text-text-primary flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-brand-500" />
-                      Velqora Mobile
-                    </span>
-                    <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
+              <div className="flex flex-col items-center animate-rope-sway origin-top h-full">
+                {/* 1. Top Window Metal Clamp & Safety Buckle */}
+                <div className="relative z-30 flex flex-col items-center -mt-2.5">
+                  {/* Chrome Metal Edge Clip over the window frame */}
+                  <div className="px-2.5 py-0.5 rounded-t-sm bg-gradient-to-b from-stone-300 via-stone-100 to-stone-400 border border-stone-500 shadow-md flex items-center justify-center">
+                    <div className="w-2.5 h-0.5 bg-stone-600 rounded-full" />
                   </div>
-                  <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs group-hover:border-brand-500/40 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
-                      <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
+                  {/* Matte Black Breakaway Buckle Top */}
+                  <div className="w-6 h-2.5 bg-stone-800 rounded-xs border border-stone-950 shadow-xs flex items-center justify-center">
+                    <div className="w-1.5 h-1 bg-stone-600 rounded-full" />
+                  </div>
+                </div>
+
+                {/* 2. Authentic Woven Fabric Lanyard Ribbon (Flat Woven Strap with Stitches & Subtle Branding) */}
+                <div className="flex-1 w-5 sm:w-5.5 relative flex flex-col items-center justify-center shadow-md -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x border-brand-800/40">
+                  {/* Left & Right Edge Stitches */}
+                  <div className="absolute inset-y-0 left-0.5 w-px border-l border-dashed border-white/30" />
+                  <div className="absolute inset-y-0 right-0.5 w-px border-r border-dashed border-white/30" />
+                  
+                  {/* Fine Fabric Webbing Texture */}
+                  <div
+                    className="absolute inset-0 opacity-25 mix-blend-overlay"
+                    style={{
+                      backgroundImage:
+                        "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.8) 2px, rgba(255,255,255,0.8) 4px)",
+                    }}
+                  />
+
+                  {/* Subtle Vertical Woven Typography on Ribbon */}
+                  <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none">
+                    <span className="text-[7.5px] font-mono font-bold tracking-[0.25em] text-white/50 uppercase [writing-mode:vertical-lr] rotate-180">
+                      VELQORA
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Bottom Metal Hardware (Chrome Crimp Collar + Swivel Hook) */}
+                <div className="relative z-30 flex flex-col items-center -my-0.5">
+                  {/* Silver Metal Crimp Clamp */}
+                  <div className="w-5 h-2 bg-gradient-to-r from-stone-400 via-stone-100 to-stone-400 rounded-xs border border-stone-500 shadow-xs flex items-center justify-around px-0.5">
+                    <div className="w-0.5 h-1 bg-stone-600 rounded-full" />
+                    <div className="w-0.5 h-1 bg-stone-600 rounded-full" />
+                  </div>
+
+                  {/* Swivel D-Ring */}
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-600 bg-transparent -mt-1 shadow-xs flex items-center justify-center">
+                    {/* Lobster Clasp Hook */}
+                    <div className="w-2 h-3 bg-gradient-to-b from-stone-200 to-stone-400 border border-stone-600 rounded-b-sm -mb-2 shadow-xs" />
+                  </div>
+                </div>
+
+                {/* 4. Mobile Companion Badge Card with ID Slot Hole */}
+                <div className="w-48 sm:w-52 rounded-2xl border-2 border-border bg-white p-1.5 shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-brand-500/20 group pointer-events-auto mt-1">
+                  {/* Lanyard Attachment Oval Hole on Top Tab */}
+                  <div className="flex justify-center -mt-3.5 mb-1.5">
+                    <div className="px-3 py-0.5 rounded-full bg-surface-secondary border border-border shadow-xs flex items-center justify-center">
+                      <div className="w-3.5 h-1.5 rounded-full bg-stone-800/80 border border-stone-600 shadow-inner" />
                     </div>
-                    <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
-                    <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+                  </div>
+
+                  <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
+                    <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
+                      <span className="font-bold text-text-primary flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-brand-500" />
+                        Velqora Mobile
+                      </span>
+                      <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs group-hover:border-brand-500/40 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
+                        <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
+                      </div>
+                      <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
+                      <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+                    </div>
                   </div>
                 </div>
               </div>
