@@ -67,7 +67,14 @@ function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
 }
 
 /**
- * World-Class 360° Interactive 3D Lanyard Card with Physical Thickness & Unified Lighting
+ * World-Class 360° Interactive 3D Lanyard Card with Elastic Stretch Physics
+ *
+ * Features:
+ * - Pointer drag rotation (yaw/pitch) with spring snap-back
+ * - Elastic vertical stretch: pulling card downward elongates the strap
+ * - Spring snap-back with bouncy overshoot (1-2 oscillations)
+ * - Visual tension effects: strap narrows, brightens, and glows when stretched
+ * - Rubber-band resistance beyond max stretch threshold
  */
 function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const [rotX, setRotX] = useState(4);
@@ -81,19 +88,29 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     opacity: 0.35,
   });
 
+  // ── Elastic stretch state ──
+  const [stretchY, setStretchY] = useState(0);
+  const MAX_STRETCH = 72;  // comfortable max stretch (px) before resistance kicks in
+  const HARD_MAX = 92;     // absolute hard limit with heavy rubber-band resistance
+
   // Physics animation loop refs
   const animFrameRef = useRef<number | null>(null);
   const velocityRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const lastPointerRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
   const rotRef = useRef<{ x: number; y: number }>({ x: 4, y: -6 });
   const isDraggingRef = useRef(false);
+  const stretchRef = useRef(0);
+  const stretchVelRef = useRef(0);
 
-  // Sync ref with state
+  // Sync refs with state for rAF access
   useEffect(() => {
     rotRef.current = { x: rotX, y: rotY };
   }, [rotX, rotY]);
+  useEffect(() => {
+    stretchRef.current = stretchY;
+  }, [stretchY]);
 
-  // Spring physics decay loop on pointer release
+  // Combined spring physics decay (rotation + elastic stretch snap-back)
   const startSpringDecay = useCallback((targetFaceY: number, initialVelY: number) => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
 
@@ -102,12 +119,20 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     let velY = initialVelY;
     let velX = (4 - currentX) * 0.1;
 
-    const stiffness = 0.075; // Spring tension
-    const damping = 0.82;    // Damping friction (allows 2-3 smooth oscillations)
+    // Rotation spring constants
+    const stiffness = 0.075;
+    const damping = 0.82;
+
+    // Elastic stretch spring constants — high tension, bouncy for snap-back feel
+    let currentStretch = stretchRef.current;
+    let sVel = stretchVelRef.current;
+    const sStiffness = 0.14;  // high tension → fast snap
+    const sDamping = 0.72;    // low damping → allows 1-2 bounces before settling
 
     const step = () => {
       if (isDraggingRef.current) return;
 
+      // ── Rotation spring ──
       const forceY = (targetFaceY - currentY) * stiffness;
       velY = (velY + forceY) * damping;
       currentY += velY;
@@ -119,12 +144,28 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
       setRotX(currentX);
       setRotY(currentY);
 
-      // Continue until settled
-      if (Math.abs(velY) > 0.05 || Math.abs(targetFaceY - currentY) > 0.1 || Math.abs(velX) > 0.05) {
+      // ── Elastic stretch spring (snap to 0 with overshoot bounce) ──
+      const sForce = (0 - currentStretch) * sStiffness;
+      sVel = (sVel + sForce) * sDamping;
+      currentStretch += sVel;
+
+      // Allow slight negative overshoot → strap compresses briefly for bounce realism
+      setStretchY(Math.max(-7, currentStretch));
+
+      // Check if all springs are settled
+      const rotSettled =
+        Math.abs(velY) < 0.05 &&
+        Math.abs(targetFaceY - currentY) < 0.1 &&
+        Math.abs(velX) < 0.05;
+      const stretchSettled =
+        Math.abs(currentStretch) < 0.3 && Math.abs(sVel) < 0.08;
+
+      if (!rotSettled || !stretchSettled) {
         animFrameRef.current = requestAnimationFrame(step);
       } else {
         setRotX(4);
         setRotY(targetFaceY);
+        setStretchY(0);
       }
     };
 
@@ -145,11 +186,12 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
       time: performance.now(),
     };
     velocityRef.current = { x: 0, y: 0 };
+    stretchVelRef.current = 0;
 
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
-  // Handle pointer move
+  // Handle pointer move — rotation (horizontal) + elastic stretch (vertical)
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current) return;
 
@@ -168,9 +210,29 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
     lastPointerRef.current = { x: e.clientX, y: e.clientY, time: now };
 
+    // ── Horizontal drag → yaw rotation (unchanged) ──
     const nextRotY = rotRef.current.y + deltaX * 0.75;
-    const nextRotX = Math.max(-26, Math.min(26, rotRef.current.x - deltaY * 0.4));
 
+    // ── Vertical drag → split between pitch rotation & elastic stretch ──
+    const curStretch = stretchRef.current;
+    const stretchRatio = Math.min(1, Math.max(0, curStretch) / MAX_STRETCH);
+
+    // Pitch sensitivity decreases as strap stretches (feels heavier when taut)
+    const pitchSensitivity = 0.4 * (1 - stretchRatio * 0.6);
+    const nextRotX = Math.max(-26, Math.min(26, rotRef.current.x - deltaY * pitchSensitivity));
+
+    // Vertical delta contributes to stretch (both directions: pull down & release up)
+    let newStretch = curStretch + deltaY * 0.55;
+
+    // Rubber-band resistance beyond MAX_STRETCH — feels increasingly "heavy"
+    if (newStretch > MAX_STRETCH) {
+      const excess = newStretch - MAX_STRETCH;
+      newStretch = MAX_STRETCH + excess * 0.1;
+    }
+    newStretch = Math.max(0, Math.min(HARD_MAX, newStretch));
+
+    stretchRef.current = newStretch;
+    setStretchY(newStretch);
     setRotX(nextRotX);
     setRotY(nextRotY);
 
@@ -181,13 +243,16 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     setGlare({ x: normX, y: normY, opacity: 0.65 });
   };
 
-  // Handle pointer up with momentum & spring physics
+  // Handle pointer up — launch combined rotation + stretch snap-back spring
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current) return;
 
     setIsDragging(false);
     isDraggingRef.current = false;
     (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+
+    // Let spring tension drive the snap-back (no initial velocity needed)
+    stretchVelRef.current = 0;
 
     // Projected landing angle based on release velocity
     const projectedY = rotRef.current.y + velocityRef.current.y * 8;
@@ -198,7 +263,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     const baseTurns = Math.round((projectedY - (isCloserToBack ? 180 : 0)) / 360) * 360;
     const targetY = baseTurns + (isCloserToBack ? 180 : -6);
 
-    // Launch spring-decay loop
+    // Launch combined spring-decay loop (handles both rotation & stretch)
     startSpringDecay(targetY, velocityRef.current.y * 1.4);
     setGlare((prev) => ({ ...prev, opacity: 0.35 }));
   };
@@ -211,7 +276,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     startSpringDecay(nextTargetY, 14);
   };
 
-  // Calculate dynamic 3D visual metrics
+  // ── Calculate dynamic 3D visual metrics ──
   const radY = (rotY * Math.PI) / 180;
   const cosY = Math.cos(radY);
   const sinY = Math.sin(radY);
@@ -229,6 +294,12 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const shadowBlur = 35 + Math.abs(cosY) * 18;
   const shadowAlpha = 0.16 + Math.abs(cosY) * 0.16;
 
+  // 4. Elastic stretch visual metrics
+  const clampedStretch = Math.max(0, stretchY);
+  const stretchFactor = Math.min(1, clampedStretch / MAX_STRETCH); // 0 → 1
+  const strapWidthScale = 1 - stretchFactor * 0.09;   // narrows ~9% at max tension
+  const strapBrightness = 1 + stretchFactor * 0.14;   // brighter when tense/taut
+
   // Cleanup animation frame
   useEffect(() => {
     return () => {
@@ -238,10 +309,13 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
   return (
     <div
-      className={`absolute top-0 -left-2 sm:-left-6 bottom-[-44px] z-30 pointer-events-none flex flex-col items-center [perspective:1300px] transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+      className={`absolute top-0 -left-2 sm:-left-6 z-30 pointer-events-none flex flex-col items-center [perspective:1300px] transition-[opacity,transform] duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] overflow-visible ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-48"
       }`}
-      style={{ transitionDelay: "450ms" }}
+      style={{
+        transitionDelay: "450ms",
+        bottom: `${-(44 + stretchY)}px`,
+      }}
     >
       <div
         className="flex flex-col items-center origin-top h-full [transform-style:preserve-3d]"
@@ -265,16 +339,17 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           </div>
         </div>
 
-        {/* ── 2. SOLID WOVEN FABRIC LANYARD STRAP (Tucked seamlessly into clamps) ── */}
+        {/* ── 2. ELASTIC WOVEN FABRIC LANYARD STRAP (Stretches with drag) ── */}
         <div
           className="flex-1 w-8 sm:w-9 relative flex flex-col items-center justify-center -my-1 overflow-hidden rounded-xs border-x-2 border-brand-900/80 shadow-[0_8px_24px_rgba(194,85,58,0.38),0_4px_10px_rgba(0,0,0,0.22)] [transform-style:preserve-3d]"
           style={{
             background:
               "linear-gradient(90deg, #993822 0%, #ba462b 12%, #d95e3f 45%, #ea6f50 55%, #ba462b 88%, #993822 100%)",
-            transform: `skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
+            transform: `scaleX(${strapWidthScale}) skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
             transformOrigin: "top center",
-            transition: isDragging ? "none" : "transform 200ms ease-out",
-            willChange: "transform",
+            filter: `brightness(${strapBrightness})`,
+            transition: isDragging ? "none" : "transform 200ms ease-out, filter 200ms ease-out",
+            willChange: "transform, filter",
           }}
         >
           {/* Top & Bottom Deep Inset Connection Shadows (Tuck-in depth) */}
@@ -294,6 +369,16 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             }}
           />
 
+          {/* Tension highlight glow — visible when strap is under elastic stress */}
+          <div
+            className="absolute inset-0 pointer-events-none z-10"
+            style={{
+              background: "linear-gradient(180deg, transparent 10%, rgba(255,200,150,0.15) 50%, transparent 90%)",
+              opacity: stretchFactor,
+              transition: isDragging ? "none" : "opacity 200ms ease-out",
+            }}
+          />
+
           {/* Solid 3D Woven Monogram */}
           <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none z-10">
             <span className="text-[9px] font-mono font-extrabold tracking-[0.32em] text-white uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
@@ -310,7 +395,6 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             <div className="w-2.5 h-0.5 bg-stone-600 rounded-full opacity-70" />
             <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
           </div>
-
           {/* Swivel D-Ring */}
           <div className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-br from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
             {/* Lobster Clasp Spring Hook (Descends directly into the card grommet) */}
@@ -328,7 +412,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
-          title="Geser 360° untuk memutar kartu"
+          title="Geser horizontal 360° · Tarik ke bawah untuk stretch elastis"
           className="w-56 sm:w-64 h-64 sm:h-70 relative mt-0.5 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
           style={{
             transform: `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
