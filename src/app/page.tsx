@@ -76,6 +76,9 @@ export default function LandingPage() {
       <main>
         {/* ─── 2. Hero Section dengan Dual-Surface Live Mockup ─── */}
         <section className="relative pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border overflow-hidden">
+          {/* Decorative Bookshelf Line-Art Background */}
+          <BookshelfHeroBackground />
+
           {/* Subtle Ambient Depth */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-brand-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -639,5 +642,365 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function BookshelfHeroBackground() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="absolute top-0 left-0 w-full h-[260px] sm:h-[300px] md:h-[360px] -z-10 pointer-events-none opacity-[0.06] text-text-primary [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] select-none"
+      viewBox="0 0 1440 280"
+      fill="none"
+      preserveAspectRatio="xMidYMin slice"
+    >
+      <g strokeLinecap="round" strokeLinejoin="round">
+        <line x1="0" y1="75" x2="1440" y2="75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="0" y1="78" x2="1440" y2="78" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" opacity="0.4" />
+        <line x1="0" y1="165" x2="1440" y2="165" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="0" y1="168" x2="1440" y2="168" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" opacity="0.4" />
+        <line x1="0" y1="255" x2="1440" y2="255" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="0" y1="258" x2="1440" y2="258" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" opacity="0.4" />
+        <g transform="rotate(-9 32 75)">
+          <rect x="24" y="30" width="15" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        </g>
+        <rect x="58" y="34" width="13" height="41" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="75" y="38" width="10" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="87" y="40" width="11" height="35" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="102" y="41" width="17" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="104" y1="49" x2="117" y2="49" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="104" y1="52" x2="117" y2="52" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="121" y="36" width="9" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="134" y="28" width="13" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 140.5 75 L 140.5 81 L 143.5 78" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="151" y="26" width="11" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="174.0" y="67.0" width="37.0" height="8.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="176.5" y="57.0" width="32.0" height="10.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="178.0" y="49.0" width="29.0" height="8.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="222" y="41" width="10" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="235" y="26" width="10" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="247" y="40" width="10" height="35" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="259" y="38" width="10" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="273" y="32" width="11" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="288" y="31" width="10" height="44" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="302" y="33" width="15" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <g transform="rotate(-10 333 75)">
+          <rect x="325" y="29" width="15" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        </g>
+        <rect x="361.0" y="65.0" width="43.0" height="10.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="363.5" y="54.0" width="38.0" height="11.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="366.0" y="43.0" width="33.0" height="11.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <path d="M 427 75 L 441 75 L 443 63 L 425 63 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M 434 63 Q 430 53 428 55 Q 432 60 434 63" stroke="currentColor" strokeWidth="1" fill="none" />
+        <path d="M 434 63 Q 438 52 440 55 Q 437 61 434 63" stroke="currentColor" strokeWidth="1" fill="none" />
+        <rect x="455" y="43" width="12" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="470" y="28" width="15" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="487" y="42" width="12" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="501" y="29" width="10" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="513" y="32" width="15" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 546 75 L 560 75 L 562 63 L 544 63 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M 553 63 Q 549 53 547 55 Q 551 60 553 63" stroke="currentColor" strokeWidth="1" fill="none" />
+        <path d="M 553 63 Q 557 52 559 55 Q 556 61 553 63" stroke="currentColor" strokeWidth="1" fill="none" />
+        <rect x="574" y="39" width="13" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="590" y="35" width="9" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="603" y="27" width="17" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="622" y="41" width="9" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="634" y="36" width="15" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="636" y1="45" x2="647" y2="45" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="636" y1="49" x2="647" y2="49" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="653" y="41" width="11" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="667" y="37" width="17" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="694" y="27" width="15" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="696" y1="39" x2="707" y2="39" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="696" y1="43" x2="707" y2="43" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="712" y="43" width="16" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="730" y="28" width="15" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="748" y="39" width="17" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="750" y1="48" x2="763" y2="48" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="750" y1="51" x2="763" y2="51" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="767" y="28" width="14" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="783" y="35" width="9" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="794" y="41" width="9" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="813" y="33" width="15" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 820.5 75 L 820.5 81 L 823.5 78" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="830" y="28" width="13" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="845" y="37" width="10" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="858" y="30" width="17" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="878" y="27" width="11" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="899" y="38" width="10" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="913" y="41" width="13" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="915" y1="49" x2="924" y2="49" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="915" y1="52" x2="924" y2="52" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="929" y="27" width="9" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="946" y="42" width="11" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="960" y="39" width="11" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="974" y="41" width="17" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="993" y="26" width="12" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1008" y="33" width="16" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1010" y1="43" x2="1022" y2="43" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1010" y1="47" x2="1022" y2="47" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1027" y="29" width="10" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1039" y="33" width="15" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1041" y1="43" x2="1052" y2="43" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1041" y1="47" x2="1052" y2="47" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1064" y="28" width="13" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1081" y="41" width="17" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1101" y="43" width="16" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1103" y1="51" x2="1115" y2="51" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1103" y1="54" x2="1115" y2="54" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1119" y="34" width="12" height="41" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1133" y="41" width="14" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1140 75 L 1140 81 L 1143 78" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="1151" y="42" width="15" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1178" y="31" width="16" height="44" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1196" y="34" width="9" height="41" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1208" y="34" width="12" height="41" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1210" y1="44" x2="1218" y2="44" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1210" y1="48" x2="1218" y2="48" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1224" y="29" width="10" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1238" y="26" width="9" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1249" y="24" width="14" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1266" y="32" width="17" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1294" y="27" width="17" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1296" y1="39" x2="1309" y2="39" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1296" y1="43" x2="1309" y2="43" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1313" y="43" width="15" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1315" y1="51" x2="1326" y2="51" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1315" y1="54" x2="1326" y2="54" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1332" y="42" width="14" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1354" y="35" width="11" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1367" y="26" width="17" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1387" y="38" width="13" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1389" y1="47" x2="1398" y2="47" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1389" y1="50" x2="1398" y2="50" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <path d="M 1418 75 L 1432 75 L 1434 63 L 1416 63 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M 1425 63 Q 1421 53 1419 55 Q 1423 60 1425 63" stroke="currentColor" strokeWidth="1" fill="none" />
+        <path d="M 1425 63 Q 1429 52 1431 55 Q 1428 61 1425 63" stroke="currentColor" strokeWidth="1" fill="none" />
+        <rect x="18" y="131" width="18" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="38" y="118" width="17" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="57" y="120" width="18" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="59" y1="131" x2="73" y2="131" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="59" y1="135" x2="73" y2="135" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="79" y="118" width="15" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="105" y="126" width="17" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="126" y="131" width="13" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="128" y1="139" x2="137" y2="139" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="128" y1="142" x2="137" y2="142" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="141" y="120" width="18" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 150 165 L 150 171 L 153 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="163" y="127" width="11" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="177" y="134" width="13" height="31" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="198" y="124" width="18" height="41" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="218" y="126" width="12" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 224 165 L 224 171 L 227 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="234" y="112" width="10" height="53" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="253" y="127" width="18" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="255" y1="136" x2="269" y2="136" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="255" y1="140" x2="269" y2="140" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="275" y="120" width="18" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="295" y="134" width="14" height="31" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="311" y="113" width="12" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="327" y="113" width="11" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="345" y="127" width="16" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="347" y1="136" x2="359" y2="136" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="347" y1="140" x2="359" y2="140" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="365" y="119" width="8" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="377" y="132" width="13" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 383.5 165 L 383.5 171 L 386.5 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="394" y="128" width="11" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="418" y="128" width="11" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="433" y="126" width="18" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 442 165 L 442 171 L 445 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="453" y="129" width="17" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="455" y1="138" x2="468" y2="138" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="455" y1="141" x2="468" y2="141" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="473" y="134" width="17" height="31" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 481.5 165 L 481.5 171 L 484.5 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="493" y="120" width="17" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="514" y="120" width="16" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="539" y="133" width="11" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="553" y="128" width="13" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="555" y1="137" x2="564" y2="137" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="555" y1="140" x2="564" y2="140" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="568" y="112" width="13" height="53" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="585" y="129" width="11" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="599" y="112" width="16" height="53" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="626" y="133" width="13" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 632.5 165 L 632.5 171 L 635.5 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="641" y="125" width="15" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="660" y="116" width="11" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="673" y="129" width="12" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="689" y="135" width="9" height="30" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="700" y="114" width="8" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="716" y="129" width="9" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="729" y="133" width="9" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="741" y="121" width="10" height="44" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="755" y="115" width="13" height="50" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="757" y1="127" x2="766" y2="127" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="757" y1="132" x2="766" y2="132" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="781.0" y="156.0" width="35.0" height="9.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="783.5" y="145.0" width="30.0" height="11.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="827" y="123" width="13" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="829" y1="133" x2="838" y2="133" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="829" y1="137" x2="838" y2="137" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="844" y="116" width="11" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="857" y="125" width="17" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="859" y1="135" x2="872" y2="135" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="859" y1="139" x2="872" y2="139" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="877" y="123" width="11" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <g transform="rotate(-11 906 165)">
+          <rect x="898" y="126" width="12" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        </g>
+        <rect x="929" y="122" width="14" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="946" y="125" width="11" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="960" y="121" width="9" height="44" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="971" y="133" width="12" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="973" y1="141" x2="981" y2="141" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="973" y1="144" x2="981" y2="144" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="985" y="127" width="15" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="987" y1="136" x2="998" y2="136" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="987" y1="140" x2="998" y2="140" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1002" y="131" width="13" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1018" y="113" width="14" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1020" y1="126" x2="1030" y2="126" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1020" y1="131" x2="1030" y2="131" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1044" y="113" width="15" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1062" y="114" width="15" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1064" y1="126" x2="1075" y2="126" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1064" y1="131" x2="1075" y2="131" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1080" y="114" width="15" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1097" y="128" width="12" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1119" y="127" width="9" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1132" y="132" width="18" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1152" y="128" width="14" height="37" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1188 165 L 1202 165 L 1204 153 L 1186 153 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M 1195 153 Q 1191 143 1189 145 Q 1193 150 1195 153" stroke="currentColor" strokeWidth="1" fill="none" />
+        <path d="M 1195 153 Q 1199 142 1201 145 Q 1198 151 1195 153" stroke="currentColor" strokeWidth="1" fill="none" />
+        <rect x="1216" y="131" width="13" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1233" y="114" width="8" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1245" y="131" width="13" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1251.5 165 L 1251.5 171 L 1254.5 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="1261" y="133" width="10" height="32" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1275" y="132" width="11" height="33" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <g transform="rotate(-13 1302 165)">
+          <rect x="1294" y="123" width="14" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        </g>
+        <rect x="1328" y="125" width="16" height="40" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1346" y="119" width="12" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1360" y="130" width="9" height="35" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1371" y="112" width="14" height="53" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1378 165 L 1378 171 L 1381 168" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="1389" y="126" width="9" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1401" y="117" width="14" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1403" y1="129" x2="1413" y2="129" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1403" y1="133" x2="1413" y2="133" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="19" y="200" width="10" height="55" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="31" y="220" width="14" height="35" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="49" y="206" width="18" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="73.0" y="245.0" width="37.0" height="10.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="75.5" y="236.0" width="32.0" height="9.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="122.0" y="245.0" width="35.0" height="10.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="124.5" y="234.0" width="30.0" height="11.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="126.0" y="224.0" width="27.0" height="10.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="165.0" y="246.0" width="37.0" height="9.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="167.0" y="236.0" width="33.0" height="10.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="168.0" y="227.0" width="31.0" height="9.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <path d="M 217 255 L 229 255 L 217 233 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <rect x="241" y="208" width="15" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="243" y1="219" x2="254" y2="219" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="243" y1="224" x2="254" y2="224" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="259" y="206" width="11" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="274" y="204" width="19" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="297" y="212" width="19" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="299" y1="222" x2="314" y2="222" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="299" y1="227" x2="314" y2="227" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="318" y="212" width="9" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="330" y="208" width="19" height="47" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="362" y="205" width="18" height="50" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="384" y="207" width="15" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 391.5 255 L 391.5 261 L 394.5 258" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="401" y="217" width="10" height="38" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="415" y="200" width="15" height="55" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="417" y1="213" x2="428" y2="213" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="417" y1="219" x2="428" y2="219" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="441" y="211" width="11" height="44" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="455" y="200" width="12" height="55" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="471" y="201" width="18" height="54" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="473" y1="214" x2="487" y2="214" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="473" y1="219" x2="487" y2="219" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="492" y="207" width="17" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="511" y="207" width="9" height="48" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="524" y="209" width="9" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="543.0" y="244.0" width="41.0" height="11.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="545.0" y="235.0" width="37.0" height="9.0" rx="1.2" stroke="currentColor" strokeWidth="1.1" />
+        <rect x="596" y="201" width="13" height="54" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="598" y1="214" x2="607" y2="214" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="598" y1="219" x2="607" y2="219" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="612" y="212" width="14" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="629" y="201" width="15" height="54" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 636.5 255 L 636.5 261 L 639.5 258" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="648" y="221" width="9" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="666" y="203" width="11" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="679" y="216" width="18" height="39" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="701" y="210" width="12" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="724" y="211" width="16" height="44" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="726" y1="222" x2="738" y2="222" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="726" y1="226" x2="738" y2="226" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="742" y="213" width="17" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="744" y1="223" x2="757" y2="223" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="744" y1="227" x2="757" y2="227" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="761" y="221" width="18" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="783" y="219" width="18" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="805" y="221" width="13" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="821" y="213" width="12" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="843" y="213" width="17" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="845" y1="223" x2="858" y2="223" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="845" y1="227" x2="858" y2="227" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="862" y="205" width="16" height="50" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="882" y="209" width="11" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="897" y="212" width="13" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="899" y1="222" x2="908" y2="222" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="899" y1="227" x2="908" y2="227" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="920" y="219" width="14" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="936" y="210" width="10" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="949" y="219" width="13" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="964" y="201" width="10" height="54" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="982" y="212" width="11" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="996" y="209" width="16" height="46" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1014" y="212" width="17" height="43" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1022.5 255 L 1022.5 261 L 1025.5 258" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+        <rect x="1035" y="221" width="19" height="34" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1037" y1="229" x2="1052" y2="229" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1037" y1="232" x2="1052" y2="232" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1057" y="213" width="12" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1081" y="213" width="17" height="42" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1083" y1="223" x2="1096" y2="223" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1083" y1="227" x2="1096" y2="227" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1101" y="203" width="16" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1121" y="205" width="12" height="50" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1137" y="219" width="11" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1150" y="203" width="18" height="52" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1152" y1="216" x2="1166" y2="216" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1152" y1="221" x2="1166" y2="221" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1170" y="200" width="13" height="55" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1172" y1="213" x2="1181" y2="213" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1172" y1="219" x2="1181" y2="219" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1186" y="204" width="17" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1222 255 L 1234 255 L 1222 233 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <rect x="1246" y="201" width="12" height="54" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="1248" y1="214" x2="1256" y2="214" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <line x1="1248" y1="219" x2="1256" y2="219" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+        <rect x="1262" y="202" width="9" height="53" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1275" y="219" width="9" height="36" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1288" y="206" width="13" height="49" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M 1322 255 L 1336 255 L 1338 243 L 1320 243 Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M 1329 243 Q 1325 233 1323 235 Q 1327 240 1329 243" stroke="currentColor" strokeWidth="1" fill="none" />
+        <path d="M 1329 243 Q 1333 232 1335 235 Q 1332 241 1329 243" stroke="currentColor" strokeWidth="1" fill="none" />
+        <rect x="1350" y="204" width="19" height="51" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1373" y="210" width="17" height="45" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1392" y="220" width="17" height="35" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1411" y="214" width="11" height="41" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+      </g>
+    </svg>
   );
 }
