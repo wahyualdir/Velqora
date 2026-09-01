@@ -9,7 +9,7 @@ Dokumen ini mencatat evaluasi keamanan dependensi Velqora, analisis audit npm, d
 | Paket | Severity | Advisory ID | Deskripsi Kerentanan | Status / Mitigasi di Velqora |
 | :--- | :--- | :--- | :--- | :--- |
 | `postcss` | High | GHSA-qx2v-qp2m-jg93, GHSA-6g55-p6wh-862q | Transitive dependency dari Next.js build pipeline | Mitigasi arsitektural (lihat Bagian 2) |
-| `sharp` | High | GHSA-f88m-g3jw-g9cj | Transitive libvips memory safety vulnerability | Mitigasi arsitektural (lihat Bagian 2) |
+| `sharp` | High | GHSA-f88m-g3jw-g9cj | Transitive libvips memory safety vulnerability | Diperbaiki via `npm audit fix` pada 1 September 2026 |
 | `xlsx` (SheetJS) | High | GHSA-4r6h-8v6p-xvw6, GHSA-5pgg-2g8v-p4x9 | Prototype Pollution & Regular Expression Denial of Service (ReDoS) | Hardening berlapis (lihat Bagian 3) |
 
 ---
