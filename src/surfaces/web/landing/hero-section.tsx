@@ -1,11 +1,180 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, Download, ShieldCheck, Sparkles, Smartphone } from "lucide-react";
+import { ArrowRight, Download, ShieldCheck, Sparkles, Smartphone, Hand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
+
+/**
+ * Interactive Lanyard Hanging Companion Card
+ * Supports touch, drag, pointer hover tilt, and click spring physics
+ */
+function InteractiveLanyardCard({ isVisible }: { isVisible: boolean }) {
+  const [tilt, setTilt] = useState<{ x: number; y: number; rotate: number }>({
+    x: 0,
+    y: 0,
+    rotate: -2,
+  });
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [isNudged, setIsNudged] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const normX = Math.max(-1, Math.min(1, (e.clientX - centerX) / (rect.width / 2)));
+    const normY = Math.max(-1, Math.min(1, (e.clientY - centerY) / (rect.height / 2)));
+
+    setIsInteracting(true);
+    setTilt({
+      x: normX * 14,
+      y: normY * 8,
+      rotate: normX * 12,
+    });
+  };
+
+  const handlePointerLeave = () => {
+    setIsInteracting(false);
+    setTilt({ x: 0, y: 0, rotate: -2 });
+  };
+
+  const handleTriggerNudge = () => {
+    setIsNudged(true);
+    setTilt({ x: 18, y: 6, rotate: 14 });
+    setTimeout(() => setTilt({ x: -14, y: 3, rotate: -10 }), 150);
+    setTimeout(() => setTilt({ x: 10, y: 2, rotate: 7 }), 300);
+    setTimeout(() => setTilt({ x: -5, y: 1, rotate: -4 }), 450);
+    setTimeout(() => {
+      setTilt({ x: 0, y: 0, rotate: -2 });
+      setIsNudged(false);
+    }, 600);
+  };
+
+  return (
+    <div
+      className={`absolute top-0 -left-2 sm:-left-6 bottom-[-36px] z-20 pointer-events-none flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+        isVisible
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 -translate-y-48"
+      }`}
+      style={{ transitionDelay: "450ms" }}
+    >
+      <div
+        className={`flex flex-col items-center origin-top h-full ${
+          !isInteracting && !isNudged ? "animate-rope-sway" : ""
+        }`}
+        style={{
+          transform: isInteracting || isNudged
+            ? `translate(${tilt.x}px, ${tilt.y}px) rotate(${tilt.rotate}deg)`
+            : undefined,
+          transition: isInteracting
+            ? "transform 80ms ease-out"
+            : isNudged
+            ? "transform 150ms ease-in-out"
+            : "transform 500ms ease-out",
+        }}
+      >
+        {/* 1. Top Window Chrome Clip (Firmly gripping the top browser frame) */}
+        <div className="relative z-30 flex flex-col items-center -mt-2">
+          {/* Polished Silver Chrome Clip */}
+          <div className="px-3 py-1 rounded-t-sm bg-gradient-to-b from-stone-200 via-stone-100 to-stone-400 border border-stone-400 shadow-md flex items-center justify-center">
+            <div className="w-3 h-0.5 bg-stone-600 rounded-full shadow-inner" />
+          </div>
+          {/* Top Anchor Ring */}
+          <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-400 bg-stone-100 shadow-xs -mt-1 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+          </div>
+        </div>
+
+        {/* 2. Solid & Premium Woven Fabric Lanyard Strap */}
+        <div className="flex-1 w-7 sm:w-8 relative flex flex-col items-center justify-center shadow-lg -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x-2 border-brand-800/60">
+          {/* Left & Right Crisp Stitches */}
+          <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/40" />
+          <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/40" />
+          
+          {/* Woven Fabric Texture Overlay */}
+          <div
+            className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,1) 2px, rgba(255,255,255,1) 4px)",
+            }}
+          />
+
+          {/* Clean Solid Monogram */}
+          <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none">
+            <span className="text-[8px] font-mono font-extrabold tracking-[0.28em] text-white/90 uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-xs">
+              VELQORA
+            </span>
+          </div>
+        </div>
+
+        {/* 3. Solid Metal Swivel Lobster Clasp & Crimp Hardware */}
+        <div className="relative z-30 flex flex-col items-center -my-0.5">
+          {/* Silver Crimp Collar */}
+          <div className="w-7 h-2.5 bg-gradient-to-r from-stone-400 via-stone-100 to-stone-400 rounded-xs border border-stone-400 shadow-xs flex items-center justify-around px-1">
+            <div className="w-1 h-1 bg-stone-600 rounded-full" />
+            <div className="w-1 h-1 bg-stone-600 rounded-full" />
+          </div>
+
+          {/* Chrome Swivel D-Ring */}
+          <div className="w-4 h-4 rounded-full border-2 border-stone-400 bg-stone-100 shadow-xs -mt-1 flex items-center justify-center">
+            {/* Lobster Clasp Hook */}
+            <div className="w-2.5 h-3.5 bg-gradient-to-b from-stone-200 to-stone-400 border border-stone-500 rounded-b-sm -mb-2 shadow-xs" />
+          </div>
+        </div>
+
+        {/* 4. Interactive Companion Badge Card (Touch / Move to Swing) */}
+        <div
+          ref={cardRef}
+          onPointerMove={handlePointerMove}
+          onPointerLeave={handlePointerLeave}
+          onClick={handleTriggerNudge}
+          title="Sentuh atau geser untuk mengayunkan lanyard"
+          className="w-52 sm:w-56 rounded-2xl border-2 border-border/90 bg-white p-2 shadow-2xl transition-shadow duration-300 hover:shadow-brand-500/25 group pointer-events-auto mt-1 cursor-grab active:cursor-grabbing select-none"
+        >
+          {/* Top Badge Slot Tab with Metal Eyelet */}
+          <div className="flex justify-center -mt-4.5 mb-2">
+            <div className="px-3.5 py-1 rounded-full bg-surface-secondary border border-border shadow-xs flex items-center justify-center">
+              <div className="w-4 h-1.5 rounded-full bg-stone-800 border border-stone-600 shadow-inner" />
+            </div>
+          </div>
+
+          {/* Smartphone Companion View */}
+          <div className="rounded-xl bg-surface-secondary/70 border border-border/80 p-2.5 space-y-2 text-text-primary">
+            <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
+              <span className="font-bold text-text-primary flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+                Velqora Mobile
+              </span>
+              <span className="text-[9px] text-text-tertiary font-mono bg-white px-1.5 py-0.5 rounded border border-border">PWA</span>
+            </div>
+
+            <div className="p-2 rounded-lg bg-white border border-brand-500/25 space-y-0.5 shadow-2xs group-hover:border-brand-500/50 transition-colors">
+              <div className="flex items-center justify-between">
+                <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
+                <span className="text-[9px] text-emerald-600 font-bold">10 Menit Lagi</span>
+              </div>
+              <p className="text-xs font-bold text-text-primary">Kalkulus Lanjut</p>
+              <p className="text-[9.5px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+            </div>
+
+            {/* Interactive hint */}
+            <div className="flex items-center justify-center gap-1 text-[9px] text-text-tertiary pt-0.5 font-medium">
+              <Hand className="w-2.5 h-2.5 text-brand-500" />
+              <span>Sentuh atau geser kartu</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function HeroSection() {
   const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
@@ -196,95 +365,8 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* REALISTIC LANYARD STRAP & MOBILE COMPANION BADGE ASSEMBLY */}
-            <div
-              className={`absolute top-0 -left-3 sm:-left-7 bottom-[-32px] z-20 pointer-events-none flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 -translate-y-48"
-              }`}
-              style={{ transitionDelay: "450ms" }}
-            >
-              <div className="flex flex-col items-center animate-rope-sway origin-top h-full">
-                {/* 1. Top Window Metal Clamp & Safety Buckle */}
-                <div className="relative z-30 flex flex-col items-center -mt-2.5">
-                  {/* Chrome Metal Edge Clip over the window frame */}
-                  <div className="px-2.5 py-0.5 rounded-t-sm bg-gradient-to-b from-stone-300 via-stone-100 to-stone-400 border border-stone-500 shadow-md flex items-center justify-center">
-                    <div className="w-2.5 h-0.5 bg-stone-600 rounded-full" />
-                  </div>
-                  {/* Matte Black Breakaway Buckle Top */}
-                  <div className="w-6 h-2.5 bg-stone-800 rounded-xs border border-stone-950 shadow-xs flex items-center justify-center">
-                    <div className="w-1.5 h-1 bg-stone-600 rounded-full" />
-                  </div>
-                </div>
-
-                {/* 2. Authentic Woven Fabric Lanyard Ribbon (Flat Woven Strap with Stitches & Subtle Branding) */}
-                <div className="flex-1 w-5 sm:w-5.5 relative flex flex-col items-center justify-center shadow-md -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x border-brand-800/40">
-                  {/* Left & Right Edge Stitches */}
-                  <div className="absolute inset-y-0 left-0.5 w-px border-l border-dashed border-white/30" />
-                  <div className="absolute inset-y-0 right-0.5 w-px border-r border-dashed border-white/30" />
-                  
-                  {/* Fine Fabric Webbing Texture */}
-                  <div
-                    className="absolute inset-0 opacity-25 mix-blend-overlay"
-                    style={{
-                      backgroundImage:
-                        "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.8) 2px, rgba(255,255,255,0.8) 4px)",
-                    }}
-                  />
-
-                  {/* Subtle Vertical Woven Typography on Ribbon */}
-                  <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none">
-                    <span className="text-[7.5px] font-mono font-bold tracking-[0.25em] text-white/50 uppercase [writing-mode:vertical-lr] rotate-180">
-                      VELQORA
-                    </span>
-                  </div>
-                </div>
-
-                {/* 3. Bottom Metal Hardware (Chrome Crimp Collar + Swivel Hook) */}
-                <div className="relative z-30 flex flex-col items-center -my-0.5">
-                  {/* Silver Metal Crimp Clamp */}
-                  <div className="w-5 h-2 bg-gradient-to-r from-stone-400 via-stone-100 to-stone-400 rounded-xs border border-stone-500 shadow-xs flex items-center justify-around px-0.5">
-                    <div className="w-0.5 h-1 bg-stone-600 rounded-full" />
-                    <div className="w-0.5 h-1 bg-stone-600 rounded-full" />
-                  </div>
-
-                  {/* Swivel D-Ring */}
-                  <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-600 bg-transparent -mt-1 shadow-xs flex items-center justify-center">
-                    {/* Lobster Clasp Hook */}
-                    <div className="w-2 h-3 bg-gradient-to-b from-stone-200 to-stone-400 border border-stone-600 rounded-b-sm -mb-2 shadow-xs" />
-                  </div>
-                </div>
-
-                {/* 4. Mobile Companion Badge Card with ID Slot Hole */}
-                <div className="w-48 sm:w-52 rounded-2xl border-2 border-border bg-white p-1.5 shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-brand-500/20 group pointer-events-auto mt-1">
-                  {/* Lanyard Attachment Oval Hole on Top Tab */}
-                  <div className="flex justify-center -mt-3.5 mb-1.5">
-                    <div className="px-3 py-0.5 rounded-full bg-surface-secondary border border-border shadow-xs flex items-center justify-center">
-                      <div className="w-3.5 h-1.5 rounded-full bg-stone-800/80 border border-stone-600 shadow-inner" />
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
-                    <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
-                      <span className="font-bold text-text-primary flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-brand-500" />
-                        Velqora Mobile
-                      </span>
-                      <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs group-hover:border-brand-500/40 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
-                        <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
-                      </div>
-                      <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
-                      <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* REALISTIC INTERACTIVE LANYARD COMPANION CARD */}
+            <InteractiveLanyardCard isVisible={isVisible} />
           </div>
         </div>
       </div>
