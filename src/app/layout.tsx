@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/context/language-context";
@@ -9,23 +9,21 @@ import { SurfaceProvider } from "@/context/surface-context";
 import { PwaRegister } from "@/components/layout/pwa-register";
 import { Toaster } from "sonner";
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "./fonts/inter/Inter-Variable.woff2",
   variable: "--font-inter",
   display: "swap",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
+const plusJakartaSans = localFont({
+  src: "./fonts/plus-jakarta-sans/PlusJakartaSans-Variable.woff2",
   variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
+const jetbrainsMono = localFont({
+  src: "./fonts/jetbrains-mono/JetBrainsMono-Variable.woff2",
   variable: "--font-mono",
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
