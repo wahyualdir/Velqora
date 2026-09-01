@@ -2,21 +2,32 @@
 
 import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, Download, ShieldCheck, Sparkles, Smartphone, Hand } from "lucide-react";
+import { ArrowRight, Download, ShieldCheck, Sparkles, Smartphone, Hand, Sparkle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
 
 /**
- * Interactive Lanyard Hanging Companion Card
- * Supports touch, drag, pointer hover tilt, and click spring physics
+ * 3D Interactive Lanyard Hanging Companion Card
+ * Features true CSS 3D perspective, interactive pointer/touch 3D tilt, specular glare lighting, and spring physics.
  */
-function InteractiveLanyardCard({ isVisible }: { isVisible: boolean }) {
-  const [tilt, setTilt] = useState<{ x: number; y: number; rotate: number }>({
-    x: 0,
-    y: 0,
-    rotate: -2,
+function Interactive3DLanyardCard({ isVisible }: { isVisible: boolean }) {
+  const [tilt, setTilt] = useState<{
+    rotX: number;
+    rotY: number;
+    rotZ: number;
+    transZ: number;
+    glareX: number;
+    glareY: number;
+  }>({
+    rotX: 6,
+    rotY: -6,
+    rotZ: -2,
+    transZ: 20,
+    glareX: 50,
+    glareY: 30,
   });
+
   const [isInteracting, setIsInteracting] = useState(false);
   const [isNudged, setIsNudged] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -32,32 +43,42 @@ function InteractiveLanyardCard({ isVisible }: { isVisible: boolean }) {
 
     setIsInteracting(true);
     setTilt({
-      x: normX * 14,
-      y: normY * 8,
-      rotate: normX * 12,
+      rotX: -normY * 18, // 3D Pitch
+      rotY: normX * 22,  // 3D Yaw
+      rotZ: normX * 8,   // 3D Roll
+      transZ: 38,        // 3D Pop Out
+      glareX: (normX + 1) * 50,
+      glareY: (normY + 1) * 50,
     });
   };
 
   const handlePointerLeave = () => {
     setIsInteracting(false);
-    setTilt({ x: 0, y: 0, rotate: -2 });
+    setTilt({
+      rotX: 6,
+      rotY: -6,
+      rotZ: -2,
+      transZ: 20,
+      glareX: 50,
+      glareY: 30,
+    });
   };
 
   const handleTriggerNudge = () => {
     setIsNudged(true);
-    setTilt({ x: 18, y: 6, rotate: 14 });
-    setTimeout(() => setTilt({ x: -14, y: 3, rotate: -10 }), 150);
-    setTimeout(() => setTilt({ x: 10, y: 2, rotate: 7 }), 300);
-    setTimeout(() => setTilt({ x: -5, y: 1, rotate: -4 }), 450);
+    setTilt({ rotX: -20, rotY: 24, rotZ: 14, transZ: 50, glareX: 80, glareY: 20 });
+    setTimeout(() => setTilt({ rotX: 16, rotY: -18, rotZ: -12, transZ: 35, glareX: 20, glareY: 80 }), 160);
+    setTimeout(() => setTilt({ rotX: -10, rotY: 12, rotZ: 8, transZ: 28, glareX: 70, glareY: 40 }), 320);
+    setTimeout(() => setTilt({ rotX: 6, rotY: -6, rotZ: -4, transZ: 22, glareX: 40, glareY: 60 }), 480);
     setTimeout(() => {
-      setTilt({ x: 0, y: 0, rotate: -2 });
+      setTilt({ rotX: 6, rotY: -6, rotZ: -2, transZ: 20, glareX: 50, glareY: 30 });
       setIsNudged(false);
-    }, 600);
+    }, 640);
   };
 
   return (
     <div
-      className={`absolute top-0 -left-2 sm:-left-6 bottom-[-36px] z-20 pointer-events-none flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+      className={`absolute top-0 -left-2 sm:-left-6 bottom-[-40px] z-30 pointer-events-none flex flex-col items-center [perspective:1200px] transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
         isVisible
           ? "opacity-100 translate-y-0"
           : "opacity-0 -translate-y-48"
@@ -65,109 +86,137 @@ function InteractiveLanyardCard({ isVisible }: { isVisible: boolean }) {
       style={{ transitionDelay: "450ms" }}
     >
       <div
-        className={`flex flex-col items-center origin-top h-full ${
+        className={`flex flex-col items-center origin-top h-full [transform-style:preserve-3d] ${
           !isInteracting && !isNudged ? "animate-rope-sway" : ""
         }`}
         style={{
           transform: isInteracting || isNudged
-            ? `translate(${tilt.x}px, ${tilt.y}px) rotate(${tilt.rotate}deg)`
-            : undefined,
+            ? `rotateX(${tilt.rotX}deg) rotateY(${tilt.rotY}deg) rotateZ(${tilt.rotZ}deg) translateZ(${tilt.transZ}px)`
+            : "rotateX(6deg) rotateY(-6deg) rotateZ(-2deg) translateZ(20px)",
           transition: isInteracting
             ? "transform 80ms ease-out"
             : isNudged
-            ? "transform 150ms ease-in-out"
+            ? "transform 160ms cubic-bezier(0.16, 1, 0.3, 1)"
             : "transform 500ms ease-out",
         }}
       >
-        {/* 1. Top Window Chrome Clip (Firmly gripping the top browser frame) */}
-        <div className="relative z-30 flex flex-col items-center -mt-2">
-          {/* Polished Silver Chrome Clip */}
-          <div className="px-3 py-1 rounded-t-sm bg-gradient-to-b from-stone-200 via-stone-100 to-stone-400 border border-stone-400 shadow-md flex items-center justify-center">
-            <div className="w-3 h-0.5 bg-stone-600 rounded-full shadow-inner" />
+        {/* 1. 3D Metal Top Window Clamp */}
+        <div className="relative z-30 flex flex-col items-center -mt-2.5 [transform-style:preserve-3d]">
+          {/* Chrome Metal Clamp with 3D Bevel & Specular Highlight */}
+          <div className="px-3 py-1 rounded-t-sm bg-gradient-to-b from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_8px_rgba(0,0,0,0.25)] flex items-center justify-center">
+            <div className="w-3.5 h-1 bg-stone-700 rounded-full shadow-inner" />
           </div>
-          {/* Top Anchor Ring */}
-          <div className="w-3.5 h-3.5 rounded-full border-2 border-stone-400 bg-stone-100 shadow-xs -mt-1 flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+          {/* 3D Anchor Ring */}
+          <div className="w-4 h-4 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-300 via-white to-stone-400 shadow-sm -mt-1 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-xs" />
           </div>
         </div>
 
-        {/* 2. Solid & Premium Woven Fabric Lanyard Strap */}
-        <div className="flex-1 w-7 sm:w-8 relative flex flex-col items-center justify-center shadow-lg -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x-2 border-brand-800/60">
-          {/* Left & Right Crisp Stitches */}
-          <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/40" />
-          <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/40" />
+        {/* 2. 3D Solid Woven Lanyard Ribbon with Depth Cast Shadow */}
+        <div className="flex-1 w-7 sm:w-8 relative flex flex-col items-center justify-center -my-0.5 overflow-hidden rounded-xs bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700 border-x-2 border-brand-800/70 shadow-[0_8px_20px_rgba(194,85,58,0.35),0_4px_8px_rgba(0,0,0,0.15)] [transform-style:preserve-3d]">
+          {/* Left & Right Double Stitches */}
+          <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/50" />
+          <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/50" />
           
-          {/* Woven Fabric Texture Overlay */}
+          {/* 3D Woven Ribbon Texture */}
           <div
-            className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none"
+            className="absolute inset-0 opacity-25 mix-blend-overlay pointer-events-none"
             style={{
               backgroundImage:
                 "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,1) 2px, rgba(255,255,255,1) 4px)",
             }}
           />
 
-          {/* Clean Solid Monogram */}
+          {/* Solid 3D Monogram */}
           <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none">
-            <span className="text-[8px] font-mono font-extrabold tracking-[0.28em] text-white/90 uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-xs">
+            <span className="text-[8.5px] font-mono font-extrabold tracking-[0.3em] text-white uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
               VELQORA
             </span>
           </div>
         </div>
 
-        {/* 3. Solid Metal Swivel Lobster Clasp & Crimp Hardware */}
-        <div className="relative z-30 flex flex-col items-center -my-0.5">
-          {/* Silver Crimp Collar */}
-          <div className="w-7 h-2.5 bg-gradient-to-r from-stone-400 via-stone-100 to-stone-400 rounded-xs border border-stone-400 shadow-xs flex items-center justify-around px-1">
-            <div className="w-1 h-1 bg-stone-600 rounded-full" />
-            <div className="w-1 h-1 bg-stone-600 rounded-full" />
+        {/* 3. 3D Metallic Lobster Clasp Hardware */}
+        <div className="relative z-30 flex flex-col items-center -my-0.5 [transform-style:preserve-3d]">
+          {/* Silver Crimp Collar with 3D Bevel */}
+          <div className="w-8 h-3 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_6px_rgba(0,0,0,0.2)] flex items-center justify-around px-1">
+            <div className="w-1 h-1.5 bg-stone-700 rounded-full shadow-inner" />
+            <div className="w-1 h-1.5 bg-stone-700 rounded-full shadow-inner" />
           </div>
 
           {/* Chrome Swivel D-Ring */}
-          <div className="w-4 h-4 rounded-full border-2 border-stone-400 bg-stone-100 shadow-xs -mt-1 flex items-center justify-center">
-            {/* Lobster Clasp Hook */}
-            <div className="w-2.5 h-3.5 bg-gradient-to-b from-stone-200 to-stone-400 border border-stone-500 rounded-b-sm -mb-2 shadow-xs" />
+          <div className="w-4.5 h-4.5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-tr from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
+            {/* 3D Lobster Clasp Spring Hook */}
+            <div className="w-2.5 h-4 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-sm -mb-2.5 shadow-sm" />
           </div>
         </div>
 
-        {/* 4. Interactive Companion Badge Card (Touch / Move to Swing) */}
+        {/* 4. 3D INTERACTIVE SMARTPHONE COMPANION BADGE */}
         <div
           ref={cardRef}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
           onClick={handleTriggerNudge}
-          title="Sentuh atau geser untuk mengayunkan lanyard"
-          className="w-52 sm:w-56 rounded-2xl border-2 border-border/90 bg-white p-2 shadow-2xl transition-shadow duration-300 hover:shadow-brand-500/25 group pointer-events-auto mt-1 cursor-grab active:cursor-grabbing select-none"
+          title="Sentuh atau geser untuk mengayunkan kartu dalam 3D"
+          className="w-54 sm:w-60 rounded-3xl bg-white p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35),0_10px_20px_rgba(194,85,58,0.15)] group pointer-events-auto mt-1 cursor-grab active:cursor-grabbing select-none relative overflow-hidden transition-all duration-300 border-[2.5px] border-stone-200 border-b-[5px] border-r-[4px] border-stone-400/80 [transform-style:preserve-3d]"
+          style={{
+            transform: `translateZ(${tilt.transZ}px)`,
+          }}
         >
-          {/* Top Badge Slot Tab with Metal Eyelet */}
-          <div className="flex justify-center -mt-4.5 mb-2">
-            <div className="px-3.5 py-1 rounded-full bg-surface-secondary border border-border shadow-xs flex items-center justify-center">
-              <div className="w-4 h-1.5 rounded-full bg-stone-800 border border-stone-600 shadow-inner" />
+          {/* Dynamic 3D Specular Light Glare Overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none rounded-3xl z-40 transition-opacity duration-150"
+            style={{
+              background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 40%, transparent 70%)`,
+              opacity: isInteracting ? 1 : 0.4,
+            }}
+          />
+
+          {/* 3D Top Badge Eyelet Loop */}
+          <div className="flex justify-center -mt-5 mb-2 relative z-30">
+            <div className="px-4 py-1 rounded-full bg-gradient-to-b from-stone-100 to-stone-300 border border-stone-400 shadow-sm flex items-center justify-center">
+              <div className="w-4 h-1.5 rounded-full bg-stone-900 border border-stone-700 shadow-inner" />
             </div>
           </div>
 
-          {/* Smartphone Companion View */}
-          <div className="rounded-xl bg-surface-secondary/70 border border-border/80 p-2.5 space-y-2 text-text-primary">
-            <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
+          {/* 3D Phone Screen Chassis View */}
+          <div className="rounded-2xl bg-surface-secondary/80 border border-border/80 p-3 space-y-2.5 text-text-primary relative overflow-hidden shadow-inner">
+            {/* Phone Screen Top Speaker/Camera Bezel */}
+            <div className="w-14 h-1 bg-stone-300 rounded-full mx-auto mb-1.5" />
+
+            {/* Header Status Bar */}
+            <div className="flex items-center justify-between text-[11px] border-b border-border/80 pb-2">
               <span className="font-bold text-text-primary flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse shadow-xs" />
                 Velqora Mobile
               </span>
-              <span className="text-[9px] text-text-tertiary font-mono bg-white px-1.5 py-0.5 rounded border border-border">PWA</span>
+              <span className="text-[9.5px] font-mono font-semibold bg-brand-500/10 text-brand-600 px-2 py-0.5 rounded-md border border-brand-500/20">
+                PWA Active
+              </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-white border border-brand-500/25 space-y-0.5 shadow-2xs group-hover:border-brand-500/50 transition-colors">
+            {/* Live Class Schedule Widget */}
+            <div className="p-2.5 rounded-xl bg-white border border-brand-500/25 space-y-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)] group-hover:border-brand-500/60 transition-colors">
               <div className="flex items-center justify-between">
-                <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
-                <span className="text-[9px] text-emerald-600 font-bold">10 Menit Lagi</span>
+                <p className="text-[9.5px] text-brand-600 font-bold uppercase tracking-wider flex items-center gap-1">
+                  <Sparkle className="w-2.5 h-2.5" />
+                  Kelas Berikutnya
+                </p>
+                <span className="text-[9.5px] text-emerald-600 font-extrabold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                  10 Menit Lagi
+                </span>
               </div>
-              <p className="text-xs font-bold text-text-primary">Kalkulus Lanjut</p>
-              <p className="text-[9.5px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+              <p className="text-xs sm:text-[13px] font-bold text-text-primary leading-tight">
+                Kalkulus Lanjut
+              </p>
+              <p className="text-[10px] text-text-secondary font-medium">
+                10:45 • Ruang 402 Gedung C
+              </p>
             </div>
 
-            {/* Interactive hint */}
-            <div className="flex items-center justify-center gap-1 text-[9px] text-text-tertiary pt-0.5 font-medium">
-              <Hand className="w-2.5 h-2.5 text-brand-500" />
-              <span>Sentuh atau geser kartu</span>
+            {/* 3D Interactive Touch Indicator */}
+            <div className="flex items-center justify-center gap-1.5 text-[9.5px] text-text-tertiary pt-0.5 font-semibold">
+              <Hand className="w-3 h-3 text-brand-500 animate-bounce" />
+              <span>Sentuh atau geser untuk gerak 3D</span>
             </div>
           </div>
         </div>
@@ -365,8 +414,8 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* REALISTIC INTERACTIVE LANYARD COMPANION CARD */}
-            <InteractiveLanyardCard isVisible={isVisible} />
+            {/* TRUE 3D INTERACTIVE LANYARD COMPANION CARD */}
+            <Interactive3DLanyardCard isVisible={isVisible} />
           </div>
         </div>
       </div>
