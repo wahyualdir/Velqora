@@ -48,7 +48,7 @@ describe("FASE 41: Dual Surface Architecture & Foundation Suite", () => {
 
       // Web Surface Token Verification
       assert.ok(content.includes('[data-surface="web"]'), "Must define [data-surface='web'] block");
-      assert.ok(content.includes("--color-background: #090d16;"), "Web surface uses deep dark background");
+      assert.ok(content.includes("--color-background: #fafaf8;"), "Web surface uses warm off-white background");
 
       // App Surface Token Verification
       assert.ok(content.includes('[data-surface="app"]'), "Must define [data-surface='app'] block");

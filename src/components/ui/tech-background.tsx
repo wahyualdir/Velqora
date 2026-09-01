@@ -53,7 +53,7 @@ export const TechBackground = React.memo(function TechBackground({
       <div
         className={cn(
           "absolute inset-0 transition-colors duration-200",
-          isLight ? "bg-[#f8fafc]" : "bg-[#000000]"
+          isLight ? "bg-[#fafaf8]" : "bg-[#fafaf8]"
         )}
       />
 
@@ -74,8 +74,8 @@ export const TechBackground = React.memo(function TechBackground({
         className={cn(
           "absolute inset-0 pointer-events-none transition-opacity duration-300",
           isLight
-            ? "bg-gradient-to-b from-white/20 via-transparent to-slate-200/30 opacity-20"
-            : "bg-gradient-to-b from-black/20 via-transparent to-black/60 opacity-30"
+            ? "bg-gradient-to-b from-white/20 via-transparent to-stone-200/20 opacity-15"
+            : "bg-gradient-to-b from-white/10 via-transparent to-stone-300/20 opacity-15"
         )}
       />
     </div>

@@ -13,17 +13,17 @@
   --font-display: var(--font-display), var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-mono), "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
-  /* Brand Scale — Velqora Precision Blue (#2563EB) */
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-300: #93c5fd;
-  --color-brand-400: #60a5fa;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-800: #1e40af;
-  --color-brand-900: #1e3a8a;
+  /* Brand Scale — Velqora Terracotta (#C2553A) "Warm Academic Library" */
+  --color-brand-50: #fef2f0;
+  --color-brand-100: #fdddd7;
+  --color-brand-200: #fbb9ad;
+  --color-brand-300: #f48e7c;
+  --color-brand-400: #e0654f;
+  --color-brand-500: #c2553a;
+  --color-brand-600: #a34530;
+  --color-brand-700: #853827;
+  --color-brand-800: #6b2d20;
+  --color-brand-900: #4a1f16;
 
   /* Semantic State Tokens */
   --color-accent-green: #10b981;
@@ -62,26 +62,25 @@
    ======================================== */
 
 :root,
-.dark,
 [data-surface="web"] {
-  --color-background: #090d16;
-  --color-surface: #0f172a;
-  --color-surface-secondary: #090d16;
-  --color-surface-tertiary: #162036;
-  --color-surface-hover: #1e293b;
+  --color-background: #fafaf8;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f5f3ee;
+  --color-surface-tertiary: #edeae3;
+  --color-surface-hover: #e8e5de;
 
-  --color-border: #1e293b;
-  --color-border-hover: #334155;
+  --color-border: #d6d3cb;
+  --color-border-hover: #b8b4ab;
 
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-tertiary: #64748b;
+  --color-text-primary: #1c1917;
+  --color-text-secondary: #57534e;
+  --color-text-tertiary: #a8a29e;
 
-  --color-sidebar: #090d16;
-  --color-sidebar-hover: #111827;
-  --color-sidebar-active: #1e3a8a;
-  --color-sidebar-text: #cbd5e1;
-  --color-sidebar-text-active: #ffffff;
+  --color-sidebar: #f5f3ee;
+  --color-sidebar-hover: #edeae3;
+  --color-sidebar-active: #c2553a;
+  --color-sidebar-text: #57534e;
+  --color-sidebar-text-active: #1c1917;
 
   /* Density & Radius default tokens */
   --density-card-p: 1rem;
@@ -169,49 +168,39 @@ html[data-surface="app"] body,
    ======================================== */
 
 .light {
-  --color-background: #f8fafc;
+  --color-background: #fafaf8;
   --color-surface: #ffffff;
-  --color-surface-secondary: #f8fafc;
-  --color-surface-tertiary: #f1f5f9;
-  --color-surface-hover: #e2e8f0;
+  --color-surface-secondary: #f5f3ee;
+  --color-surface-tertiary: #edeae3;
+  --color-surface-hover: #e8e5de;
 
-  --color-border: #e2e8f0;
-  --color-border-hover: #cbd5e1;
+  --color-border: #d6d3cb;
+  --color-border-hover: #b8b4ab;
 
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-tertiary: #64748b;
+  --color-text-primary: #1c1917;
+  --color-text-secondary: #57534e;
+  --color-text-tertiary: #a8a29e;
 
-  --color-sidebar: #ffffff;
-  --color-sidebar-hover: #f1f5f9;
-  --color-sidebar-active: #2563eb;
-  --color-sidebar-text: #334155;
-  --color-sidebar-text-active: #0f172a;
+  --color-sidebar: #f5f3ee;
+  --color-sidebar-hover: #edeae3;
+  --color-sidebar-active: #c2553a;
+  --color-sidebar-text: #57534e;
+  --color-sidebar-text-active: #1c1917;
 }
 
 .light body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #fafaf8;
+  color: #1c1917;
 }
 
 /* High Contrast Mode Adjustments */
-html[data-contrast="high"].dark {
-  --color-background: #000000;
-  --color-surface: #0a0f1d;
-  --color-surface-secondary: #000000;
-  --color-border: #334155;
-  --color-border-hover: #475569;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #cbd5e1;
-}
-
-html[data-contrast="high"].light {
+html[data-contrast="high"] {
   --color-surface: #ffffff;
-  --color-surface-secondary: #f1f5f9;
-  --color-border: #94a3b8;
-  --color-border-hover: #64748b;
-  --color-text-primary: #000000;
-  --color-text-secondary: #1e293b;
+  --color-surface-secondary: #f5f3ee;
+  --color-border: #78716c;
+  --color-border-hover: #57534e;
+  --color-text-primary: #0c0a09;
+  --color-text-secondary: #1c1917;
 }
 
 /* UI Density Controls */
@@ -268,19 +257,19 @@ html[data-font-size="large"] {
 /* Titanium / Default */
 html[data-accent="titanium"],
 html[data-accent="platinum"] {
-  --color-brand-500: #94a3b8;
-  --color-brand-600: #64748b;
-  --color-brand-700: #475569;
-  --color-sidebar-active: #334155;
+  --color-brand-500: #a8a29e;
+  --color-brand-600: #78716c;
+  --color-brand-700: #57534e;
+  --color-sidebar-active: #44403c;
 }
 
-/* Indigo / Precision Blue (Default Brand) */
-html[data-accent="indigo"],
+/* Terracotta / Warm Academic (Default Brand) */
+html[data-accent="terracotta"],
 html:not([data-accent]) {
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-sidebar-active: #1e3a8a;
+  --color-brand-500: #c2553a;
+  --color-brand-600: #a34530;
+  --color-brand-700: #853827;
+  --color-sidebar-active: #6b2d20;
 }
 
 /* Emerald */
@@ -288,7 +277,7 @@ html[data-accent="emerald"] {
   --color-brand-500: #10b981;
   --color-brand-600: #059669;
   --color-brand-700: #047857;
-  --color-sidebar-active: #047857;
+  --color-sidebar-active: #065f46;
 }
 
 /* Violet */
@@ -459,15 +448,15 @@ button, a, input, select, textarea {
 .bg-tech-grid {
   background-size: 32px 32px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(to right, rgba(28, 25, 23, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(28, 25, 23, 0.04) 1px, transparent 1px);
 }
 
 .bg-tech-grid-light {
   background-size: 32px 32px;
   background-image: 
-    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(28, 25, 23, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(28, 25, 23, 0.04) 1px, transparent 1px);
 }
 
 .radial-mask-vignette {

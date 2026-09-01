@@ -6,23 +6,23 @@ import path from "path";
 describe("FASE 40: Professional Product UI, Visual System & UX Polish Suite", () => {
   // ─── Group A: Design Tokens & Neutral Foundation ───
   describe("Group A: Design Token Normalization & Palette Consistency", () => {
-    it("Scenario POLISH-1: Globals CSS defines dark neutral foundation and Precision Blue brand scale", () => {
+    it("Scenario POLISH-1: Globals CSS defines warm neutral foundation and Terracotta brand scale", () => {
       const globalsPath = path.join(process.cwd(), "src/app/globals.css");
       assert.ok(fs.existsSync(globalsPath), "globals.css must exist");
       const content = fs.readFileSync(globalsPath, "utf-8");
 
-      // Verify Precision Blue Scale
-      assert.ok(content.includes("--color-brand-600: #2563eb;"), "Must define Precision Blue #2563eb");
-      assert.ok(content.includes("--color-brand-500: #3b82f6;"), "Must define Brand 500 #3b82f6");
+      // Verify Terracotta Brand Scale
+      assert.ok(content.includes("--color-brand-600: #a34530;"), "Must define Terracotta brand-600 #a34530");
+      assert.ok(content.includes("--color-brand-500: #c2553a;"), "Must define Brand 500 #c2553a");
 
-      // Verify Dark Surface Neutral Scale
-      assert.ok(content.includes("--color-background: #090d16;"), "Must define background #090d16");
-      assert.ok(content.includes("--color-surface: #0f172a;"), "Must define surface #0f172a");
-      assert.ok(content.includes("--color-surface-hover: #1e293b;"), "Must define surface hover #1e293b");
+      // Verify Warm Neutral Surface Scale
+      assert.ok(content.includes("--color-background: #fafaf8;"), "Must define warm background #fafaf8");
+      assert.ok(content.includes("--color-surface: #ffffff;"), "Must define surface #ffffff");
+      assert.ok(content.includes("--color-surface-hover: #e8e5de;"), "Must define surface hover #e8e5de");
 
       // Verify Light Surface Palette
       assert.ok(content.includes(".light {"), "Must define light theme block");
-      assert.ok(content.includes("--color-background: #f8fafc;"), "Must define light background");
+      assert.ok(content.includes("--color-background: #fafaf8;"), "Must define light background");
       assert.ok(content.includes("--color-surface: #ffffff;"), "Must define light surface");
     });
 

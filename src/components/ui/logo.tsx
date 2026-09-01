@@ -62,9 +62,9 @@ export function VelqoraMark({
       case "primary":
       default:
         return {
-          left: "fill-[#0071e3] dark:fill-[#2997ff]",
-          right: "fill-[#2997ff] dark:fill-[#60a5fa]",
-          node: "fill-[#60a5fa] dark:fill-[#93c5fd]",
+          left: "fill-[#a34530] dark:fill-[#c2553a]",
+          right: "fill-[#c2553a] dark:fill-[#e0654f]",
+          node: "fill-[#e0654f] dark:fill-[#f48e7c]",
         };
     }
   };
@@ -85,8 +85,8 @@ export function VelqoraMark({
       {/* Optional Obsidian Squircle Tile Background */}
       {showTile && (
         <>
-          <rect width="32" height="32" rx="8" fill="#0b0f19" />
-          <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#1e293b" strokeWidth="1" />
+          <rect width="32" height="32" rx="8" fill="#1c1917" />
+          <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#44403c" strokeWidth="1" />
         </>
       )}
 

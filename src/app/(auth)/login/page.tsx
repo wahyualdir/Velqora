@@ -237,7 +237,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-brand-500 selection:text-white">
+    <div className="relative min-h-screen flex flex-col justify-between text-text-primary overflow-x-hidden selection:bg-brand-500/20 selection:text-brand-600">
 
       {/* Subtle Background */}
       <TechBackground />
@@ -248,7 +248,7 @@ export default function LoginPage() {
 
           {/* 1. Primary Card: Login Form */}
           <div
-            className="relative rounded-2xl border border-white/15 bg-[#030712]/90 backdrop-blur-xl p-5 sm:p-7 shadow-2xl text-left transition-all duration-300 overflow-hidden animate-fade-in-up"
+            className="relative rounded-2xl border border-border bg-white/95 backdrop-blur-xl p-5 sm:p-7 shadow-lg text-left transition-all duration-300 overflow-hidden animate-fade-in-up"
             style={{ animationDelay: "100ms" }}
           >
 
@@ -261,14 +261,14 @@ export default function LoginPage() {
 
             {/* Header Title & Subtitle */}
             <div className="space-y-1 text-center">
-              <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight font-display">
+              <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
                 {isForgotPassword
                   ? resetSent
                     ? "Cek Email Anda"
                     : "Reset Password"
                   : "Masuk ke Akun"}
               </h1>
-              <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+              <p className="text-[11px] sm:text-xs text-text-tertiary leading-relaxed max-w-xs mx-auto">
                 {isForgotPassword ? (
                   resetSent ? (
                     `Instruksi pemulihan telah dikirim ke ${email}`
@@ -284,8 +284,8 @@ export default function LoginPage() {
             {isForgotPassword ? (
               resetSent ? (
                 <div className="space-y-3 text-center py-1 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                  <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md text-emerald-300 text-xs leading-relaxed flex items-center justify-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-700 text-xs leading-relaxed flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                     <span>Tautan pemulihan telah dikirim ke <strong>{email}</strong>.</span>
                   </div>
                   <button
@@ -294,7 +294,7 @@ export default function LoginPage() {
                       setIsForgotPassword(false);
                       setResetSent(false);
                     }}
-                    className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] transition-all min-h-[38px] cursor-pointer active:scale-98"
+                    className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-text-primary bg-surface-secondary hover:bg-surface-hover border border-border transition-all min-h-[38px] cursor-pointer active:scale-98"
                   >
                     Kembali ke Halaman Masuk
                   </button>
@@ -302,23 +302,23 @@ export default function LoginPage() {
               ) : (
                 <form onSubmit={handleResetPassword} className="space-y-3.5 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                    <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
                       Email Akun
                     </label>
                     <div
                       className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                         focusedField === "reset-email"
-                          ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
-                          : "border-white/[0.12] bg-white/[0.03] hover:border-white/[0.22]"
+                          ? "border-brand-500 bg-brand-500/5 ring-2 ring-brand-500/20"
+                          : "border-border bg-surface hover:border-border-hover"
                       }`}
                     >
                       <Mail
                         className={`absolute left-3 w-4 h-4 transition-colors ${
                           focusedField === "reset-email"
-                            ? "text-brand-400"
+                            ? "text-brand-500"
                             : email.length > 0
-                            ? "text-slate-200"
-                            : "text-slate-400"
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
                         }`}
                       />
                       <input
@@ -331,7 +331,7 @@ export default function LoginPage() {
                         disabled={loading}
                         required
                         autoComplete="email"
-                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50"
+                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50"
                       />
                     </div>
                   </div>
@@ -339,7 +339,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 shadow-xs transition-all active:scale-98 min-h-[40px] cursor-pointer disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 shadow-sm transition-all active:scale-98 min-h-[40px] cursor-pointer disabled:opacity-50"
                   >
                     {loading ? (
                       <div className="flex items-center gap-2">
@@ -357,7 +357,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setIsForgotPassword(false)}
-                    className="w-full text-center text-xs text-slate-400 hover:text-white transition-colors pt-0.5 cursor-pointer"
+                    className="w-full text-center text-xs text-text-tertiary hover:text-text-primary transition-colors pt-0.5 cursor-pointer"
                   >
                     Kembali ke Login
                   </button>
@@ -371,7 +371,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={handleGoogleLogin}
                     disabled={loading}
-                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.12] hover:border-white/[0.22] shadow-xs transition-all active:scale-98 disabled:opacity-50 min-h-[38px] cursor-pointer"
+                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs transition-all active:scale-98 disabled:opacity-50 min-h-[38px] cursor-pointer"
                   >
                     <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
                     <span>Google</span>
@@ -381,9 +381,9 @@ export default function LoginPage() {
                     type="button"
                     onClick={handleGithubLogin}
                     disabled={loading}
-                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.12] hover:border-white/[0.22] shadow-xs transition-all active:scale-98 disabled:opacity-50 min-h-[38px] cursor-pointer"
+                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs transition-all active:scale-98 disabled:opacity-50 min-h-[38px] cursor-pointer"
                   >
-                    <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-slate-100" />
+                    <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-text-primary" />
                     <span>GitHub</span>
                   </button>
                 </div>
@@ -391,10 +391,10 @@ export default function LoginPage() {
                 {/* Divider */}
                 <div className="relative animate-fade-in-up" style={{ animationDelay: "250ms" }}>
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/[0.08]" />
+                    <div className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                    <span className="bg-[#030712] px-2.5 py-0.5 text-slate-400 font-medium rounded-md border border-white/[0.08]">
+                    <span className="bg-white px-2.5 py-0.5 text-text-tertiary font-medium rounded-md border border-border">
                       atau masuk via email
                     </span>
                   </div>
@@ -404,25 +404,25 @@ export default function LoginPage() {
                 <form onSubmit={handleSubmit} className="space-y-3.5 pt-0.5">
                   {/* Email Field */}
                   <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                    <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
                       Email
                     </label>
                     <div
                       className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                         focusedField === "email"
-                          ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
+                          ? "border-brand-500 bg-brand-500/5 ring-2 ring-brand-500/20"
                           : email.length > 0
-                          ? "border-white/[0.2] bg-white/[0.05]"
-                          : "border-white/[0.12] bg-white/[0.03] hover:border-white/[0.22]"
+                          ? "border-border-hover bg-surface"
+                          : "border-border bg-surface hover:border-border-hover"
                       }`}
                     >
                       <Mail
                         className={`absolute left-3 w-4 h-4 transition-colors ${
                           focusedField === "email"
-                            ? "text-brand-400"
+                            ? "text-brand-500"
                             : email.length > 0
-                            ? "text-slate-200"
-                            : "text-slate-400"
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
                         }`}
                       />
                       <input
@@ -435,7 +435,7 @@ export default function LoginPage() {
                         disabled={loading}
                         required
                         autoComplete="email"
-                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
+                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50 font-medium"
                       />
                     </div>
                   </div>
@@ -443,7 +443,7 @@ export default function LoginPage() {
                   {/* Password Field */}
                   <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "310ms" }}>
                     <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                      <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
                         Password
                       </label>
                       <button
@@ -452,7 +452,7 @@ export default function LoginPage() {
                           setIsForgotPassword(true);
                           setResetSent(false);
                         }}
-                        className="text-[11px] text-slate-400 hover:text-brand-400 hover:underline transition-colors cursor-pointer"
+                        className="text-[11px] text-text-tertiary hover:text-brand-500 hover:underline transition-colors cursor-pointer"
                       >
                         Lupa password?
                       </button>
@@ -460,19 +460,19 @@ export default function LoginPage() {
                     <div
                       className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
                         focusedField === "password"
-                          ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
+                          ? "border-brand-500 bg-brand-500/5 ring-2 ring-brand-500/20"
                           : password.length > 0
-                          ? "border-white/[0.2] bg-white/[0.05]"
-                          : "border-white/[0.12] bg-white/[0.03] hover:border-white/[0.22]"
+                          ? "border-border-hover bg-surface"
+                          : "border-border bg-surface hover:border-border-hover"
                       }`}
                     >
                       <Lock
                         className={`absolute left-3 w-4 h-4 transition-colors ${
                           focusedField === "password"
-                            ? "text-brand-400"
+                            ? "text-brand-500"
                             : password.length > 0
-                            ? "text-slate-200"
-                            : "text-slate-400"
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
                         }`}
                       />
                       <input
@@ -485,16 +485,16 @@ export default function LoginPage() {
                         disabled={loading}
                         required
                         autoComplete="current-password"
-                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
+                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50 font-medium"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2.5 p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                        className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
                         tabIndex={-1}
                         aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                       >
-                        {showPassword ? <EyeOff className="w-3.5 h-3.5 text-cyan-400" /> : <Eye className="w-3.5 h-3.5" />}
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5 text-brand-500" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
                     </div>
                   </div>
@@ -504,7 +504,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 active:scale-98 transition-all disabled:opacity-50 shadow-xs min-h-[40px] cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-98 transition-all disabled:opacity-50 shadow-sm min-h-[40px] cursor-pointer"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
@@ -527,13 +527,13 @@ export default function LoginPage() {
 
           {/* 2. Secondary Switcher Box */}
           <div
-            className="rounded-xl border border-white/[0.12] bg-[#030712]/60 backdrop-blur-md p-3 text-center text-xs text-slate-300 shadow-xs animate-fade-in-up"
+            className="rounded-xl border border-border bg-surface/80 backdrop-blur-md p-3 text-center text-xs text-text-secondary shadow-xs animate-fade-in-up"
             style={{ animationDelay: "370ms" }}
           >
             Belum memiliki akun?{" "}
             <Link
               href="/register"
-              className="font-bold text-brand-400 hover:text-brand-300 underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
+              className="font-bold text-brand-500 hover:text-brand-600 underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
             >
               <span>Daftar Sekarang</span>
               <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
@@ -545,11 +545,11 @@ export default function LoginPage() {
 
       {/* Footer */}
       <footer
-        className="w-full py-6 px-4 border-t border-white/[0.08] z-10 flex items-center justify-center max-w-4xl mx-auto text-center animate-fade-in-up"
+        className="w-full py-6 px-4 border-t border-border z-10 flex items-center justify-center max-w-4xl mx-auto text-center animate-fade-in-up"
         style={{ animationDelay: "400ms" }}
       >
-        <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed">
-          &copy; 2026 <span className="text-slate-300 font-medium">JOBLIB505 FORUM GROUP</span>. Semua hak dilindungi undang-undang.
+        <p className="text-[11px] sm:text-xs text-text-tertiary leading-relaxed">
+          &copy; 2026 <span className="text-text-secondary font-medium">JOBLIB505 FORUM GROUP</span>. Semua hak dilindungi undang-undang.
         </p>
       </footer>
     </div>

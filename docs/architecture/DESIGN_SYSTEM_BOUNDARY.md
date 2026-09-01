@@ -4,24 +4,42 @@
 
 ## 1. SHARED BRAND & DESIGN TOKEN FOUNDATION
 
-### A. Surface Palette Tokens
-- **Dark Neutral Foundation (70–85% of Viewport)**:
-  - Base Background: `#090D16` (`--color-background`)
-  - Primary Surface: `#0F172A` (`--color-surface`)
-  - Surface Hover: `#1E293B` (`--color-surface-hover`)
-  - Card Secondary: `#162036`
-  - Border / Separators: `#1E293B` (hover `#334155`)
-- **Light Neutral Foundation (Theme Option / Clean Presentation)**:
-  - Base Background: `#F8FAFC`
-  - Primary Surface: `#FFFFFF`
-  - Surface Hover: `#F1F5F9`
+### A. Surface Palette Tokens — "Warm Academic Library"
+
+**Design Philosophy**: Velqora's visual identity draws from the warm, structured
+atmosphere of a university library — quality paper, organized shelves, warm
+lighting. This deliberately separates Velqora from the dark-navy + blue-accent
+default of AI-generated SaaS templates. Light-first by design, with warm
+neutrals instead of cool grays.
+
+- **Warm Neutral Foundation (70–85% of Viewport)**:
+  - Base Background: `#FAFAF8` (`--color-background`) — warm off-white, like quality paper
+  - Primary Surface: `#FFFFFF` (`--color-surface`) — clean white card
+  - Surface Secondary: `#F5F3EE` — warm cream for alternate sections
+  - Surface Tertiary: `#EDEAE3` — subtle warmth
+  - Surface Hover: `#E8E5DE`
+  - Border / Separators: `#D6D3CB` (hover `#B8B4AB`) — warm gray, not cool slate
+  - Text Primary: `#1C1917` — warm charcoal, not pure black
+  - Text Secondary: `#57534E` — warm medium gray
+  - Text Tertiary: `#A8A29E` — warm light gray
+
+- **App Surface (Mobile PWA — Unchanged)**:
+  - Base Background: `#FFFFFF`
+  - Primary Surface: `#F8FAFC`
+  - Surface Hover: `#E2E8F0`
   - Border / Separators: `#E2E8F0`
 
-### B. Precision Blue Accent (5–10% of Viewport)
-- **Primary Brand Accent**: `#2563EB` (`brand-600`)
-- **Secondary Accent**: `#3B82F6` (`brand-500`)
-- **Soft Interactive Fill**: `rgba(37, 99, 235, 0.1)` (`bg-brand-500/10`)
-- **Subtle Focus Ring**: `#3B82F6` (`focus-visible:ring-brand-500`)
+### B. Terracotta Accent (5–10% of Viewport)
+- **Primary Brand Accent**: `#C2553A` (`brand-500`)
+- **Interactive Hover**: `#A34530` (`brand-600`)
+- **Deep Active**: `#853827` (`brand-700`)
+- **Soft Interactive Fill**: `rgba(194, 85, 58, 0.1)` (`bg-brand-500/10`)
+- **Subtle Focus Ring**: `#C2553A` (`focus-visible:ring-brand-500`)
+
+**Why Terracotta?** No major edtech competitor (Notion, Coursera, Google
+Classroom, Canva Learn) uses terracotta as primary accent. It evokes warmth,
+academic heritage, and intentionality — qualities absent from generic
+blue/indigo/teal palettes that dominate AI-generated output.
 
 ### C. Anti-Slop Strict Invariants
 - Strictly **0 gradient text** (`bg-clip-text`).
