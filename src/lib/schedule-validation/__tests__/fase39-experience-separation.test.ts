@@ -157,7 +157,7 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
         "src/components/layout/desktop/desktop-top-bar.tsx",
         "src/components/layout/mobile/mobile-top-bar.tsx",
         "src/surfaces/app/dashboard/mobile-dashboard-view.tsx",
-        "src/components/tasks/desktop-task-workspace.tsx",
+        "src/surfaces/web/tasks/desktop-task-workspace.tsx",
       ];
 
       filesToCheck.forEach((rel) => {
