@@ -29,6 +29,9 @@ export function PwaRegister() {
         navigator.serviceWorker
           .register("/sw.js")
           .then((reg) => {
+            // Check update immediately after registration
+            reg.update().catch(() => {});
+
             // Check for updates periodically when user switches to tab / app
             const checkForUpdate = () => {
               if (document.visibilityState === "visible") {
