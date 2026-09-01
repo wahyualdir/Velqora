@@ -17,13 +17,13 @@ export function ProductDuality() {
       >
         <div className="max-w-xl space-y-3 mb-14 text-left">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-600 text-xs font-semibold uppercase tracking-wider">
-            Fleksibilitas Dua Layar
+            Web & Mobile
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-[2.2rem] font-bold font-display tracking-tight text-text-primary leading-tight">
             Bekerja serius di laptop, pantau cepat dari ponsel saat jalan ke kampus.
           </h2>
           <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
-            Satu akun tersinkronisasi otomatis. Kamu tidak perlu mengetik ulang jadwal atau memindahkan file secara manual antar perangkat.
+            Satu akun tersinkronisasi otomatis. Kamu tidak perlu mengetik ulang jadwal atau memindahkan berkas materi secara manual antar perangkat.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export function ProductDuality() {
             </div>
 
             <p className="text-[13.5px] text-text-secondary leading-relaxed">
-              Pasang langsung lewat browser tanpa perlu unduh ratusan MB dari app store. Cek ruangan kuliah berikutnya dan tenggat tugas hanya dengan satu ketukan ibu jari.
+              Pasang langsung lewat browser (PWA) tanpa perlu unduh ratusan MB dari app store. Cek ruangan kuliah berikutnya dan tenggat tugas hanya dengan satu ketukan ibu jari.
             </p>
 
             <div className="space-y-3 pt-3 border-t border-border/70">

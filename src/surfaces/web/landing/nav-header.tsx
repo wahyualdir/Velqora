@@ -37,7 +37,7 @@ export function NavHeader() {
             onClick={(e) => handleAnchorClick(e, "arsitektur")}
             className="relative py-1.5 hover:text-text-primary transition-colors duration-150 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-brand-500 after:transition-all after:duration-200 hover:after:w-full cursor-pointer select-none"
           >
-            Dua Layar
+            Web & Mobile
           </a>
           <a
             href="#fitur"
@@ -77,7 +77,7 @@ export function NavHeader() {
               size="sm"
               className="text-[13px] font-semibold gap-1.5 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white shadow-sm hover:shadow-md transition-all duration-150"
             >
-              <span>Buka Workspace</span>
+              <span>Masuk ke Workspace</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </Link>

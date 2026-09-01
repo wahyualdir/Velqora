@@ -30,6 +30,9 @@ export function EditorialFooter() {
             <Link href="/dashboard/ai-tutor" className="hover:text-text-primary transition-colors duration-150">
               AI Tutor
             </Link>
+            <Link href="/dashboard/kuis-ai" className="hover:text-text-primary transition-colors duration-150">
+              Latihan & Kuis
+            </Link>
             <Link href="/download" className="hover:text-brand-600 transition-colors duration-150 text-brand-500 font-semibold">
               Pasang PWA
             </Link>

@@ -27,7 +27,7 @@ export function HeroSection() {
           {/* Left: Editorial Human Copy */}
           <div className="lg:col-span-6 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 text-xs font-semibold tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
               Workspace Akademis Mahasiswa
             </div>
 
@@ -48,7 +48,7 @@ export function HeroSection() {
                   size="lg"
                   className="text-sm font-semibold gap-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white px-6 shadow-sm hover:shadow-md transition-all duration-150"
                 >
-                  <span>Mulai Belajar Sekarang</span>
+                  <span>Masuk ke Workspace — Gratis</span>
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>

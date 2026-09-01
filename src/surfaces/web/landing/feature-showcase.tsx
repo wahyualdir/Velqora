@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Calendar, Bot, FolderArchive, CheckSquare, Code2, HelpCircle } from "lucide-react";
+import { Calendar, Bot, FolderArchive, CheckSquare, Code2, BrainCircuit } from "lucide-react";
 import { useScrollReveal } from "./use-landing-animation";
 
 export function FeatureShowcase() {
@@ -165,15 +165,15 @@ export function FeatureShowcase() {
             </div>
           </div>
 
-          {/* Feature 6: Kuis Latihan AI — 4 cols */}
+          {/* Feature 6: Latihan & Kuis AI — 4 cols */}
           <div className="lg:col-span-4 p-6 rounded-2xl border border-border bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4 text-left flex flex-col justify-between">
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center border border-cyan-500/20">
-                <HelpCircle className="w-5 h-5" />
+                <BrainCircuit className="w-5 h-5" />
               </div>
-              <h3 className="text-lg font-bold font-display text-text-primary">Latihan Kuis Mandiri</h3>
+              <h3 className="text-lg font-bold font-display text-text-primary">Latihan & Kuis AI</h3>
               <p className="text-[13px] text-text-secondary leading-relaxed">
-                Buat kuis latihan interaktif otomatis dari rangkuman modulmu. Uji sejauh mana pemahamanmu sebelum menghadapi UTS atau UAS.
+                Hasilkan kuis latihan interaktif otomatis dari dokumen materi kuliahmu. Uji sejauh mana pemahamanmu sebelum menghadapi UTS atau UAS.
               </p>
             </div>
             <div className="p-3 rounded-xl bg-surface-secondary/70 border border-border space-y-1.5 text-[11px]">
