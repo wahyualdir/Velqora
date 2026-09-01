@@ -7,7 +7,6 @@ export * from "./deadline-intelligence-card";
 export * from "./early-warning-banner";
 export * from "./explainability-modal";
 export * from "./missed-session-recovery-modal";
-export * from "./mobile-schedule-agenda";
 export * from "./recommendation-history-table";
 export * from "./recommendations-center";
 export * from "./reschedule-impact-modal";
