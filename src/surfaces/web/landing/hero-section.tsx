@@ -562,7 +562,7 @@ export function HeroSection() {
   const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
 
   return (
-    <section className="relative pt-14 pb-20 lg:pt-20 lg:pb-28 border-b border-border overflow-hidden">
+    <section className="relative pt-14 pb-20 lg:pt-20 lg:pb-28 border-b border-border overflow-x-hidden">
       <BookshelfHeroBackground />
 
       {/* Warm subtle ambient glow */}
