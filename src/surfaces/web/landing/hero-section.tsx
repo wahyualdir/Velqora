@@ -196,48 +196,61 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Mobile Companion Overlay with Hanging Rope Descent Animation ("Turun Pakai Tali") */}
+            {/* Hanging Rope Assembly & Mobile Companion Phone ("Turun Pakai Tali") */}
             <div
-              className={`absolute -bottom-8 -left-3 sm:-left-6 w-48 sm:w-52 z-20 origin-top transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+              className={`absolute -top-3 -left-2 sm:-left-6 z-20 origin-top pointer-events-auto transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
                 isVisible
-                  ? "opacity-100 translate-y-0 rotate-[-2deg]"
-                  : "opacity-0 -translate-y-24 rotate-[-9deg] pointer-events-none"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-48 pointer-events-none"
               }`}
               style={{ transitionDelay: "450ms" }}
             >
-              {/* Tali Gantungan (Hanging String & Anchor Pin) */}
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none select-none z-10">
-                {/* Pin / Paku Anchor di atas */}
-                <div className="w-2.5 h-2.5 rounded-full bg-brand-500 border-2 border-white shadow-xs" />
-                {/* Garis Tali Bertali Halus */}
-                <div
-                  className={`w-[1.5px] bg-gradient-to-b from-brand-500/80 via-brand-500/50 to-brand-500/90 transition-all duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
-                    isVisible ? "h-12 opacity-100" : "h-0 opacity-0"
-                  }`}
-                  style={{ transitionDelay: "450ms" }}
-                />
-                {/* Ring / Pengait Cincin di atas kartu */}
-                <div className="w-2 h-2 rounded-full border-[1.5px] border-brand-500 -mt-0.5 bg-white shadow-2xs" />
-              </div>
-
-              {/* Card Container with tactile hover sway */}
-              <div className="rounded-2xl border-2 border-border/90 bg-white p-1.5 shadow-2xl transition-all duration-300 hover:rotate-0 hover:scale-[1.02] hover:shadow-brand-500/15 group">
-                <div className="w-12 h-1.5 bg-surface-secondary rounded-full mx-auto mb-2" />
-                <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
-                  <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
-                    <span className="font-bold text-text-primary flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-brand-500" />
-                      Velqora Mobile
-                    </span>
-                    <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
+              {/* Continuous Gentle Pendulum Sway Assembly */}
+              <div className="flex flex-col items-center animate-rope-sway origin-top">
+                {/* 1. Top Anchor Hook (clipped over desktop window chrome) */}
+                <div className="relative flex flex-col items-center z-30">
+                  {/* Top Mounting Pin / Carabiner Ring */}
+                  <div className="w-4 h-4 rounded-full border-2 border-brand-500 bg-white shadow-md flex items-center justify-center -mb-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
                   </div>
-                  <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs group-hover:border-brand-500/40 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
-                      <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
+                  
+                  {/* Braided Terracotta Rope / Lanyard Strap */}
+                  <div className="w-1.5 h-36 sm:h-44 bg-gradient-to-b from-brand-600 via-brand-500 to-brand-600 shadow-sm relative overflow-hidden rounded-full border border-brand-700/30">
+                    {/* Woven Stitching Texture */}
+                    <div
+                      className="absolute inset-0 opacity-40"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.7) 3px, rgba(255,255,255,0.7) 6px)",
+                      }}
+                    />
+                  </div>
+
+                  {/* Metal Ring Clasp at bottom of rope */}
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-brand-600 bg-white shadow-xs -mt-1 flex items-center justify-center">
+                    <div className="w-1 h-1 rounded-full bg-brand-500" />
+                  </div>
+                </div>
+
+                {/* 2. Mobile Companion Phone Card (hanging at the end of the rope) */}
+                <div className="w-48 sm:w-52 rounded-2xl border-2 border-border bg-white p-1.5 shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-brand-500/20 group -mt-1">
+                  <div className="w-12 h-1.5 bg-surface-secondary rounded-full mx-auto mb-2" />
+                  <div className="rounded-xl bg-surface-secondary/60 border border-border p-2.5 space-y-2 text-text-primary">
+                    <div className="flex items-center justify-between text-[10px] border-b border-border/80 pb-1.5">
+                      <span className="font-bold text-text-primary flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-brand-500" />
+                        Velqora Mobile
+                      </span>
+                      <span className="text-[9px] text-text-tertiary font-mono">PWA</span>
                     </div>
-                    <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
-                    <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+                    <div className="p-2 rounded-lg bg-white border border-brand-500/20 space-y-0.5 shadow-2xs group-hover:border-brand-500/40 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[9px] text-brand-600 font-bold uppercase tracking-wider">Kelas Berikutnya</p>
+                        <span className="text-[9px] text-emerald-600 font-medium">10 Menit Lagi</span>
+                      </div>
+                      <p className="text-[11px] font-bold text-text-primary">Kalkulus Lanjut</p>
+                      <p className="text-[9px] text-text-secondary">10:45 • R. 402 Gedung C</p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -577,3 +577,24 @@ button, a, input, select, textarea {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
+
+/* Rope Hanging & Descent Physics Animation */
+@keyframes rope-sway {
+  0%, 100% {
+    transform: rotate(-2.5deg) translateY(0px);
+  }
+  50% {
+    transform: rotate(2deg) translateY(6px);
+  }
+}
+
+.animate-rope-sway {
+  animation: rope-sway 4.5s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rope-sway {
+    animation: none !important;
+  }
+}
