@@ -6,8 +6,8 @@ import { getDashboardStats } from "@/actions/study-actions";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
-import { DesktopDashboardView } from "@/components/dashboard/desktop-dashboard-view";
-import { MobileDashboardView } from "@/components/dashboard/mobile-dashboard-view";
+import { DesktopDashboardView } from "@/surfaces/web/dashboard/desktop-dashboard-view";
+import { MobileDashboardView } from "@/surfaces/app/dashboard/mobile-dashboard-view";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 
 interface DashboardStatsState {

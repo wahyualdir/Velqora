@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { DashboardFocus } from "@/components/dashboard/dashboard-focus";
-import { DashboardMetrics } from "@/components/dashboard/dashboard-metrics";
-import { DashboardModulesList } from "@/components/dashboard/dashboard-modules-list";
-import { DashboardRecentViews } from "@/components/dashboard/dashboard-recent-views";
-import { DashboardTasksList } from "@/components/dashboard/dashboard-tasks-list";
-import { DashboardQuickTools } from "@/components/dashboard/dashboard-quick-tools";
+import { DashboardHeader } from "./dashboard-header";
+import { DashboardFocus } from "./dashboard-focus";
+import { DashboardMetrics } from "./dashboard-metrics";
+import { DashboardModulesList } from "./dashboard-modules-list";
+import { DashboardRecentViews } from "./dashboard-recent-views";
+import { DashboardTasksList } from "./dashboard-tasks-list";
+import { DashboardQuickTools } from "./dashboard-quick-tools";
 
 interface DesktopDashboardViewProps {
   userName: string;

@@ -168,7 +168,7 @@ describe("FASE 40: Professional Product UI, Visual System & UX Polish Suite", ()
     });
 
     it("Scenario POLISH-9: Mobile dashboard view hero card is calm and devoid of excessive rainbow gradients", () => {
-      const mobileDashPath = path.join(process.cwd(), "src/components/dashboard/mobile-dashboard-view.tsx");
+      const mobileDashPath = path.join(process.cwd(), "src/surfaces/app/dashboard/mobile-dashboard-view.tsx");
       assert.ok(fs.existsSync(mobileDashPath), "mobile-dashboard-view.tsx must exist");
       const content = fs.readFileSync(mobileDashPath, "utf-8");
 
@@ -209,8 +209,8 @@ describe("FASE 40: Professional Product UI, Visual System & UX Polish Suite", ()
 
     it("Scenario POLISH-12: Metric grids enforce auto-rows-fr across Web and App views", () => {
       const filesWithGrids = [
-        "src/components/dashboard/dashboard-metrics.tsx",
-        "src/components/dashboard/mobile-dashboard-view.tsx",
+        "src/surfaces/web/dashboard/dashboard-metrics.tsx",
+        "src/surfaces/app/dashboard/mobile-dashboard-view.tsx",
         "src/components/schedule/behavior-insights-card.tsx",
         "src/components/schedule/current-academic-state-card.tsx",
         "src/components/schedule/schedule-intelligence-summary.tsx",
