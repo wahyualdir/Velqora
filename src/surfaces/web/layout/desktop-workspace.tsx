@@ -48,7 +48,7 @@ export function DesktopWorkspaceHeader({
   breadcrumbs,
 }: DesktopWorkspaceHeaderProps) {
   return (
-    <div className="border-b border-border/80 bg-surface/50 backdrop-blur-xs py-4 px-6 mb-6">
+    <div className="border-b border-border/80 bg-surface/50 backdrop-blur-xs py-4 px-4 sm:px-6 mb-6">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-text-tertiary font-mono mb-2">
           {breadcrumbs.map((crumb, idx) => (
@@ -76,7 +76,7 @@ export function DesktopWorkspaceHeader({
           </h1>
           {badge}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
+        {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
       </div>
 
       {description && (

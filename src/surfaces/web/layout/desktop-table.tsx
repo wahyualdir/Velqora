@@ -10,7 +10,7 @@ interface DesktopTableProps extends React.TableHTMLAttributes<HTMLTableElement> 
 
 export function DesktopTable({ children, className, ...props }: DesktopTableProps) {
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-border bg-surface shadow-2xs">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-surface shadow-2xs">
       <table
         className={cn("w-full text-left border-collapse text-xs min-w-[700px]", className)}
         {...props}
@@ -31,7 +31,7 @@ export function DesktopTableHeader({
   return (
     <thead
       className={cn(
-        "bg-surface-secondary/70 border-b border-border text-text-secondary text-[11px] font-semibold uppercase tracking-wider font-mono select-none",
+        "bg-surface-secondary/80 border-b border-border text-text-secondary text-[11px] font-semibold uppercase tracking-wider font-mono select-none",
         className
       )}
     >
@@ -55,7 +55,7 @@ export function DesktopTableRow({
     <tr
       onClick={onClick}
       className={cn(
-        "border-b border-border/60 transition-colors",
+        "border-b border-border/60 transition-colors last:border-b-0",
         isInteractive && "cursor-pointer hover:bg-surface-secondary/50 active:bg-surface-secondary/70",
         className
       )}
@@ -73,7 +73,7 @@ export function DesktopTableHead({
   className?: string;
 }) {
   return (
-    <th className={cn("py-2.5 px-3.5 font-semibold text-text-tertiary", className)}>
+    <th className={cn("py-3 px-4 font-semibold text-text-tertiary", className)}>
       {children}
     </th>
   );
@@ -87,7 +87,7 @@ export function DesktopTableCell({
   className?: string;
 }) {
   return (
-    <td className={cn("py-2.5 px-3.5 text-text-primary align-middle", className)}>
+    <td className={cn("py-3 px-4 text-text-primary align-middle", className)}>
       {children}
     </td>
   );

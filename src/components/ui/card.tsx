@@ -22,7 +22,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
   interactive?: boolean;
   padding?: "none" | "sm" | "md" | "lg";
-  variant?: "default" | "subtle" | "elevated" | "outline" | "secondary" | "interactive" | "dossier";
+  variant?: "default" | "subtle" | "focus" | "elevated" | "outline" | "secondary" | "interactive" | "dossier";
   onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
   style?: React.CSSProperties;
 }
@@ -43,6 +43,7 @@ export function Card({
   const variantStyles = {
     default: "bg-surface border-border shadow-2xs",
     subtle: "bg-surface-secondary/70 border-border/80",
+    focus: "bg-surface border-border border-l-4 border-l-brand-500 shadow-xs",
     elevated: "bg-surface border-border shadow-xs dark:shadow-black/30",
     outline: "bg-transparent border-border",
     secondary: "bg-surface-secondary border-border",
@@ -116,12 +117,14 @@ export function CardStat({
 }: CardStatProps) {
   const content = (
     <div className="h-full flex flex-col justify-between space-y-2 select-none">
-      {/* Header: Label & Icon */}
+      {/* Header: Label & Neutral Icon */}
       <div className="flex items-center justify-between gap-1.5 text-text-tertiary">
         <span className="text-xs font-medium text-text-secondary truncate">
           {label}
         </span>
-        {Icon && <Icon className="w-4 h-4 shrink-0 text-brand-500" />}
+        {Icon && (
+          <Icon className="w-4 h-4 shrink-0 text-text-tertiary group-hover:text-brand-500 transition-colors duration-150" />
+        )}
       </div>
 
       {/* Body: Value, Hint, or Badge */}

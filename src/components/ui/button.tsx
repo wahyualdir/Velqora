@@ -45,28 +45,28 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 border border-brand-500/30 shadow-2xs",
+        "bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 border border-brand-500/30 shadow-2xs",
       secondary:
-        "bg-surface-tertiary text-text-primary hover:bg-surface-hover active:bg-surface border border-border",
+        "bg-surface-secondary text-text-primary hover:bg-surface-tertiary active:bg-surface border border-border shadow-2xs",
       outline:
-        "bg-transparent text-text-primary hover:bg-surface-tertiary active:bg-surface-hover border border-border hover:border-border-hover",
+        "bg-transparent text-text-primary hover:bg-surface-secondary active:bg-surface-tertiary border border-border hover:border-border-hover",
       ghost:
-        "bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-tertiary active:bg-surface-hover",
+        "bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:bg-surface-tertiary",
       destructive:
         "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-red-500/30 shadow-2xs",
       danger:
         "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-red-500/30 shadow-2xs",
-      link: "bg-transparent text-brand-500 hover:text-brand-400 hover:underline p-0 min-h-0 h-auto rounded-none border-0 shadow-none",
+      link: "bg-transparent text-brand-500 hover:text-brand-600 hover:underline p-0 min-h-0 h-auto rounded-none border-0 shadow-none",
       icon: "bg-surface-secondary text-text-secondary hover:text-text-primary hover:bg-surface-tertiary border border-border p-2",
     };
 
     const sizes = {
-      sm: "px-2.5 py-1.5 min-h-[34px] text-xs gap-1.5",
-      md: "px-3.5 py-2 min-h-[40px] sm:min-h-[38px] text-xs sm:text-sm gap-2",
+      sm: "px-3 py-1.5 min-h-[36px] text-xs gap-1.5",
+      md: "px-4 py-2 min-h-[40px] text-xs sm:text-sm gap-2 font-medium",
       lg: "px-5 py-2.5 min-h-[44px] text-sm sm:text-base gap-2.5 font-semibold",
-      "icon-sm": "w-8 h-8 min-h-[32px] min-w-[32px] p-1.5 gap-0",
-      "icon-md": "w-10 h-10 min-h-[40px] min-w-[40px] sm:min-h-[38px] sm:min-w-[38px] p-2 gap-0",
-      "icon-lg": "w-11 h-11 min-h-[44px] min-w-[44px] p-2.5 gap-0",
+      "icon-sm": "w-9 h-9 min-h-[36px] min-w-[36px] p-2 gap-0",
+      "icon-md": "w-10 h-10 min-h-[40px] min-w-[40px] p-2.5 gap-0",
+      "icon-lg": "w-11 h-11 min-h-[44px] min-w-[44px] p-3 gap-0",
     };
 
     return (
