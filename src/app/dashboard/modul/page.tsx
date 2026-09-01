@@ -15,7 +15,7 @@ import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { ModuleHeader } from "@/components/modul/module-header";
 import { ModuleFilters } from "@/components/modul/module-filters";
 import { ModuleListItem } from "@/components/modul/module-list-item";
-import { MobileModuleList } from "@/components/modul/mobile-module-list";
+import { MobileModuleList } from "@/surfaces/app/modul/mobile-module-list";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
