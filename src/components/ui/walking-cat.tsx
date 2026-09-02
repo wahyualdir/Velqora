@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const WALK_FRAMES = [
@@ -9,6 +9,8 @@ const WALK_FRAMES = [
   "/cat/walk-frame-3.png",
   "/cat/walk-frame-4.png",
 ];
+
+const SPRITE_WIDTH = 48;
 
 interface WalkingCatProps {
   className?: string;
@@ -22,10 +24,31 @@ interface WalkingCatProps {
 export function WalkingCat({ className = "", speed = 7 }: WalkingCatProps) {
   const [direction, setDirection] = useState<"right" | "left">("right");
   const [mounted, setMounted] = useState(false);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // Measure the actual container width in pixels so the cat travels
+  // the full distance instead of being stuck near its own size.
+  useEffect(() => {
+    if (!trackRef.current) return;
+
+    const measure = () => {
+      if (trackRef.current) {
+        setTrackWidth(trackRef.current.offsetWidth);
+      }
+    };
+
+    measure();
+
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(trackRef.current);
+
+    return () => resizeObserver.disconnect();
   }, []);
 
   if (!mounted) {
@@ -47,29 +70,36 @@ export function WalkingCat({ className = "", speed = 7 }: WalkingCatProps) {
     );
   }
 
+  const maxTravel = Math.max(trackWidth - SPRITE_WIDTH, 0);
+
   return (
-    <div className={`relative w-full h-11 overflow-hidden pointer-events-none select-none border-t border-border/40 pt-1.5 mt-2 ${className}`}>
-      {/* Horizontal Walking Track with Ping-Pong Ping */}
-      <motion.div
-        className="absolute bottom-0.5 will-change-transform"
-        initial={{ x: "0%" }}
-        animate={{
-          x: direction === "right" ? ["0%", "calc(100% - 50px)"] : ["calc(100% - 50px)", "0%"],
-        }}
-        transition={{
-          duration: speed,
-          ease: "linear",
-        }}
-        onAnimationComplete={() => {
-          setDirection((prev) => (prev === "right" ? "left" : "right"));
-        }}
-        style={{
-          scaleX: direction === "left" ? -1 : 1,
-          transformOrigin: "center center",
-        }}
-      >
-        <CatSpriteImage walking={true} />
-      </motion.div>
+    <div
+      ref={trackRef}
+      className={`relative w-full h-11 overflow-hidden pointer-events-none select-none border-t border-border/40 pt-1.5 mt-2 ${className}`}
+    >
+      {/* Horizontal Walking Track with Ping-Pong (pixel-based, relative to container width) */}
+      {trackWidth > 0 && (
+        <motion.div
+          className="absolute bottom-0.5 will-change-transform"
+          initial={{ x: 0 }}
+          animate={{
+            x: direction === "right" ? [0, maxTravel] : [maxTravel, 0],
+          }}
+          transition={{
+            duration: speed,
+            ease: "linear",
+          }}
+          onAnimationComplete={() => {
+            setDirection((prev) => (prev === "right" ? "left" : "right"));
+          }}
+          style={{
+            scaleX: direction === "left" ? -1 : 1,
+            transformOrigin: "center center",
+          }}
+        >
+          <CatSpriteImage walking={true} />
+        </motion.div>
+      )}
     </div>
   );
 }
