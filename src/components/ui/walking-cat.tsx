@@ -34,8 +34,9 @@ export function WalkingCat({ className = "", speed = 7 }: WalkingCatProps) {
 
   // Measure the actual container width in pixels so the cat travels
   // the full distance instead of being stuck near its own size.
+  // Depends on `mounted` because the ref is only attached after mount.
   useEffect(() => {
-    if (!trackRef.current) return;
+    if (!mounted || !trackRef.current) return;
 
     const measure = () => {
       if (trackRef.current) {
@@ -49,7 +50,7 @@ export function WalkingCat({ className = "", speed = 7 }: WalkingCatProps) {
     resizeObserver.observe(trackRef.current);
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [mounted]);
 
   if (!mounted) {
     return (
