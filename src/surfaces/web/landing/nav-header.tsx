@@ -66,15 +66,15 @@ export function NavHeader() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-[13px] font-medium text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors"
+              className="text-[13px] font-medium text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors cursor-pointer"
             >
-              Masuk
+              Masuk / Login
             </Button>
           </Link>
-          <Link href="/dashboard">
+          <Link href="/login">
             <Button
               size="sm"
-              className="text-[13px] font-semibold gap-1.5 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white shadow-sm hover:shadow-md transition-all duration-150"
+              className="text-[13px] font-semibold gap-1.5 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer"
             >
               <span>Masuk ke Workspace</span>
               <ArrowRight className="w-3.5 h-3.5" />

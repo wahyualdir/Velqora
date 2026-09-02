@@ -705,20 +705,29 @@ export function HeroSection() {
               }`}
               style={{ transitionDelay: "240ms" }}
             >
-              <Link href="/dashboard" className="focus-visible:outline-hidden">
+              <Link href="/login" className="focus-visible:outline-hidden">
                 <Button
                   size="lg"
-                  className="text-sm font-semibold gap-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white px-6 shadow-sm hover:shadow-md transition-all duration-150"
+                  className="text-sm font-semibold gap-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white px-6 shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer"
                 >
                   <span>Masuk ke Workspace — Gratis</span>
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <Link href="/download" className="focus-visible:outline-hidden">
+              <Link href="/login" className="focus-visible:outline-hidden">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-sm font-medium gap-2 border-border hover:bg-surface-hover hover:border-border-hover text-text-primary active:scale-[0.98] transition-all duration-150"
+                  className="text-sm font-medium gap-2 border-border hover:bg-surface-hover hover:border-border-hover text-text-primary active:scale-[0.98] transition-all duration-150 cursor-pointer"
+                >
+                  <span>Masuk / Login</span>
+                </Button>
+              </Link>
+              <Link href="/download" className="focus-visible:outline-hidden">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-sm font-medium gap-2 text-text-secondary hover:text-text-primary hover:bg-surface-hover active:scale-[0.98] transition-all duration-150 cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-brand-500" />
                   <span>Pasang di HP (PWA)</span>
