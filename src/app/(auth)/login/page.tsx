@@ -16,7 +16,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
-import { LoginStudyIllustration } from "@/components/ui/auth-illustrations";
+import { AnimatedCatStudyIllustration } from "@/components/ui/auth-illustrations";
 import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
@@ -566,9 +566,9 @@ export default function LoginPage() {
               <span>Meja Belajar Digital</span>
             </div>
 
-            {/* 2D Vector Illustration */}
+            {/* Animated Cat 2D Vector Illustration */}
             <div className="w-full flex items-center justify-center py-2">
-              <LoginStudyIllustration className="w-full max-w-[310px] h-auto transition-transform duration-500 hover:scale-[1.02]" />
+              <AnimatedCatStudyIllustration className="w-full max-w-[310px] h-auto transition-transform duration-500 hover:scale-[1.02]" />
             </div>
 
             {/* Caption & Feature Tags */}

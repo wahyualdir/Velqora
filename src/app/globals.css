@@ -656,6 +656,189 @@ button, a, input, select, textarea {
   justify-content: center;
 }
 
+/* ========================================
+   Velqora Animated Cat Illustration Keyframes
+   GPU-Accelerated, 60fps, Smooth Idle Loop
+   ======================================== */
+
+@keyframes cat-blink {
+  0%, 88%, 100% {
+    transform: scaleY(1);
+  }
+  92%, 96% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes cat-tail-sway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-9deg);
+  }
+  75% {
+    transform: rotate(11deg);
+  }
+}
+
+@keyframes cat-breathe {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-2.5px) scale(1.008);
+  }
+}
+
+@keyframes cat-head-look {
+  0%, 75%, 100% {
+    transform: rotate(0deg) translateX(0px);
+  }
+  80%, 92% {
+    transform: rotate(-4deg) translateX(-3px);
+  }
+}
+
+@keyframes cat-ear-twitch {
+  0%, 88%, 100% {
+    transform: rotate(0deg);
+  }
+  90% {
+    transform: rotate(-5deg);
+  }
+  93% {
+    transform: rotate(3deg);
+  }
+  95% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes cat-float-1 {
+  0%, 100% {
+    transform: translateY(0px) rotate(-8deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-6deg);
+  }
+}
+
+@keyframes cat-float-2 {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes cat-float-3 {
+  0%, 100% {
+    transform: translateY(0px) rotate(6deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(8deg);
+  }
+}
+
+@keyframes cat-float-4 {
+  0%, 100% {
+    transform: translateY(0px) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-8deg);
+  }
+}
+
+@keyframes cat-steam {
+  0% {
+    opacity: 0;
+    transform: translateY(0px) scale(0.9);
+  }
+  30% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(1.1);
+  }
+}
+
+.animate-cat-blink {
+  animation: cat-blink 3.8s ease-in-out infinite;
+  transform-origin: 175px 235px;
+  will-change: transform;
+}
+
+.animate-cat-tail {
+  animation: cat-tail-sway 2.6s ease-in-out infinite;
+  transform-origin: 140px 410px;
+  will-change: transform;
+}
+
+.animate-cat-breathe {
+  animation: cat-breathe 3.5s ease-in-out infinite;
+  transform-origin: 175px 420px;
+  will-change: transform;
+}
+
+.animate-cat-head {
+  animation: cat-head-look 9.5s ease-in-out infinite;
+  transform-origin: 175px 265px;
+  will-change: transform;
+}
+
+.animate-cat-ear {
+  animation: cat-ear-twitch 6.5s ease-in-out infinite;
+  transform-origin: 135px 200px;
+  will-change: transform;
+}
+
+.animate-cat-float-1 {
+  animation: cat-float-1 3.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-cat-float-2 {
+  animation: cat-float-2 3.8s ease-in-out 0.4s infinite;
+  will-change: transform;
+}
+
+.animate-cat-float-3 {
+  animation: cat-float-3 4.2s ease-in-out 0.9s infinite;
+  will-change: transform;
+}
+
+.animate-cat-float-4 {
+  animation: cat-float-4 3.4s ease-in-out 1.4s infinite;
+  will-change: transform;
+}
+
+.animate-cat-steam {
+  animation: cat-steam 2.2s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-cat-blink,
+  .animate-cat-tail,
+  .animate-cat-breathe,
+  .animate-cat-head,
+  .animate-cat-ear,
+  .animate-cat-float-1,
+  .animate-cat-float-2,
+  .animate-cat-float-3,
+  .animate-cat-float-4,
+  .animate-cat-steam {
+    animation: none !important;
+  }
+}
+
+
 /* Safe Area Support */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .safe-area-bottom {
