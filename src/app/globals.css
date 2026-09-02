@@ -33,6 +33,23 @@
   --color-accent-pink: #ec4899;
   --color-accent-cyan: #06b6d4;
 
+  /* Design System Tokens (Tailwind v4) */
+  --color-brand: #C65D3B;
+  --color-brand-DEFAULT: #C65D3B;
+  --color-brand-hover: #B54F2F;
+  --color-brand-light: #F4E4DD;
+
+  --color-surface-DEFAULT: #FFFFFF;
+  --color-surface-subtle: #FAF6F1;
+
+  --color-border-DEFAULT: #E5DDD5;
+  --color-border-focus: #C65D3B;
+
+  --color-ink: #1F1B18;
+  --color-ink-DEFAULT: #1F1B18;
+  --color-ink-muted: #6B6560;
+  --color-ink-placeholder: #A39C94;
+
   /* Surface & Container Tokens (CSS Variables) */
   --color-background: var(--color-background);
   --color-surface: var(--color-surface);
@@ -55,6 +72,17 @@
   --color-sidebar-active: var(--color-sidebar-active);
   --color-sidebar-text: var(--color-sidebar-text);
   --color-sidebar-text-active: var(--color-sidebar-text-active);
+}
+
+/* Crisp Clean Autofill Styling (Fixes grey/blueish autofill backgrounds) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #1F1B18 !important;
+  caret-color: #1F1B18 !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* ========================================
