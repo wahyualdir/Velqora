@@ -67,7 +67,14 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  // Micro-interaction states: error shake & positive success pulse
+  const [isShaking, setIsShaking] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const triggerErrorState = (message: string) => {
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 350);
     toast.error(message);
   };
 
@@ -196,7 +203,6 @@ export default function LoginPage() {
           triggerErrorState(error.message);
         }
       } else {
-
         let role = isOwner ? "owner" : "user";
         if (!isOwner) {
           try {
@@ -215,6 +221,8 @@ export default function LoginPage() {
           }
         }
 
+        // Trigger positive feedback animation before navigating
+        setIsSuccess(true);
         toast.success(
           role === "owner"
             ? "Selamat datang kembali, System Owner!"
@@ -227,7 +235,7 @@ export default function LoginPage() {
         setTimeout(() => {
           router.push("/dashboard");
           router.refresh();
-        }, 350);
+        }, 400);
       }
     } catch (err: any) {
       triggerErrorState(err?.message || "Terjadi kesalahan pada server");
@@ -246,16 +254,17 @@ export default function LoginPage() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10 z-10 w-full">
         <div className="w-full max-w-[400px] text-center space-y-3.5">
 
-          {/* 1. Primary Card: Login Form */}
+          {/* 1. Primary Card: Login Form with Entrance & Error/Success Animations */}
           <div
-            className="relative rounded-2xl border border-border bg-white/95 backdrop-blur-xl p-5 sm:p-7 shadow-lg text-left transition-all duration-300 overflow-hidden animate-fade-in-up"
-            style={{ animationDelay: "100ms" }}
+            className={`relative rounded-2xl border border-border dark:border-stone-800 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl p-5 sm:p-7 shadow-lg dark:shadow-black/40 text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
+              isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
+            }`}
           >
 
-            {/* Inner Content Layer (z-10 relative) */}
+            {/* Inner Content Layer */}
             <div className="relative z-10 space-y-5">
-              {/* Header: Brand Mark (Small & Clean) */}
-              <div className="flex flex-col items-center justify-center pt-0.5">
+              {/* Header: Brand Mark Logo with Fade-In + Scale Entrance */}
+              <div className="flex flex-col items-center justify-center pt-0.5 animate-logo-entrance motion-reduce:animate-none">
                 <VelqoraMark size={28} />
               </div>
 
@@ -284,7 +293,7 @@ export default function LoginPage() {
             {isForgotPassword ? (
               resetSent ? (
                 <div className="space-y-3 text-center py-1 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                  <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-700 text-xs leading-relaxed flex items-center justify-center gap-2">
+                  <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-700 text-xs leading-relaxed flex items-center justify-center gap-2" aria-live="polite">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                     <span>Tautan pemulihan telah dikirim ke <strong>{email}</strong>.</span>
                   </div>
@@ -294,7 +303,7 @@ export default function LoginPage() {
                       setIsForgotPassword(false);
                       setResetSent(false);
                     }}
-                    className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-text-primary bg-surface-secondary hover:bg-surface-hover border border-border transition-all min-h-[38px] cursor-pointer active:scale-98"
+                    className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-text-primary bg-surface-secondary hover:bg-surface-hover border border-border hover:scale-[1.01] active:scale-[0.98] transition-all duration-150 min-h-[38px] cursor-pointer"
                   >
                     Kembali ke Halaman Masuk
                   </button>
@@ -306,14 +315,14 @@ export default function LoginPage() {
                       Email Akun
                     </label>
                     <div
-                      className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
                         focusedField === "reset-email"
-                          ? "border-brand-500 bg-brand-500/5 ring-2 ring-brand-500/20"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
                           : "border-border bg-surface hover:border-border-hover"
                       }`}
                     >
                       <Mail
-                        className={`absolute left-3 w-4 h-4 transition-colors ${
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
                           focusedField === "reset-email"
                             ? "text-brand-500"
                             : email.length > 0
@@ -331,7 +340,7 @@ export default function LoginPage() {
                         disabled={loading}
                         required
                         autoComplete="email"
-                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50"
+                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 transition-colors duration-200"
                       />
                     </div>
                   </div>
@@ -339,17 +348,17 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 shadow-sm transition-all active:scale-98 min-h-[40px] cursor-pointer disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 shadow-sm hover:shadow-md hover:shadow-brand-500/20 active:scale-[0.98] transition-all duration-150 ease-in-out min-h-[40px] cursor-pointer disabled:opacity-50"
                   >
                     {loading ? (
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <div className="flex items-center gap-2" aria-live="polite">
+                        <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
                         <span className="text-xs">Memproses...</span>
                       </div>
                     ) : (
                       <>
                         <span>Kirim Link Reset</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
                       </>
                     )}
                   </button>
@@ -365,15 +374,15 @@ export default function LoginPage() {
               )
             ) : (
               <>
-                {/* OAuth Buttons (Google / GitHub) */}
+                {/* 3. OAuth Buttons (Google & GitHub) with Hover Scale & Soft Shadow */}
                 <div className="grid grid-cols-2 gap-2.5 animate-fade-in-up" style={{ animationDelay: "220ms" }}>
                   <button
                     type="button"
                     onClick={handleGoogleLogin}
                     disabled={loading}
-                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs transition-all active:scale-98 disabled:opacity-50 min-h-[38px] cursor-pointer"
+                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
                   >
-                    <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
+                    <GoogleIcon className="w-3.5 h-3.5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
                     <span>Google</span>
                   </button>
 
@@ -381,9 +390,9 @@ export default function LoginPage() {
                     type="button"
                     onClick={handleGithubLogin}
                     disabled={loading}
-                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs transition-all active:scale-98 disabled:opacity-50 min-h-[38px] cursor-pointer"
+                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
                   >
-                    <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-text-primary" />
+                    <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-text-primary transition-transform duration-150 group-hover:scale-110" />
                     <span>GitHub</span>
                   </button>
                 </div>
@@ -394,7 +403,7 @@ export default function LoginPage() {
                     <div className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                    <span className="bg-white px-2.5 py-0.5 text-text-tertiary font-medium rounded-md border border-border">
+                    <span className="bg-white dark:bg-stone-900 px-2.5 py-0.5 text-text-tertiary font-medium rounded-md border border-border">
                       atau masuk via email
                     </span>
                   </div>
@@ -402,22 +411,22 @@ export default function LoginPage() {
 
                 {/* Form Input Email & Password */}
                 <form onSubmit={handleSubmit} className="space-y-3.5 pt-0.5">
-                  {/* Email Field */}
+                  {/* 4. Email Field with Terracotta Focus Ring & Glow */}
                   <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
                     <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
                       Email
                     </label>
                     <div
-                      className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
                         focusedField === "email"
-                          ? "border-brand-500 bg-brand-500/5 ring-2 ring-brand-500/20"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
                           : email.length > 0
                           ? "border-border-hover bg-surface"
                           : "border-border bg-surface hover:border-border-hover"
                       }`}
                     >
                       <Mail
-                        className={`absolute left-3 w-4 h-4 transition-colors ${
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
                           focusedField === "email"
                             ? "text-brand-500"
                             : email.length > 0
@@ -435,12 +444,12 @@ export default function LoginPage() {
                         disabled={loading}
                         required
                         autoComplete="email"
-                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50 font-medium"
+                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
                       />
                     </div>
                   </div>
 
-                  {/* Password Field */}
+                  {/* 4. Password Field with Terracotta Focus & Eye Toggle Animation */}
                   <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "310ms" }}>
                     <div className="flex items-center justify-between">
                       <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
@@ -458,16 +467,16 @@ export default function LoginPage() {
                       </button>
                     </div>
                     <div
-                      className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
                         focusedField === "password"
-                          ? "border-brand-500 bg-brand-500/5 ring-2 ring-brand-500/20"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
                           : password.length > 0
                           ? "border-border-hover bg-surface"
                           : "border-border bg-surface hover:border-border-hover"
                       }`}
                     >
                       <Lock
-                        className={`absolute left-3 w-4 h-4 transition-colors ${
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
                           focusedField === "password"
                             ? "text-brand-500"
                             : password.length > 0
@@ -485,36 +494,49 @@ export default function LoginPage() {
                         disabled={loading}
                         required
                         autoComplete="current-password"
-                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none disabled:opacity-50 font-medium"
+                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
                       />
+                      {/* 5. Password Eye Toggle with Rotation & Opacity Micro-Transitions */}
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
+                        className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary opacity-60 hover:opacity-100 transition-opacity duration-150 cursor-pointer"
                         tabIndex={-1}
                         aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                       >
-                        {showPassword ? <EyeOff className="w-3.5 h-3.5 text-brand-500" /> : <Eye className="w-3.5 h-3.5" />}
+                        <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
+                          {showPassword ? (
+                            <EyeOff className="w-3.5 h-3.5 text-brand-500 transition-all duration-150" />
+                          ) : (
+                            <Eye className="w-3.5 h-3.5 transition-all duration-150" />
+                          )}
+                        </span>
                       </button>
                     </div>
                   </div>
 
-                  {/* Submit Button */}
+                  {/* 6. Submit Button with Native 600ms Spinner & Success Feedback */}
                   <div className="pt-1">
                     <button
                       type="submit"
-                      disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-98 transition-all disabled:opacity-50 shadow-sm min-h-[40px] cursor-pointer"
+                      disabled={loading || isSuccess}
+                      aria-live="polite"
+                      className="group w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow-md hover:shadow-brand-500/20 min-h-[40px] cursor-pointer"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
                           <span>Memproses...</span>
+                        </div>
+                      ) : isSuccess ? (
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-scale-in" />
+                          <span>Berhasil Masuk!</span>
                         </div>
                       ) : (
                         <>
                           <span>Masuk ke Akun</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
                         </>
                       )}
                     </button>
@@ -525,7 +547,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* 2. Secondary Switcher Box */}
+          {/* 2. Secondary Switcher Box with Subtle Stagger Entrance */}
           <div
             className="rounded-xl border border-border bg-surface/80 backdrop-blur-md p-3 text-center text-xs text-text-secondary shadow-xs animate-fade-in-up"
             style={{ animationDelay: "370ms" }}
@@ -536,7 +558,7 @@ export default function LoginPage() {
               className="font-bold text-brand-500 hover:text-brand-600 underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
             >
               <span>Daftar Sekarang</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-150" />
             </Link>
           </div>
 
@@ -555,3 +577,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
