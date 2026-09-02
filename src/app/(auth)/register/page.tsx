@@ -16,7 +16,8 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
-import { VelqoraMark, Logo } from "@/components/ui/logo";
+import { VelqoraMark } from "@/components/ui/logo";
+import { RegisterTypingIllustration } from "@/components/ui/auth-illustrations";
 import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
@@ -59,7 +60,6 @@ function GoogleIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-
 export default function RegisterPage() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
@@ -70,9 +70,20 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  // Micro-interaction states: error shake & positive success pulse
+  const [isShaking, setIsShaking] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const triggerErrorState = (message: string) => {
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 350);
+    toast.error(message);
+  };
+
   // Password strength calculation
   const getPasswordStrength = () => {
-    if (!password) return { label: "", score: 0, color: "bg-slate-700" };
+    if (!password) return { label: "", score: 0, color: "bg-surface-secondary" };
     let score = 0;
     if (password.length >= 6) score += 1;
     if (password.length >= 8) score += 1;
@@ -100,13 +111,15 @@ export default function RegisterPage() {
       });
 
       if (error) {
-        toast.error(`Gagal menghubungkan Google: ${error.message}`, { id: "google-login" });
+        triggerErrorState(`Gagal menghubungkan Google: ${error.message}`);
+        toast.dismiss("google-login");
       } else if (data?.url) {
         toast.success("Mengarahkan ke Google...", { id: "google-login" });
         window.location.href = data.url;
       }
     } catch (err: any) {
-      toast.error(err?.message || "Google Provider belum diaktifkan di Supabase Dashboard", { id: "google-login" });
+      triggerErrorState(err?.message || "Google Provider belum diaktifkan di Supabase Dashboard");
+      toast.dismiss("google-login");
     } finally {
       setLoading(false);
     }
@@ -125,13 +138,15 @@ export default function RegisterPage() {
       });
 
       if (error) {
-        toast.error(`Gagal menghubungkan GitHub: ${error.message}`, { id: "github-login" });
+        triggerErrorState(`Gagal menghubungkan GitHub: ${error.message}`);
+        toast.dismiss("github-login");
       } else if (data?.url) {
         toast.success("Mengarahkan ke GitHub...", { id: "github-login" });
         window.location.href = data.url;
       }
     } catch (err: any) {
-      toast.error(err?.message || "GitHub Provider belum diaktifkan di Supabase Dashboard", { id: "github-login" });
+      triggerErrorState(err?.message || "GitHub Provider belum diaktifkan di Supabase Dashboard");
+      toast.dismiss("github-login");
     } finally {
       setLoading(false);
     }
@@ -141,22 +156,22 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (!fullName.trim()) {
-      toast.error("Nama lengkap wajib diisi");
+      triggerErrorState("Nama lengkap wajib diisi");
       return;
     }
 
-    if (!email) {
-      toast.error("Email wajib diisi");
+    if (!email.trim()) {
+      triggerErrorState("Email wajib diisi");
       return;
     }
 
     if (password.length < 6) {
-      toast.error("Kata sandi minimal 6 karakter");
+      triggerErrorState("Kata sandi minimal 6 karakter");
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Konfirmasi kata sandi tidak cocok");
+      triggerErrorState("Konfirmasi kata sandi tidak cocok");
       return;
     }
 
@@ -179,10 +194,10 @@ export default function RegisterPage() {
 
       if (error) {
         if (error.message.toLowerCase().includes("user already registered")) {
-          toast.error("Email sudah terdaftar. Silakan langsung masuk ke akun Anda.");
-          router.push("/login");
+          triggerErrorState("Email sudah terdaftar. Silakan langsung masuk ke akun Anda.");
+          setTimeout(() => router.push("/login"), 1200);
         } else {
-          toast.error(error.message);
+          triggerErrorState(error.message);
         }
       } else {
         // Coba auto sign in
@@ -198,377 +213,412 @@ export default function RegisterPage() {
               localStorage.setItem("user_role", role);
             }
           }
+          setIsSuccess(true);
           toast.success(`Pendaftaran berhasil! Selamat datang di Velqora, ${fullName.trim()}!`);
-          router.push("/dashboard");
-          router.refresh();
+          setTimeout(() => {
+            router.push("/dashboard");
+            router.refresh();
+          }, 400);
           return;
         }
 
+        setIsSuccess(true);
         toast.success(
           "Pendaftaran berhasil! Silakan masuk dengan email dan kata sandi Anda."
         );
-        router.push("/login");
+        setTimeout(() => {
+          router.push("/login");
+        }, 400);
       }
     } catch (err: any) {
-      toast.error(err?.message || "Terjadi kesalahan pada pendaftaran akun");
+      triggerErrorState(err?.message || "Terjadi kesalahan pada pendaftaran akun");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between text-white overflow-x-hidden selection:bg-brand-500 selection:text-white">
+    <div className="relative min-h-screen flex flex-col justify-between text-text-primary overflow-x-hidden selection:bg-brand-500/20 selection:text-brand-600">
 
       {/* Subtle Background */}
       <TechBackground />
 
-      {/* Floating Header */}
-      <header className="sticky top-0 z-40 w-full pt-4 px-4 sm:px-8">
-        <div className="max-w-5xl mx-auto rounded-2xl border border-white/[0.1] bg-[#0c1322]/60 backdrop-blur-xl px-4 py-2.5 flex items-center justify-between shadow-md">
-          <Link
-            href="/"
-            className="flex items-center gap-2 cursor-pointer focus:outline-none"
-          >
-            <Logo variant="sidebar" />
-          </Link>
+      {/* Main Register Layout (Responsive Split on Desktop, Focused on Mobile) */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10 z-10 w-full">
+        <div className="w-full max-w-[420px] lg:max-w-[880px] grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
 
-          <div className="flex items-center gap-2">
-            <Link
-              href="/login"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-text-secondary hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-colors"
+          {/* Left Column: Form & Switcher */}
+          <div className="w-full max-w-[420px] mx-auto text-center space-y-3.5">
+
+            {/* 1. Primary Card: Register Form */}
+            <div
+              className={`relative rounded-2xl border border-border dark:border-stone-800 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl p-5 sm:p-7 shadow-lg dark:shadow-black/40 text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
+                isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
+              }`}
             >
-              <span>Masuk</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+              {/* Inner Content Layer */}
+              <div className="relative z-10 space-y-4">
+                {/* Header: Brand Mark Logo with Fade-In + Scale Entrance */}
+                <div className="flex flex-col items-center justify-center pt-0.5 animate-logo-entrance motion-reduce:animate-none">
+                  <VelqoraMark size={28} />
+                </div>
+
+                {/* Header Title & Subtitle */}
+                <div className="space-y-1 text-center">
+                  <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
+                    Daftar Akun Baru
+                  </h1>
+                  <p className="text-[11px] sm:text-xs text-text-tertiary leading-relaxed max-w-xs mx-auto">
+                    Buat akun untuk mulai mengelola modul, jadwal, dan asisten AI Anda
+                  </p>
+                </div>
+
+                {/* 3. OAuth Buttons (Google & GitHub) */}
+                <div className="grid grid-cols-2 gap-2.5 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
+                  <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
+                  >
+                    <GoogleIcon className="w-3.5 h-3.5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
+                    <span>Google</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleGithubLogin}
+                    disabled={loading}
+                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
+                  >
+                    <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-text-primary transition-transform duration-150 group-hover:scale-110" />
+                    <span>GitHub</span>
+                  </button>
+                </div>
+
+                {/* Divider */}
+                <div className="relative animate-fade-in-up" style={{ animationDelay: "210ms" }}>
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
+                    <span className="bg-white dark:bg-stone-900 px-2.5 py-0.5 text-text-tertiary font-medium rounded-md border border-border">
+                      atau daftar via email
+                    </span>
+                  </div>
+                </div>
+
+                {/* Form Input Fields */}
+                <form onSubmit={handleRegister} className="space-y-3 pt-0.5">
+                  {/* Full Name Field */}
+                  <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
+                    <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
+                      Nama Lengkap
+                    </label>
+                    <div
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                        focusedField === "fullName"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                          : fullName.length > 0
+                          ? "border-border-hover bg-surface"
+                          : "border-border bg-surface hover:border-border-hover"
+                      }`}
+                    >
+                      <User
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                          focusedField === "fullName"
+                            ? "text-brand-500"
+                            : fullName.length > 0
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
+                        }`}
+                      />
+                      <input
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        onFocus={() => setFocusedField("fullName")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Nama lengkap Anda"
+                        disabled={loading}
+                        required
+                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email Field */}
+                  <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "270ms" }}>
+                    <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
+                      Email
+                    </label>
+                    <div
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                        focusedField === "email"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                          : email.length > 0
+                          ? "border-border-hover bg-surface"
+                          : "border-border bg-surface hover:border-border-hover"
+                      }`}
+                    >
+                      <Mail
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                          focusedField === "email"
+                            ? "text-brand-500"
+                            : email.length > 0
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
+                        }`}
+                      />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onFocus={() => setFocusedField("email")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="nama@email.com"
+                        disabled={loading}
+                        required
+                        autoComplete="email"
+                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password Field */}
+                  <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
+                        Password
+                      </label>
+                      {password && (
+                        <span className="text-[10px] text-text-tertiary">
+                          Kekuatan: <span className="font-semibold text-text-secondary">{passwordStrength.label}</span>
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                        focusedField === "password"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                          : password.length > 0
+                          ? "border-border-hover bg-surface"
+                          : "border-border bg-surface hover:border-border-hover"
+                      }`}
+                    >
+                      <Lock
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                          focusedField === "password"
+                            ? "text-brand-500"
+                            : password.length > 0
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
+                        }`}
+                      />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onFocus={() => setFocusedField("password")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Minimal 6 karakter"
+                        disabled={loading}
+                        required
+                        minLength={6}
+                        autoComplete="new-password"
+                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary opacity-60 hover:opacity-100 transition-opacity duration-150 cursor-pointer"
+                        tabIndex={-1}
+                        aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                      >
+                        <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
+                          {showPassword ? (
+                            <EyeOff className="w-3.5 h-3.5 text-brand-500 transition-all duration-150" />
+                          ) : (
+                            <Eye className="w-3.5 h-3.5 transition-all duration-150" />
+                          )}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Password Strength Meter */}
+                    {password && (
+                      <div className="grid grid-cols-3 gap-1 pt-0.5 animate-fade-in">
+                        <div className={`h-1 rounded-full ${passwordStrength.score >= 1 ? passwordStrength.color : "bg-border"}`} />
+                        <div className={`h-1 rounded-full ${passwordStrength.score >= 2 ? passwordStrength.color : "bg-border"}`} />
+                        <div className={`h-1 rounded-full ${passwordStrength.score >= 3 ? passwordStrength.color : "bg-border"}`} />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Confirm Password Field */}
+                  <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "330ms" }}>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
+                        Konfirmasi Password
+                      </label>
+                      {confirmPassword && (
+                        <span className="text-[10px]">
+                          {password === confirmPassword ? (
+                            <span className="text-emerald-600 font-semibold flex items-center gap-0.5">
+                              <CheckCircle2 className="w-3 h-3" /> Cocok
+                            </span>
+                          ) : (
+                            <span className="text-rose-500 font-semibold">Tidak cocok</span>
+                          )}
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                        focusedField === "confirmPassword"
+                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                          : confirmPassword.length > 0
+                          ? "border-border-hover bg-surface"
+                          : "border-border bg-surface hover:border-border-hover"
+                      }`}
+                    >
+                      <Lock
+                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                          focusedField === "confirmPassword"
+                            ? "text-brand-500"
+                            : confirmPassword.length > 0
+                            ? "text-text-secondary"
+                            : "text-text-tertiary"
+                        }`}
+                      />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        onFocus={() => setFocusedField("confirmPassword")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Ulangi password"
+                        disabled={loading}
+                        required
+                        autoComplete="new-password"
+                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary opacity-60 hover:opacity-100 transition-opacity duration-150 cursor-pointer"
+                        tabIndex={-1}
+                        aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
+                      >
+                        <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
+                          {showConfirmPassword ? (
+                            <EyeOff className="w-3.5 h-3.5 text-brand-500 transition-all duration-150" />
+                          ) : (
+                            <Eye className="w-3.5 h-3.5 transition-all duration-150" />
+                          )}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Terms Note */}
+                  <p className="text-[10px] text-text-tertiary text-center leading-relaxed pt-0.5 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
+                    Dengan mendaftar, Anda menyetujui Ketentuan Layanan & Kebijakan Privasi Velqora.
+                  </p>
+
+                  {/* Submit Button */}
+                  <div className="pt-1">
+                    <button
+                      type="submit"
+                      disabled={loading || isSuccess}
+                      aria-live="polite"
+                      className="group w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow-md hover:shadow-brand-500/20 min-h-[40px] cursor-pointer"
+                    >
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
+                          <span>Mendaftarkan...</span>
+                        </div>
+                      ) : isSuccess ? (
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-scale-in" />
+                          <span>Pendaftaran Berhasil!</span>
+                        </div>
+                      ) : (
+                        <>
+                          <span>Daftar Akun</span>
+                          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* 2. Secondary Switcher Box */}
+            <div
+              className="rounded-xl border border-border bg-surface/80 backdrop-blur-md p-3 text-center text-xs text-text-secondary shadow-xs animate-fade-in-up"
+              style={{ animationDelay: "370ms" }}
+            >
+              Sudah memiliki akun?{" "}
+              <Link
+                href="/login"
+                className="font-bold text-brand-500 hover:text-brand-600 underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
+              >
+                <span>Masuk ke Akun</span>
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-150" />
+              </Link>
+            </div>
           </div>
-        </div>
-      </header>
 
-      {/* Main Register Card Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-3.5 sm:px-6 py-6 sm:py-10 z-10 w-full">
-        <div className="w-full max-w-[440px] text-center space-y-4">
-
-          {/* 1. Primary Card: Register Form with Doodle Wallpaper Inside */}
-          <div className="relative rounded-3xl border border-white/[0.18] bg-[#070b14]/80 backdrop-blur-2xl p-5 sm:p-7 shadow-2xl text-left transition-all duration-300 hover:border-brand-500/40 overflow-hidden animate-fade-in-up">
-
-            {/* ─── DOODLE ART WALLPAPER INSIDE REGISTER BOX ─── */}
-            <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-3xl select-none">
-              {/* Doodle Artwork with Invert & Dark Ambient Blending */}
-              <div
-                className="absolute inset-0 bg-cover bg-center opacity-[0.20] invert mix-blend-screen transition-opacity duration-300"
-                style={{
-                  backgroundImage: `url('/images/auth/login-doodle-wallpaper.png')`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              />
-              {/* Dark Gradient Veil for 100% Crisp Legibility & Contrast */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#070b14]/85 via-[#070b14]/75 to-[#070b14]/90" />
-              {/* Top edge glass specular reflection */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none" />
+          {/* Right Column: Modern SaaS 2D Minimalist Illustration Showcase (Desktop only) */}
+          <div
+            className="hidden lg:flex flex-col items-center justify-between p-7 rounded-2xl border border-border/80 dark:border-stone-800 bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl shadow-lg dark:shadow-black/40 w-full h-full text-center overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none space-y-4"
+            style={{ animationDelay: "200ms" }}
+          >
+            {/* Top Pill */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-semibold tracking-wide">
+              <span>Mulai Lebih Awal</span>
             </div>
 
-            {/* Inner Content Layer (z-10 relative) */}
-            <div className="relative z-10 space-y-6">
+            {/* 2D Vector Illustration */}
+            <div className="w-full flex items-center justify-center py-1">
+              <RegisterTypingIllustration className="w-full max-w-[310px] h-auto transition-transform duration-500 hover:scale-[1.03]" />
+            </div>
 
-              {/* Velqora Brand Mark Header */}
-              <div className="flex flex-col items-center justify-center pt-2">
-                  <VelqoraMark size={36} />
-              </div>
-
-            {/* Header Form */}
-            <div className="space-y-1 text-center">
-              <h1 className="text-2xl font-bold text-white tracking-tight">
-                Daftar Akun Baru
-              </h1>
-              <p className="text-xs text-text-secondary min-h-[20px] flex items-center justify-center">
-                Buat akun untuk mulai mengelola modul dan materi belajar Anda
+            {/* Caption & Feature Tags */}
+            <div className="space-y-2">
+              <h2 className="text-sm font-bold font-display text-text-primary tracking-tight">
+                Bangun Kebiasaan Belajar Rapi
+              </h2>
+              <p className="text-[11.5px] text-text-tertiary leading-relaxed max-w-xs mx-auto">
+                Satu akun untuk sinkronisasi jadwal, arsip catatan, dan panduan belajar cerdas sepanjang semester.
               </p>
-            </div>
-
-            {/* OAuth Buttons (Google / GitHub) */}
-            <div className="grid grid-cols-2 gap-3 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                className="group flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.12] hover:border-brand-500/40 transition-all duration-150 active:scale-[0.98] disabled:opacity-50"
-              >
-                <GoogleIcon className="w-4 h-4 shrink-0" />
-                <span className="group-hover:text-white transition-colors">Google</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleGithubLogin}
-                disabled={loading}
-                className="group flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-200 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.12] hover:border-slate-400/50 transition-all duration-150 active:scale-[0.98] disabled:opacity-50"
-              >
-                <GitHubIcon className="w-4 h-4 shrink-0 text-slate-100" />
-                <span className="group-hover:text-white transition-colors">GitHub</span>
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="relative animate-fade-in-up" style={{ animationDelay: "210ms" }}>
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/[0.08]" />
-              </div>
-              <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                <span className="bg-[#0b101c]/90 px-3 py-0.5 text-slate-400 font-medium rounded-full border border-white/[0.08]">
-                  atau daftar via email
+              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-[10.5px] font-semibold">
+                <span className="px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-secondary">
+                  Gratis Selamanya
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-secondary">
+                  Data Terisolasi Aman
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-600">
+                  Akses Web & Mobile
                 </span>
               </div>
             </div>
-
-            {/* Registration Form */}
-            <form onSubmit={handleRegister} className="space-y-4">
-              
-              {/* Full Name Field */}
-              <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                  Nama Lengkap
-                </label>
-                <div
-                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
-                    focusedField === "fullName"
-                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
-                      : fullName.length > 0
-                      ? "border-white/[0.2] bg-white/[0.05]"
-                      : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
-                  }`}
-                >
-                  <User
-                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
-                      focusedField === "fullName"
-                        ? "text-brand-400"
-                        : fullName.length > 0
-                        ? "text-slate-200"
-                        : "text-slate-400"
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    onFocus={() => setFocusedField("fullName")}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="Contoh: Budi Santoso"
-                    disabled={loading}
-                    required
-                    className="w-full bg-transparent pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
-                  />
-                </div>
-              </div>
-
-              {/* Email Field */}
-              <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "270ms" }}>
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block">
-                    Alamat Email
-                  </label>
-                </div>
-                <div
-                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
-                    focusedField === "email"
-                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
-                      : email.length > 0
-                      ? "border-white/[0.2] bg-white/[0.05]"
-                      : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
-                  }`}
-                >
-                  <Mail
-                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
-                      focusedField === "email"
-                        ? "text-brand-400"
-                        : email.length > 0
-                        ? "text-slate-200"
-                        : "text-slate-400"
-                    }`}
-                  />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onFocus={() => setFocusedField("email")}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="nama@email.com"
-                    disabled={loading}
-                    required
-                    className="w-full bg-transparent pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
-                  />
-                </div>
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                    Kata Sandi
-                  </label>
-                  {password && (
-                    <span className="text-[10px] font-mono text-slate-400">
-                      Kekuatan: <span className="font-semibold text-slate-200">{passwordStrength.label}</span>
-                    </span>
-                  )}
-                </div>
-                <div
-                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
-                    focusedField === "password"
-                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
-                      : password.length > 0
-                      ? "border-white/[0.2] bg-white/[0.05]"
-                      : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
-                  }`}
-                >
-                  <Lock
-                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
-                      focusedField === "password"
-                        ? "text-brand-400"
-                        : password.length > 0
-                        ? "text-slate-200"
-                        : "text-slate-400"
-                    }`}
-                  />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onFocus={() => setFocusedField("password")}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="Minimal 6 karakter"
-                    disabled={loading}
-                    required
-                    minLength={6}
-                    className="w-full bg-transparent pl-10 pr-11 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 p-1 text-slate-400 hover:text-white transition-all duration-150"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4 text-slate-300" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-
-                {/* Password Strength Meter */}
-                {password && (
-                  <div className="grid grid-cols-3 gap-1.5 pt-1 animate-fade-in">
-                    <div className={`h-1 rounded-full ${passwordStrength.score >= 1 ? passwordStrength.color : "bg-white/[0.08]"}`} />
-                    <div className={`h-1 rounded-full ${passwordStrength.score >= 2 ? passwordStrength.color : "bg-white/[0.08]"}`} />
-                    <div className={`h-1 rounded-full ${passwordStrength.score >= 3 ? passwordStrength.color : "bg-white/[0.08]"}`} />
-                  </div>
-                )}
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "330ms" }}>
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                    Konfirmasi Kata Sandi
-                  </label>
-                  {confirmPassword && (
-                    <span className="text-[10px] font-mono">
-                      {password === confirmPassword ? (
-                        <span className="text-emerald-400 font-semibold flex items-center gap-0.5">
-                          <CheckCircle2 className="w-3 h-3" /> Cocok
-                        </span>
-                      ) : (
-                        <span className="text-rose-400 font-semibold">Tidak cocok</span>
-                      )}
-                    </span>
-                  )}
-                </div>
-                <div
-                  className={`relative flex items-center rounded-xl border transition-all duration-150 overflow-hidden ${
-                    focusedField === "confirmPassword"
-                      ? "border-brand-500 bg-white/[0.08] ring-2 ring-brand-500/30"
-                      : confirmPassword.length > 0
-                      ? "border-white/[0.2] bg-white/[0.05]"
-                      : "border-white/[0.1] bg-white/[0.03] hover:border-white/[0.2]"
-                  }`}
-                >
-                  <Lock
-                    className={`absolute left-3.5 w-4 h-4 transition-colors duration-150 ${
-                      focusedField === "confirmPassword"
-                        ? "text-brand-400"
-                        : confirmPassword.length > 0
-                        ? "text-slate-200"
-                        : "text-slate-400"
-                    }`}
-                  />
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    onFocus={() => setFocusedField("confirmPassword")}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="Ulangi kata sandi"
-                    disabled={loading}
-                    required
-                    className="w-full bg-transparent pl-10 pr-11 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none disabled:opacity-50 font-medium"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 p-1 text-slate-400 hover:text-white transition-all duration-150"
-                    tabIndex={-1}
-                  >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-300" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Terms and Privacy Policy Note */}
-              <p className="text-[11px] text-slate-400 text-center leading-relaxed px-1 animate-fade-in-up" style={{ animationDelay: "360ms" }}>
-                Dengan mendaftar, Anda menyetujui <span className="text-slate-300 underline">Ketentuan Layanan</span> dan <span className="text-slate-300 underline">Kebijakan Privasi</span> Velqora.
-              </p>
-
-              {/* Submit Button */}
-              <div className="pt-1">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 active:scale-[0.98] transition-colors disabled:opacity-50 min-h-[42px]"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Mendaftarkan...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <span>Daftar Sekarang</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-            </div>
-          </div>
-
-          {/* 2. Secondary Switcher Box with Floating Border & Glow */}
-          <div className="rounded-2xl border border-white/[0.16] bg-[#070b14]/35 backdrop-blur-md p-4 sm:p-5 text-center text-xs sm:text-sm text-slate-200 shadow-lg shadow-black/30 hover:border-white/[0.25] transition-all duration-300 animate-fade-in-up" style={{ animationDelay: "420ms" }}>
-            Sudah memiliki akun?{" "}
-            <Link
-              href="/login"
-              className="font-bold text-brand-400 hover:text-brand-300 underline underline-offset-4 transition-all duration-200 ml-1 inline-flex items-center gap-1 group"
-            >
-              <span>Masuk ke Akun</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </Link>
           </div>
 
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-8 px-4 border-t border-white/[0.08] z-10 flex items-center justify-center max-w-5xl mx-auto text-center animate-fade-in-up" style={{ animationDelay: "450ms" }}>
-        <p className="text-xs text-text-secondary">
-          &copy; {new Date().getFullYear()} JOBLIB505 FORUM GROUP. Semua hak dilindungi undang-undang.
+      <footer
+        className="w-full py-6 px-4 border-t border-border z-10 flex items-center justify-center max-w-4xl mx-auto text-center animate-fade-in-up"
+        style={{ animationDelay: "400ms" }}
+      >
+        <p className="text-[11px] sm:text-xs text-text-tertiary leading-relaxed">
+          &copy; 2026 <span className="text-text-secondary font-medium">JOBLIB505 FORUM GROUP</span>. Semua hak dilindungi undang-undang.
         </p>
       </footer>
     </div>
