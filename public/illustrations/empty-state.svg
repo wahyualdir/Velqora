@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" fill="none" role="img" aria-label="Ilustrasi Empty State Jadwal & Tugas Selesai">
+  <!-- Defs -->
+  <defs>
+    <linearGradient id="empty-terracotta" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0654F" />
+      <stop offset="100%" stop-color="#C2553A" />
+    </linearGradient>
+    <filter id="empty-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#C2553A" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Ground Ambient Base -->
+  <ellipse cx="250" cy="430" rx="190" ry="16" fill="#F4ECE4" opacity="0.85" />
+  <ellipse cx="240" cy="430" rx="140" ry="10" fill="#E8DCD1" opacity="0.6" />
+
+  <!-- Floating Green Checkmark Badge (All Done / Clear) -->
+  <g transform="translate(195, 60)" filter="url(#empty-glow)">
+    <circle cx="55" cy="45" r="38" fill="#FAF6F1" stroke="#292524" stroke-width="2.5" />
+    <circle cx="55" cy="45" r="30" fill="#10B981" stroke="#292524" stroke-width="2" />
+    <path d="M44 45 L52 53 L68 37" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+
+  <!-- Floating Sparkles & Confetti -->
+  <path d="M95 120 Q98 126 104 129 Q98 132 95 138 Q92 132 86 129 Q92 126 95 120 Z" fill="#C2553A" />
+  <path d="M395 125 Q398 131 404 134 Q398 137 395 143 Q392 137 386 134 Q392 131 395 125 Z" fill="#FBBF24" />
+  <circle cx="120" cy="220" r="4" fill="#10B981" opacity="0.7" />
+  <circle cx="380" cy="220" r="3.5" fill="#C2553A" opacity="0.6" />
+  <rect x="345" y="85" width="8" height="8" rx="2" transform="rotate(25 345 85)" fill="#C2553A" opacity="0.7" />
+  <rect x="145" y="95" width="7" height="7" rx="2" transform="rotate(-15 145 95)" fill="#FBBF24" opacity="0.8" />
+
+  <!-- Relaxed Lounge Chair / Beanbag -->
+  <path d="M140 280 C110 320, 115 415, 170 425 L330 425 C385 415, 390 320, 360 280 C330 240, 170 240, 140 280 Z" fill="#F4ECE4" stroke="#292524" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M150 360 Q250 380 350 360" fill="none" stroke="#292524" stroke-width="2" />
+
+  <!-- Character: Sitting Relaxed, Content Smile -->
+  <g id="empty-character">
+    <!-- Crossed Legs -->
+    <path d="M170 380 C150 390, 125 405, 145 420 C165 430, 220 420, 250 405" fill="#3D3835" stroke="#292524" stroke-width="2.5" stroke-linejoin="round" />
+    <path d="M330 380 C350 390, 375 405, 355 420 C335 430, 280 420, 250 405" fill="#292524" stroke="#292524" stroke-width="2.5" stroke-linejoin="round" />
+    <ellipse cx="145" cy="420" rx="8" ry="5.5" fill="#FAF6F1" stroke="#292524" stroke-width="2" />
+    <ellipse cx="355" cy="420" rx="8" ry="5.5" fill="#FAF6F1" stroke="#292524" stroke-width="2" />
+
+    <!-- Torso -->
+    <path d="M195 245 C180 270, 185 375, 195 385 L305 385 C315 375, 320 270, 305 245 C290 235, 210 235, 195 245 Z" fill="url(#empty-terracotta)" stroke="#292524" stroke-width="2.5" stroke-linejoin="round" />
+    <path d="M228 242 C228 254, 272 254, 272 242" fill="#FAF6F1" stroke="#292524" stroke-width="2.5" stroke-linejoin="round" />
+
+    <!-- Head & Hair -->
+    <rect x="243" y="222" width="14" height="24" rx="4" fill="#FCD9C4" stroke="#292524" stroke-width="2" />
+    <circle cx="250" cy="195" r="30" fill="#FCD9C4" stroke="#292524" stroke-width="2.5" />
+    
+    <!-- Hair -->
+    <path d="M220 195 C218 170, 232 155, 250 155 C272 155, 284 168, 282 195 C278 178, 270 172, 255 172 C240 172, 228 182, 220 195 Z" fill="#292524" stroke="#292524" stroke-width="2.5" stroke-linejoin="round" />
+    <path d="M220 192 C222 180, 235 168, 252 168 C265 168, 278 176, 280 190 C272 182, 258 178, 245 182 C235 185, 228 190, 220 192 Z" fill="#3D3835" />
+
+    <!-- Glasses & Serene Smiling Face -->
+    <circle cx="240" cy="195" r="8" fill="#FFFFFF" fill-opacity="0.4" stroke="#292524" stroke-width="1.8" />
+    <circle cx="262" cy="195" r="8" fill="#FFFFFF" fill-opacity="0.4" stroke="#292524" stroke-width="1.8" />
+    <line x1="248" y1="195" x2="254" y2="195" stroke="#292524" stroke-width="1.8" />
+    <!-- Content Curved Eyes (Joyful / Relaxed ^ ^) -->
+    <path d="M236 195 Q240 191 244 195" fill="none" stroke="#292524" stroke-width="2" stroke-linecap="round" />
+    <path d="M258 195 Q262 191 266 195" fill="none" stroke="#292524" stroke-width="2" stroke-linecap="round" />
+    <!-- Happy Smile -->
+    <path d="M245 208 Q251 214 257 208" fill="none" stroke="#292524" stroke-width="2" stroke-linecap="round" />
+    <circle cx="230" cy="202" r="3.5" fill="#E0654F" opacity="0.4" />
+    <circle cx="270" cy="202" r="3.5" fill="#E0654F" opacity="0.4" />
+
+    <!-- Arms: Relaxed with hands holding warm cup -->
+    <g id="empty-arms">
+      <path d="M200 255 C180 285, 195 330, 230 338" fill="none" stroke="url(#empty-terracotta)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M200 255 C180 285, 195 330, 230 338" fill="none" stroke="#292524" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M300 255 C320 285, 305 330, 270 338" fill="none" stroke="url(#empty-terracotta)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M300 255 C320 285, 305 330, 270 338" fill="none" stroke="#292524" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      
+      <!-- Cup in Hands -->
+      <g transform="translate(241, 320)">
+        <path d="M5 -8 Q9 -4 5 0" fill="none" stroke="#C2553A" stroke-width="1.5" stroke-linecap="round" opacity="0.5" />
+        <rect x="0" y="4" width="18" height="20" rx="5" fill="#FAF6F1" stroke="#292524" stroke-width="2.2" />
+        <circle cx="9" cy="14" r="3.5" fill="#C2553A" />
+      </g>
+      <circle cx="234" cy="336" r="6" fill="#FCD9C4" stroke="#292524" stroke-width="1.8" />
+      <circle cx="266" cy="336" r="6" fill="#FCD9C4" stroke="#292524" stroke-width="1.8" />
+    </g>
+  </g>
+</svg>

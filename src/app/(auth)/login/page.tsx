@@ -16,6 +16,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
+import { LoginStudyIllustration } from "@/components/ui/auth-illustrations";
 import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
@@ -250,316 +251,356 @@ export default function LoginPage() {
       {/* Subtle Background */}
       <TechBackground />
 
-      {/* Main Login Card Section */}
+      {/* Main Login Layout (Responsive Split on Desktop, Focused on Mobile) */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10 z-10 w-full">
-        <div className="w-full max-w-[400px] text-center space-y-3.5">
+        <div className="w-full max-w-[400px] lg:max-w-[860px] grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
 
-          {/* 1. Primary Card: Login Form with Entrance & Error/Success Animations */}
-          <div
-            className={`relative rounded-2xl border border-border dark:border-stone-800 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl p-5 sm:p-7 shadow-lg dark:shadow-black/40 text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
-              isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
-            }`}
-          >
+          {/* Left Column: Form & Switcher */}
+          <div className="w-full max-w-[400px] mx-auto text-center space-y-3.5">
 
-            {/* Inner Content Layer */}
-            <div className="relative z-10 space-y-5">
-              {/* Header: Brand Mark Logo with Fade-In + Scale Entrance */}
-              <div className="flex flex-col items-center justify-center pt-0.5 animate-logo-entrance motion-reduce:animate-none">
-                <VelqoraMark size={28} />
+            {/* 1. Primary Card: Login Form with Entrance & Error/Success Animations */}
+            <div
+              className={`relative rounded-2xl border border-border dark:border-stone-800 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl p-5 sm:p-7 shadow-lg dark:shadow-black/40 text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
+                isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
+              }`}
+            >
+              {/* Inner Content Layer */}
+              <div className="relative z-10 space-y-5">
+                {/* Header: Brand Mark Logo with Fade-In + Scale Entrance */}
+                <div className="flex flex-col items-center justify-center pt-0.5 animate-logo-entrance motion-reduce:animate-none">
+                  <VelqoraMark size={28} />
+                </div>
+
+              {/* Header Title & Subtitle */}
+              <div className="space-y-1 text-center">
+                <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
+                  {isForgotPassword
+                    ? resetSent
+                      ? "Cek Email Anda"
+                      : "Reset Password"
+                    : "Masuk ke Akun"}
+                </h1>
+                <p className="text-[11px] sm:text-xs text-text-tertiary leading-relaxed max-w-xs mx-auto">
+                  {isForgotPassword ? (
+                    resetSent ? (
+                      `Instruksi pemulihan telah dikirim ke ${email}`
+                    ) : (
+                      "Masukkan email Anda untuk menerima tautan pemulihan kata sandi"
+                    )
+                  ) : (
+                    "Akses materi perkuliahan, modul praktik, dan asisten AI Anda"
+                  )}
+                </p>
               </div>
 
-            {/* Header Title & Subtitle */}
-            <div className="space-y-1 text-center">
-              <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
-                {isForgotPassword
-                  ? resetSent
-                    ? "Cek Email Anda"
-                    : "Reset Password"
-                  : "Masuk ke Akun"}
-              </h1>
-              <p className="text-[11px] sm:text-xs text-text-tertiary leading-relaxed max-w-xs mx-auto">
-                {isForgotPassword ? (
-                  resetSent ? (
-                    `Instruksi pemulihan telah dikirim ke ${email}`
-                  ) : (
-                    "Masukkan email Anda untuk menerima tautan pemulihan kata sandi"
-                  )
+              {isForgotPassword ? (
+                resetSent ? (
+                  <div className="space-y-3 text-center py-1 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+                    <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-700 text-xs leading-relaxed flex items-center justify-center gap-2" aria-live="polite">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>Tautan pemulihan telah dikirim ke <strong>{email}</strong>.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(false);
+                        setResetSent(false);
+                      }}
+                      className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-text-primary bg-surface-secondary hover:bg-surface-hover border border-border hover:scale-[1.01] active:scale-[0.98] transition-all duration-150 min-h-[38px] cursor-pointer"
+                    >
+                      Kembali ke Halaman Masuk
+                    </button>
+                  </div>
                 ) : (
-                  "Akses materi perkuliahan, modul praktik, dan asisten AI Anda"
-                )}
-              </p>
-            </div>
-
-            {isForgotPassword ? (
-              resetSent ? (
-                <div className="space-y-3 text-center py-1 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                  <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-700 text-xs leading-relaxed flex items-center justify-center gap-2" aria-live="polite">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Tautan pemulihan telah dikirim ke <strong>{email}</strong>.</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsForgotPassword(false);
-                      setResetSent(false);
-                    }}
-                    className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-text-primary bg-surface-secondary hover:bg-surface-hover border border-border hover:scale-[1.01] active:scale-[0.98] transition-all duration-150 min-h-[38px] cursor-pointer"
-                  >
-                    Kembali ke Halaman Masuk
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleResetPassword} className="space-y-3.5 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
-                      Email Akun
-                    </label>
-                    <div
-                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
-                        focusedField === "reset-email"
-                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
-                          : "border-border bg-surface hover:border-border-hover"
-                      }`}
-                    >
-                      <Mail
-                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "reset-email"
-                            ? "text-brand-500"
-                            : email.length > 0
-                            ? "text-text-secondary"
-                            : "text-text-tertiary"
-                        }`}
-                      />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setFocusedField("reset-email")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="nama@email.com"
-                        disabled={loading}
-                        required
-                        autoComplete="email"
-                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 transition-colors duration-200"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 shadow-sm hover:shadow-md hover:shadow-brand-500/20 active:scale-[0.98] transition-all duration-150 ease-in-out min-h-[40px] cursor-pointer disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <div className="flex items-center gap-2" aria-live="polite">
-                        <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
-                        <span className="text-xs">Memproses...</span>
-                      </div>
-                    ) : (
-                      <>
-                        <span>Kirim Link Reset</span>
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsForgotPassword(false)}
-                    className="w-full text-center text-xs text-text-tertiary hover:text-text-primary transition-colors pt-0.5 cursor-pointer"
-                  >
-                    Kembali ke Login
-                  </button>
-                </form>
-              )
-            ) : (
-              <>
-                {/* 3. OAuth Buttons (Google & GitHub) with Hover Scale & Soft Shadow */}
-                <div className="grid grid-cols-2 gap-2.5 animate-fade-in-up" style={{ animationDelay: "220ms" }}>
-                  <button
-                    type="button"
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
-                  >
-                    <GoogleIcon className="w-3.5 h-3.5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
-                    <span>Google</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleGithubLogin}
-                    disabled={loading}
-                    className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
-                  >
-                    <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-text-primary transition-transform duration-150 group-hover:scale-110" />
-                    <span>GitHub</span>
-                  </button>
-                </div>
-
-                {/* Divider */}
-                <div className="relative animate-fade-in-up" style={{ animationDelay: "250ms" }}>
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                    <span className="bg-white dark:bg-stone-900 px-2.5 py-0.5 text-text-tertiary font-medium rounded-md border border-border">
-                      atau masuk via email
-                    </span>
-                  </div>
-                </div>
-
-                {/* Form Input Email & Password */}
-                <form onSubmit={handleSubmit} className="space-y-3.5 pt-0.5">
-                  {/* 4. Email Field with Terracotta Focus Ring & Glow */}
-                  <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
-                    <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
-                      Email
-                    </label>
-                    <div
-                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
-                        focusedField === "email"
-                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
-                          : email.length > 0
-                          ? "border-border-hover bg-surface"
-                          : "border-border bg-surface hover:border-border-hover"
-                      }`}
-                    >
-                      <Mail
-                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "email"
-                            ? "text-brand-500"
-                            : email.length > 0
-                            ? "text-text-secondary"
-                            : "text-text-tertiary"
-                        }`}
-                      />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setFocusedField("email")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="nama@email.com"
-                        disabled={loading}
-                        required
-                        autoComplete="email"
-                        className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 4. Password Field with Terracotta Focus & Eye Toggle Animation */}
-                  <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "310ms" }}>
-                    <div className="flex items-center justify-between">
+                  <form onSubmit={handleResetPassword} className="space-y-3.5 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+                    <div className="space-y-1">
                       <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
-                        Password
+                        Email Akun
                       </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsForgotPassword(true);
-                          setResetSent(false);
-                        }}
-                        className="text-[11px] text-text-tertiary hover:text-brand-500 hover:underline transition-colors cursor-pointer"
-                      >
-                        Lupa password?
-                      </button>
-                    </div>
-                    <div
-                      className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
-                        focusedField === "password"
-                          ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
-                          : password.length > 0
-                          ? "border-border-hover bg-surface"
-                          : "border-border bg-surface hover:border-border-hover"
-                      }`}
-                    >
-                      <Lock
-                        className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "password"
-                            ? "text-brand-500"
-                            : password.length > 0
-                            ? "text-text-secondary"
-                            : "text-text-tertiary"
+                      <div
+                        className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                          focusedField === "reset-email"
+                            ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                            : "border-border bg-surface hover:border-border-hover"
                         }`}
-                      />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setFocusedField("password")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="••••••••"
-                        disabled={loading}
-                        required
-                        autoComplete="current-password"
-                        className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
-                      />
-                      {/* 5. Password Eye Toggle with Rotation & Opacity Micro-Transitions */}
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary opacity-60 hover:opacity-100 transition-opacity duration-150 cursor-pointer"
-                        tabIndex={-1}
-                        aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                       >
-                        <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
-                          {showPassword ? (
-                            <EyeOff className="w-3.5 h-3.5 text-brand-500 transition-all duration-150" />
-                          ) : (
-                            <Eye className="w-3.5 h-3.5 transition-all duration-150" />
-                          )}
-                        </span>
-                      </button>
+                        <Mail
+                          className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                            focusedField === "reset-email"
+                              ? "text-brand-500"
+                              : email.length > 0
+                              ? "text-text-secondary"
+                              : "text-text-tertiary"
+                          }`}
+                        />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onFocus={() => setFocusedField("reset-email")}
+                          onBlur={() => setFocusedField(null)}
+                          placeholder="nama@email.com"
+                          disabled={loading}
+                          required
+                          autoComplete="email"
+                          className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 transition-colors duration-200"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* 6. Submit Button with Native 600ms Spinner & Success Feedback */}
-                  <div className="pt-1">
                     <button
                       type="submit"
-                      disabled={loading || isSuccess}
-                      aria-live="polite"
-                      className="group w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow-md hover:shadow-brand-500/20 min-h-[40px] cursor-pointer"
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 shadow-sm hover:shadow-md hover:shadow-brand-500/20 active:scale-[0.98] transition-all duration-150 ease-in-out min-h-[40px] cursor-pointer disabled:opacity-50"
                     >
                       {loading ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2" aria-live="polite">
                           <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
-                          <span>Memproses...</span>
-                        </div>
-                      ) : isSuccess ? (
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-scale-in" />
-                          <span>Berhasil Masuk!</span>
+                          <span className="text-xs">Memproses...</span>
                         </div>
                       ) : (
                         <>
-                          <span>Masuk ke Akun</span>
+                          <span>Kirim Link Reset</span>
                           <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
                         </>
                       )}
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsForgotPassword(false)}
+                      className="w-full text-center text-xs text-text-tertiary hover:text-text-primary transition-colors pt-0.5 cursor-pointer"
+                    >
+                      Kembali ke Login
+                    </button>
+                  </form>
+                )
+              ) : (
+                <>
+                  {/* 3. OAuth Buttons (Google & GitHub) with Hover Scale & Soft Shadow */}
+                  <div className="grid grid-cols-2 gap-2.5 animate-fade-in-up" style={{ animationDelay: "220ms" }}>
+                    <button
+                      type="button"
+                      onClick={handleGoogleLogin}
+                      disabled={loading}
+                      className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
+                    >
+                      <GoogleIcon className="w-3.5 h-3.5 shrink-0 transition-transform duration-150 group-hover:scale-110" />
+                      <span>Google</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleGithubLogin}
+                      disabled={loading}
+                      className="group flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-text-primary bg-surface hover:bg-surface-hover border border-border hover:border-border-hover shadow-xs hover:shadow-md hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-50 min-h-[38px] cursor-pointer"
+                    >
+                      <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-text-primary transition-transform duration-150 group-hover:scale-110" />
+                      <span>GitHub</span>
+                    </button>
                   </div>
-                </form>
-              </>
-            )}
+
+                  {/* Divider */}
+                  <div className="relative animate-fade-in-up" style={{ animationDelay: "250ms" }}>
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border" />
+                    </div>
+                    <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
+                      <span className="bg-white dark:bg-stone-900 px-2.5 py-0.5 text-text-tertiary font-medium rounded-md border border-border">
+                        atau masuk via email
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Form Input Email & Password */}
+                  <form onSubmit={handleSubmit} className="space-y-3.5 pt-0.5">
+                    {/* 4. Email Field with Terracotta Focus Ring & Glow */}
+                    <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
+                      <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
+                        Email
+                      </label>
+                      <div
+                        className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                          focusedField === "email"
+                            ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                            : email.length > 0
+                            ? "border-border-hover bg-surface"
+                            : "border-border bg-surface hover:border-border-hover"
+                        }`}
+                      >
+                        <Mail
+                          className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                            focusedField === "email"
+                              ? "text-brand-500"
+                              : email.length > 0
+                              ? "text-text-secondary"
+                              : "text-text-tertiary"
+                          }`}
+                        />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onFocus={() => setFocusedField("email")}
+                          onBlur={() => setFocusedField(null)}
+                          placeholder="nama@email.com"
+                          disabled={loading}
+                          required
+                          autoComplete="email"
+                          className="w-full bg-transparent pl-9 pr-3.5 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 4. Password Field with Terracotta Focus & Eye Toggle Animation */}
+                    <div className="space-y-1 animate-fade-in-up" style={{ animationDelay: "310ms" }}>
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider block">
+                          Password
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsForgotPassword(true);
+                            setResetSent(false);
+                          }}
+                          className="text-[11px] text-text-tertiary hover:text-brand-500 hover:underline transition-colors cursor-pointer"
+                        >
+                          Lupa password?
+                        </button>
+                      </div>
+                      <div
+                        className={`relative flex items-center rounded-xl border transition-all duration-200 ease-in-out overflow-hidden ${
+                          focusedField === "password"
+                            ? "border-brand-500 bg-brand-500/[0.03] ring-2 ring-brand-500/20 shadow-[0_0_0_3px_rgba(194,85,58,0.12)]"
+                            : password.length > 0
+                            ? "border-border-hover bg-surface"
+                            : "border-border bg-surface hover:border-border-hover"
+                        }`}
+                      >
+                        <Lock
+                          className={`absolute left-3 w-4 h-4 transition-colors duration-200 ${
+                            focusedField === "password"
+                              ? "text-brand-500"
+                              : password.length > 0
+                              ? "text-text-secondary"
+                              : "text-text-tertiary"
+                          }`}
+                        />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          onFocus={() => setFocusedField("password")}
+                          onBlur={() => setFocusedField(null)}
+                          placeholder="••••••••"
+                          disabled={loading}
+                          required
+                          autoComplete="current-password"
+                          className="w-full bg-transparent pl-9 pr-10 py-2 min-h-[38px] text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-hidden disabled:opacity-50 font-medium transition-colors duration-200"
+                        />
+                        {/* 5. Password Eye Toggle with Rotation & Opacity Micro-Transitions */}
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary opacity-60 hover:opacity-100 transition-opacity duration-150 cursor-pointer"
+                          tabIndex={-1}
+                          aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                        >
+                          <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
+                            {showPassword ? (
+                              <EyeOff className="w-3.5 h-3.5 text-brand-500 transition-all duration-150" />
+                            ) : (
+                              <Eye className="w-3.5 h-3.5 transition-all duration-150" />
+                            )}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 6. Submit Button with Native 600ms Spinner & Success Feedback */}
+                    <div className="pt-1">
+                      <button
+                        type="submit"
+                        disabled={loading || isSuccess}
+                        aria-live="polite"
+                        className="group w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-[0.98] transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-sm hover:shadow-md hover:shadow-brand-500/20 min-h-[40px] cursor-pointer"
+                      >
+                        {loading ? (
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
+                            <span>Memproses...</span>
+                          </div>
+                        ) : isSuccess ? (
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-scale-in" />
+                            <span>Berhasil Masuk!</span>
+                          </div>
+                        ) : (
+                          <>
+                            <span>Masuk ke Akun</span>
+                            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
+              </div>
+            </div>
+
+            {/* 2. Secondary Switcher Box with Subtle Stagger Entrance */}
+            <div
+              className="rounded-xl border border-border bg-surface/80 backdrop-blur-md p-3 text-center text-xs text-text-secondary shadow-xs animate-fade-in-up"
+              style={{ animationDelay: "370ms" }}
+            >
+              Belum memiliki akun?{" "}
+              <Link
+                href="/register"
+                className="font-bold text-brand-500 hover:text-brand-600 underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
+              >
+                <span>Daftar Sekarang</span>
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-150" />
+              </Link>
             </div>
           </div>
 
-          {/* 2. Secondary Switcher Box with Subtle Stagger Entrance */}
+          {/* Right Column: Modern SaaS 2D Minimalist Illustration Showcase (Desktop only) */}
           <div
-            className="rounded-xl border border-border bg-surface/80 backdrop-blur-md p-3 text-center text-xs text-text-secondary shadow-xs animate-fade-in-up"
-            style={{ animationDelay: "370ms" }}
+            className="hidden lg:flex flex-col items-center justify-between p-7 rounded-2xl border border-border/80 dark:border-stone-800 bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl shadow-lg dark:shadow-black/40 w-full h-full text-center overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none space-y-4"
+            style={{ animationDelay: "200ms" }}
           >
-            Belum memiliki akun?{" "}
-            <Link
-              href="/register"
-              className="font-bold text-brand-500 hover:text-brand-600 underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
-            >
-              <span>Daftar Sekarang</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-150" />
-            </Link>
+            {/* Top Pill */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-semibold tracking-wide">
+              <span>Meja Belajar Digital</span>
+            </div>
+
+            {/* 2D Vector Illustration */}
+            <div className="w-full flex items-center justify-center py-1">
+              <LoginStudyIllustration className="w-full max-w-[310px] h-auto transition-transform duration-500 hover:scale-[1.03]" />
+            </div>
+
+            {/* Caption & Feature Tags */}
+            <div className="space-y-2">
+              <h2 className="text-sm font-bold font-display text-text-primary tracking-tight">
+                Fokus Kuliah Tanpa Ribet
+              </h2>
+              <p className="text-[11.5px] text-text-tertiary leading-relaxed max-w-xs mx-auto">
+                Susun jadwal perkuliahan tanpa bentrok, arsipkan slide & catatan, dan bedah konsep bareng asisten AI.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-[10.5px] font-semibold">
+                <span className="px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-secondary">
+                  Jadwal Otomatis
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-secondary">
+                  Catatan & Tugas
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-600">
+                  AI Tutor Terpadu
+                </span>
+              </div>
+            </div>
           </div>
 
         </div>
