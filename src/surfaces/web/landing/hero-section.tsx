@@ -22,16 +22,15 @@ import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
 
 /**
- * 3D Physical Grommet & Interlocking Clasp Aperture
- * Features a real 3D metallic torus eyelet with directional top-left specular lighting,
- * hollow inner aperture depth, and an interlocking lobster carabiner hook latch.
+ * 3D Physical Grommet & Interlocking Clasp Aperture Tab
+ * Sits cleanly at the top of each card face, interlocking directly with the lobster carabiner hook.
  */
-function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
+function Physical3DGrommetTab({ isBack = false }: { isBack?: boolean }) {
   return (
-    <div className="flex justify-center -mt-6 mb-1 relative z-30 [transform-style:preserve-3d] pointer-events-none">
-      {/* 3D Tab Base extending smoothly from Card */}
+    <div className="flex justify-center -mt-4.5 mb-1 relative z-30 [transform-style:preserve-3d] pointer-events-none">
+      {/* 3D Tab Base extending from Card Top */}
       <div
-        className={`px-5 py-1.5 rounded-full border flex items-center justify-center relative shadow-[0_4px_10px_rgba(0,0,0,0.3)] ${
+        className={`px-4 py-1 rounded-full border flex items-center justify-center relative shadow-[0_3px_8px_rgba(0,0,0,0.3)] ${
           isBack
             ? "bg-gradient-to-b from-stone-700 via-stone-800 to-stone-900 border-stone-600"
             : "bg-gradient-to-b from-stone-100 via-stone-200 to-stone-300 border-stone-300"
@@ -39,28 +38,28 @@ function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
       >
         {/* 3D Metallic Donut / Torus Grommet Ring with Top-Left Directional Lighting */}
         <div
-          className="w-8 h-4 rounded-full flex items-center justify-center relative shadow-[0_3px_6px_rgba(0,0,0,0.45)]"
+          className="w-7 h-4 rounded-full flex items-center justify-center relative shadow-[0_2px_5px_rgba(0,0,0,0.4)]"
           style={{
             background:
               "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #e4e4e7 25%, #71717a 50%, #3f3f46 75%, #ffffff 100%)",
             boxShadow:
-              "inset 1.5px 1.5px 2px rgba(255,255,255,0.9), inset -1.5px -1.5px 3px rgba(0,0,0,0.6), 0 2px 5px rgba(0,0,0,0.35)",
+              "inset 1.5px 1.5px 2px rgba(255,255,255,0.95), inset -1.5px -1.5px 2.5px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.35)",
           }}
         >
           {/* Deep Hollow Inner Eyelet Hole (Aperture with Inset Void Shadow) */}
           <div
-            className="w-4 h-2 rounded-full bg-stone-950 flex items-center justify-center relative overflow-hidden"
+            className="w-3.5 h-2 rounded-full bg-stone-950 flex items-center justify-center relative overflow-hidden"
             style={{
-              boxShadow: "inset 0 3px 5px rgba(0,0,0,0.95), inset 0 -1px 2px rgba(255,255,255,0.25)",
+              boxShadow: "inset 0 2.5px 4px rgba(0,0,0,0.95), inset 0 -1px 2px rgba(255,255,255,0.25)",
             }}
           >
             {/* Interlocking Lobster Hook Front Latch (Physically threads through the aperture) */}
-            <div className="w-2 h-3 bg-gradient-to-b from-stone-300 via-stone-100 to-stone-500 rounded-b-xs shadow-xs -mt-1 opacity-90" />
+            <div className="w-1.5 h-3 bg-gradient-to-b from-stone-300 via-stone-100 to-stone-500 rounded-b-xs shadow-xs -mt-1 opacity-95" />
           </div>
         </div>
 
         {/* Ambient Occlusion Shadow Under Grommet on Card Surface */}
-        <div className="absolute -bottom-1 inset-x-2 h-1.5 bg-black/40 blur-xs rounded-full pointer-events-none" />
+        <div className="absolute -bottom-1 inset-x-1.5 h-1.5 bg-black/40 blur-xs rounded-full pointer-events-none" />
       </div>
     </div>
   );
@@ -70,8 +69,8 @@ function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
  * World-Class 360° Interactive 3D Lanyard Card with Elastic Stretch & Physics
  *
  * Physical & Structural Guarantees:
- * 1. Strict DOM Hierarchy: Clip -> Strap -> Crimp Collar / Swivel Clasp -> Card Chassis (Nested Child).
- * 2. Exact Pivot: Card rotation transform-origin is placed precisely at the top grommet/D-ring joint (50% 0px).
+ * 1. Strict DOM Hierarchy: Clip -> Strap -> Crimp Collar / Swivel Clasp -> Card Chassis (Seamless Chain).
+ * 2. Exact Pivot: Card rotation transform-origin is placed precisely at the top grommet/D-ring joint (50% 10px).
  * 3. Continuous 360° Drag + Modulo 360 Normalization on release to eliminate edge-on blade lock.
  * 4. Elastic Stretch Physics: downward drag stretches the strap up to 90px with rubber-band resistance & snap bounce.
  * 5. Viewport-Aware Idle Sway: subtle organic pendulum oscillation paused when off-screen.
@@ -358,7 +357,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const strapBrightness = 1 + stretchFactor * 0.14; // tension brightening
 
   // Base strap length (px) that expands physically with stretchY
-  const baseStrapHeight = 105;
+  const baseStrapHeight = 100;
   const currentStrapHeight = baseStrapHeight + clampedStretch;
 
   // Cleanup all animation frames on unmount
@@ -416,7 +415,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
         {/* ── 2. CLASSIC WOVEN FABRIC LANYARD STRAP (Stretches & Narrows with Physics) ── */}
         <div
-          className="w-[34px] sm:w-[36px] relative flex flex-col items-center justify-center -mt-1.5 rounded-xs border-x border-brand-950/70 [transform-style:preserve-3d]"
+          className="w-[34px] sm:w-[36px] relative flex flex-col items-center justify-between -mt-1 rounded-xs border-x border-brand-950/70 [transform-style:preserve-3d]"
           style={{
             height: `${currentStrapHeight}px`,
             background:
@@ -464,178 +463,178 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
               VELQORA
             </span>
           </div>
+        </div>
 
-          {/* ── 3. METALLIC CRIMP COLLAR & SWIVEL LOBSTER CLASP (Child of Strap) ── */}
-          <div className="absolute -bottom-5 z-30 flex flex-col items-center [transform-style:preserve-3d]">
-            {/* Brushed Silver Crimp Collar */}
-            <div className="w-9 h-3.5 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_8px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.8)] flex items-center justify-around px-1.5">
-              <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
-              <div className="w-2.5 h-0.5 bg-stone-600 rounded-full opacity-70" />
-              <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
+        {/* ── 3. METALLIC CRIMP COLLAR & SWIVEL LOBSTER CLASP HARDWARE (Directly Interlocking into Card) ── */}
+        <div className="relative z-30 flex flex-col items-center -mt-1.5 [transform-style:preserve-3d]">
+          {/* Brushed Silver Crimp Collar */}
+          <div className="w-9 h-3.5 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_8px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.8)] flex items-center justify-around px-1.5">
+            <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
+            <div className="w-2.5 h-0.5 bg-stone-600 rounded-full opacity-70" />
+            <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
+          </div>
+
+          {/* Swivel D-Ring Housing */}
+          <div
+            className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 shadow-md -mt-1 flex items-center justify-center relative"
+            style={{
+              background:
+                "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #e2e8f0 25%, #64748b 50%, #334155 75%, #ffffff 100%)",
+            }}
+          >
+            {/* Lobster Clasp Spring Hook Latch (Descends directly into the card eyelet aperture) */}
+            <div className="w-3 h-5.5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md shadow-md flex items-end justify-center pb-0.5 absolute -bottom-3 z-40">
+              <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
             </div>
+          </div>
+        </div>
 
-            {/* Swivel D-Ring Housing */}
+        {/* ── 4. TRUE 360° ROTATABLE 3D CARD (Pivoting at Top Grommet Hole) ── */}
+        <div
+          onPointerEnter={() => setIsHovered(true)}
+          onPointerLeave={() => setIsHovered(false)}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          title="Geser horizontal 360° · Tarik ke bawah untuk stretch elastis"
+          className="w-56 sm:w-64 relative -mt-0.5 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
+          style={{
+            transform: `rotateX(${safeRotX}deg) rotateY(${safeRotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
+            transformOrigin: "50% 8px", // PIVOTS EXACTLY AT THE GROMMET CONNECTION POINT
+            willChange: "transform",
+          }}
+        >
+          {/* ── FRONT FACE (rotateY 0deg) WITH 3D CHASSIS THICKNESS RIM ── */}
+          <div
+            className="relative w-full rounded-3xl bg-white p-2.5 pt-1.5 border-[2px] border-stone-200 [backface-visibility:hidden] [transform:rotateY(0deg)] flex flex-col justify-between transition-shadow duration-300"
+            style={{
+              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 1px 0 1px #e7e5e4, 0 2.5px 0 1.5px #d6d3d1, 0 4px 0 2px #a8a29e, 0 5.5px 0 2.5px #78716c, 0 10px 24px rgba(194,85,58,0.12)`,
+            }}
+          >
+            {/* Dynamic Specular Light Glare Overlay */}
             <div
-              className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 shadow-md -mt-1 flex items-center justify-center"
+              className="absolute inset-0 pointer-events-none rounded-3xl z-40 transition-opacity duration-150"
               style={{
-                background:
-                  "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #e2e8f0 25%, #64748b 50%, #334155 75%, #ffffff 100%)",
+                background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 45%, transparent 75%)`,
+                opacity: glare.opacity,
               }}
-            >
-              {/* Lobster Clasp Spring Hook Latch (Extends directly into card eyelet grommet) */}
-              <div className="w-3 h-5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md -mb-3 shadow-md flex items-end justify-center pb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
+            />
+
+            {/* 3D Physical Torus Grommet Tab (Directly interlocked with hook) */}
+            <Physical3DGrommetTab isBack={false} />
+
+            {/* Inner Phone Screen Content */}
+            <div className="rounded-2xl bg-surface-secondary/80 border border-border/80 p-3 space-y-2.5 text-text-primary shadow-inner flex-1 flex flex-col justify-between overflow-hidden">
+              {/* Speaker / Camera Bezel */}
+              <div className="w-14 h-1 bg-stone-300 rounded-full mx-auto" />
+
+              {/* Status Bar */}
+              <div className="flex items-center justify-between text-[11px] border-b border-border/80 pb-1.5">
+                <span className="font-bold text-text-primary flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse shadow-xs" />
+                  Velqora Mobile
+                </span>
+                <span className="text-[9.5px] font-mono font-semibold bg-brand-500/10 text-brand-600 px-2 py-0.5 rounded-md border border-brand-500/20">
+                  PWA Active
+                </span>
+              </div>
+
+              {/* Live Schedule Widget */}
+              <div className="p-2.5 rounded-xl bg-white border border-brand-500/25 space-y-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                <div className="flex items-center justify-between">
+                  <p className="text-[9.5px] text-brand-600 font-bold uppercase tracking-wider flex items-center gap-1">
+                    <Sparkle className="w-2.5 h-2.5" />
+                    Kelas Berikutnya
+                  </p>
+                  <span className="text-[9.5px] text-emerald-600 font-extrabold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                    10 Menit Lagi
+                  </span>
+                </div>
+                <p className="text-xs sm:text-[13px] font-bold text-text-primary leading-tight">
+                  Kalkulus Lanjut
+                </p>
+                <p className="text-[10px] text-text-secondary font-medium">
+                  10:45 • Ruang 402 Gedung C
+                </p>
+              </div>
+
+              {/* Interactive Rotate Hint & Flip Trigger */}
+              <div
+                className={`flex items-center justify-between text-[9px] text-text-tertiary pt-0.5 font-semibold transition-opacity duration-300 ${
+                  hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
+                }`}
+              >
+                <span className="flex items-center gap-1">
+                  <RotateCw className="w-3 h-3 text-brand-500" />
+                  <span>Geser 360°</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleQuickFlip}
+                  className="px-2 py-0.5 rounded bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 border border-brand-500/20 transition-colors cursor-pointer active:scale-95"
+                >
+                  Balik Kartu ↺
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* ── 4. TRUE 360° ROTATABLE 3D CARD (Child with transformOrigin at Top Grommet) ── */}
-            <div
-              onPointerEnter={() => setIsHovered(true)}
-              onPointerLeave={() => setIsHovered(false)}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-              title="Geser horizontal 360° · Tarik ke bawah untuk stretch elastis"
-              className="w-56 sm:w-64 h-64 sm:h-70 relative -mt-1 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
-              style={{
-                transform: `rotateX(${safeRotX}deg) rotateY(${safeRotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
-                transformOrigin: "50% 0px", // PIVOTS EXACTLY AT THE GROMMET CONNECTION POINT
-                willChange: "transform",
-              }}
-            >
-              {/* ── FRONT FACE (rotateY 0deg) WITH 3D CHASSIS THICKNESS RIM ── */}
-              <div
-                className="absolute inset-0 rounded-3xl bg-white p-2.5 border-[2px] border-stone-200 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between transition-shadow duration-300"
-                style={{
-                  boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 1px 0 1px #e7e5e4, 0 2.5px 0 1.5px #d6d3d1, 0 4px 0 2px #a8a29e, 0 5.5px 0 2.5px #78716c, 0 10px 24px rgba(194,85,58,0.12)`,
-                }}
-              >
-                {/* Dynamic Specular Light Glare Overlay */}
-                <div
-                  className="absolute inset-0 pointer-events-none rounded-3xl z-40 transition-opacity duration-150"
-                  style={{
-                    background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 45%, transparent 75%)`,
-                    opacity: glare.opacity,
-                  }}
-                />
+          {/* ── BACK FACE (rotateY 180deg) WITH 3D CHASSIS THICKNESS RIM ── */}
+          <div
+            className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 pt-1.5 border-[2px] border-stone-700 [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col justify-between text-white transition-shadow duration-300"
+            style={{
+              boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.12}), 0 1px 0 1px #44403c, 0 2.5px 0 1.5px #292524, 0 4px 0 2px #1c1917, 0 5.5px 0 2.5px #0c0a09`,
+            }}
+          >
+            {/* 3D Physical Torus Grommet Tab (Back Face View) */}
+            <Physical3DGrommetTab isBack={true} />
 
-                {/* 3D Physical Torus Grommet Ring */}
-                <Physical3DGrommet isBack={false} />
+            {/* Inner Digital Student Pass */}
+            <div className="rounded-2xl bg-stone-800/90 border border-stone-700/80 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
+              {/* Holographic shimmer glow */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/15 rounded-full blur-xl pointer-events-none" />
 
-                {/* Inner Phone Screen Content */}
-                <div className="rounded-2xl bg-surface-secondary/80 border border-border/80 p-3 space-y-2.5 text-text-primary shadow-inner flex-1 flex flex-col justify-between">
-                  {/* Speaker / Camera Bezel */}
-                  <div className="w-14 h-1 bg-stone-300 rounded-full mx-auto" />
-
-                  {/* Status Bar */}
-                  <div className="flex items-center justify-between text-[11px] border-b border-border/80 pb-1.5">
-                    <span className="font-bold text-text-primary flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse shadow-xs" />
-                      Velqora Mobile
-                    </span>
-                    <span className="text-[9.5px] font-mono font-semibold bg-brand-500/10 text-brand-600 px-2 py-0.5 rounded-md border border-brand-500/20">
-                      PWA Active
-                    </span>
+              {/* Pass Header */}
+              <div className="flex items-center justify-between border-b border-stone-700/80 pb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3.5 h-3.5 rounded-sm bg-brand-500 flex items-center justify-center font-bold text-[8px] text-white">
+                    V
                   </div>
+                  <span className="text-[10px] font-mono font-bold tracking-wider text-stone-200">
+                    ACADEMIC PASS
+                  </span>
+                </div>
+                <Wifi className="w-3.5 h-3.5 text-brand-400" />
+              </div>
 
-                  {/* Live Schedule Widget */}
-                  <div className="p-2.5 rounded-xl bg-white border border-brand-500/25 space-y-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[9.5px] text-brand-600 font-bold uppercase tracking-wider flex items-center gap-1">
-                        <Sparkle className="w-2.5 h-2.5" />
-                        Kelas Berikutnya
-                      </p>
-                      <span className="text-[9.5px] text-emerald-600 font-extrabold bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                        10 Menit Lagi
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-[13px] font-bold text-text-primary leading-tight">
-                      Kalkulus Lanjut
-                    </p>
-                    <p className="text-[10px] text-text-secondary font-medium">
-                      10:45 • Ruang 402 Gedung C
-                    </p>
-                  </div>
-
-                  {/* Interactive Rotate Hint & Flip Trigger */}
-                  <div
-                    className={`flex items-center justify-between text-[9px] text-text-tertiary pt-0.5 font-semibold transition-opacity duration-300 ${
-                      hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
-                    }`}
-                  >
-                    <span className="flex items-center gap-1">
-                      <RotateCw className="w-3 h-3 text-brand-500" />
-                      <span>Geser 360°</span>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleQuickFlip}
-                      className="px-2 py-0.5 rounded bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 border border-brand-500/20 transition-colors cursor-pointer active:scale-95"
-                    >
-                      Balik Kartu ↺
-                    </button>
-                  </div>
+              {/* QR Code Scanner Box */}
+              <div className="flex items-center gap-3 bg-stone-900/90 p-2 rounded-xl border border-stone-700/70">
+                <div className="p-1.5 bg-white rounded-lg shrink-0">
+                  <QrCode className="w-8 h-8 text-stone-900" />
+                </div>
+                <div className="space-y-0.5 min-w-0">
+                  <p className="text-[10px] font-mono font-bold text-brand-400 truncate">
+                    NIM: 22/498210/TK
+                  </p>
+                  <p className="text-[9px] text-stone-300 truncate">Teknik Informatika</p>
+                  <p className="text-[8px] text-stone-400 font-mono">Sem. Genap 2026</p>
                 </div>
               </div>
 
-              {/* ── BACK FACE (rotateY 180deg) WITH 3D CHASSIS THICKNESS RIM ── */}
-              <div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 border-[2px] border-stone-700 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white transition-shadow duration-300"
-                style={{
-                  boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.12}), 0 1px 0 1px #44403c, 0 2.5px 0 1.5px #292524, 0 4px 0 2px #1c1917, 0 5.5px 0 2.5px #0c0a09`,
-                }}
-              >
-                {/* 3D Physical Torus Grommet Ring (Back Face View) */}
-                <Physical3DGrommet isBack={true} />
-
-                {/* Inner Digital Student Pass */}
-                <div className="rounded-2xl bg-stone-800/90 border border-stone-700/80 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
-                  {/* Holographic shimmer glow */}
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/15 rounded-full blur-xl pointer-events-none" />
-
-                  {/* Pass Header */}
-                  <div className="flex items-center justify-between border-b border-stone-700/80 pb-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 rounded-sm bg-brand-500 flex items-center justify-center font-bold text-[8px] text-white">
-                        V
-                      </div>
-                      <span className="text-[10px] font-mono font-bold tracking-wider text-stone-200">
-                        ACADEMIC PASS
-                      </span>
-                    </div>
-                    <Wifi className="w-3.5 h-3.5 text-brand-400" />
-                  </div>
-
-                  {/* QR Code Scanner Box */}
-                  <div className="flex items-center gap-3 bg-stone-900/90 p-2 rounded-xl border border-stone-700/70">
-                    <div className="p-1.5 bg-white rounded-lg shrink-0">
-                      <QrCode className="w-8 h-8 text-stone-900" />
-                    </div>
-                    <div className="space-y-0.5 min-w-0">
-                      <p className="text-[10px] font-mono font-bold text-brand-400 truncate">
-                        NIM: 22/498210/TK
-                      </p>
-                      <p className="text-[9px] text-stone-300 truncate">Teknik Informatika</p>
-                      <p className="text-[8px] text-stone-400 font-mono">Sem. Genap 2026</p>
-                    </div>
-                  </div>
-
-                  {/* NFC Sync Tag */}
-                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 pt-0.5">
-                    <span className="flex items-center gap-1 text-emerald-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                      Synced PWA
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleQuickFlip}
-                      className="px-2 py-0.5 rounded bg-stone-700/80 hover:bg-stone-700 text-stone-200 border border-stone-600 transition-colors cursor-pointer active:scale-95"
-                    >
-                      Sisi Depan ↻
-                    </button>
-                  </div>
-                </div>
+              {/* NFC Sync Tag */}
+              <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 pt-0.5">
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  Synced PWA
+                </span>
+                <button
+                  type="button"
+                  onClick={handleQuickFlip}
+                  className="px-2 py-0.5 rounded bg-stone-700/80 hover:bg-stone-700 text-stone-200 border border-stone-600 transition-colors cursor-pointer active:scale-95"
+                >
+                  Sisi Depan ↻
+                </button>
               </div>
             </div>
           </div>
@@ -644,6 +643,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     </div>
   );
 }
+
 
 export function HeroSection() {
   const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
