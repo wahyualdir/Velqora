@@ -22,14 +22,14 @@ import { BookshelfHeroBackground } from "./bookshelf-bg";
 import { useScrollReveal } from "./use-landing-animation";
 
 /**
- * 3D Physical Grommet & Interlocking Clasp Assembly
+ * 3D Physical Grommet & Interlocking Clasp Aperture
  * Features a real 3D metallic torus eyelet with directional top-left specular lighting,
- * hollow inner aperture depth, and an interlocking lobster carabiner hook.
+ * hollow inner aperture depth, and an interlocking lobster carabiner hook latch.
  */
 function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
   return (
-    <div className="flex justify-center -mt-6 mb-1 relative z-30 [transform-style:preserve-3d]">
-      {/* 3D Tab Base extending from Card */}
+    <div className="flex justify-center -mt-6 mb-1 relative z-30 [transform-style:preserve-3d] pointer-events-none">
+      {/* 3D Tab Base extending smoothly from Card */}
       <div
         className={`px-5 py-1.5 rounded-full border flex items-center justify-center relative shadow-[0_4px_10px_rgba(0,0,0,0.3)] ${
           isBack
@@ -54,7 +54,7 @@ function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
               boxShadow: "inset 0 3px 5px rgba(0,0,0,0.95), inset 0 -1px 2px rgba(255,255,255,0.25)",
             }}
           >
-            {/* Interlocking Lobster Hook Front Latch (Threads through the hole) */}
+            {/* Interlocking Lobster Hook Front Latch (Physically threads through the aperture) */}
             <div className="w-2 h-3 bg-gradient-to-b from-stone-300 via-stone-100 to-stone-500 rounded-b-xs shadow-xs -mt-1 opacity-90" />
           </div>
         </div>
@@ -67,14 +67,15 @@ function Physical3DGrommet({ isBack = false }: { isBack?: boolean }) {
 }
 
 /**
- * World-Class 360° Interactive 3D Lanyard Card with Elastic Stretch Physics
+ * World-Class 360° Interactive 3D Lanyard Card with Elastic Stretch & Physics
  *
- * Features:
- * - Pointer drag rotation (yaw/pitch) with spring snap-back
- * - Elastic vertical stretch: pulling card downward elongates the strap
- * - Spring snap-back with bouncy overshoot (1-2 oscillations)
- * - Visual tension effects: strap narrows, brightens, and glows when stretched
- * - Rubber-band resistance beyond max stretch threshold
+ * Physical & Structural Guarantees:
+ * 1. Strict DOM Hierarchy: Clip -> Strap -> Crimp Collar / Swivel Clasp -> Card Chassis (Nested Child).
+ * 2. Exact Pivot: Card rotation transform-origin is placed precisely at the top grommet/D-ring joint (50% 0px).
+ * 3. Continuous 360° Drag + Modulo 360 Normalization on release to eliminate edge-on blade lock.
+ * 4. Elastic Stretch Physics: downward drag stretches the strap up to 90px with rubber-band resistance & snap bounce.
+ * 5. Viewport-Aware Idle Sway: subtle organic pendulum oscillation paused when off-screen.
+ * 6. Authentic Woven Webbing Strap: double dashed edge stitching, ribbed webbing texture, and fabric thickness side shadow.
  */
 function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   const [rotX, setRotX] = useState(4);
@@ -90,19 +91,21 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
   // ── Elastic stretch state ──
   const [stretchY, setStretchY] = useState(0);
-  const MAX_STRETCH = 72;  // comfortable max stretch (px) before resistance kicks in
-  const HARD_MAX = 92;     // absolute hard limit with heavy rubber-band resistance
+  const MAX_STRETCH = 76; // comfortable max stretch (px) before rubber-band resistance
+  const HARD_MAX = 92; // absolute hard limit
 
   // Physics animation loop refs
   const animFrameRef = useRef<number | null>(null);
+  const idleFrameRef = useRef<number | null>(null);
   const velocityRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const lastPointerRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
   const rotRef = useRef<{ x: number; y: number }>({ x: 4, y: -6 });
   const isDraggingRef = useRef(false);
   const stretchRef = useRef(0);
   const stretchVelRef = useRef(0);
+  const isSettledRef = useRef(true);
 
-  // Sync refs with state for rAF access
+  // Sync refs with state
   useEffect(() => {
     rotRef.current = { x: rotX, y: rotY };
   }, [rotX, rotY]);
@@ -113,21 +116,22 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   // Combined spring physics decay (rotation + elastic stretch snap-back)
   const startSpringDecay = useCallback((targetFaceY: number, initialVelY: number) => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    isSettledRef.current = false;
 
-    let currentY = rotRef.current.y;
-    let currentX = rotRef.current.x;
-    let velY = initialVelY;
-    let velX = (4 - currentX) * 0.1;
+    let currentY = Number.isFinite(rotRef.current.y) ? rotRef.current.y : 0;
+    let currentX = Number.isFinite(rotRef.current.x) ? rotRef.current.x : 4;
+    let velY = Number.isFinite(initialVelY) ? initialVelY : 0;
+    let velX = (4 - currentX) * 0.12;
 
     // Rotation spring constants
-    const stiffness = 0.075;
-    const damping = 0.82;
+    const stiffness = 0.082;
+    const damping = 0.81;
 
-    // Elastic stretch spring constants — high tension, bouncy for snap-back feel
-    let currentStretch = stretchRef.current;
-    let sVel = stretchVelRef.current;
-    const sStiffness = 0.14;  // high tension → fast snap
-    const sDamping = 0.72;    // low damping → allows 1-2 bounces before settling
+    // Elastic stretch spring constants — snappy with authentic fabric overshoot bounce
+    let currentStretch = Number.isFinite(stretchRef.current) ? stretchRef.current : 0;
+    let sVel = Number.isFinite(stretchVelRef.current) ? stretchVelRef.current : 0;
+    const sStiffness = 0.15; // fast snap
+    const sDamping = 0.72; // slight underdamped for 1-2 visible bounce oscillations
 
     const step = () => {
       if (isDraggingRef.current) return;
@@ -141,31 +145,39 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
       velX = (velX + forceX) * damping;
       currentX += velX;
 
-      setRotX(currentX);
-      setRotY(currentY);
+      // Safeguard against NaN / Infinity
+      const safeX = Number.isFinite(currentX) ? currentX : 4;
+      const safeY = Number.isFinite(currentY) ? currentY : 0;
 
-      // ── Elastic stretch spring (snap to 0 with overshoot bounce) ──
+      setRotX(safeX);
+      setRotY(safeY);
+
+      // ── Elastic stretch spring (snap to 0 with compression bounce) ──
       const sForce = (0 - currentStretch) * sStiffness;
       sVel = (sVel + sForce) * sDamping;
       currentStretch += sVel;
 
-      // Allow slight negative overshoot → strap compresses briefly for bounce realism
-      setStretchY(Math.max(-7, currentStretch));
+      // Allow slight negative overshoot (-6px) for realistic strap recoil
+      const safeStretch = Number.isFinite(currentStretch) ? Math.max(-6, currentStretch) : 0;
+      setStretchY(safeStretch);
 
-      // Check if all springs are settled
+      // Settle condition check
       const rotSettled =
-        Math.abs(velY) < 0.05 &&
-        Math.abs(targetFaceY - currentY) < 0.1 &&
-        Math.abs(velX) < 0.05;
+        Math.abs(velY) < 0.04 &&
+        Math.abs(targetFaceY - safeY) < 0.08 &&
+        Math.abs(velX) < 0.04;
       const stretchSettled =
-        Math.abs(currentStretch) < 0.3 && Math.abs(sVel) < 0.08;
+        Math.abs(safeStretch) < 0.25 && Math.abs(sVel) < 0.06;
 
       if (!rotSettled || !stretchSettled) {
         animFrameRef.current = requestAnimationFrame(step);
       } else {
+        // Fully settled: normalize angles modulo 360 to prevent numerical growth
+        const normalizedSettledY = ((targetFaceY % 360) + 360) % 360;
         setRotX(4);
-        setRotY(targetFaceY);
+        setRotY(normalizedSettledY === 360 ? 0 : normalizedSettledY);
         setStretchY(0);
+        isSettledRef.current = true;
       }
     };
 
@@ -175,9 +187,11 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
   // Handle pointer down (mouse or touch)
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (idleFrameRef.current) cancelAnimationFrame(idleFrameRef.current);
 
     setIsDragging(true);
     isDraggingRef.current = true;
+    isSettledRef.current = false;
     setHasInteracted(true);
 
     lastPointerRef.current = {
@@ -191,7 +205,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
-  // Handle pointer move — rotation (horizontal) + elastic stretch (vertical)
+  // Handle pointer move — horizontal 360° rotation + vertical elastic stretch
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current) return;
 
@@ -200,7 +214,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     const deltaX = e.clientX - lastPointerRef.current.x;
     const deltaY = e.clientY - lastPointerRef.current.y;
 
-    // Calculate instantaneous velocity (deg/frame equivalent)
+    // Calculate smoothed instantaneous velocity
     const instVelY = (deltaX / dt) * 16;
     const instVelX = (deltaY / dt) * 16;
     velocityRef.current = {
@@ -210,40 +224,45 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
     lastPointerRef.current = { x: e.clientX, y: e.clientY, time: now };
 
-    // ── Horizontal drag → yaw rotation (unchanged) ──
+    // ── Horizontal drag -> continuous yaw rotation ──
     const nextRotY = rotRef.current.y + deltaX * 0.75;
 
-    // ── Vertical drag → split between pitch rotation & elastic stretch ──
+    // ── Vertical drag -> split between pitch tilt & elastic downward stretch ──
     const curStretch = stretchRef.current;
     const stretchRatio = Math.min(1, Math.max(0, curStretch) / MAX_STRETCH);
 
-    // Pitch sensitivity decreases as strap stretches (feels heavier when taut)
-    const pitchSensitivity = 0.4 * (1 - stretchRatio * 0.6);
-    const nextRotX = Math.max(-26, Math.min(26, rotRef.current.x - deltaY * pitchSensitivity));
+    // Pitch sensitivity decreases as strap stretches taut
+    const pitchSensitivity = 0.38 * (1 - stretchRatio * 0.65);
+    const nextRotX = Math.max(-25, Math.min(25, rotRef.current.x - deltaY * pitchSensitivity));
 
-    // Vertical delta contributes to stretch (both directions: pull down & release up)
+    // Vertical delta contributes to strap elongation
     let newStretch = curStretch + deltaY * 0.55;
 
-    // Rubber-band resistance beyond MAX_STRETCH — feels increasingly "heavy"
+    // Rubber-band resistance when stretching beyond MAX_STRETCH
     if (newStretch > MAX_STRETCH) {
       const excess = newStretch - MAX_STRETCH;
-      newStretch = MAX_STRETCH + excess * 0.1;
+      newStretch = MAX_STRETCH + excess * 0.12;
     }
     newStretch = Math.max(0, Math.min(HARD_MAX, newStretch));
 
-    stretchRef.current = newStretch;
-    setStretchY(newStretch);
-    setRotX(nextRotX);
-    setRotY(nextRotY);
+    // Safeguards for safe numerical values
+    const safeRotY = Number.isFinite(nextRotY) ? nextRotY : 0;
+    const safeRotX = Number.isFinite(nextRotX) ? nextRotX : 4;
+    const safeStretch = Number.isFinite(newStretch) ? newStretch : 0;
 
-    // Calculate light glare coordinates
+    stretchRef.current = safeStretch;
+    setStretchY(safeStretch);
+    setRotX(safeRotX);
+    setRotY(safeRotY);
+
+    // Calculate dynamic specular glare coordinates
     const rect = e.currentTarget.getBoundingClientRect();
     const normX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
     const normY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
     setGlare({ x: normX, y: normY, opacity: 0.65 });
   };
 
-  // Handle pointer up — launch combined rotation + stretch snap-back spring
+  // Handle pointer up — calculate nearest clean face and launch bounce spring
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current) return;
 
@@ -251,304 +270,372 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
     isDraggingRef.current = false;
     (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
 
-    // Let spring tension drive the snap-back (no initial velocity needed)
     stretchVelRef.current = 0;
 
-    // Projected landing angle based on release velocity
-    const projectedY = rotRef.current.y + velocityRef.current.y * 8;
+    // Projected landing angle based on release flick velocity
+    const safeVelY = Number.isFinite(velocityRef.current.y) ? velocityRef.current.y : 0;
+    const currentY = Number.isFinite(rotRef.current.y) ? rotRef.current.y : 0;
+    const projectedY = currentY + safeVelY * 7.5;
+
+    // Modulo 360 normalization to find nearest resting face (Front 0° or Back 180°)
     const normalizedY = ((projectedY % 360) + 360) % 360;
     const isCloserToBack = normalizedY > 90 && normalizedY < 270;
 
-    // Find nearest target face (0°, 180°, 360°, etc.)
+    // Nearest clean multiple target (never stopping at edge-on 90°/270°)
     const baseTurns = Math.round((projectedY - (isCloserToBack ? 180 : 0)) / 360) * 360;
-    const targetY = baseTurns + (isCloserToBack ? 180 : -6);
+    const targetY = baseTurns + (isCloserToBack ? 180 : 0);
 
-    // Launch combined spring-decay loop (handles both rotation & stretch)
-    startSpringDecay(targetY, velocityRef.current.y * 1.4);
+    startSpringDecay(targetY, safeVelY * 1.35);
     setGlare((prev) => ({ ...prev, opacity: 0.35 }));
   };
 
-  // Quick button flip trigger
+  // Quick button flip trigger (smooth 180° turn)
   const handleQuickFlip = (e: React.MouseEvent) => {
     e.stopPropagation();
     setHasInteracted(true);
-    const nextTargetY = rotRef.current.y + 180;
+    const currentY = Number.isFinite(rotRef.current.y) ? rotRef.current.y : 0;
+    const nextTargetY = currentY + 180;
     startSpringDecay(nextTargetY, 14);
   };
 
-  // ── Calculate dynamic 3D visual metrics ──
-  const radY = (rotY * Math.PI) / 180;
+  // ── Viewport-Aware Subtle Idle Pendulum Sway ──
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let startTime = performance.now();
+
+    const idleStep = (time: number) => {
+      // Only apply idle sway if settled, not dragging, and not hovered
+      if (!isDraggingRef.current && isSettledRef.current) {
+        const elapsed = time - startTime;
+        // Gentle organic pendulum micro-sway (±2.2° yaw, ±1.0° pitch)
+        const swayY = Math.sin(elapsed * 0.0016) * 2.2;
+        const swayX = 4 + Math.cos(elapsed * 0.0013) * 0.9;
+
+        const baseFaceY = rotRef.current.y;
+        // Modulo normalized base
+        const cleanBaseY = Math.round(baseFaceY / 180) * 180;
+        setRotY(cleanBaseY + swayY);
+        setRotX(swayX);
+      } else {
+        startTime = time;
+      }
+
+      idleFrameRef.current = requestAnimationFrame(idleStep);
+    };
+
+    idleFrameRef.current = requestAnimationFrame(idleStep);
+
+    return () => {
+      if (idleFrameRef.current) cancelAnimationFrame(idleFrameRef.current);
+    };
+  }, [isVisible]);
+
+  // ── 3D Visual & Lighting Calculations ──
+  const safeRotY = Number.isFinite(rotY) ? rotY : 0;
+  const safeRotX = Number.isFinite(rotX) ? rotX : 4;
+  const radY = (safeRotY * Math.PI) / 180;
   const cosY = Math.cos(radY);
   const sinY = Math.sin(radY);
 
-  // 1. Strap skew flex (simulates flexible ribbon bending with card)
-  const strapSkew = sinY * 8;
-  const strapRotate = rotX * 0.25;
+  // 1. Strap dynamic skew & twist (follows card yaw)
+  const strapSkew = sinY * 7;
+  const strapRotate = safeRotX * 0.2;
 
-  // 2. Physical scale dip at 90 degrees (thin card turning edge-on)
-  const cardScale = 0.94 + 0.06 * Math.abs(cosY);
+  // 2. Physical edge perspective compression
+  const cardScale = 0.95 + 0.05 * Math.abs(cosY);
 
-  // 3. Dynamic directional ambient drop shadow & 3D bevel thickness extrusion
-  const shadowOffsetX = -sinY * 24;
+  // 3. Directional ambient drop shadow & 3D bevel thickness
+  const shadowOffsetX = -sinY * 22;
   const shadowOffsetY = 24 + Math.abs(cosY) * 12;
-  const shadowBlur = 35 + Math.abs(cosY) * 18;
-  const shadowAlpha = 0.16 + Math.abs(cosY) * 0.16;
+  const shadowBlur = 34 + Math.abs(cosY) * 16;
+  const shadowAlpha = 0.16 + Math.abs(cosY) * 0.14;
 
   // 4. Elastic stretch visual metrics
   const clampedStretch = Math.max(0, stretchY);
-  const stretchFactor = Math.min(1, clampedStretch / MAX_STRETCH); // 0 → 1
-  const strapWidthScale = 1 - stretchFactor * 0.09;   // narrows ~9% at max tension
-  const strapBrightness = 1 + stretchFactor * 0.14;   // brighter when tense/taut
+  const stretchFactor = Math.min(1, clampedStretch / MAX_STRETCH);
+  const strapWidthScale = 1 - stretchFactor * 0.08; // narrows slightly under tension
+  const strapBrightness = 1 + stretchFactor * 0.14; // tension brightening
 
-  // Cleanup animation frame
+  // Base strap length (px) that expands physically with stretchY
+  const baseStrapHeight = 105;
+  const currentStrapHeight = baseStrapHeight + clampedStretch;
+
+  // Cleanup all animation frames on unmount
   useEffect(() => {
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (idleFrameRef.current) cancelAnimationFrame(idleFrameRef.current);
     };
   }, []);
 
   return (
     <div
-      className={`absolute top-0 -left-2 sm:-left-6 z-30 pointer-events-none flex flex-col items-center [perspective:1300px] transition-[opacity,transform] duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] overflow-visible ${
+      className={`absolute top-0 -left-2 sm:-left-6 z-30 pointer-events-none flex flex-col items-center [perspective:1200px] transition-[opacity,transform] duration-1000 ease-[cubic-bezier(0.34,1.4,0.64,1)] overflow-visible ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-48"
       }`}
       style={{
         transitionDelay: "450ms",
-        bottom: `${-(44 + stretchY)}px`,
       }}
     >
+      {/* ── UNIFIED PHYSICAL RIG CONTAINER (Preserve 3D, GPU Accelerated) ── */}
       <div
-        className="flex flex-col items-center origin-top h-full [transform-style:preserve-3d]"
+        className="flex flex-col items-center origin-top [transform-style:preserve-3d]"
         style={{
-          transform: `translate3d(0, ${isHovered && !isDragging ? -4 : 0}px, 28px)`,
-          transition: isDragging ? "none" : "transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+          transform: `translate3d(0, ${isHovered && !isDragging ? -4 : 0}px, 24px)`,
+          transition: isDragging ? "none" : "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)",
           willChange: "transform",
         }}
       >
-        {/* ── 1. SOLID CHROME TOP WINDOW CLAMP (Unified Top-Left Specular Lighting) ── */}
-        <div className="relative z-30 flex flex-col items-center -mt-3 [transform-style:preserve-3d]">
-          {/* Chrome Metal Clamp Bracket with Inset Crimp Pressure */}
-          <div className="w-9 sm:w-10 px-2 py-1 rounded-t-sm bg-gradient-to-br from-white via-stone-200 to-stone-400 border border-stone-400 shadow-[0_4px_10px_rgba(0,0,0,0.35),inset_0_-2px_4px_rgba(0,0,0,0.3)] flex items-center justify-between">
+        {/* ── 1. TOP WINDOW MOUNT BRACKET / CHROME CLIP (Fixed Anchor) ── */}
+        <div className="relative z-30 flex flex-col items-center -mt-3.5 [transform-style:preserve-3d]">
+          {/* Chrome Metal Clamp with Inset Screws & Specular Highlight */}
+          <div
+            className="w-10 sm:w-11 px-2.5 py-1.5 rounded-t-sm border border-stone-400/90 shadow-[0_4px_10px_rgba(0,0,0,0.35),inset_0_-2px_4px_rgba(0,0,0,0.3)] flex items-center justify-between"
+            style={{
+              background:
+                "linear-gradient(135deg, #ffffff 0%, #e2e8f0 35%, #94a3b8 70%, #475569 100%)",
+            }}
+          >
             <div className="w-1.5 h-1.5 rounded-full bg-stone-700 shadow-inner" />
-            <div className="w-3 h-0.5 bg-stone-800 rounded-full opacity-60" />
+            <div className="w-3.5 h-0.5 bg-stone-800 rounded-full opacity-60" />
             <div className="w-1.5 h-1.5 rounded-full bg-stone-700 shadow-inner" />
           </div>
+
           {/* Swivel Top Ring */}
-          <div className="w-4.5 h-4.5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-br from-stone-300 via-white to-stone-400 shadow-sm -mt-1 flex items-center justify-center">
+          <div
+            className="w-5 h-4.5 rounded-full border-[2.5px] border-stone-400 shadow-sm -mt-1 flex items-center justify-center"
+            style={{
+              background:
+                "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #cbd5e1 25%, #64748b 50%, #334155 75%, #ffffff 100%)",
+            }}
+          >
             <div className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-xs" />
           </div>
         </div>
 
-        {/* ── 2. ELASTIC WOVEN FABRIC LANYARD STRAP (Stretches with drag) ── */}
+        {/* ── 2. CLASSIC WOVEN FABRIC LANYARD STRAP (Stretches & Narrows with Physics) ── */}
         <div
-          className="flex-1 w-8 sm:w-9 relative flex flex-col items-center justify-center -my-1 overflow-hidden rounded-xs border-x-2 border-brand-900/80 shadow-[0_8px_24px_rgba(194,85,58,0.38),0_4px_10px_rgba(0,0,0,0.22)] [transform-style:preserve-3d]"
+          className="w-[34px] sm:w-[36px] relative flex flex-col items-center justify-center -mt-1.5 rounded-xs border-x border-brand-950/70 [transform-style:preserve-3d]"
           style={{
+            height: `${currentStrapHeight}px`,
             background:
-              "linear-gradient(90deg, #993822 0%, #ba462b 12%, #d95e3f 45%, #ea6f50 55%, #ba462b 88%, #993822 100%)",
+              "linear-gradient(90deg, #853827 0%, #a34530 14%, #c2553a 42%, #e0654f 50%, #c2553a 58%, #a34530 86%, #853827 100%)",
             transform: `scaleX(${strapWidthScale}) skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
             transformOrigin: "top center",
             filter: `brightness(${strapBrightness})`,
-            transition: isDragging ? "none" : "transform 200ms ease-out, filter 200ms ease-out",
-            willChange: "transform, filter",
+            boxShadow:
+              "2.5px 0 6px rgba(0,0,0,0.22), -1px 0 2px rgba(0,0,0,0.1), inset 0 3px 6px rgba(0,0,0,0.4), inset 0 -3px 6px rgba(0,0,0,0.4)",
+            transition: isDragging ? "none" : "transform 180ms ease-out, filter 180ms ease-out",
+            willChange: "transform, height, filter",
           }}
         >
-          {/* Top & Bottom Deep Inset Connection Shadows (Tuck-in depth) */}
-          <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-20" />
-          <div className="absolute bottom-0 inset-x-0 h-2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-20" />
+          {/* Top & Bottom Tuck-in Connection Shadows */}
+          <div className="absolute top-0 inset-x-0 h-2.5 bg-gradient-to-b from-black/70 to-transparent pointer-events-none z-20" />
+          <div className="absolute bottom-0 inset-x-0 h-2.5 bg-gradient-to-t from-black/70 to-transparent pointer-events-none z-20" />
 
-          {/* Left & Right Double Stitches (Full Length) */}
-          <div className="absolute inset-y-0 left-1 w-px border-l-2 border-dashed border-white/60" />
-          <div className="absolute inset-y-0 right-1 w-px border-r-2 border-dashed border-white/60" />
+          {/* Left & Right Fine Double Dashed Stitch Lines */}
+          <div className="absolute inset-y-0 left-1 w-px border-l border-dashed border-white/50" />
+          <div className="absolute inset-y-0 right-1 w-px border-r border-dashed border-white/50" />
 
           {/* High-Density Tactile Woven Webbing Texture */}
           <div
-            className="absolute inset-0 opacity-35 mix-blend-overlay pointer-events-none"
+            className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
             style={{
               backgroundImage:
-                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.4) 2px, rgba(255,255,255,0.4) 3px, rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px)",
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.4) 2px, rgba(255,255,255,0.4) 3px, rgba(0,0,0,0.25) 3px, rgba(0,0,0,0.25) 4px)",
             }}
           />
 
-          {/* Tension highlight glow — visible when strap is under elastic stress */}
+          {/* Tension Glow Highlight — flares when pulled taut */}
           <div
             className="absolute inset-0 pointer-events-none z-10"
             style={{
-              background: "linear-gradient(180deg, transparent 10%, rgba(255,200,150,0.15) 50%, transparent 90%)",
+              background:
+                "linear-gradient(180deg, transparent 10%, rgba(255,210,170,0.22) 50%, transparent 90%)",
               opacity: stretchFactor,
-              transition: isDragging ? "none" : "opacity 200ms ease-out",
+              transition: isDragging ? "none" : "opacity 180ms ease-out",
             }}
           />
 
-          {/* Solid 3D Woven Monogram */}
-          <div className="h-full flex items-center justify-center py-4 select-none pointer-events-none z-10">
-            <span className="text-[9px] font-mono font-extrabold tracking-[0.32em] text-white uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+          {/* Solid 3D Woven Jacquard Monogram */}
+          <div className="h-full flex items-center justify-center py-2 select-none pointer-events-none z-10">
+            <span className="text-[9px] font-mono font-extrabold tracking-[0.32em] text-white/95 uppercase [writing-mode:vertical-lr] rotate-180 drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
               VELQORA
             </span>
           </div>
-        </div>
 
-        {/* ── 3. METALLIC CRIMP COLLAR & LOBSTER CLASP HARDWARE (Directly locking into Card Grommet) ── */}
-        <div className="relative z-30 flex flex-col items-center -my-1 [transform-style:preserve-3d]">
-          {/* Silver Crimp Collar (Clamping down on strap bottom) */}
-          <div className="w-8.5 h-3.5 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_8px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.8)] flex items-center justify-around px-1.5">
-            <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
-            <div className="w-2.5 h-0.5 bg-stone-600 rounded-full opacity-70" />
-            <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
-          </div>
-          {/* Swivel D-Ring */}
-          <div className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 bg-gradient-to-br from-stone-200 via-white to-stone-300 shadow-md -mt-1 flex items-center justify-center">
-            {/* Lobster Clasp Spring Hook (Descends directly into the card grommet) */}
-            <div className="w-3 h-5.5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md -mb-3 shadow-md flex items-end justify-center pb-0.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
+          {/* ── 3. METALLIC CRIMP COLLAR & SWIVEL LOBSTER CLASP (Child of Strap) ── */}
+          <div className="absolute -bottom-5 z-30 flex flex-col items-center [transform-style:preserve-3d]">
+            {/* Brushed Silver Crimp Collar */}
+            <div className="w-9 h-3.5 bg-gradient-to-r from-stone-400 via-white to-stone-400 rounded-xs border border-stone-400 shadow-[0_3px_8px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.8)] flex items-center justify-around px-1.5">
+              <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
+              <div className="w-2.5 h-0.5 bg-stone-600 rounded-full opacity-70" />
+              <div className="w-1 h-1.5 bg-stone-800 rounded-full shadow-inner" />
             </div>
-          </div>
-        </div>
 
-        {/* ── 4. TRUE 360° ROTATABLE 3D CARD WITH 3D PHYSICAL THICKNESS & GROMMET ── */}
-        <div
-          onPointerEnter={() => setIsHovered(true)}
-          onPointerLeave={() => setIsHovered(false)}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          title="Geser horizontal 360° · Tarik ke bawah untuk stretch elastis"
-          className="w-56 sm:w-64 h-64 sm:h-70 relative mt-0.5 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
-          style={{
-            transform: `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
-            willChange: "transform",
-          }}
-        >
-          {/* ── FRONT FACE (rotateY 0deg) WITH 3D CHASSIS THICKNESS RIM ── */}
-          <div
-            className="absolute inset-0 rounded-3xl bg-white p-2.5 border-[2px] border-stone-200 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between transition-shadow duration-300"
-            style={{
-              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 1px 0 1px #e7e5e4, 0 2.5px 0 1.5px #d6d3d1, 0 4px 0 2px #a8a29e, 0 5.5px 0 2.5px #78716c, 0 10px 20px rgba(194,85,58,0.12)`,
-            }}
-          >
-            {/* Dynamic Specular Light Glare Overlay */}
+            {/* Swivel D-Ring Housing */}
             <div
-              className="absolute inset-0 pointer-events-none rounded-3xl z-40 transition-opacity duration-150"
+              className="w-5 h-5 rounded-full border-[2.5px] border-stone-400 shadow-md -mt-1 flex items-center justify-center"
               style={{
-                background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 45%, transparent 75%)`,
-                opacity: glare.opacity,
+                background:
+                  "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #e2e8f0 25%, #64748b 50%, #334155 75%, #ffffff 100%)",
               }}
-            />
-
-            {/* 3D Physical Torus Grommet Ring */}
-            <Physical3DGrommet isBack={false} />
-
-            {/* Inner Phone Screen Content */}
-            <div className="rounded-2xl bg-surface-secondary/80 border border-border/80 p-3 space-y-2.5 text-text-primary shadow-inner flex-1 flex flex-col justify-between">
-              {/* Speaker / Camera Bezel */}
-              <div className="w-14 h-1 bg-stone-300 rounded-full mx-auto" />
-
-              {/* Status Bar */}
-              <div className="flex items-center justify-between text-[11px] border-b border-border/80 pb-1.5">
-                <span className="font-bold text-text-primary flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse shadow-xs" />
-                  Velqora Mobile
-                </span>
-                <span className="text-[9.5px] font-mono font-semibold bg-brand-500/10 text-brand-600 px-2 py-0.5 rounded-md border border-brand-500/20">
-                  PWA Active
-                </span>
-              </div>
-
-              {/* Live Schedule Widget */}
-              <div className="p-2.5 rounded-xl bg-white border border-brand-500/25 space-y-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
-                <div className="flex items-center justify-between">
-                  <p className="text-[9.5px] text-brand-600 font-bold uppercase tracking-wider flex items-center gap-1">
-                    <Sparkle className="w-2.5 h-2.5" />
-                    Kelas Berikutnya
-                  </p>
-                  <span className="text-[9.5px] text-emerald-600 font-extrabold bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                    10 Menit Lagi
-                  </span>
-                </div>
-                <p className="text-xs sm:text-[13px] font-bold text-text-primary leading-tight">
-                  Kalkulus Lanjut
-                </p>
-                <p className="text-[10px] text-text-secondary font-medium">
-                  10:45 • Ruang 402 Gedung C
-                </p>
-              </div>
-
-              {/* Interactive Rotate Hint & Flip Trigger */}
-              <div
-                className={`flex items-center justify-between text-[9px] text-text-tertiary pt-0.5 font-semibold transition-opacity duration-300 ${
-                  hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
-                }`}
-              >
-                <span className="flex items-center gap-1">
-                  <RotateCw className="w-3 h-3 text-brand-500" />
-                  <span>Geser 360°</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={handleQuickFlip}
-                  className="px-2 py-0.5 rounded bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 border border-brand-500/20 transition-colors cursor-pointer active:scale-95"
-                >
-                  Balik Kartu ↺
-                </button>
+            >
+              {/* Lobster Clasp Spring Hook Latch (Extends directly into card eyelet grommet) */}
+              <div className="w-3 h-5 bg-gradient-to-b from-stone-200 via-white to-stone-400 border border-stone-500 rounded-b-md -mb-3 shadow-md flex items-end justify-center pb-0.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
               </div>
             </div>
-          </div>
 
-          {/* ── BACK FACE (rotateY 180deg) WITH 3D CHASSIS THICKNESS RIM ── */}
-          <div
-            className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 border-[2px] border-stone-700 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white transition-shadow duration-300"
-            style={{
-              boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.1}), 0 1px 0 1px #44403c, 0 2.5px 0 1.5px #292524, 0 4px 0 2px #1c1917, 0 5.5px 0 2.5px #0c0a09`,
-            }}
-          >
-            {/* 3D Physical Torus Grommet Ring (Back Face View) */}
-            <Physical3DGrommet isBack={true} />
+            {/* ── 4. TRUE 360° ROTATABLE 3D CARD (Child with transformOrigin at Top Grommet) ── */}
+            <div
+              onPointerEnter={() => setIsHovered(true)}
+              onPointerLeave={() => setIsHovered(false)}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              title="Geser horizontal 360° · Tarik ke bawah untuk stretch elastis"
+              className="w-56 sm:w-64 h-64 sm:h-70 relative -mt-1 pointer-events-auto cursor-grab active:cursor-grabbing select-none [touch-action:none] [transform-style:preserve-3d]"
+              style={{
+                transform: `rotateX(${safeRotX}deg) rotateY(${safeRotY}deg) scale3d(${cardScale}, ${cardScale}, 1)`,
+                transformOrigin: "50% 0px", // PIVOTS EXACTLY AT THE GROMMET CONNECTION POINT
+                willChange: "transform",
+              }}
+            >
+              {/* ── FRONT FACE (rotateY 0deg) WITH 3D CHASSIS THICKNESS RIM ── */}
+              <div
+                className="absolute inset-0 rounded-3xl bg-white p-2.5 border-[2px] border-stone-200 [backface-visibility:hidden] [transform:rotateY(0deg)] overflow-hidden flex flex-col justify-between transition-shadow duration-300"
+                style={{
+                  boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha}), 0 1px 0 1px #e7e5e4, 0 2.5px 0 1.5px #d6d3d1, 0 4px 0 2px #a8a29e, 0 5.5px 0 2.5px #78716c, 0 10px 24px rgba(194,85,58,0.12)`,
+                }}
+              >
+                {/* Dynamic Specular Light Glare Overlay */}
+                <div
+                  className="absolute inset-0 pointer-events-none rounded-3xl z-40 transition-opacity duration-150"
+                  style={{
+                    background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 45%, transparent 75%)`,
+                    opacity: glare.opacity,
+                  }}
+                />
 
-            {/* Inner Digital Student Pass */}
-            <div className="rounded-2xl bg-stone-800/90 border border-stone-700/80 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
-              {/* Holographic shimmer glow */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/15 rounded-full blur-xl pointer-events-none" />
+                {/* 3D Physical Torus Grommet Ring */}
+                <Physical3DGrommet isBack={false} />
 
-              {/* Pass Header */}
-              <div className="flex items-center justify-between border-b border-stone-700/80 pb-1.5">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3.5 h-3.5 rounded-sm bg-brand-500 flex items-center justify-center font-bold text-[8px] text-white">
-                    V
+                {/* Inner Phone Screen Content */}
+                <div className="rounded-2xl bg-surface-secondary/80 border border-border/80 p-3 space-y-2.5 text-text-primary shadow-inner flex-1 flex flex-col justify-between">
+                  {/* Speaker / Camera Bezel */}
+                  <div className="w-14 h-1 bg-stone-300 rounded-full mx-auto" />
+
+                  {/* Status Bar */}
+                  <div className="flex items-center justify-between text-[11px] border-b border-border/80 pb-1.5">
+                    <span className="font-bold text-text-primary flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse shadow-xs" />
+                      Velqora Mobile
+                    </span>
+                    <span className="text-[9.5px] font-mono font-semibold bg-brand-500/10 text-brand-600 px-2 py-0.5 rounded-md border border-brand-500/20">
+                      PWA Active
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono font-bold tracking-wider text-stone-200">
-                    ACADEMIC PASS
-                  </span>
+
+                  {/* Live Schedule Widget */}
+                  <div className="p-2.5 rounded-xl bg-white border border-brand-500/25 space-y-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[9.5px] text-brand-600 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <Sparkle className="w-2.5 h-2.5" />
+                        Kelas Berikutnya
+                      </p>
+                      <span className="text-[9.5px] text-emerald-600 font-extrabold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                        10 Menit Lagi
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-[13px] font-bold text-text-primary leading-tight">
+                      Kalkulus Lanjut
+                    </p>
+                    <p className="text-[10px] text-text-secondary font-medium">
+                      10:45 • Ruang 402 Gedung C
+                    </p>
+                  </div>
+
+                  {/* Interactive Rotate Hint & Flip Trigger */}
+                  <div
+                    className={`flex items-center justify-between text-[9px] text-text-tertiary pt-0.5 font-semibold transition-opacity duration-300 ${
+                      hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
+                    }`}
+                  >
+                    <span className="flex items-center gap-1">
+                      <RotateCw className="w-3 h-3 text-brand-500" />
+                      <span>Geser 360°</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleQuickFlip}
+                      className="px-2 py-0.5 rounded bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 border border-brand-500/20 transition-colors cursor-pointer active:scale-95"
+                    >
+                      Balik Kartu ↺
+                    </button>
+                  </div>
                 </div>
-                <Wifi className="w-3.5 h-3.5 text-brand-400" />
               </div>
 
-              {/* QR Code Scanner Box */}
-              <div className="flex items-center gap-3 bg-stone-900/90 p-2 rounded-xl border border-stone-700/70">
-                <div className="p-1.5 bg-white rounded-lg shrink-0">
-                  <QrCode className="w-8 h-8 text-stone-900" />
-                </div>
-                <div className="space-y-0.5 min-w-0">
-                  <p className="text-[10px] font-mono font-bold text-brand-400 truncate">
-                    NIM: 22/498210/TK
-                  </p>
-                  <p className="text-[9px] text-stone-300 truncate">Teknik Informatika</p>
-                  <p className="text-[8px] text-stone-400 font-mono">Sem. Genap 2026</p>
-                </div>
-              </div>
+              {/* ── BACK FACE (rotateY 180deg) WITH 3D CHASSIS THICKNESS RIM ── */}
+              <div
+                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 p-2.5 border-[2px] border-stone-700 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden flex flex-col justify-between text-white transition-shadow duration-300"
+                style={{
+                  boxShadow: `${-shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,${shadowAlpha + 0.12}), 0 1px 0 1px #44403c, 0 2.5px 0 1.5px #292524, 0 4px 0 2px #1c1917, 0 5.5px 0 2.5px #0c0a09`,
+                }}
+              >
+                {/* 3D Physical Torus Grommet Ring (Back Face View) */}
+                <Physical3DGrommet isBack={true} />
 
-              {/* NFC Sync Tag */}
-              <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 pt-0.5">
-                <span className="flex items-center gap-1 text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  Synced PWA
-                </span>
-                <button
-                  type="button"
-                  onClick={handleQuickFlip}
-                  className="px-2 py-0.5 rounded bg-stone-700/80 hover:bg-stone-700 text-stone-200 border border-stone-600 transition-colors cursor-pointer active:scale-95"
-                >
-                  Sisi Depan ↻
-                </button>
+                {/* Inner Digital Student Pass */}
+                <div className="rounded-2xl bg-stone-800/90 border border-stone-700/80 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
+                  {/* Holographic shimmer glow */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/15 rounded-full blur-xl pointer-events-none" />
+
+                  {/* Pass Header */}
+                  <div className="flex items-center justify-between border-b border-stone-700/80 pb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 rounded-sm bg-brand-500 flex items-center justify-center font-bold text-[8px] text-white">
+                        V
+                      </div>
+                      <span className="text-[10px] font-mono font-bold tracking-wider text-stone-200">
+                        ACADEMIC PASS
+                      </span>
+                    </div>
+                    <Wifi className="w-3.5 h-3.5 text-brand-400" />
+                  </div>
+
+                  {/* QR Code Scanner Box */}
+                  <div className="flex items-center gap-3 bg-stone-900/90 p-2 rounded-xl border border-stone-700/70">
+                    <div className="p-1.5 bg-white rounded-lg shrink-0">
+                      <QrCode className="w-8 h-8 text-stone-900" />
+                    </div>
+                    <div className="space-y-0.5 min-w-0">
+                      <p className="text-[10px] font-mono font-bold text-brand-400 truncate">
+                        NIM: 22/498210/TK
+                      </p>
+                      <p className="text-[9px] text-stone-300 truncate">Teknik Informatika</p>
+                      <p className="text-[8px] text-stone-400 font-mono">Sem. Genap 2026</p>
+                    </div>
+                  </div>
+
+                  {/* NFC Sync Tag */}
+                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 pt-0.5">
+                    <span className="flex items-center gap-1 text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      Synced PWA
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleQuickFlip}
+                      className="px-2 py-0.5 rounded bg-stone-700/80 hover:bg-stone-700 text-stone-200 border border-stone-600 transition-colors cursor-pointer active:scale-95"
+                    >
+                      Sisi Depan ↻
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
