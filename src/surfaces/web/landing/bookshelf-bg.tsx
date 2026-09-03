@@ -9,7 +9,7 @@ export function BookshelfHeroBackground() {
   return (
     <svg
       aria-hidden="true"
-      className="absolute top-0 left-0 w-full h-[260px] sm:h-[300px] md:h-[360px] -z-10 pointer-events-none opacity-[0.04] text-text-primary [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] select-none"
+      className="absolute top-0 left-0 w-full h-[260px] sm:h-[300px] md:h-[360px] -z-10 pointer-events-none opacity-[0.04] text-ink-primary [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] select-none"
       viewBox="0 0 1440 280"
       fill="none"
       preserveAspectRatio="xMidYMin slice"

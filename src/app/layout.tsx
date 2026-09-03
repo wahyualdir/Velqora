@@ -27,6 +27,12 @@ const jetbrainsMono = localFont({
   display: "swap",
 });
 
+const fraunces = localFont({
+  src: "./fonts/fraunces/fraunces-latin-standard-normal.woff2",
+  variable: "--font-editorial",
+  display: "swap",
+});
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -106,7 +112,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

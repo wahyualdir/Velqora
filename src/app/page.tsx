@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-text-primary selection:bg-brand-500/20 selection:text-brand-600 font-sans antialiased scroll-smooth">
+    <div className="min-h-screen bg-paper text-ink-primary selection:bg-tinta-500/15 selection:text-tinta-700 font-sans antialiased scroll-smooth">
       <NavHeader />
       <main>
         <HeroSection />

@@ -406,17 +406,17 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                 "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #cbd5e1 25%, #64748b 50%, #334155 75%, #ffffff 100%)",
             }}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-xs" />
+            <div className="w-1.5 h-1.5 rounded-full bg-tinta-600 shadow-xs" />
           </div>
         </div>
 
         {/* ── 2. CLASSIC WOVEN JACQUARD LANYARD STRAP (Stretches & Narrows with Physics) ── */}
         <div
-          className="w-[36px] sm:w-[38px] relative flex flex-col items-center justify-between -mt-1 rounded-xs border-x border-brand-950/60 [transform-style:preserve-3d]"
+          className="w-[36px] sm:w-[38px] relative flex flex-col items-center justify-between -mt-1 rounded-xs border-x border-tinta-950/60 [transform-style:preserve-3d]"
           style={{
             height: `${currentStrapHeight}px`,
             background:
-              "linear-gradient(90deg, #7c2d1e 0%, #a34530 15%, #c2553a 45%, #d96249 50%, #c2553a 55%, #a34530 85%, #7c2d1e 100%)",
+              "linear-gradient(90deg, #101f3c 0%, #1c3868 15%, #2f5cab 45%, #4676ca 50%, #2f5cab 55%, #1c3868 85%, #101f3c 100%)",
             transform: `scaleX(${strapWidthScale}) skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
             transformOrigin: "top center",
             filter: `brightness(${strapBrightness})`,
@@ -448,7 +448,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             className="absolute inset-0 pointer-events-none z-10"
             style={{
               background:
-                "linear-gradient(180deg, transparent 10%, rgba(255,210,170,0.25) 50%, transparent 90%)",
+                "linear-gradient(180deg, transparent 10%, rgba(184,207,239,0.25) 50%, transparent 90%)",
               opacity: stretchFactor,
               transition: isDragging ? "none" : "opacity 180ms ease-out",
             }}
@@ -504,9 +504,9 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
         >
           {/* ── FRONT FACE (rotateY 0deg) WITH CRISP SOLID CHASSIS ── */}
           <div
-            className="relative w-full rounded-2xl bg-white p-3 pt-2 border border-stone-200/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.05)] [backface-visibility:hidden] [transform:rotateY(0deg)] flex flex-col justify-between transition-shadow duration-300"
+            className="relative w-full rounded-2xl bg-paper-card p-3 pt-2 border border-paper-border shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.05)] [backface-visibility:hidden] [transform:rotateY(0deg)] flex flex-col justify-between transition-shadow duration-300"
             style={{
-              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(15,23,42,${shadowAlpha}), 0 16px 36px -8px rgba(194,85,58,0.14), 0 2px 6px rgba(0,0,0,0.06)`,
+              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(15,23,42,${shadowAlpha}), 0 16px 36px -8px rgba(47,92,171,0.14), 0 2px 6px rgba(0,0,0,0.06)`,
             }}
           >
             {/* Dynamic Specular Light Glare */}
@@ -522,23 +522,23 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             <Physical3DGrommetTab isBack={false} />
 
             {/* Smart Companion Screen Content */}
-            <div className="rounded-xl bg-gradient-to-b from-stone-50/80 to-white border border-stone-200/80 p-3 space-y-2.5 text-text-primary shadow-xs flex-1 flex flex-col justify-between overflow-hidden">
+            <div className="rounded-xl bg-gradient-to-b from-paper-secondary/60 to-paper-card border border-paper-border p-3 space-y-2.5 text-ink-primary shadow-xs flex-1 flex flex-col justify-between overflow-hidden">
               {/* Status Bar */}
-              <div className="flex items-center justify-between text-[11px] border-b border-stone-200/70 pb-2">
-                <span className="font-bold text-stone-900 flex items-center gap-1.5">
+              <div className="flex items-center justify-between text-[11px] border-b border-paper-border pb-2">
+                <span className="font-bold text-ink-primary flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-xs" />
                   Velqora Mobile
                 </span>
-                <span className="text-[9px] font-mono font-bold bg-brand-500/10 text-brand-600 px-2 py-0.5 rounded-full border border-brand-500/20">
+                <span className="text-[9px] font-mono font-bold bg-tinta-50 text-tinta-700 px-2 py-0.5 rounded-full border border-tinta-200/80">
                   PWA Active
                 </span>
               </div>
 
               {/* Live Schedule Widget */}
-              <div className="p-2.5 rounded-xl bg-white border border-brand-500/30 space-y-1.5 shadow-[0_2px_8px_rgba(194,85,58,0.06)]">
+              <div className="p-2.5 rounded-xl bg-paper-card border border-tinta-500/30 space-y-1.5 shadow-[0_2px_8px_rgba(47,92,171,0.06)]">
                 <div className="flex items-center justify-between">
-                  <p className="text-[9.5px] text-brand-600 font-extrabold uppercase tracking-wider flex items-center gap-1">
-                    <Sparkle className="w-2.5 h-2.5 fill-brand-500" />
+                  <p className="text-[9.5px] text-tinta-700 font-extrabold uppercase tracking-wider flex items-center gap-1">
+                    <Sparkle className="w-2.5 h-2.5 fill-tinta-600 text-tinta-600" />
                     Kelas Berikutnya
                   </p>
                   <span className="text-[9.5px] text-emerald-700 font-extrabold bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded-md">
@@ -546,15 +546,15 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs sm:text-[13px] font-bold text-stone-900 leading-tight">
+                  <p className="text-xs sm:text-[13px] font-semibold font-editorial text-ink-primary leading-tight">
                     Kalkulus Lanjut
                   </p>
-                  <p className="text-[10px] text-stone-500 font-medium flex items-center gap-1 mt-0.5">
-                    <Clock className="w-2.5 h-2.5 text-stone-400 shrink-0" />
+                  <p className="text-[10px] text-ink-secondary font-medium flex items-center gap-1 mt-0.5">
+                    <Clock className="w-2.5 h-2.5 text-ink-tertiary shrink-0" />
                     <span>10:45 • Ruang 402 Gedung C</span>
                   </p>
                 </div>
-                <div className="pt-1 border-t border-stone-100 flex items-center justify-between text-[9px] text-stone-500 font-medium">
+                <div className="pt-1 border-t border-paper-border/60 flex items-center justify-between text-[9px] text-ink-secondary font-medium">
                   <span>Dr. Ir. Hendra S., M.T.</span>
                   <span className="text-emerald-600 font-semibold flex items-center gap-0.5">
                     <CheckCircle2 className="w-2.5 h-2.5" />
@@ -565,18 +565,18 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
               {/* Interactive Rotate Hint & Flip Trigger */}
               <div
-                className={`flex items-center justify-between text-[9px] text-stone-500 pt-0.5 font-semibold transition-opacity duration-300 ${
+                className={`flex items-center justify-between text-[9px] text-ink-secondary pt-0.5 font-semibold transition-opacity duration-300 ${
                   hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
                 }`}
               >
                 <span className="flex items-center gap-1">
-                  <RotateCw className="w-3 h-3 text-brand-500 animate-spin-slow" />
+                  <RotateCw className="w-3 h-3 text-tinta-600 animate-spin-slow" />
                   <span>Geser 360°</span>
                 </span>
                 <button
                   type="button"
                   onClick={handleQuickFlip}
-                  className="px-2.5 py-1 rounded-md bg-stone-100 hover:bg-stone-200/80 active:bg-stone-200 text-stone-700 font-medium border border-stone-200 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                  className="px-2.5 py-1 rounded-md bg-paper-secondary hover:bg-paper-secondary/80 active:bg-paper-secondary text-ink-primary font-medium border border-paper-border transition-all cursor-pointer active:scale-95 shadow-2xs"
                 >
                   Balik Kartu ↺
                 </button>
@@ -597,19 +597,19 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             {/* Inner Digital Student Pass */}
             <div className="rounded-xl bg-stone-800/90 border border-stone-700/70 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
               {/* Holographic shimmer glow */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/20 rounded-full blur-xl pointer-events-none" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-tinta-500/20 rounded-full blur-xl pointer-events-none" />
 
               {/* Pass Header */}
               <div className="flex items-center justify-between border-b border-stone-700/80 pb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-4 h-4 rounded bg-brand-500 flex items-center justify-center font-bold text-[9px] text-white shadow-xs">
+                  <div className="w-4 h-4 rounded bg-tinta-600 flex items-center justify-center font-bold text-[9px] text-white shadow-xs">
                     V
                   </div>
                   <span className="text-[10px] font-mono font-bold tracking-wider text-stone-200">
                     ACADEMIC PASS
                   </span>
                 </div>
-                <Wifi className="w-3.5 h-3.5 text-brand-400" />
+                <Wifi className="w-3.5 h-3.5 text-tinta-300" />
               </div>
 
               {/* QR Code Scanner Box */}
@@ -621,7 +621,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                   <p className="text-[10.5px] font-bold text-white truncate">
                     Wahyu Aldi Riyanto
                   </p>
-                  <p className="text-[9.5px] font-mono font-bold text-brand-400 truncate">
+                  <p className="text-[9.5px] font-mono font-bold text-tinta-300 truncate">
                     22/498210/TK
                   </p>
                   <p className="text-[8.5px] text-stone-400">Teknik Informatika • 2026</p>
@@ -655,11 +655,11 @@ export function HeroSection() {
   const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
 
   return (
-    <section className="relative pt-14 pb-20 lg:pt-20 lg:pb-28 border-b border-border overflow-x-hidden">
+    <section className="relative pt-14 pb-20 lg:pt-20 lg:pb-28 border-b border-paper-border overflow-x-hidden">
       <BookshelfHeroBackground />
 
-      {/* Warm subtle ambient glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-brand-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      {/* Subtle blue tinta ambient glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-tinta-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div
         ref={ref}
@@ -668,35 +668,35 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left: Editorial Human Copy with Staggered Transitions */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            {/* 1. Kicker Badge */}
+            {/* 1. Kicker Badge — Editorial Style */}
             <div
               className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "0ms" }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 text-xs font-semibold tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
-                Workspace Akademis Mahasiswa
+              <div className="flex items-center gap-3">
+                <span className="font-editorial italic text-base text-tinta-700">Workspace Akademis Mahasiswa</span>
+                <span className="h-px w-16 bg-paper-border" />
               </div>
             </div>
 
-            {/* 2. Headline */}
+            {/* 2. Headline — Editorial Serif */}
             <h1
-              className={`text-[2.4rem] sm:text-[3rem] lg:text-[3.25rem] xl:text-[3.65rem] font-extrabold tracking-[-0.035em] font-display text-text-primary leading-[1.1] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`text-[2.4rem] sm:text-[3rem] lg:text-[3.25rem] xl:text-[3.65rem] font-semibold tracking-[-0.03em] font-editorial text-ink-primary leading-[1.15] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "80ms" }}
             >
               Kuliah lebih tenang saat jadwal, materi, dan tugas{" "}
-              <span className="text-brand-500 underline decoration-brand-500/30 decoration-wavy decoration-1 underline-offset-4">
+              <span className="text-tinta-600 underline decoration-tinta-500/30 decoration-wavy decoration-1 underline-offset-4">
                 tidak berceceran.
               </span>
             </h1>
 
             {/* 3. Subheadline */}
             <p
-              className={`text-base lg:text-[17px] text-text-secondary leading-relaxed max-w-lg transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`text-base lg:text-[17px] text-ink-secondary font-sans leading-relaxed max-w-lg transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "160ms" }}
@@ -714,7 +714,7 @@ export function HeroSection() {
               <Link href="/login" className="focus-visible:outline-hidden">
                 <Button
                   size="lg"
-                  className="text-sm font-semibold gap-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white px-6 shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer"
+                  className="text-sm font-semibold gap-2 bg-tinta-600 hover:bg-tinta-700 active:scale-[0.98] text-white px-6 shadow-xs hover:shadow-sm transition-all duration-150 cursor-pointer"
                 >
                   <span>Masuk ke Workspace — Gratis</span>
                   <ArrowRight className="w-4 h-4" />
@@ -724,7 +724,7 @@ export function HeroSection() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-sm font-medium gap-2 border-border hover:bg-surface-hover hover:border-border-hover text-text-primary active:scale-[0.98] transition-all duration-150 cursor-pointer"
+                  className="text-sm font-medium gap-2 border-paper-border hover:bg-paper-secondary hover:border-paper-border text-ink-primary active:scale-[0.98] transition-all duration-150 cursor-pointer"
                 >
                   <span>Masuk / Login</span>
                 </Button>
@@ -733,9 +733,9 @@ export function HeroSection() {
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="text-sm font-medium gap-2 text-text-secondary hover:text-text-primary hover:bg-surface-hover active:scale-[0.98] transition-all duration-150 cursor-pointer"
+                  className="text-sm font-medium gap-2 text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary active:scale-[0.98] transition-all duration-150 cursor-pointer"
                 >
-                  <Download className="w-4 h-4 text-brand-500" />
+                  <Download className="w-4 h-4 text-tinta-600" />
                   <span>Pasang di HP (PWA)</span>
                 </Button>
               </Link>
@@ -743,23 +743,23 @@ export function HeroSection() {
 
             {/* 5. Trust Indicators */}
             <div
-              className={`pt-4 border-t border-border/80 flex flex-wrap items-center gap-y-2 gap-x-5 text-[12px] text-text-tertiary transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`pt-4 border-t border-paper-border flex flex-wrap items-center gap-y-2 gap-x-5 text-[12px] text-ink-tertiary transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "320ms" }}
             >
-              <span className="flex items-center gap-1.5 text-text-secondary font-medium">
+              <span className="flex items-center gap-1.5 text-ink-secondary font-medium">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 Data terisolasi per akun
               </span>
-              <span className="w-px h-3 bg-border hidden sm:inline-block" />
+              <span className="w-px h-3 bg-paper-border hidden sm:inline-block" />
               <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-brand-500 shrink-0" />
+                <Sparkles className="w-3.5 h-3.5 text-tinta-600 shrink-0" />
                 100% Bebas Iklan & Pelacak
               </span>
-              <span className="w-px h-3 bg-border hidden sm:inline-block" />
+              <span className="w-px h-3 bg-paper-border hidden sm:inline-block" />
               <span className="flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                <Smartphone className="w-3.5 h-3.5 text-tinta-500 shrink-0" />
                 Sinkron Web & HP Instan
               </span>
             </div>
@@ -773,9 +773,9 @@ export function HeroSection() {
             style={{ transitionDelay: "200ms" }}
           >
             {/* Desktop Window Mockup with High-End SaaS Elevation */}
-            <div className="rounded-2xl border border-stone-200/90 bg-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.1)] overflow-hidden transform lg:rotate-1 lg:translate-x-2 transition-transform duration-300 hover:rotate-0">
+            <div className="rounded-2xl border border-paper-border bg-paper-card shadow-[0_20px_50px_-12px_rgba(22,35,58,0.08),0_0_1px_rgba(0,0,0,0.1)] overflow-hidden transform lg:rotate-1 lg:translate-x-2 transition-transform duration-300 hover:rotate-0">
               {/* Window Chrome Header Bar with Clean macOS Aesthetics */}
-              <div className="h-10 px-4 bg-stone-50/90 border-b border-stone-200/80 flex items-center justify-between text-[11px] text-text-tertiary select-none">
+              <div className="h-10 px-4 bg-paper-secondary/80 border-b border-paper-border flex items-center justify-between text-[11px] text-ink-tertiary select-none">
                 {/* Traffic Light Dots */}
                 <div className="flex items-center gap-1.5 shrink-0">
                   <div className="w-2.5 h-2.5 rounded-full bg-rose-400 border border-rose-500/40" />
@@ -784,10 +784,10 @@ export function HeroSection() {
                 </div>
 
                 {/* Center Address Bar with Secure SSL Lock */}
-                <div className="px-3.5 py-1 rounded-full bg-white border border-stone-200/80 text-[11px] font-mono text-stone-600 truncate max-w-[250px] shadow-2xs text-center flex items-center gap-1.5 justify-center">
-                  <Lock className="w-2.5 h-2.5 text-stone-400" />
-                  <span className="font-semibold text-stone-700">velqora.web.id</span>
-                  <span className="text-stone-400">/dashboard/jadwal</span>
+                <div className="px-3.5 py-1 rounded-full bg-paper-card border border-paper-border text-[11px] font-mono text-ink-secondary truncate max-w-[250px] shadow-2xs text-center flex items-center gap-1.5 justify-center">
+                  <Lock className="w-2.5 h-2.5 text-ink-tertiary" />
+                  <span className="font-semibold text-ink-primary">velqora.web.id</span>
+                  <span className="text-ink-tertiary">/dashboard/jadwal</span>
                 </div>
 
                 {/* Right Status Badge */}
@@ -798,22 +798,22 @@ export function HeroSection() {
               </div>
 
               {/* Modern Horizontal Workspace Navigation Bar */}
-              <div className="px-4 sm:px-5 py-2 border-b border-stone-100 bg-stone-50/50 flex items-center justify-between text-xs select-none">
+              <div className="px-4 sm:px-5 py-2 border-b border-paper-border bg-paper-secondary/40 flex items-center justify-between text-xs select-none">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  <div className="px-2.5 py-1 rounded-md bg-brand-50 text-brand-600 font-bold flex items-center gap-1.5 text-[11px] border border-brand-200/60 shadow-2xs">
-                    <Layers className="w-3 h-3 text-brand-500" />
+                  <div className="px-2.5 py-1 rounded-md bg-tinta-50 text-tinta-700 font-bold flex items-center gap-1.5 text-[11px] border border-tinta-200/60 shadow-2xs">
+                    <Layers className="w-3 h-3 text-tinta-600" />
                     <span>Jadwal Kuliah</span>
                   </div>
-                  <div className="px-2 py-1 rounded-md text-stone-500 hover:text-stone-800 hover:bg-stone-100/80 flex items-center gap-1 text-[11px] transition-colors">
-                    <BookOpen className="w-3 h-3 text-stone-400" />
+                  <div className="px-2 py-1 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary flex items-center gap-1 text-[11px] transition-colors">
+                    <BookOpen className="w-3 h-3 text-ink-tertiary" />
                     <span>Modul & Slide</span>
                   </div>
-                  <div className="px-2 py-1 rounded-md text-stone-500 hover:text-stone-800 hover:bg-stone-100/80 flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
-                    <CheckSquare className="w-3 h-3 text-stone-400" />
+                  <div className="px-2 py-1 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
+                    <CheckSquare className="w-3 h-3 text-ink-tertiary" />
                     <span>Tugas</span>
                   </div>
-                  <div className="px-2 py-1 rounded-md text-stone-500 hover:text-stone-800 hover:bg-stone-100/80 flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
-                    <Bot className="w-3 h-3 text-stone-400" />
+                  <div className="px-2 py-1 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
+                    <Bot className="w-3 h-3 text-ink-tertiary" />
                     <span>AI Tutor</span>
                   </div>
                 </div>
@@ -824,17 +824,17 @@ export function HeroSection() {
               </div>
 
               {/* Main Workspace Area (Generous Left Padding: zero clipping from foreground card) */}
-              <div className="p-4 sm:p-5 pl-14 sm:pl-16 lg:pl-20 bg-background/95 space-y-3">
-                <div className="flex items-center justify-between pb-1.5 border-b border-border/70">
+              <div className="p-4 sm:p-5 pl-14 sm:pl-16 lg:pl-20 bg-paper/50 space-y-3">
+                <div className="flex items-center justify-between pb-1.5 border-b border-paper-border">
                   <div>
-                    <p className="text-xs font-bold text-text-primary font-display">
+                    <p className="text-xs font-semibold text-ink-primary font-editorial">
                       Semester Genap • 21 SKS
                     </p>
-                    <p className="text-[11px] text-text-tertiary font-mono">
+                    <p className="text-[11px] text-ink-tertiary font-mono">
                       Kalender Mingguan Aktif
                     </p>
                   </div>
-                  <span className="text-[10px] font-mono text-stone-400 bg-stone-100 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-ink-secondary bg-paper-secondary px-2 py-0.5 rounded">
                     Sesi Pagi & Siang
                   </span>
                 </div>
@@ -842,55 +842,55 @@ export function HeroSection() {
                 {/* Schedule Cards with Pristine Contrast & Alignment */}
                 <div className="space-y-2.5 text-xs">
                   {/* Item 1: Struktur Data */}
-                  <div className="p-3 rounded-xl bg-white border border-stone-200/90 shadow-2xs hover:border-brand-500/40 transition-colors flex items-center justify-between gap-3">
+                  <div className="p-3 rounded-xl bg-paper-card border border-paper-border shadow-2xs hover:border-tinta-500/40 transition-colors flex items-center justify-between gap-3">
                     <div className="min-w-0 space-y-0.5">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-brand-500 shrink-0" />
-                        <p className="font-bold text-text-primary text-xs truncate">
+                        <span className="w-2 h-2 rounded-full bg-tinta-600 shrink-0" />
+                        <p className="font-semibold text-ink-primary font-editorial text-xs truncate">
                           Struktur Data & Algoritma
                         </p>
                       </div>
-                      <p className="text-[11px] text-text-secondary font-medium pl-4">
+                      <p className="text-[11px] text-ink-secondary font-medium pl-4">
                         Senin • 08:00 – 10:30 • Lab Komputer 3
                       </p>
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-brand-500/10 text-brand-700 font-semibold border border-brand-500/20 shrink-0">
+                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-tinta-50 text-tinta-700 font-semibold border border-tinta-200/60 shrink-0">
                       3 SKS
                     </span>
                   </div>
 
                   {/* Item 2: Sistem Basis Data */}
-                  <div className="p-3 rounded-xl bg-white border border-stone-200/90 shadow-2xs hover:border-blue-500/40 transition-colors flex items-center justify-between gap-3">
+                  <div className="p-3 rounded-xl bg-paper-card border border-paper-border shadow-2xs hover:border-tinta-400/40 transition-colors flex items-center justify-between gap-3">
                     <div className="min-w-0 space-y-0.5">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-                        <p className="font-bold text-text-primary text-xs truncate">
+                        <span className="w-2 h-2 rounded-full bg-tinta-500 shrink-0" />
+                        <p className="font-semibold text-ink-primary font-editorial text-xs truncate">
                           Sistem Basis Data Terdistribusi
                         </p>
                       </div>
-                      <p className="text-[11px] text-text-secondary font-medium pl-4">
+                      <p className="text-[11px] text-ink-secondary font-medium pl-4">
                         Rabu • 13:00 – 15:30 • Gedung Kuliah B201
                       </p>
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-blue-500/10 text-blue-700 font-semibold border border-blue-500/20 shrink-0">
+                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-tinta-50 text-tinta-700 font-semibold border border-tinta-200/60 shrink-0">
                       3 SKS
                     </span>
                   </div>
 
                   {/* Item 3: Kecerdasan Buatan & ML */}
-                  <div className="p-3 rounded-xl bg-white border border-stone-200/90 shadow-2xs hover:border-purple-500/40 transition-colors flex items-center justify-between gap-3">
+                  <div className="p-3 rounded-xl bg-paper-card border border-paper-border shadow-2xs hover:border-purple-500/40 transition-colors flex items-center justify-between gap-3">
                     <div className="min-w-0 space-y-0.5">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
-                        <p className="font-bold text-text-primary text-xs truncate">
+                        <p className="font-semibold text-ink-primary font-editorial text-xs truncate">
                           Kecerdasan Buatan & ML
                         </p>
                       </div>
-                      <p className="text-[11px] text-text-secondary font-medium pl-4">
+                      <p className="text-[11px] text-ink-secondary font-medium pl-4">
                         Kamis • 10:00 – 12:30 • Lab Riset AI
                       </p>
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-purple-500/10 text-purple-700 font-semibold border border-purple-500/20 shrink-0">
+                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-200/60 shrink-0">
                       3 SKS
                     </span>
                   </div>
