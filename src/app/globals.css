@@ -893,3 +893,24 @@ button, a, input, select, textarea {
     animation: none !important;
   }
 }
+
+/* Hero Floating Micro-Element Keyframes */
+@keyframes hero-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-hero-float {
+  animation: hero-float 3.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-float {
+    animation: none !important;
+  }
+}
+

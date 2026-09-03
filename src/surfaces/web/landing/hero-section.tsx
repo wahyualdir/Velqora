@@ -406,17 +406,17 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                 "conic-gradient(from 315deg at 50% 50%, #ffffff 0%, #cbd5e1 25%, #64748b 50%, #334155 75%, #ffffff 100%)",
             }}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-tinta-600 shadow-xs" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#B84A2B] shadow-xs" />
           </div>
         </div>
 
         {/* ── 2. CLASSIC WOVEN JACQUARD LANYARD STRAP (Stretches & Narrows with Physics) ── */}
         <div
-          className="w-[36px] sm:w-[38px] relative flex flex-col items-center justify-between -mt-1 rounded-xs border-x border-tinta-950/60 [transform-style:preserve-3d]"
+          className="w-[36px] sm:w-[38px] relative flex flex-col items-center justify-between -mt-1 rounded-xs border-x border-[#5A1F10]/70 [transform-style:preserve-3d]"
           style={{
             height: `${currentStrapHeight}px`,
             background:
-              "linear-gradient(90deg, #101f3c 0%, #1c3868 15%, #2f5cab 45%, #4676ca 50%, #2f5cab 55%, #1c3868 85%, #101f3c 100%)",
+              "linear-gradient(90deg, #7A2E19 0%, #9E3B1E 15%, #B84A2B 45%, #D46B42 50%, #B84A2B 55%, #9E3B1E 85%, #7A2E19 100%)",
             transform: `scaleX(${strapWidthScale}) skewX(${strapSkew}deg) rotateZ(${strapRotate}deg)`,
             transformOrigin: "top center",
             filter: `brightness(${strapBrightness})`,
@@ -448,7 +448,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             className="absolute inset-0 pointer-events-none z-10"
             style={{
               background:
-                "linear-gradient(180deg, transparent 10%, rgba(184,207,239,0.25) 50%, transparent 90%)",
+                "linear-gradient(180deg, transparent 10%, rgba(255,220,190,0.25) 50%, transparent 90%)",
               opacity: stretchFactor,
               transition: isDragging ? "none" : "opacity 180ms ease-out",
             }}
@@ -504,9 +504,9 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
         >
           {/* ── FRONT FACE (rotateY 0deg) WITH CRISP SOLID CHASSIS ── */}
           <div
-            className="relative w-full rounded-2xl bg-paper-card p-3 pt-2 border border-paper-border shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.05)] [backface-visibility:hidden] [transform:rotateY(0deg)] flex flex-col justify-between transition-shadow duration-300"
+            className="relative w-full rounded-2xl bg-white p-3 pt-2 border border-[#E7E2DA] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(0,0,0,0.04)] [backface-visibility:hidden] [transform:rotateY(0deg)] flex flex-col justify-between transition-shadow duration-300"
             style={{
-              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(15,23,42,${shadowAlpha}), 0 16px 36px -8px rgba(47,92,171,0.14), 0 2px 6px rgba(0,0,0,0.06)`,
+              boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(28,25,23,${shadowAlpha}), 0 20px 40px -10px rgba(184,74,43,0.18), 0 2px 6px rgba(0,0,0,0.06)`,
             }}
           >
             {/* Dynamic Specular Light Glare */}
@@ -522,23 +522,23 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             <Physical3DGrommetTab isBack={false} />
 
             {/* Smart Companion Screen Content */}
-            <div className="rounded-xl bg-gradient-to-b from-paper-secondary/60 to-paper-card border border-paper-border p-3 space-y-2.5 text-ink-primary shadow-xs flex-1 flex flex-col justify-between overflow-hidden">
+            <div className="rounded-xl bg-gradient-to-b from-[#FAF8F5] to-white border border-[#E7E2DA] p-3 space-y-2.5 text-[#1C1917] shadow-xs flex-1 flex flex-col justify-between overflow-hidden">
               {/* Status Bar */}
-              <div className="flex items-center justify-between text-[11px] border-b border-paper-border pb-2">
-                <span className="font-bold text-ink-primary flex items-center gap-1.5">
+              <div className="flex items-center justify-between text-[11px] border-b border-[#E7E2DA] pb-2">
+                <span className="font-bold text-[#1C1917] flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-xs" />
                   Velqora Mobile
                 </span>
-                <span className="text-[9px] font-mono font-bold bg-tinta-50 text-tinta-700 px-2 py-0.5 rounded-full border border-tinta-200/80">
+                <span className="text-[9px] font-mono font-bold bg-[#B84A2B]/10 text-[#B84A2B] px-2 py-0.5 rounded-full border border-[#B84A2B]/20">
                   PWA Active
                 </span>
               </div>
 
               {/* Live Schedule Widget */}
-              <div className="p-2.5 rounded-xl bg-paper-card border border-tinta-500/30 space-y-1.5 shadow-[0_2px_8px_rgba(47,92,171,0.06)]">
+              <div className="p-2.5 rounded-xl bg-white border border-[#B84A2B]/25 space-y-1.5 shadow-[0_2px_10px_rgba(184,74,43,0.06)]">
                 <div className="flex items-center justify-between">
-                  <p className="text-[9.5px] text-tinta-700 font-extrabold uppercase tracking-wider flex items-center gap-1">
-                    <Sparkle className="w-2.5 h-2.5 fill-tinta-600 text-tinta-600" />
+                  <p className="text-[9.5px] text-[#B84A2B] font-extrabold uppercase tracking-wider flex items-center gap-1">
+                    <Sparkle className="w-2.5 h-2.5 fill-[#B84A2B] text-[#B84A2B]" />
                     Kelas Berikutnya
                   </p>
                   <span className="text-[9.5px] text-emerald-700 font-extrabold bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded-md">
@@ -546,15 +546,15 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs sm:text-[13px] font-semibold font-editorial text-ink-primary leading-tight">
+                  <p className="text-xs sm:text-[13px] font-semibold font-editorial text-[#1C1917] leading-tight">
                     Kalkulus Lanjut
                   </p>
-                  <p className="text-[10px] text-ink-secondary font-medium flex items-center gap-1 mt-0.5">
-                    <Clock className="w-2.5 h-2.5 text-ink-tertiary shrink-0" />
+                  <p className="text-[10px] text-[#57534E] font-medium flex items-center gap-1 mt-0.5">
+                    <Clock className="w-2.5 h-2.5 text-[#78716C] shrink-0" />
                     <span>10:45 • Ruang 402 Gedung C</span>
                   </p>
                 </div>
-                <div className="pt-1 border-t border-paper-border/60 flex items-center justify-between text-[9px] text-ink-secondary font-medium">
+                <div className="pt-1 border-t border-[#E7E2DA]/60 flex items-center justify-between text-[9px] text-[#57534E] font-medium">
                   <span>Dr. Ir. Hendra S., M.T.</span>
                   <span className="text-emerald-600 font-semibold flex items-center gap-0.5">
                     <CheckCircle2 className="w-2.5 h-2.5" />
@@ -565,18 +565,18 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
 
               {/* Interactive Rotate Hint & Flip Trigger */}
               <div
-                className={`flex items-center justify-between text-[9px] text-ink-secondary pt-0.5 font-semibold transition-opacity duration-300 ${
+                className={`flex items-center justify-between text-[9px] text-[#57534E] pt-0.5 font-semibold transition-opacity duration-300 ${
                   hasInteracted ? "opacity-60 hover:opacity-100" : "opacity-100"
                 }`}
               >
                 <span className="flex items-center gap-1">
-                  <RotateCw className="w-3 h-3 text-tinta-600 animate-spin-slow" />
+                  <RotateCw className="w-3 h-3 text-[#B84A2B] animate-spin-slow" />
                   <span>Geser 360°</span>
                 </span>
                 <button
                   type="button"
                   onClick={handleQuickFlip}
-                  className="px-2.5 py-1 rounded-md bg-paper-secondary hover:bg-paper-secondary/80 active:bg-paper-secondary text-ink-primary font-medium border border-paper-border transition-all cursor-pointer active:scale-95 shadow-2xs"
+                  className="px-2.5 py-1 rounded-md bg-[#FAF8F5] hover:bg-white active:bg-stone-100 text-[#44403C] font-medium border border-[#E7E2DA] transition-all cursor-pointer active:scale-95 shadow-2xs"
                 >
                   Balik Kartu ↺
                 </button>
@@ -597,19 +597,19 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
             {/* Inner Digital Student Pass */}
             <div className="rounded-xl bg-stone-800/90 border border-stone-700/70 p-3 space-y-2 flex-1 flex flex-col justify-between relative overflow-hidden">
               {/* Holographic shimmer glow */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-tinta-500/20 rounded-full blur-xl pointer-events-none" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[#B84A2B]/20 rounded-full blur-xl pointer-events-none" />
 
               {/* Pass Header */}
               <div className="flex items-center justify-between border-b border-stone-700/80 pb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-4 h-4 rounded bg-tinta-600 flex items-center justify-center font-bold text-[9px] text-white shadow-xs">
+                  <div className="w-4 h-4 rounded bg-[#B84A2B] flex items-center justify-center font-bold text-[9px] text-white shadow-xs">
                     V
                   </div>
                   <span className="text-[10px] font-mono font-bold tracking-wider text-stone-200">
                     ACADEMIC PASS
                   </span>
                 </div>
-                <Wifi className="w-3.5 h-3.5 text-tinta-300" />
+                <Wifi className="w-3.5 h-3.5 text-[#D46B42]" />
               </div>
 
               {/* QR Code Scanner Box */}
@@ -621,7 +621,7 @@ function Interactive360LanyardCard({ isVisible }: { isVisible: boolean }) {
                   <p className="text-[10.5px] font-bold text-white truncate">
                     Wahyu Aldi Riyanto
                   </p>
-                  <p className="text-[9.5px] font-mono font-bold text-tinta-300 truncate">
+                  <p className="text-[9.5px] font-mono font-bold text-[#D46B42] truncate">
                     22/498210/TK
                   </p>
                   <p className="text-[8.5px] text-stone-400">Teknik Informatika • 2026</p>
@@ -655,11 +655,12 @@ export function HeroSection() {
   const { ref, isVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
 
   return (
-    <section className="relative pt-14 pb-20 lg:pt-20 lg:pb-28 border-b border-paper-border overflow-x-hidden">
+    <section className="relative pt-16 pb-20 lg:pt-24 lg:pb-32 border-b border-[#E7E2DA]/80 bg-[#FAF8F5] overflow-x-hidden">
       <BookshelfHeroBackground />
 
-      {/* Subtle blue tinta ambient glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-tinta-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      {/* Subtle Warm Ambient Mesh & Radial Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[450px] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(184,74,43,0.07),transparent_70%)] pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-amber-500/[0.025] rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div
         ref={ref}
@@ -668,35 +669,41 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left: Editorial Human Copy with Staggered Transitions */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            {/* 1. Kicker Badge — Editorial Style */}
+            {/* 1. Glass Pill Badge with Glowing Pulse Ring */}
             <div
               className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "0ms" }}
             >
-              <div className="flex items-center gap-3">
-                <span className="font-editorial italic text-base text-tinta-700">Workspace Akademis Mahasiswa</span>
-                <span className="h-px w-16 bg-paper-border" />
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-md border border-[#E7E2DA] shadow-2xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B84A2B] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#B84A2B]" />
+                </span>
+                <span className="text-xs font-medium tracking-wide text-[#44403C]">
+                  Workspace Akademis Mahasiswa
+                </span>
               </div>
             </div>
 
-            {/* 2. Headline — Editorial Serif */}
+            {/* 2. Headline — High-Character Editorial Serif with Breathing Room */}
             <h1
-              className={`text-[2.4rem] sm:text-[3rem] lg:text-[3.25rem] xl:text-[3.65rem] font-semibold tracking-[-0.03em] font-editorial text-ink-primary leading-[1.15] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`text-[2.65rem] sm:text-[3.25rem] lg:text-[3.75rem] xl:text-[4.2rem] font-semibold tracking-[-0.025em] font-editorial text-[#1C1917] leading-[1.14] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "80ms" }}
             >
               Kuliah lebih tenang saat jadwal, materi, dan tugas{" "}
-              <span className="text-tinta-600 underline decoration-tinta-500/30 decoration-wavy decoration-1 underline-offset-4">
+              <span className="relative inline-block bg-gradient-to-r from-[#B84A2B] via-[#C85A32] to-[#D46B42] bg-clip-text text-transparent">
                 tidak berceceran.
+                <span className="absolute left-0 -bottom-1 w-full h-[2px] bg-gradient-to-r from-[#B84A2B]/80 via-[#C85A32]/80 to-[#D46B42]/80 rounded-full" />
               </span>
             </h1>
 
-            {/* 3. Subheadline */}
+            {/* 3. Subheadline with Relaxed Contrast */}
             <p
-              className={`text-base lg:text-[17px] text-ink-secondary font-sans leading-relaxed max-w-lg transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`text-base sm:text-lg text-[#44403C]/90 font-sans leading-relaxed max-w-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "160ms" }}
@@ -704,7 +711,7 @@ export function HeroSection() {
               Susun jadwal semester tanpa drama bentrok jam, arsipkan slide dosen per mata kuliah, dan bedah konsep rumit bareng AI tutor yang paham silabus perkuliahanmu.
             </p>
 
-            {/* 4. CTA Group */}
+            {/* 4. Premium CTA Button Group */}
             <div
               className={`flex flex-wrap items-center gap-3 pt-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
@@ -714,17 +721,17 @@ export function HeroSection() {
               <Link href="/login" className="focus-visible:outline-hidden">
                 <Button
                   size="lg"
-                  className="text-sm font-semibold gap-2 bg-tinta-600 hover:bg-tinta-700 active:scale-[0.98] text-white px-6 shadow-xs hover:shadow-sm transition-all duration-150 cursor-pointer"
+                  className="h-12 px-7 rounded-lg text-[13.5px] font-semibold gap-2 bg-gradient-to-b from-[#C85A32] to-[#B84A2B] hover:from-[#D46B42] hover:to-[#C85A32] active:scale-[0.98] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_16px_rgba(184,74,43,0.32)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_22px_rgba(184,74,43,0.42)] hover:scale-[1.01] transition-all duration-200 cursor-pointer group"
                 >
                   <span>Masuk ke Workspace — Gratis</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                 </Button>
               </Link>
               <Link href="/login" className="focus-visible:outline-hidden">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-sm font-medium gap-2 border-paper-border hover:bg-paper-secondary hover:border-paper-border text-ink-primary active:scale-[0.98] transition-all duration-150 cursor-pointer"
+                  className="h-12 px-6 rounded-lg text-[13.5px] font-medium gap-2 border border-[#E7E2DA] bg-white/70 hover:bg-white hover:border-[#D4CCC0] hover:text-[#1C1917] text-[#44403C] active:scale-[0.98] transition-all duration-150 cursor-pointer"
                 >
                   <span>Masuk / Login</span>
                 </Button>
@@ -733,34 +740,34 @@ export function HeroSection() {
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="text-sm font-medium gap-2 text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary active:scale-[0.98] transition-all duration-150 cursor-pointer"
+                  className="h-12 px-5 rounded-lg text-[13.5px] font-medium gap-2 text-[#57534E] hover:text-[#1C1917] hover:bg-white/60 active:scale-[0.98] transition-all duration-150 cursor-pointer group"
                 >
-                  <Download className="w-4 h-4 text-tinta-600" />
+                  <Download className="w-4 h-4 text-[#B84A2B] group-hover:translate-y-0.5 transition-transform duration-150" />
                   <span>Pasang di HP (PWA)</span>
                 </Button>
               </Link>
             </div>
 
-            {/* 5. Trust Indicators */}
+            {/* 5. Refined Trust Indicators with Dot Separators */}
             <div
-              className={`pt-4 border-t border-paper-border flex flex-wrap items-center gap-y-2 gap-x-5 text-[12px] text-ink-tertiary transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`pt-6 border-t border-[#E7E2DA]/70 flex flex-wrap items-center gap-y-2 gap-x-4 text-[13px] text-[#57534E] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
               }`}
               style={{ transitionDelay: "320ms" }}
             >
-              <span className="flex items-center gap-1.5 text-ink-secondary font-medium">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                Data terisolasi per akun
+              <span className="flex items-center gap-1.5 font-medium text-[#44403C]">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 stroke-[1.75]" />
+                <span>Data terisolasi per akun</span>
               </span>
-              <span className="w-px h-3 bg-paper-border hidden sm:inline-block" />
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-tinta-600 shrink-0" />
-                100% Bebas Iklan & Pelacak
+              <span className="text-[#A8A29E] select-none text-xs hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 font-medium text-[#44403C]">
+                <Sparkles className="w-4 h-4 text-[#B84A2B] shrink-0 stroke-[1.75]" />
+                <span>100% Bebas Iklan & Pelacak</span>
               </span>
-              <span className="w-px h-3 bg-paper-border hidden sm:inline-block" />
-              <span className="flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-tinta-500 shrink-0" />
-                Sinkron Web & HP Instan
+              <span className="text-[#A8A29E] select-none text-xs hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 font-medium text-[#44403C]">
+                <Smartphone className="w-4 h-4 text-[#B84A2B] shrink-0 stroke-[1.75]" />
+                <span>Sinkron Web & HP Instan</span>
               </span>
             </div>
           </div>
@@ -772,127 +779,148 @@ export function HeroSection() {
             }`}
             style={{ transitionDelay: "200ms" }}
           >
-            {/* Desktop Window Mockup with High-End SaaS Elevation */}
-            <div className="rounded-2xl border border-paper-border bg-paper-card shadow-[0_20px_50px_-12px_rgba(22,35,58,0.08),0_0_1px_rgba(0,0,0,0.1)] overflow-hidden transform lg:rotate-1 lg:translate-x-2 transition-transform duration-300 hover:rotate-0">
-              {/* Window Chrome Header Bar with Clean macOS Aesthetics */}
-              <div className="h-10 px-4 bg-paper-secondary/80 border-b border-paper-border flex items-center justify-between text-[11px] text-ink-tertiary select-none">
-                {/* Traffic Light Dots */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <div className="w-2.5 h-2.5 rounded-full bg-rose-400 border border-rose-500/40" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500/40" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-emerald-500/40" />
-                </div>
-
-                {/* Center Address Bar with Secure SSL Lock */}
-                <div className="px-3.5 py-1 rounded-full bg-paper-card border border-paper-border text-[11px] font-mono text-ink-secondary truncate max-w-[250px] shadow-2xs text-center flex items-center gap-1.5 justify-center">
-                  <Lock className="w-2.5 h-2.5 text-ink-tertiary" />
-                  <span className="font-semibold text-ink-primary">velqora.web.id</span>
-                  <span className="text-ink-tertiary">/dashboard/jadwal</span>
-                </div>
-
-                {/* Right Status Badge */}
-                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-semibold shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Web Workspace</span>
-                </div>
-              </div>
-
-              {/* Modern Horizontal Workspace Navigation Bar */}
-              <div className="px-4 sm:px-5 py-2 border-b border-paper-border bg-paper-secondary/40 flex items-center justify-between text-xs select-none">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <div className="px-2.5 py-1 rounded-md bg-tinta-50 text-tinta-700 font-bold flex items-center gap-1.5 text-[11px] border border-tinta-200/60 shadow-2xs">
-                    <Layers className="w-3 h-3 text-tinta-600" />
-                    <span>Jadwal Kuliah</span>
-                  </div>
-                  <div className="px-2 py-1 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary flex items-center gap-1 text-[11px] transition-colors">
-                    <BookOpen className="w-3 h-3 text-ink-tertiary" />
-                    <span>Modul & Slide</span>
-                  </div>
-                  <div className="px-2 py-1 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
-                    <CheckSquare className="w-3 h-3 text-ink-tertiary" />
-                    <span>Tugas</span>
-                  </div>
-                  <div className="px-2 py-1 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-paper-secondary flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
-                    <Bot className="w-3 h-3 text-ink-tertiary" />
-                    <span>AI Tutor</span>
-                  </div>
-                </div>
-
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 font-semibold flex items-center gap-1">
-                  <span>✓</span> 0 Jadwal Bentrok
+            {/* Floating Micro-Element: Semester Status Badge with Organic Ambient Float */}
+            <div
+              className="absolute -top-3.5 right-4 sm:right-8 z-30 animate-hero-float select-none pointer-events-none"
+            >
+              <div className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#E7E2DA] shadow-[0_8px_20px_-4px_rgba(28,25,23,0.12),0_2px_6px_rgba(28,25,23,0.06)] flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+                </span>
+                <span className="text-[11.5px] font-semibold text-[#1C1917] font-sans">
+                  0 Jadwal Bentrok
+                </span>
+                <span className="text-[#A8A29E] text-[10px]">•</span>
+                <span className="text-[10.5px] font-mono font-medium text-emerald-700 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                  21 SKS Valid
                 </span>
               </div>
+            </div>
 
-              {/* Main Workspace Area (Generous Left Padding: zero clipping from foreground card) */}
-              <div className="p-4 sm:p-5 pl-14 sm:pl-16 lg:pl-20 bg-paper/50 space-y-3">
-                <div className="flex items-center justify-between pb-1.5 border-b border-paper-border">
-                  <div>
-                    <p className="text-xs font-semibold text-ink-primary font-editorial">
-                      Semester Genap • 21 SKS
-                    </p>
-                    <p className="text-[11px] text-ink-tertiary font-mono">
-                      Kalender Mingguan Aktif
-                    </p>
+            {/* Desktop Window Mockup with 3D Depth & Clean Perspective Elevation */}
+            <div className="relative [perspective:1200px]">
+              <div className="rounded-2xl border border-[#E7E2DA] bg-white shadow-[0_25px_60px_-15px_rgba(28,25,23,0.12),0_12px_24px_-8px_rgba(28,25,23,0.06),0_0_0_1px_rgba(231,226,218,0.7)] overflow-hidden transform lg:[transform:rotateY(-1.5deg)_rotateX(1.5deg)] transition-all duration-500 hover:[transform:rotateY(0deg)_rotateX(0deg)]">
+                {/* Window Chrome Header Bar with Elegant Neutral Controls */}
+                <div className="h-10 px-4 bg-[#FAF8F5]/90 border-b border-[#E7E2DA] flex items-center justify-between text-[11px] text-[#78716C] select-none">
+                  {/* Subtle Traffic Light Dots */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-rose-400 transition-colors" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-amber-400 transition-colors" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-emerald-400 transition-colors" />
                   </div>
-                  <span className="text-[10px] font-mono text-ink-secondary bg-paper-secondary px-2 py-0.5 rounded">
-                    Sesi Pagi & Siang
+
+                  {/* Center Address Bar with Secure SSL Lock */}
+                  <div className="px-3.5 py-1 rounded-full bg-white border border-[#E7E2DA] text-[11px] font-mono text-[#57534E] truncate max-w-[250px] shadow-2xs text-center flex items-center gap-1.5 justify-center">
+                    <Lock className="w-2.5 h-2.5 text-[#78716C]" />
+                    <span className="font-semibold text-[#1C1917]">velqora.web.id</span>
+                    <span className="text-[#78716C]">/dashboard/jadwal</span>
+                  </div>
+
+                  {/* Right Status Badge */}
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#E7E2DA] text-[#44403C] text-[10px] font-medium shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Web Workspace</span>
+                  </div>
+                </div>
+
+                {/* Modern Horizontal Workspace Navigation Bar */}
+                <div className="px-4 sm:px-5 py-2 border-b border-[#E7E2DA]/80 bg-[#FAF8F5]/50 flex items-center justify-between text-xs select-none">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <div className="px-2.5 py-1 rounded-md bg-white text-[#B84A2B] font-bold flex items-center gap-1.5 text-[11px] border border-[#B84A2B]/20 shadow-2xs">
+                      <Layers className="w-3 h-3 text-[#B84A2B]" />
+                      <span>Jadwal Kuliah</span>
+                    </div>
+                    <div className="px-2 py-1 rounded-md text-[#57534E] hover:text-[#1C1917] hover:bg-white flex items-center gap-1 text-[11px] transition-colors">
+                      <BookOpen className="w-3 h-3 text-[#78716C]" />
+                      <span>Modul & Slide</span>
+                    </div>
+                    <div className="px-2 py-1 rounded-md text-[#57534E] hover:text-[#1C1917] hover:bg-white flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
+                      <CheckSquare className="w-3 h-3 text-[#78716C]" />
+                      <span>Tugas</span>
+                    </div>
+                    <div className="px-2 py-1 rounded-md text-[#57534E] hover:text-[#1C1917] hover:bg-white flex items-center gap-1 text-[11px] transition-colors hidden sm:flex">
+                      <Bot className="w-3 h-3 text-[#78716C]" />
+                      <span>AI Tutor</span>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 font-semibold flex items-center gap-1">
+                    <span>✓</span> Sesi Terjadwal
                   </span>
                 </div>
 
-                {/* Schedule Cards with Pristine Contrast & Alignment */}
-                <div className="space-y-2.5 text-xs">
-                  {/* Item 1: Struktur Data */}
-                  <div className="p-3 rounded-xl bg-paper-card border border-paper-border shadow-2xs hover:border-tinta-500/40 transition-colors flex items-center justify-between gap-3">
-                    <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-tinta-600 shrink-0" />
-                        <p className="font-semibold text-ink-primary font-editorial text-xs truncate">
-                          Struktur Data & Algoritma
-                        </p>
-                      </div>
-                      <p className="text-[11px] text-ink-secondary font-medium pl-4">
-                        Senin • 08:00 – 10:30 • Lab Komputer 3
+                {/* Main Workspace Area (Generous Left Padding: zero clipping from foreground card) */}
+                <div className="p-4 sm:p-5 pl-14 sm:pl-16 lg:pl-20 bg-[#FAF8F5]/35 space-y-3">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-[#E7E2DA]">
+                    <div>
+                      <p className="text-xs font-semibold text-[#1C1917] font-editorial">
+                        Semester Genap • 21 SKS
+                      </p>
+                      <p className="text-[11px] text-[#78716C] font-mono">
+                        Kalender Mingguan Aktif
                       </p>
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-tinta-50 text-tinta-700 font-semibold border border-tinta-200/60 shrink-0">
-                      3 SKS
+                    <span className="text-[10px] font-mono text-[#57534E] bg-white border border-[#E7E2DA] px-2 py-0.5 rounded">
+                      Sesi Pagi & Siang
                     </span>
                   </div>
 
-                  {/* Item 2: Sistem Basis Data */}
-                  <div className="p-3 rounded-xl bg-paper-card border border-paper-border shadow-2xs hover:border-tinta-400/40 transition-colors flex items-center justify-between gap-3">
-                    <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-tinta-500 shrink-0" />
-                        <p className="font-semibold text-ink-primary font-editorial text-xs truncate">
-                          Sistem Basis Data Terdistribusi
+                  {/* Schedule Cards with Pristine Contrast & Alignment */}
+                  <div className="space-y-2.5 text-xs">
+                    {/* Item 1: Struktur Data */}
+                    <div className="p-3 rounded-xl bg-white border border-[#E7E2DA] shadow-2xs hover:border-[#B84A2B]/40 transition-colors flex items-center justify-between gap-3">
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-[#B84A2B] shrink-0" />
+                          <p className="font-semibold text-[#1C1917] font-editorial text-xs truncate">
+                            Struktur Data & Algoritma
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-[#57534E] font-medium pl-4">
+                          Senin • 08:00 – 10:30 • Lab Komputer 3
                         </p>
                       </div>
-                      <p className="text-[11px] text-ink-secondary font-medium pl-4">
-                        Rabu • 13:00 – 15:30 • Gedung Kuliah B201
-                      </p>
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-[#B84A2B]/10 text-[#B84A2B] font-semibold border border-[#B84A2B]/20 shrink-0">
+                        3 SKS
+                      </span>
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-tinta-50 text-tinta-700 font-semibold border border-tinta-200/60 shrink-0">
-                      3 SKS
-                    </span>
-                  </div>
 
-                  {/* Item 3: Kecerdasan Buatan & ML */}
-                  <div className="p-3 rounded-xl bg-paper-card border border-paper-border shadow-2xs hover:border-purple-500/40 transition-colors flex items-center justify-between gap-3">
-                    <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
-                        <p className="font-semibold text-ink-primary font-editorial text-xs truncate">
-                          Kecerdasan Buatan & ML
+                    {/* Item 2: Sistem Basis Data */}
+                    <div className="p-3 rounded-xl bg-white border border-[#E7E2DA] shadow-2xs hover:border-blue-500/40 transition-colors flex items-center justify-between gap-3">
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                          <p className="font-semibold text-[#1C1917] font-editorial text-xs truncate">
+                            Sistem Basis Data Terdistribusi
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-[#57534E] font-medium pl-4">
+                          Rabu • 13:00 – 15:30 • Gedung Kuliah B201
                         </p>
                       </div>
-                      <p className="text-[11px] text-ink-secondary font-medium pl-4">
-                        Kamis • 10:00 – 12:30 • Lab Riset AI
-                      </p>
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold border border-blue-200/60 shrink-0">
+                        3 SKS
+                      </span>
                     </div>
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-200/60 shrink-0">
-                      3 SKS
-                    </span>
+
+                    {/* Item 3: Kecerdasan Buatan & ML */}
+                    <div className="p-3 rounded-xl bg-white border border-[#E7E2DA] shadow-2xs hover:border-purple-500/40 transition-colors flex items-center justify-between gap-3">
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-purple-600 shrink-0" />
+                          <p className="font-semibold text-[#1C1917] font-editorial text-xs truncate">
+                            Kecerdasan Buatan & ML
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-[#57534E] font-medium pl-4">
+                          Kamis • 10:00 – 12:30 • Lab Riset AI
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-200/60 shrink-0">
+                        3 SKS
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
