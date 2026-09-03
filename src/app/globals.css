@@ -76,29 +76,29 @@
   /* Editorial Landing Typography */
   --font-editorial: var(--font-editorial), "Fraunces", Georgia, serif;
 
-  /* "Tinta & Kertas" (Ink & Paper) — Landing Exclusive Tokens */
-  --color-paper: #f3f5f2;
-  --color-paper-card: #ffffff;
-  --color-paper-secondary: #eaeee9;
-  --color-paper-border: #d7ddd3;
-  --color-paper-border-subtle: #e5eae1;
+  /* Warm Cream & Paper — Landing Surface Tokens */
+  --color-paper: #FAF8F5;
+  --color-paper-card: #FFFFFF;
+  --color-paper-secondary: #F4EFEB;
+  --color-paper-border: #E8E0D7;
+  --color-paper-border-subtle: #F0EAE3;
 
-  /* Tinta (Blue Ballpoint Pen Scale 50-900) */
-  --color-tinta-50: #eef3fb;
-  --color-tinta-100: #d9e5f6;
-  --color-tinta-200: #b8cfef;
-  --color-tinta-300: #8eb3e5;
-  --color-tinta-400: #5d92d8;
-  --color-tinta-500: #2f5cab;
-  --color-tinta-600: #234988;
-  --color-tinta-700: #1c3868;
-  --color-tinta-800: #152748;
-  --color-tinta-900: #101f3c;
+  /* Velqora Signature Terracotta / Warm Burnt-Orange Scale (50-900) */
+  --color-tinta-50: #fef4f1;
+  --color-tinta-100: #fde6e0;
+  --color-tinta-200: #fbc8bc;
+  --color-tinta-300: #f69f8c;
+  --color-tinta-400: #ee7257;
+  --color-tinta-500: #c2553a;
+  --color-tinta-600: #b84a2b;
+  --color-tinta-700: #9e3b1e;
+  --color-tinta-800: #7a2e19;
+  --color-tinta-900: #4e1c0e;
 
-  /* Ink (Text Hierarchy Tokens for Landing) */
-  --color-ink-primary: #16233a;
-  --color-ink-secondary: #3e5170;
-  --color-ink-tertiary: #7c8aa1;
+  /* Warm Charcoal Text Hierarchy Tokens */
+  --color-ink-primary: #1C1917;
+  --color-ink-secondary: #44403C;
+  --color-ink-tertiary: #78716C;
 }
 
 /* Crisp Clean Autofill Styling (Fixes grey/blueish autofill backgrounds) */

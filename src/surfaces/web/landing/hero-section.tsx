@@ -887,10 +887,10 @@ export function HeroSection() {
                     </div>
 
                     {/* Item 2: Sistem Basis Data */}
-                    <div className="p-3 rounded-xl bg-white border border-[#E7E2DA] shadow-2xs hover:border-blue-500/40 transition-colors flex items-center justify-between gap-3">
+                    <div className="p-3 rounded-xl bg-white border border-[#E7E2DA] shadow-2xs hover:border-amber-500/40 transition-colors flex items-center justify-between gap-3">
                       <div className="min-w-0 space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-amber-600 shrink-0" />
                           <p className="font-semibold text-[#1C1917] font-editorial text-xs truncate">
                             Sistem Basis Data Terdistribusi
                           </p>
@@ -899,7 +899,7 @@ export function HeroSection() {
                           Rabu • 13:00 – 15:30 • Gedung Kuliah B201
                         </p>
                       </div>
-                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold border border-blue-200/60 shrink-0">
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-700 font-semibold border border-amber-200/60 shrink-0">
                         3 SKS
                       </span>
                     </div>
