@@ -17,6 +17,8 @@ import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
 import { WalkingCat } from "@/components/ui/walking-cat";
+import { HuskyWatcher, type HuskyState } from "@/components/ui/husky-watcher";
+import { DoorSubmitButton } from "@/components/ui/door-submit-button";
 import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
@@ -63,6 +65,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetSent, setResetSent] = useState(false);
@@ -72,6 +75,18 @@ export default function LoginPage() {
   // Micro-interaction states: error shake & positive success pulse
   const [isShaking, setIsShaking] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Dynamic interactive Husky State (Settigation interaction logic)
+  const getHuskyState = (): HuskyState => {
+    if (isSuccess) return "happy";
+    if (focusedField === "password") {
+      return showPassword ? "peek" : "cover-eyes";
+    }
+    if (focusedField === "email" || focusedField === "reset-email") {
+      return "look-down";
+    }
+    return "idle";
+  };
 
   const triggerErrorState = (message: string) => {
     setIsShaking(true);
@@ -253,19 +268,25 @@ export default function LoginPage() {
 
       {/* Main Single Centered Card Login Layout */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 w-full">
-        <div className="w-full max-w-[420px] mx-auto text-center space-y-4">
+        <div className="w-full max-w-[420px] mx-auto text-center space-y-3">
+
+          {/* 🐺 Interactive Husky Mascot Sitting Atop Card (Settigation Style) */}
+          <div className="relative flex justify-center -mb-10 z-20">
+            <HuskyWatcher state={getHuskyState()} />
+          </div>
 
           {/* Primary Card: Login Form with Walking Cat at the bottom */}
           <div
-            className={`relative rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
+            className={`relative rounded-2xl border border-border bg-surface p-6 sm:p-8 pt-7 sm:pt-9 shadow-sm text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
               isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
             }`}
           >
             {/* Inner Content */}
             <div className="relative z-10 space-y-5">
-              {/* Header: Brand Mark Logo with Fade-In + Scale */}
-              <div className="flex flex-col items-center justify-center pt-0.5 animate-logo-entrance motion-reduce:animate-none">
-                <VelqoraMark size={32} />
+              {/* Header: Brand Mark Logo & Name (matching Den style in video) */}
+              <div className="flex items-center justify-center gap-2 pt-1 animate-logo-entrance motion-reduce:animate-none">
+                <VelqoraMark size={22} />
+                <span className="font-bold text-lg text-ink tracking-tight font-display">Velqora</span>
               </div>
 
               {/* Header Title & Subtitle */}
@@ -429,6 +450,7 @@ export default function LoginPage() {
                           }`}
                         />
                         <input
+                          id="login-email-input"
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
@@ -445,21 +467,9 @@ export default function LoginPage() {
 
                     {/* Password Field */}
                     <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "310ms" }}>
-                      <div className="flex items-center justify-between">
-                        <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
-                          Password
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsForgotPassword(true);
-                            setResetSent(false);
-                          }}
-                          className="text-[11px] sm:text-xs text-ink-muted hover:text-brand hover:underline transition-colors cursor-pointer"
-                        >
-                          Lupa password?
-                        </button>
-                      </div>
+                      <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
+                        Password
+                      </label>
                       <div
                         className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
                           focusedField === "password"
@@ -475,6 +485,7 @@ export default function LoginPage() {
                           }`}
                         />
                         <input
+                          id="login-password-input"
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
@@ -486,9 +497,11 @@ export default function LoginPage() {
                           autoComplete="current-password"
                           className="w-full bg-surface pl-10 pr-11 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
                         />
-                        {/* Eye Toggle */}
+                        {/* Eye Toggle with Focus Retention */}
                         <button
+                          id="login-password-toggle"
                           type="button"
+                          onMouseDown={(e) => e.preventDefault()}
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3.5 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
                           tabIndex={-1}
@@ -503,33 +516,40 @@ export default function LoginPage() {
                           </span>
                         </button>
                       </div>
+
+                      {/* Remember Me & Forgot Password Row (Settigation Video Style) */}
+                      <div className="flex items-center justify-between pt-1 text-xs">
+                        <label className="flex items-center gap-2 text-ink-muted hover:text-ink cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="w-3.5 h-3.5 rounded border-border text-brand focus:ring-brand/20 accent-brand cursor-pointer"
+                          />
+                          <span>Ingat saya</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsForgotPassword(true);
+                            setResetSent(false);
+                          }}
+                          className="text-[11px] sm:text-xs text-ink-muted hover:text-brand hover:underline transition-colors cursor-pointer"
+                        >
+                          Lupa password?
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Primary Submit Button */}
+                    {/* Primary Submit Button with 3D Door Portal (Settigation Video Style) */}
                     <div className="pt-2">
-                      <button
-                        type="submit"
+                      <DoorSubmitButton
+                        id="login-submit-button"
+                        loading={loading}
+                        isSuccess={isSuccess}
                         disabled={loading || isSuccess}
-                        aria-live="polite"
-                        className="group w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-[10px] text-sm sm:text-base font-semibold text-white bg-brand hover:bg-brand-hover hover:-translate-y-[1px] active:translate-y-0 active:scale-[0.99] transition-all duration-150 shadow-sm hover:shadow-md cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none min-h-[46px]"
-                      >
-                        {loading ? (
-                          <div className="flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
-                            <span>Memproses...</span>
-                          </div>
-                        ) : isSuccess ? (
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-scale-in" />
-                            <span>Berhasil Masuk!</span>
-                          </div>
-                        ) : (
-                          <>
-                            <span>Masuk ke Akun</span>
-                            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
-                          </>
-                        )}
-                      </button>
+                        type="submit"
+                      />
                     </div>
                   </form>
                 </>

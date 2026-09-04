@@ -914,3 +914,22 @@ button, a, input, select, textarea {
   }
 }
 
+/* Door Walking Figure Animation (Settigation Style) */
+@keyframes doorLegFront {
+  0% {
+    transform: rotate(-28deg);
+  }
+  100% {
+    transform: rotate(28deg);
+  }
+}
+
+@keyframes doorLegBack {
+  0% {
+    transform: rotate(28deg);
+  }
+  100% {
+    transform: rotate(-28deg);
+  }
+}
+
