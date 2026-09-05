@@ -17,7 +17,6 @@ import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
 import { WalkingCat } from "@/components/ui/walking-cat";
-import { HuskyWatcher, type HuskyState } from "@/components/ui/husky-watcher";
 import { DoorSubmitButton } from "@/components/ui/door-submit-button";
 import { isOwnerUser } from "@/lib/utils";
 
@@ -75,18 +74,6 @@ export default function LoginPage() {
   // Micro-interaction states: error shake & positive success pulse
   const [isShaking, setIsShaking] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  // Dynamic interactive Husky State (Settigation interaction logic)
-  const getHuskyState = (): HuskyState => {
-    if (isSuccess) return "happy";
-    if (focusedField === "password") {
-      return showPassword ? "peek" : "cover-eyes";
-    }
-    if (focusedField === "email" || focusedField === "reset-email") {
-      return "look-down";
-    }
-    return "idle";
-  };
 
   const triggerErrorState = (message: string) => {
     setIsShaking(true);
@@ -270,14 +257,9 @@ export default function LoginPage() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 w-full">
         <div className="w-full max-w-[420px] mx-auto text-center space-y-3">
 
-          {/* 🐺 Interactive Husky Mascot Sitting Atop Card (Settigation Style) */}
-          <div className="relative flex justify-center -mb-10 z-20">
-            <HuskyWatcher state={getHuskyState()} />
-          </div>
-
           {/* Primary Card: Login Form with Walking Cat at the bottom */}
           <div
-            className={`relative rounded-2xl border border-border bg-surface p-6 sm:p-8 pt-7 sm:pt-9 shadow-sm text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
+            className={`relative rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
               isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
             }`}
           >
