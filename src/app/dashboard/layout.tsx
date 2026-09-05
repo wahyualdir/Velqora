@@ -95,6 +95,7 @@ export default function DashboardLayout({
         {isApp ? (
           <MobileTopBar
             onOpenSearch={() => setCommandPaletteOpen(true)}
+            onOpenMenu={() => setSidebarOpen(true)}
           />
         ) : (
           <>
@@ -111,6 +112,7 @@ export default function DashboardLayout({
             <div className="block lg:hidden">
               <MobileTopBar
                 onOpenSearch={() => setCommandPaletteOpen(true)}
+                onOpenMenu={() => setSidebarOpen(true)}
               />
             </div>
           </>
