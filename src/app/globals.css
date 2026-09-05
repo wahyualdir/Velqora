@@ -933,3 +933,199 @@ button, a, input, select, textarea {
   }
 }
 
+/* ==============================================================================
+   VELQORA OS — RETRO CYBERPUNK & LEARNING OS STYLES (Inspired by Vintec Learn)
+   ============================================================================== */
+
+.vt-desktop-bg {
+  background-color: #07090E;
+  background-image: 
+    radial-gradient(ellipse at 50% 10%, rgba(255, 46, 147, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 80%, rgba(0, 242, 254, 0.06) 0%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+}
+
+.vt-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Retro Window Framing */
+.vt-window {
+  background-color: #0F141C;
+  border-top: 2px solid #2A364F;
+  border-left: 2px solid #2A364F;
+  border-right: 2px solid #06080C;
+  border-bottom: 2px solid #06080C;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.vt-window-inset {
+  border-top: 2px solid #06080C;
+  border-left: 2px solid #06080C;
+  border-right: 2px solid #2A364F;
+  border-bottom: 2px solid #2A364F;
+}
+
+/* Window Titlebar Gradients */
+.vt-titlebar {
+  background: linear-gradient(90deg, #131A27 0%, #1A2436 60%, #0F141C 100%);
+  border-bottom: 1px solid #222C3E;
+}
+
+.vt-titlebar-active {
+  background: linear-gradient(90deg, #1E1B4B 0%, #2E1065 50%, #0F141C 100%);
+  border-bottom: 1px solid #4C1D95;
+}
+
+/* Control Buttons (Minimize, Maximize, Close) */
+.vt-window-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: #1A2232;
+  color: #94A3B8;
+  border-top: 1px solid #334155;
+  border-left: 1px solid #334155;
+  border-right: 1px solid #090D14;
+  border-bottom: 1px solid #090D14;
+  transition: all 0.1s ease;
+}
+
+.vt-window-btn:hover {
+  background-color: #2D3748;
+  color: #F1F5F9;
+}
+
+.vt-window-btn:active {
+  border-top: 1px solid #090D14;
+  border-left: 1px solid #090D14;
+  border-right: 1px solid #334155;
+  border-bottom: 1px solid #334155;
+}
+
+.vt-window-btn-close:hover {
+  background-color: #EF4444 !important;
+  color: #FFFFFF !important;
+  border-color: #DC2626 !important;
+}
+
+/* Vintec-Style Buttons */
+.vt-btn-pink {
+  background: #FF2E93;
+  color: #FFFFFF;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-top: 2px solid #FF77B8;
+  border-left: 2px solid #FF77B8;
+  border-right: 2px solid #A80054;
+  border-bottom: 2px solid #A80054;
+  box-shadow: 0 0 16px rgba(255, 46, 147, 0.45);
+  transition: all 0.12s ease;
+}
+
+.vt-btn-pink:hover {
+  background: #FF47A3;
+  box-shadow: 0 0 24px rgba(255, 46, 147, 0.7);
+  transform: translateY(-1px);
+}
+
+.vt-btn-pink:active {
+  border-top: 2px solid #A80054;
+  border-left: 2px solid #A80054;
+  border-right: 2px solid #FF77B8;
+  border-bottom: 2px solid #FF77B8;
+  transform: translateY(1px);
+}
+
+.vt-btn-teal {
+  background: #00F2FE;
+  color: #07090E;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-top: 2px solid #70FBFF;
+  border-left: 2px solid #70FBFF;
+  border-right: 2px solid #00939B;
+  border-bottom: 2px solid #00939B;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.4);
+  transition: all 0.12s ease;
+}
+
+.vt-btn-teal:hover {
+  background: #38F5FF;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.65);
+  transform: translateY(-1px);
+}
+
+.vt-btn-teal:active {
+  border-top: 2px solid #00939B;
+  border-left: 2px solid #00939B;
+  border-right: 2px solid #70FBFF;
+  border-bottom: 2px solid #70FBFF;
+  transform: translateY(1px);
+}
+
+.vt-btn-chrome {
+  background: #182030;
+  color: #CBD5E1;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  border-top: 2px solid #334155;
+  border-left: 2px solid #334155;
+  border-right: 2px solid #070B12;
+  border-bottom: 2px solid #070B12;
+  transition: all 0.12s ease;
+}
+
+.vt-btn-chrome:hover {
+  background: #242E42;
+  color: #F8FAFC;
+  border-color: #475569;
+}
+
+.vt-btn-chrome:active {
+  border-top: 2px solid #070B12;
+  border-left: 2px solid #070B12;
+  border-right: 2px solid #334155;
+  border-bottom: 2px solid #334155;
+}
+
+/* Taskbar Styling */
+.vt-taskbar {
+  background: #0B0E14;
+  border-top: 2px solid #1E293B;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Marquee / Ribbon Animation */
+@keyframes vt-marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-vt-marquee {
+  display: flex;
+  width: max-content;
+  animation: vt-marquee 28s linear infinite;
+}
+
+.animate-vt-marquee:hover {
+  animation-play-state: paused;
+}
+
+

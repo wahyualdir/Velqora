@@ -1,39 +1,71 @@
 import React from "react";
 import type { Metadata } from "next";
-import { NavHeader } from "@/surfaces/web/landing/nav-header";
-import { HeroSection } from "@/surfaces/web/landing/hero-section";
-import { ProductDuality } from "@/surfaces/web/landing/product-duality";
-import { FeatureShowcase } from "@/surfaces/web/landing/feature-showcase";
-import { WorkflowNarrative } from "@/surfaces/web/landing/workflow-narrative";
-import { ClosingCTA } from "@/surfaces/web/landing/closing-cta";
-import { EditorialFooter } from "@/surfaces/web/landing/editorial-footer";
+import { 
+  OSTopBar, 
+  OSTaskbar, 
+  OSDesktopIcons, 
+  OSHeroWindow, 
+  InteractiveTerminal, 
+  CurriculumExplorer, 
+  NotepadManifesto, 
+  CompanionShowcase, 
+  RunDialogCTA, 
+  MarqueeTicker 
+} from "@/components/os";
 
 export const metadata: Metadata = {
-  title: "Velqora — Workspace Akademis & Manajemen Kuliah Mahasiswa",
+  title: "Velqora OS — Learning Environment & Kurikulum Web Modern",
   description:
-    "Susun jadwal kuliah tanpa bentrok, arsipkan modul dan slide dosen, lacak deadline tugas, serta pelajari konsep sulit bersama AI tutor kontekstual.",
+    "Sistem Operasi Pembelajaran Web Modern: 12 Modul Terstandarisasi, Interactive Terminal Monitor, Curriculum Explorer, dan Kompatibilitas Docker & CI/CD.",
   keywords: [
-    "Velqora",
-    "Jadwal Kuliah Mahasiswa",
-    "Manajemen Kuliah",
-    "AI Tutor Kampus",
-    "Arsip Modul Kuliah",
-    "Workspace Mahasiswa",
+    "Velqora OS",
+    "Vintec Learn",
+    "Pengembangan Aplikasi Web Modern",
+    "Learning OS",
+    "Next.js 15",
+    "React 19",
+    "Curriculum Explorer",
   ],
 };
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-paper text-ink-primary selection:bg-tinta-500/15 selection:text-tinta-700 font-sans antialiased scroll-smooth">
-      <NavHeader />
-      <main>
-        <HeroSection />
-        <ProductDuality />
-        <FeatureShowcase />
-        <WorkflowNarrative />
-        <ClosingCTA />
+    <div className="min-h-screen vt-desktop-bg text-slate-100 font-sans antialiased relative selection:bg-[#FF2E93] selection:text-white pb-14">
+      {/* CRT Scanlines Overlay */}
+      <div className="fixed inset-0 vt-scanlines pointer-events-none z-40" />
+
+      {/* Retro OS Top Menu Bar */}
+      <OSTopBar />
+
+      {/* Marquee Ticker */}
+      <MarqueeTicker />
+
+      {/* Desktop Workspace */}
+      <main className="relative z-10 space-y-8 pt-2 pb-16">
+        {/* Desktop Shortcuts */}
+        <OSDesktopIcons />
+
+        {/* Hero Window */}
+        <OSHeroWindow />
+
+        {/* Interactive Terminal (MONITOR.EXE) */}
+        <InteractiveTerminal />
+
+        {/* Curriculum Explorer: 12 Modules (C:\Velqora\Curriculum_Explorer\) */}
+        <CurriculumExplorer />
+
+        {/* Notepad Manifesto (README.txt) */}
+        <NotepadManifesto />
+
+        {/* Companion App Showcase (Velqora_Companion.exe) */}
+        <CompanionShowcase />
+
+        {/* Run Dialog CTA (RUN.EXE) */}
+        <RunDialogCTA />
       </main>
-      <EditorialFooter />
+
+      {/* Retro OS Bottom Taskbar */}
+      <OSTaskbar />
     </div>
   );
 }
