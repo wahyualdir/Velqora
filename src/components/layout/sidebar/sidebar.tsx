@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SIDEBAR_CATEGORIES } from "@/lib/constants";
 import {
@@ -36,6 +36,7 @@ export function Sidebar({
   onToggleCollapse,
 }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
   const { isApp } = useSurface();
   const [isOwner, setIsOwner] = useState(false);
@@ -52,18 +53,33 @@ export function Sidebar({
     return initial;
   });
 
+  // Accurate active state helper for sub-items with query params
+  const isSubActiveCheck = (sub: any, link: any) => {
+    if (sub.href.includes("?")) {
+      const [subPath, subQuery] = sub.href.split("?");
+      if (pathname !== subPath) return false;
+      const [qKey, qVal] = subQuery.split("=");
+      return searchParams?.get(qKey) === qVal;
+    }
+    if (pathname !== sub.href) return false;
+    // Check if any sibling sub-item has query parameter matching current URL
+    const hasSiblingMatch = link.subItems?.some((sib: any) => {
+      if (!sib.href.includes("?")) return false;
+      const [sibPath, sibQuery] = sib.href.split("?");
+      if (pathname !== sibPath) return false;
+      const [qKey, qVal] = sibQuery.split("=");
+      return searchParams?.get(qKey) === qVal;
+    });
+    return !hasSiblingMatch;
+  };
+
   // Auto-expand parent menu when current pathname matches any sub-item
   useEffect(() => {
     if (!pathname) return;
     SIDEBAR_CATEGORIES.forEach((category) => {
       category.links.forEach((link: any) => {
         if (link.subItems && link.subItems.length > 0) {
-          const isChildActive = link.subItems.some((sub: any) => {
-            if (sub.href.includes("?")) {
-              return pathname === sub.href.split("?")[0];
-            }
-            return pathname === sub.href || pathname.startsWith(sub.href + "/");
-          });
+          const isChildActive = link.subItems.some((sub: any) => isSubActiveCheck(sub, link));
           const isParentActive =
             link.href === "/dashboard"
               ? pathname === "/dashboard"
@@ -75,7 +91,7 @@ export function Sidebar({
         }
       });
     });
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   // Toggle accordion item
   const toggleMenu = (href: string, e?: React.MouseEvent) => {
@@ -177,7 +193,7 @@ export function Sidebar({
 
             return (
               <div key={category.title} className="space-y-1">
-                <div className="px-2 pb-1 font-mono text-[10px] font-bold text-[#853827] uppercase tracking-wider">
+                <div className="px-2 pt-1 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] uppercase tracking-wider">
                   {translatedCatTitle}
                 </div>
 
@@ -190,15 +206,10 @@ export function Sidebar({
                     const isParentExact =
                       link.href === "/dashboard"
                         ? pathname === "/dashboard"
-                        : pathname === link.href;
+                        : pathname === link.href && !hasSubItems;
                     const isAnyChildActive =
                       hasSubItems &&
-                      link.subItems.some((sub: any) => {
-                        if (sub.href.includes("?")) {
-                          return pathname === sub.href.split("?")[0];
-                        }
-                        return pathname === sub.href || pathname.startsWith(sub.href + "/");
-                      });
+                      link.subItems.some((sub: any) => isSubActiveCheck(sub, link));
                     const isActive = isParentExact || isAnyChildActive;
 
                     const linkKey = linkLabelMap[link.label];
@@ -210,34 +221,37 @@ export function Sidebar({
 
                     return (
                       <div key={link.href} className="space-y-0.5">
-                        <div className="flex items-center gap-1">
+                        <div
+                          className={cn(
+                            "group flex items-center rounded-xs transition-all duration-100",
+                            isActive
+                              ? "bg-[#C2553A] text-white shadow-xs border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20]"
+                              : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                          )}
+                        >
                           <Link
                             href={link.href}
                             onClick={onClose}
                             aria-current={isParentExact ? "page" : undefined}
-                            className={cn(
-                              "flex items-center gap-2.5 px-2.5 h-8.5 font-mono text-xs transition-colors flex-1 min-w-0 rounded-none",
-                              "focus-visible:outline-none",
-                              isActive
-                                ? "bg-[#C2553A] text-white font-bold border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20] shadow-xs"
-                                : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
-                            )}
+                            className="flex items-center gap-2.5 px-2.5 h-8 flex-1 min-w-0 focus-visible:outline-none"
                           >
                             {Icon && (
                               <Icon
                                 className={cn(
-                                  "w-3.5 h-3.5 shrink-0",
+                                  "w-4 h-4 shrink-0 transition-colors",
                                   isActive
                                     ? "text-white"
                                     : isAiItem
                                     ? "text-[#C2553A]"
-                                    : "text-[#7A756D]"
+                                    : "text-[#6E675F] group-hover:text-[#1A1816]"
                                 )}
                               />
                             )}
-                            <span className="truncate flex-1">{translatedLabel}</span>
+                            <span className="truncate flex-1 font-sans text-[13px] font-medium leading-none">
+                              {translatedLabel}
+                            </span>
                             {isAiItem && !isActive && (
-                              <span className="px-1 py-0.2 text-[9px] font-mono font-bold bg-[#C2553A]/10 text-[#C2553A] border border-[#C2553A]/30">
+                              <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-[#C2553A]/10 text-[#C2553A] border border-[#C2553A]/30 rounded-2xs">
                                 AI
                               </span>
                             )}
@@ -249,12 +263,17 @@ export function Sidebar({
                               onClick={(e) => toggleMenu(link.href, e)}
                               aria-expanded={isExpanded}
                               aria-label={`Buka submenu ${link.label}`}
-                              className="p-1.5 font-mono text-xs bg-[#ECE9D8] text-[#1C1917] border-t border-l border-[#FFFFFF] border-b border-r border-[#7A756D] cursor-pointer"
+                              className={cn(
+                                "p-1.5 mr-1 rounded-xs transition-colors cursor-pointer flex items-center justify-center",
+                                isActive
+                                  ? "text-white/80 hover:text-white hover:bg-white/15"
+                                  : "text-[#7A756D] hover:text-[#1A1816] hover:bg-black/5"
+                              )}
                             >
                               <ChevronDown
                                 className={cn(
-                                  "w-3 h-3 transition-transform duration-200",
-                                  isExpanded && "rotate-180 text-[#C2553A]"
+                                  "w-3.5 h-3.5 transition-transform duration-200",
+                                  isExpanded && "rotate-180"
                                 )}
                               />
                             </button>
@@ -263,12 +282,10 @@ export function Sidebar({
 
                         {/* Accordion Submenu Items */}
                         {hasSubItems && isExpanded && (
-                          <div className="ml-4 pl-2 border-l border-[#7A756D]/40 space-y-0.5 py-0.5 animate-fade-in">
+                          <div className="ml-3.5 pl-2.5 border-l-2 border-[#D9D2C5] space-y-0.5 my-1 animate-fade-in">
                             {link.subItems.map((sub: any) => {
                               const SubIcon = iconMap[sub.icon];
-                              const isSubActive = sub.href.includes("?")
-                                ? pathname === sub.href.split("?")[0]
-                                : pathname === sub.href;
+                              const isSubActive = isSubActiveCheck(sub, link);
                               return (
                                 <Link
                                   key={sub.href}
@@ -276,24 +293,27 @@ export function Sidebar({
                                   onClick={onClose}
                                   aria-current={isSubActive ? "page" : undefined}
                                   className={cn(
-                                    "flex items-center gap-2 px-2 h-7 font-mono text-[11px] transition-colors rounded-none",
+                                    "flex items-center gap-2 px-2 py-1.5 rounded-xs font-sans text-[12px] transition-colors",
                                     "focus-visible:outline-none",
                                     isSubActive
-                                      ? "bg-[#C2553A]/15 text-[#853827] font-bold border-l-2 border-[#C2553A]"
-                                      : "text-[#524B42] hover:text-[#1A1816] hover:bg-[#ECE7DF] font-normal"
+                                      ? "bg-[#FFFFFF] text-[#853827] font-bold border border-[#D4CEBF] border-l-2 border-l-[#C2553A] shadow-2xs"
+                                      : "text-[#524B42] hover:text-[#1A1816] hover:bg-[#ECE7DF] font-medium"
                                   )}
                                 >
                                   {SubIcon && (
                                     <SubIcon
                                       className={cn(
-                                        "w-3 h-3 shrink-0",
+                                        "w-3.5 h-3.5 shrink-0 transition-colors",
                                         isSubActive
                                           ? "text-[#C2553A]"
-                                          : "text-[#7A756D]"
+                                          : "text-[#8A8378]"
                                       )}
                                     />
                                   )}
-                                  <span className="truncate">{sub.label}</span>
+                                  <span className="truncate flex-1">{sub.label}</span>
+                                  {isSubActive && (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#C2553A] shrink-0" />
+                                  )}
                                 </Link>
                               );
                             })}
@@ -310,7 +330,7 @@ export function Sidebar({
           {/* Mobile Admin Section */}
           {(isAdmin || isOwner) && (
             <div className="pt-2.5 border-t border-[#7A756D]/40 space-y-1">
-              <div className="px-2 pb-1 font-mono text-[10px] font-bold text-[#C2553A] flex items-center justify-between uppercase tracking-wider">
+              <div className="px-2 pb-1 font-mono text-[9.5px] font-bold text-[#C2553A] flex items-center justify-between uppercase tracking-wider">
                 <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
                 <Crown className="w-3 h-3 text-[#C2553A]" />
               </div>
@@ -322,11 +342,11 @@ export function Sidebar({
                     onClick={onClose}
                     aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-2.5 px-2.5 h-8.5 font-mono text-xs transition-colors rounded-none",
+                      "flex items-center gap-2.5 px-2.5 h-8 font-sans text-[13px] font-medium transition-colors rounded-xs",
                       "focus-visible:outline-none",
                       pathname.startsWith("/dashboard/kelola-role")
                         ? "bg-[#C2553A] text-white font-bold border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20] shadow-xs"
-                        : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                        : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent"
                     )}
                   >
                     <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
@@ -339,11 +359,11 @@ export function Sidebar({
                   onClick={onClose}
                   aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 h-8.5 font-mono text-xs transition-colors rounded-none",
+                    "flex items-center gap-2.5 px-2.5 h-8 font-sans text-[13px] font-medium transition-colors rounded-xs",
                     "focus-visible:outline-none",
                     pathname.startsWith("/dashboard/peta-pengguna")
                       ? "bg-[#C2553A] text-white font-bold border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20] shadow-xs"
-                      : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                      : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent"
                   )}
                 >
                   <MapPin className="w-3.5 h-3.5 shrink-0" />
@@ -431,7 +451,7 @@ export function Sidebar({
               <div key={category.title} className="space-y-0.5">
                 {/* Category Header */}
                 {!isCollapsed && (
-                  <div className="px-2 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] uppercase tracking-wider">
+                  <div className="px-2 pt-1 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] uppercase tracking-wider">
                     {translatedCatTitle}
                   </div>
                 )}
@@ -446,15 +466,10 @@ export function Sidebar({
                     const isParentExact =
                       link.href === "/dashboard"
                         ? pathname === "/dashboard"
-                        : pathname === link.href;
+                        : pathname === link.href && !hasSubItems;
                     const isAnyChildActive =
                       hasSubItems &&
-                      link.subItems.some((sub: any) => {
-                        if (sub.href.includes("?")) {
-                          return pathname === sub.href.split("?")[0];
-                        }
-                        return pathname === sub.href || pathname.startsWith(sub.href + "/");
-                      });
+                      link.subItems.some((sub: any) => isSubActiveCheck(sub, link));
                     const isActive = isParentExact || isAnyChildActive;
 
                     const linkKey = linkLabelMap[link.label];
@@ -466,19 +481,22 @@ export function Sidebar({
 
                     return (
                       <div key={link.href} className="relative group space-y-0.5">
-                        <div className="flex items-center">
+                        <div
+                          className={cn(
+                            "flex items-center rounded-xs transition-all duration-100",
+                            isActive
+                              ? "bg-[#C2553A] text-white shadow-xs border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20]"
+                              : "text-[#2D2823] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                          )}
+                        >
                           <Link
                             href={link.href}
                             aria-current={isParentExact ? "page" : undefined}
                             className={cn(
-                              "relative flex items-center transition-all duration-100 font-mono text-xs flex-1 min-w-0 rounded-none",
-                              "focus-visible:outline-none",
+                              "relative flex items-center transition-all duration-100 flex-1 min-w-0 focus-visible:outline-none",
                               isCollapsed
                                 ? "justify-center w-8 h-8 mx-auto"
-                                : "gap-2 px-2 h-7.5",
-                              isActive
-                                ? "bg-[#C2553A] text-white font-bold border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20] shadow-xs"
-                                : "text-[#3D352E] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                                : "gap-2 px-2.5 h-7.5"
                             )}
                           >
                             {Icon && (
@@ -489,19 +507,19 @@ export function Sidebar({
                                     ? "text-white"
                                     : isAiItem
                                     ? "text-[#C2553A]"
-                                    : "text-[#7A756D]"
+                                    : "text-[#7A756D] group-hover:text-[#1A1816]"
                                 )}
                               />
                             )}
 
                             {!isCollapsed && (
-                              <span className="truncate flex-1 leading-snug">
+                              <span className="truncate flex-1 font-sans text-[13px] font-medium leading-none">
                                 {translatedLabel}
                               </span>
                             )}
 
                             {isAiItem && !isActive && !isCollapsed && (
-                              <span className="px-1 py-0.2 text-[8px] font-mono font-bold bg-[#C2553A]/10 text-[#C2553A] border border-[#C2553A]/30">
+                              <span className="px-1 py-0.2 text-[8.5px] font-mono font-bold bg-[#C2553A]/10 text-[#C2553A] border border-[#C2553A]/30 rounded-2xs">
                                 AI
                               </span>
                             )}
@@ -514,12 +532,17 @@ export function Sidebar({
                               onClick={(e) => toggleMenu(link.href, e)}
                               aria-expanded={isExpanded}
                               aria-label={`Toggle ${link.label}`}
-                              className="p-1 font-mono text-xs bg-[#ECE9D8] text-[#1C1917] border border-[#7A756D]/40 hover:bg-[#F2EFE8] cursor-pointer ml-0.5"
+                              className={cn(
+                                "p-1.5 mr-1 rounded-xs transition-colors cursor-pointer flex items-center justify-center",
+                                isActive
+                                  ? "text-white/80 hover:text-white hover:bg-white/15"
+                                  : "text-[#7A756D] hover:text-[#1A1816] hover:bg-black/5"
+                              )}
                             >
                               <ChevronDown
                                 className={cn(
-                                  "w-3 h-3 transition-transform duration-200",
-                                  isExpanded && "rotate-180 text-[#C2553A]"
+                                  "w-3.5 h-3.5 transition-transform duration-200",
+                                  isExpanded && "rotate-180"
                                 )}
                               />
                             </button>
@@ -528,12 +551,10 @@ export function Sidebar({
 
                         {/* Accordion Sub-items (Desktop Expanded) */}
                         {hasSubItems && !isCollapsed && isExpanded && (
-                          <div className="ml-3 pl-2 border-l border-[#7A756D]/40 space-y-0.5 py-0.5 animate-fade-in">
+                          <div className="ml-3.5 pl-2.5 border-l-2 border-[#D9D2C5] space-y-0.5 my-1 animate-fade-in">
                             {link.subItems.map((sub: any) => {
                               const SubIcon = iconMap[sub.icon];
-                              const isSubActive = sub.href.includes("?")
-                                ? pathname === sub.href.split("?")[0]
-                                : pathname === sub.href;
+                              const isSubActive = isSubActiveCheck(sub, link);
 
                               return (
                                 <Link
@@ -541,24 +562,27 @@ export function Sidebar({
                                   href={sub.href}
                                   aria-current={isSubActive ? "page" : undefined}
                                   className={cn(
-                                    "flex items-center gap-1.5 px-1.5 h-6 font-mono text-[11px] transition-colors rounded-none",
+                                    "flex items-center gap-2 px-2 py-1.5 rounded-xs font-sans text-[12px] transition-colors",
                                     "focus-visible:outline-none",
                                     isSubActive
-                                      ? "bg-[#C2553A]/15 text-[#853827] font-bold border-l-2 border-[#C2553A]"
-                                      : "text-[#524B42] hover:text-[#1A1816] hover:bg-[#ECE7DF] font-normal"
+                                      ? "bg-[#FFFFFF] text-[#853827] font-bold border border-[#D4CEBF] border-l-2 border-l-[#C2553A] shadow-2xs"
+                                      : "text-[#524B42] hover:text-[#1A1816] hover:bg-[#ECE7DF] font-medium"
                                   )}
                                 >
                                   {SubIcon && (
                                     <SubIcon
                                       className={cn(
-                                        "w-3 h-3 shrink-0",
+                                        "w-3.5 h-3.5 shrink-0 transition-colors",
                                         isSubActive
                                           ? "text-[#C2553A]"
-                                          : "text-[#7A756D]"
+                                          : "text-[#8A8378]"
                                       )}
                                     />
                                   )}
-                                  <span className="truncate">{sub.label}</span>
+                                  <span className="truncate flex-1">{sub.label}</span>
+                                  {isSubActive && (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#C2553A] shrink-0" />
+                                  )}
                                 </Link>
                               );
                             })}
@@ -567,7 +591,7 @@ export function Sidebar({
 
                         {/* Collapsed Tooltip / Flyout Menu on Hover (Desktop Collapsed) */}
                         {isCollapsed && (
-                          <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 rounded-none bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-b-[#7A756D] border-r-[#7A756D] text-[#1C1917] text-xs font-mono font-bold shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 min-w-[170px] space-y-1.5">
+                          <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 rounded-none bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-b-[#7A756D] border-r-[#7A756D] text-[#1C1917] text-xs font-sans font-bold shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 min-w-[170px] space-y-1.5">
                             <div className="font-bold border-b border-[#7A756D]/30 pb-1 text-[#1C1917] flex items-center justify-between">
                               <span>{translatedLabel}</span>
                               {isAiItem && (
@@ -581,16 +605,14 @@ export function Sidebar({
                               <div className="space-y-0.5 pt-0.5">
                                 {link.subItems.map((sub: any) => {
                                   const SubIcon = iconMap[sub.icon];
-                                  const isSubActive = sub.href.includes("?")
-                                    ? pathname === sub.href.split("?")[0]
-                                    : pathname === sub.href;
+                                  const isSubActive = isSubActiveCheck(sub, link);
 
                                   return (
                                     <Link
                                       key={sub.href}
                                       href={sub.href}
                                       className={cn(
-                                        "flex items-center gap-1.5 px-1.5 py-0.5 text-[11px] font-mono transition-colors",
+                                        "flex items-center gap-1.5 px-1.5 py-0.5 text-[11px] font-sans transition-colors",
                                         isSubActive
                                           ? "bg-[#C2553A]/15 text-[#853827] font-bold"
                                           : "text-[#524B42] hover:text-[#1A1816] hover:bg-[#ECE7DF]"
@@ -630,14 +652,14 @@ export function Sidebar({
                       href="/dashboard/kelola-role"
                       aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                       className={cn(
-                        "relative flex items-center transition-all duration-100 font-mono text-xs flex-1 min-w-0 rounded-none",
+                        "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
                         "focus-visible:outline-none",
                         isCollapsed
                           ? "justify-center w-8 h-8 mx-auto"
-                          : "gap-2 px-2 h-7.5",
+                          : "gap-2 px-2.5 h-7.5",
                         pathname.startsWith("/dashboard/kelola-role")
                           ? "bg-[#C2553A] text-white font-bold border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20] shadow-xs"
-                          : "text-[#3D352E] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                          : "text-[#3D352E] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent"
                       )}
                     >
                       <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
@@ -647,7 +669,7 @@ export function Sidebar({
                     </Link>
 
                     {isCollapsed && (
-                      <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-mono text-[11px] font-bold bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-b-[#7A756D] border-r-[#7A756D] text-[#1C1917] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-b-[#7A756D] border-r-[#7A756D] text-[#1C1917] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                         Kelola Hak Akses
                       </div>
                     )}
@@ -659,14 +681,14 @@ export function Sidebar({
                     href="/dashboard/peta-pengguna"
                     aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                     className={cn(
-                      "relative flex items-center transition-all duration-100 font-mono text-xs flex-1 min-w-0 rounded-none",
+                      "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
                       "focus-visible:outline-none",
                       isCollapsed
                         ? "justify-center w-8 h-8 mx-auto"
-                        : "gap-2 px-2 h-7.5",
+                        : "gap-2 px-2.5 h-7.5",
                       pathname.startsWith("/dashboard/peta-pengguna")
                         ? "bg-[#C2553A] text-white font-bold border-t border-l border-[#EE7257] border-b border-r border-[#6B2D20] shadow-xs"
-                        : "text-[#3D352E] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent font-medium"
+                        : "text-[#3D352E] hover:text-[#1A1816] hover:bg-[#ECE7DF] border border-transparent"
                     )}
                   >
                     <MapPin className="w-3.5 h-3.5 shrink-0" />
@@ -676,7 +698,7 @@ export function Sidebar({
                   </Link>
 
                   {isCollapsed && (
-                    <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-mono text-[11px] font-bold bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-b-[#7A756D] border-r-[#7A756D] text-[#1C1917] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-b-[#7A756D] border-r-[#7A756D] text-[#1C1917] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                       Peta Pengguna
                     </div>
                   )}
