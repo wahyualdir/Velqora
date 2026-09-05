@@ -3,11 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { CheckSquare, ArrowRight, Plus } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { daysUntilDeadline } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
+import { OSWindow } from "@/components/os/os-window";
 
 interface DashboardTasksListProps {
   loading: boolean;
@@ -16,15 +14,21 @@ interface DashboardTasksListProps {
 
 export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) {
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between px-0.5">
-        <h2 className="text-sm sm:text-base font-bold text-text-primary tracking-tight font-display flex items-center gap-2">
-          <CheckSquare className="w-4 h-4 text-amber-600" />
-          <span>Tugas Aktif & Tenggat</span>
-        </h2>
+    <OSWindow
+      title="TASKS_MONITOR.EXE — DAFTAR TUGAS"
+      icon={<CheckSquare className="w-4 h-4 text-amber-200" />}
+      statusText={`${tasks.length} TUGAS TERJADWAL`}
+      className="shadow-sm"
+      bodyClassName="p-0 bg-[#FFFFFF] text-[#1C1917]"
+    >
+      <div className="p-3 bg-[#FAF8F5] border-b border-[#E5DDD5] flex items-center justify-between font-mono text-xs select-none">
+        <span className="font-bold text-[#1C1917] flex items-center gap-1.5">
+          <CheckSquare className="w-3.5 h-3.5 text-[#C2553A]" />
+          <span>Tugas &amp; Tenggat</span>
+        </span>
         <Link
           href="/dashboard/tugas"
-          className="text-xs font-semibold text-text-secondary hover:text-brand-600 transition-colors flex items-center gap-1"
+          className="text-xs font-bold text-[#C2553A] hover:text-[#B84A2B] transition-colors flex items-center gap-1"
         >
           <span>Kelola</span>
           <ArrowRight className="w-3 h-3" />
@@ -32,60 +36,56 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
       </div>
 
       {loading ? (
-        <div className="space-y-2">
-          <Skeleton className="h-14 rounded-xl" />
-          <Skeleton className="h-14 rounded-xl" />
-          <Skeleton className="h-14 rounded-xl" />
+        <div className="p-3 space-y-2">
+          <Skeleton className="h-12 rounded-none" />
+          <Skeleton className="h-12 rounded-none" />
+          <Skeleton className="h-12 rounded-none" />
         </div>
       ) : tasks.length === 0 ? (
-        <Card padding="md" variant="subtle" className="border-dashed text-center space-y-2">
-          <p className="text-xs font-semibold text-text-secondary">Semua tugas telah selesai.</p>
-          <p className="text-[11.5px] text-text-tertiary">
+        <div className="p-5 text-center space-y-2 font-mono">
+          <p className="text-xs font-bold text-[#1C1917]">Semua tugas telah selesai.</p>
+          <p className="text-[11px] text-[#7A756D]">
             Tidak ada tenggat waktu mendesak yang menunggu dikerjakan.
           </p>
-          <div className="pt-1">
+          <div className="pt-2">
             <Link href="/dashboard/tugas/baru">
-              <Button size="sm" variant="outline" className="text-xs gap-1.5">
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Tugas</span>
-              </Button>
+              <button
+                type="button"
+                className="px-3.5 py-1.5 vt-btn-chrome text-xs font-bold flex items-center gap-1.5 mx-auto"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
+                <span>+ Tambah Tugas</span>
+              </button>
             </Link>
           </div>
-        </Card>
+        </div>
       ) : (
-        <Card padding="none" className="divide-y divide-border/60">
+        <div className="divide-y divide-[#E5DDD5] font-mono">
           {tasks.map((task) => {
             const days = task.deadline ? daysUntilDeadline(task.deadline) : null;
             const isUrgent = days !== null && days <= 2 && days >= 0;
             const isLate = days !== null && days < 0;
 
-            const priorityVariant =
-              task.priority === "tinggi"
-                ? "danger"
-                : task.priority === "sedang"
-                ? "warning"
-                : "neutral";
-
             return (
               <Link
                 key={task.id}
                 href="/dashboard/tugas"
-                className="group block p-3 sm:px-3.5 hover:bg-surface-secondary/50 transition-colors"
+                className="group block p-3 sm:px-3.5 hover:bg-[#FAF8F5] transition-colors"
               >
                 <div className="space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <Badge variant={priorityVariant} size="sm">
+                    <span className="px-1.5 py-0.2 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917] text-[10px] font-bold uppercase">
                       {task.priority || "Normal"}
-                    </Badge>
+                    </span>
 
                     {task.deadline && (
                       <span
-                        className={`text-[10.5px] font-mono ${
+                        className={`text-[10px] font-bold font-mono ${
                           isLate
-                            ? "text-red-600 font-semibold"
+                            ? "text-red-600"
                             : isUrgent
-                            ? "text-amber-600 font-semibold"
-                            : "text-text-tertiary"
+                            ? "text-amber-600"
+                            : "text-[#7A756D]"
                         }`}
                       >
                         {isLate
@@ -96,18 +96,18 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xs font-semibold text-text-primary group-hover:text-brand-600 transition-colors truncate">
+                  <h3 className="text-xs font-bold font-sans text-[#1C1917] group-hover:text-[#C2553A] transition-colors truncate">
                     {task.title}
                   </h3>
-                  <p className="text-[11px] text-text-secondary truncate">
+                  <p className="text-[11px] text-[#524B42] truncate font-sans">
                     {task.subject || "Tugas Mandiri"}
                   </p>
                 </div>
               </Link>
             );
           })}
-        </Card>
+        </div>
       )}
-    </section>
+    </OSWindow>
   );
 }

@@ -53,16 +53,16 @@ export function DesktopTopBar({
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-colors duration-200">
-      <div className="flex items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 max-w-[1600px] mx-auto w-full">
-        {/* Left: Menu Toggle Button & Spotlight Search */}
+    <header className="sticky top-0 z-30 bg-[#ECE9D8] border-b-2 border-[#FFFFFF] border-b-[#7A756D] shadow-xs select-none">
+      <div className="flex items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-2 max-w-[1600px] mx-auto w-full font-mono">
+        {/* Left: Menu Toggle Button & Retro Inset Search Box */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 max-w-xl">
           {onToggleSidebar && (
             <button
               type="button"
               onClick={onToggleSidebar}
               aria-label="Toggle menu sidebar"
-              className="h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors active:scale-95 cursor-pointer shrink-0"
+              className="h-8 w-8 min-h-[32px] min-w-[32px] flex items-center justify-center vt-btn-chrome text-[#1C1917] cursor-pointer shrink-0"
               title={isSidebarCollapsed ? "Buka Menu Sidebar" : "Kecilkan Menu Sidebar"}
             >
               <Menu className="w-4 h-4" />
@@ -73,31 +73,31 @@ export function DesktopTopBar({
             onClick={onOpenCommandPalette}
             className="relative flex-1 min-w-0 cursor-pointer group"
           >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary group-hover:text-brand-500 transition-colors pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#7A756D] group-hover:text-[#C2553A] transition-colors pointer-events-none" />
             <input
               type="text"
               readOnly
               value={searchQuery}
               onClick={onOpenCommandPalette}
               placeholder="Cari materi, modul, tugas... (Ctrl + K)"
-              className="w-full pl-9 pr-12 h-9 rounded-lg border border-border bg-surface-secondary/70 group-hover:border-border-hover group-hover:bg-surface-secondary text-text-primary placeholder:text-text-tertiary text-xs transition-all duration-150 cursor-pointer truncate focus:outline-none"
+              className="w-full pl-8 pr-12 h-8 bg-[#FAF8F5] border-t border-l border-[#7A756D] border-b border-r border-[#FFFFFF] text-[#1C1917] placeholder:text-[#8A8378] text-xs font-mono transition-all truncate focus:outline-none"
             />
-            <div className="flex items-center gap-0.5 absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded border border-border bg-surface text-[10px] font-mono text-text-tertiary group-hover:text-text-primary transition-colors">
+            <div className="flex items-center gap-0.5 absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 border border-[#B8B1A5] bg-[#ECE9D8] text-[10px] font-mono text-[#524B42]">
               <Command className="w-2.5 h-2.5" />
               <span>K</span>
             </div>
           </div>
         </div>
 
-        {/* Right: Workspace Status & User Actions (Progressive Disclosure) */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-          {/* Install / Download App CTA (Icon-collapse on 1024-1279px, full on >= 1280px) */}
+        {/* Right: Workspace Status & User Actions (Retro Bevel) */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 text-xs">
+          {/* Install / Download App CTA */}
           {!isPwaStandalone ? (
             canInstallPwa ? (
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg border border-brand-500/30 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 h-8 vt-btn-terracotta text-xs font-bold cursor-pointer"
                 title="Pasang Velqora Desktop App"
               >
                 <Download className="w-3.5 h-3.5 shrink-0" />
@@ -106,16 +106,16 @@ export function DesktopTopBar({
             ) : (
               <Link
                 href="/download"
-                className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary text-xs font-medium transition-colors"
+                className="flex items-center gap-1.5 px-2.5 h-8 vt-btn-chrome text-xs font-semibold"
                 title="Unduh & Pasang Aplikasi"
               >
-                <Download className="w-3.5 h-3.5 shrink-0 text-text-tertiary" />
+                <Download className="w-3.5 h-3.5 shrink-0 text-[#C2553A]" />
                 <span className="hidden xl:inline">Unduh App</span>
               </Link>
             )
           ) : (
-            <div className="flex items-center gap-1 px-2.5 h-9 rounded-lg border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 text-[11px] font-medium">
-              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+            <div className="flex items-center gap-1 px-2.5 h-8 bg-[#FAF8F5] border border-[#B8B1A5] text-emerald-800 text-[11px] font-bold">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
               <span className="hidden xl:inline">App Mode</span>
             </div>
           )}
@@ -123,7 +123,7 @@ export function DesktopTopBar({
           {/* Admin Badge */}
           {isAdmin && (
             <div
-              className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg border border-brand-500/30 bg-brand-500/10 text-brand-600 text-xs font-semibold"
+              className="flex items-center gap-1.5 px-2.5 h-8 vt-btn-terracotta text-xs font-bold"
               title="Akses Administrator"
             >
               <Crown className="w-3.5 h-3.5 shrink-0" />
@@ -135,20 +135,24 @@ export function DesktopTopBar({
 
           {/* Online Health Indicator */}
           <div
-            className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg border border-border bg-surface text-xs text-text-secondary"
+            className="flex items-center gap-1.5 px-2.5 h-8 bg-[#FAF8F5] border border-[#B8B1A5] text-xs text-[#1C1917]"
             title="Sistem Terhubung & Sinkron"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-            <span className="hidden sm:inline font-mono text-[10px] font-semibold text-emerald-700 uppercase">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
+            <span className="hidden sm:inline font-mono text-[10px] font-bold text-emerald-700 uppercase">
               {t("statusOnline")}
             </span>
           </div>
 
           {/* Notifications Center */}
-          <NotificationCenter />
+          <div className="vt-btn-chrome h-8 flex items-center justify-center px-1">
+            <NotificationCenter />
+          </div>
 
           {/* User Profile Menu */}
-          <UserProfileMenu variant="navbar" />
+          <div className="vt-btn-chrome h-8 flex items-center px-1">
+            <UserProfileMenu variant="navbar" />
+          </div>
         </div>
       </div>
     </header>

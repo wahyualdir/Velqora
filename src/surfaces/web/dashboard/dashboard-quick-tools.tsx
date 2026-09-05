@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Code2, Bot, BrainCircuit, ScanLine, ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Code2, Bot, BrainCircuit, ScanLine, ChevronRight, Wrench } from "lucide-react";
+import { OSWindow } from "@/components/os/os-window";
 
 export function DashboardQuickTools() {
   const tools = [
@@ -34,40 +34,44 @@ export function DashboardQuickTools() {
   ];
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between px-0.5">
-        <h2 className="text-sm font-bold text-text-primary tracking-tight font-display">
-          Alat Praktik & Utilitas
-        </h2>
+    <OSWindow
+      title="QUICK_TOOLS.DLL — ALAT PRAKTIK"
+      icon={<Wrench className="w-4 h-4 text-amber-200" />}
+      statusText="4 UTILITIES READY"
+      className="shadow-sm"
+      bodyClassName="p-0 bg-[#FFFFFF] text-[#1C1917]"
+    >
+      <div className="p-3 bg-[#FAF8F5] border-b border-[#E5DDD5] font-mono text-xs font-bold text-[#1C1917] select-none">
+        Alat Praktik &amp; Utilitas
       </div>
 
-      <Card padding="none" className="divide-y divide-border/60 bg-surface-secondary/40 border-border/70">
+      <div className="divide-y divide-[#E5DDD5] font-mono">
         {tools.map((tool) => {
           const Icon = tool.icon;
           return (
             <Link
               key={tool.title}
               href={tool.href}
-              className="group flex items-center justify-between p-3 sm:px-3.5 hover:bg-surface-secondary/80 transition-colors"
+              className="group flex items-center justify-between p-3 sm:px-3.5 hover:bg-[#FAF8F5] transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="p-1.5 rounded-lg bg-surface border border-border/70 text-text-secondary group-hover:text-brand-500 group-hover:border-brand-500/30 group-hover:bg-brand-500/5 transition-all duration-150 shrink-0">
+                <div className="p-1.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#C2553A] group-hover:scale-105 transition-transform shrink-0">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs font-bold text-text-primary group-hover:text-brand-600 transition-colors truncate">
+                  <h3 className="text-xs font-bold font-sans text-[#1C1917] group-hover:text-[#C2553A] transition-colors truncate">
                     {tool.title}
                   </h3>
-                  <p className="text-[11px] text-text-secondary truncate">
+                  <p className="text-[11px] text-[#524B42] truncate font-sans">
                     {tool.description}
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-text-tertiary group-hover:text-brand-500 shrink-0 transition-colors" />
+              <ChevronRight className="w-4 h-4 text-[#C2553A] group-hover:translate-x-0.5 transition-transform shrink-0" />
             </Link>
           );
         })}
-      </Card>
-    </section>
+      </div>
+    </OSWindow>
   );
 }
