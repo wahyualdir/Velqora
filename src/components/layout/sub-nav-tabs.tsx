@@ -82,7 +82,7 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
     <nav
       aria-label="Navigasi Sub Kategori"
       className={cn(
-        "flex items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto scrollbar-none touch-pan-x max-w-full select-none shadow-2xs",
+        "flex items-center gap-1 p-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] overflow-x-auto scrollbar-none touch-pan-x max-w-full select-none shadow-2xs font-mono mb-4",
         className
       )}
     >
@@ -96,22 +96,29 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
             href={tab.href}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 whitespace-nowrap",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50",
+              "flex items-center gap-2 px-3 py-1 text-xs font-medium transition-all shrink-0 whitespace-nowrap",
+              "focus-visible:outline-none",
               isActive
-                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 shadow-2xs font-semibold"
-                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-transparent"
+                ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-2xs"
+                : "text-[#524B42] dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-zinc-100 hover:bg-[#FAF8F5]/80 dark:hover:bg-zinc-800 border border-transparent"
             )}
           >
             <Icon
               className={cn(
-                "w-4 h-4 shrink-0",
-                isActive ? "text-brand-600 dark:text-brand-400" : "text-text-tertiary"
+                "w-3.5 h-3.5 shrink-0",
+                isActive ? "text-white" : "text-[#7A756D] dark:text-zinc-400"
               )}
             />
-            <span>{tab.label}</span>
+            <span className="font-sans text-xs font-semibold">{tab.label}</span>
             {tab.badge !== undefined && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-secondary border border-border text-text-muted">
+              <span
+                className={cn(
+                  "px-1.5 py-0.2 text-[9px] font-mono",
+                  isActive
+                    ? "bg-white/20 text-white"
+                    : "bg-[#FAF8F5] dark:bg-zinc-800 text-[#524B42] dark:text-zinc-400 border border-[#B8B1A5] dark:border-zinc-700"
+                )}
+              >
                 {tab.badge}
               </span>
             )}

@@ -947,6 +947,17 @@ button, a, input, select, textarea {
   background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
 }
 
+.dark .vt-desktop-bg,
+html.dark .vt-desktop-bg {
+  background-color: #0c0a09;
+  background-image: 
+    radial-gradient(ellipse at 50% 10%, rgba(194, 85, 58, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+}
+
 .vt-scanlines {
   background: linear-gradient(
     rgba(28, 25, 23, 0) 50%, 
@@ -966,6 +977,16 @@ button, a, input, select, textarea {
   box-shadow: 2px 6px 20px rgba(28, 25, 23, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
+.dark .vt-window,
+html.dark .vt-window {
+  background-color: #18181B;
+  border-top: 2px solid #3F3F46;
+  border-left: 2px solid #3F3F46;
+  border-right: 2px solid #09090B;
+  border-bottom: 2px solid #09090B;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
 .vt-window-inset {
   border-top: 2px solid #7A756D;
   border-left: 2px solid #7A756D;
@@ -973,15 +994,37 @@ button, a, input, select, textarea {
   border-bottom: 2px solid #FFFFFF;
 }
 
-/* Window Titlebar (Signature Velqora Terracotta Gradient) */
+.dark .vt-window-inset,
+html.dark .vt-window-inset {
+  border-top: 2px solid #09090B;
+  border-left: 2px solid #09090B;
+  border-right: 2px solid #3F3F46;
+  border-bottom: 2px solid #3F3F46;
+  background-color: #121214;
+}
+
+/* Window Titlebar (Signature Velqora Terracotta Gradient or Active Accent) */
 .vt-titlebar {
   background: linear-gradient(90deg, #C2553A 0%, #B84A2B 60%, #853827 100%);
   color: #FFFFFF;
 }
 
+.dark .vt-titlebar,
+html.dark .vt-titlebar {
+  background: linear-gradient(90deg, var(--color-brand-600, #a34530) 0%, var(--color-brand-700, #853827) 60%, var(--color-brand-800, #6b2d20) 100%);
+  color: #FFFFFF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
 .vt-titlebar-inactive {
   background: linear-gradient(90deg, #9C968D 0%, #7A756D 100%);
   color: #F4EFEB;
+}
+
+.dark .vt-titlebar-inactive,
+html.dark .vt-titlebar-inactive {
+  background: linear-gradient(90deg, #27272A 0%, #18181B 100%);
+  color: #71717A;
 }
 
 /* Control Buttons (Minimize, Maximize, Close) */
@@ -1003,9 +1046,25 @@ button, a, input, select, textarea {
   transition: all 0.1s ease;
 }
 
+.dark .vt-window-btn,
+html.dark .vt-window-btn {
+  background-color: #27272A;
+  color: #F4F4F5;
+  border-top: 1px solid #52525B;
+  border-left: 1px solid #52525B;
+  border-right: 1px solid #09090B;
+  border-bottom: 1px solid #09090B;
+}
+
 .vt-window-btn:hover {
   background-color: #F5EFEB;
   color: #000000;
+}
+
+.dark .vt-window-btn:hover,
+html.dark .vt-window-btn:hover {
+  background-color: #3F3F46;
+  color: #FFFFFF;
 }
 
 .vt-window-btn:active {
@@ -1013,6 +1072,14 @@ button, a, input, select, textarea {
   border-left: 1px solid #4A463F;
   border-right: 1px solid #FFFFFF;
   border-bottom: 1px solid #FFFFFF;
+}
+
+.dark .vt-window-btn:active,
+html.dark .vt-window-btn:active {
+  border-top: 1px solid #09090B;
+  border-left: 1px solid #09090B;
+  border-right: 1px solid #52525B;
+  border-bottom: 1px solid #52525B;
 }
 
 .vt-window-btn-close:hover {
@@ -1038,11 +1105,31 @@ button, a, input, select, textarea {
   transition: all 0.12s ease;
 }
 
+.dark .vt-btn-terracotta,
+.dark .vt-btn-pink,
+html.dark .vt-btn-terracotta,
+html.dark .vt-btn-pink {
+  background: var(--color-brand-500, #C2553A);
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  border-right: 2px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
 .vt-btn-terracotta:hover,
 .vt-btn-pink:hover {
   background: #B84A2B;
   box-shadow: 0 4px 16px rgba(194, 85, 58, 0.5);
   transform: translateY(-1px);
+}
+
+.dark .vt-btn-terracotta:hover,
+.dark .vt-btn-pink:hover,
+html.dark .vt-btn-terracotta:hover,
+html.dark .vt-btn-pink:hover {
+  background: var(--color-brand-600, #B84A2B);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .vt-btn-terracotta:active,
@@ -1052,6 +1139,16 @@ button, a, input, select, textarea {
   border-right: 2px solid #EE7257;
   border-bottom: 2px solid #EE7257;
   transform: translateY(1px);
+}
+
+.dark .vt-btn-terracotta:active,
+.dark .vt-btn-pink:active,
+html.dark .vt-btn-terracotta:active,
+html.dark .vt-btn-pink:active {
+  border-top: 2px solid rgba(0, 0, 0, 0.5);
+  border-left: 2px solid rgba(0, 0, 0, 0.5);
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Warm Paper / Chrome Bevel Button */
@@ -1068,10 +1165,29 @@ button, a, input, select, textarea {
   transition: all 0.12s ease;
 }
 
+.dark .vt-btn-chrome,
+html.dark .vt-btn-chrome {
+  background: #27272A;
+  color: #F4F4F5;
+  border-top: 2px solid #3F3F46;
+  border-left: 2px solid #3F3F46;
+  border-right: 2px solid #09090B;
+  border-bottom: 2px solid #09090B;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
 .vt-btn-chrome:hover {
   background: #F4EFEB;
   color: #C2553A;
   border-color: #B54F2F;
+}
+
+.dark .vt-btn-chrome:hover,
+html.dark .vt-btn-chrome:hover {
+  background: #3F3F46;
+  color: var(--color-brand-400, #EE7257);
+  border-top-color: #52525B;
+  border-left-color: #52525B;
 }
 
 .vt-btn-chrome:active {
@@ -1079,6 +1195,14 @@ button, a, input, select, textarea {
   border-left: 2px solid #8A857D;
   border-right: 2px solid #FFFFFF;
   border-bottom: 2px solid #FFFFFF;
+}
+
+.dark .vt-btn-chrome:active,
+html.dark .vt-btn-chrome:active {
+  border-top: 2px solid #09090B;
+  border-left: 2px solid #09090B;
+  border-right: 2px solid #3F3F46;
+  border-bottom: 2px solid #3F3F46;
 }
 
 /* Warm Amber Button */
@@ -1098,6 +1222,18 @@ button, a, input, select, textarea {
   transition: all 0.12s ease;
 }
 
+.dark .vt-btn-amber,
+.dark .vt-btn-teal,
+html.dark .vt-btn-amber,
+html.dark .vt-btn-teal {
+  background: #D97706;
+  color: #FFFFFF;
+  border-top: 2px solid #F59E0B;
+  border-left: 2px solid #F59E0B;
+  border-right: 2px solid #78350F;
+  border-bottom: 2px solid #78350F;
+}
+
 .vt-btn-amber:hover,
 .vt-btn-teal:hover {
   background: #D97706;
@@ -1105,11 +1241,25 @@ button, a, input, select, textarea {
   transform: translateY(-1px);
 }
 
+.dark .vt-btn-amber:hover,
+.dark .vt-btn-teal:hover,
+html.dark .vt-btn-amber:hover,
+html.dark .vt-btn-teal:hover {
+  background: #B45309;
+}
+
 /* Taskbar Styling (Retro Windows Cream) */
 .vt-taskbar {
   background: #ECE9D8;
   border-top: 2px solid #FFFFFF;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .vt-taskbar,
+html.dark .vt-taskbar {
+  background: #18181B;
+  border-top: 2px solid #3F3F46;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Marquee / Ribbon Animation */

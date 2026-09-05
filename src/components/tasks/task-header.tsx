@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { GoogleClassroomIcon } from "@/components/ui/brand-logos";
 import { PageHeader } from "@/components/layout/page-header";
 
@@ -24,22 +23,22 @@ export function TaskHeader({
       actions={
         <>
           {onOpenClassroom && (
-            <Button
-              size="sm"
-              variant="outline"
+            <button
+              type="button"
               onClick={onOpenClassroom}
-              className="gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+              className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
             >
               <GoogleClassroomIcon className="w-3.5 h-3.5" />
               <span>{isClassroomConnected ? "Classroom Terhubung" : "Hubungkan Classroom"}</span>
-            </Button>
+            </button>
           )}
 
-          <Link href="/dashboard/tugas/baru">
-            <Button size="sm" className="gap-1.5 text-xs font-semibold shadow-xs">
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ Tugas Baru</span>
-            </Button>
+          <Link
+            href="/dashboard/tugas/baru"
+            className="vt-btn-terracotta text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Tambah Tugas</span>
           </Link>
         </>
       }

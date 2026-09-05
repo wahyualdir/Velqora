@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Plus, Brain, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
 
 interface AITutorHeaderProps {
   onNewSession: () => void;
@@ -20,29 +20,16 @@ export function AITutorHeader({
   sessionCount,
 }: AITutorHeaderProps) {
   return (
-    <header className="space-y-4 border-b border-border/70 pb-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase font-mono bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-              Asisten Akademik
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary tracking-tight font-display">
-            AI Tutor
-          </h1>
-          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl">
-            Konsultasi materi, analisis kode, dan pemahaman konsep akademik berbantuan kecerdasan buatan.
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <Button
-            size="sm"
-            variant="outline"
+    <PageHeader
+      eyebrow="Asisten Akademik"
+      title="AI Tutor"
+      description="Konsultasi materi, analisis kode, dan pemahaman konsep akademik berbantuan kecerdasan buatan."
+      actions={
+        <>
+          <button
+            type="button"
             onClick={onToggleSidebar}
-            className="gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+            className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
             title={showSidebar ? "Sembunyikan Riwayat Sesi" : "Tampilkan Riwayat Sesi"}
             aria-label="Toggle riwayat sesi"
           >
@@ -52,30 +39,29 @@ export function AITutorHeader({
               <PanelLeftOpen className="w-3.5 h-3.5" />
             )}
             <span className="hidden sm:inline">Riwayat ({sessionCount})</span>
-          </Button>
+          </button>
 
-          <Button
-            size="sm"
-            variant="outline"
+          <button
+            type="button"
             onClick={onOpenMemory}
-            className="gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+            className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
             title="Kelola Memori Konteks Pembelajaran"
             aria-label="Kelola memori AI"
           >
-            <Brain className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+            <Brain className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
             <span>Memori Belajar</span>
-          </Button>
+          </button>
 
-          <Button
-            size="sm"
+          <button
+            type="button"
             onClick={onNewSession}
-            className="gap-1.5 text-xs font-semibold shadow-xs"
+            className="vt-btn-terracotta text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ Sesi Baru</span>
-          </Button>
-        </div>
-      </div>
-    </header>
+            <span>Sesi Baru</span>
+          </button>
+        </>
+      }
+    />
   );
 }

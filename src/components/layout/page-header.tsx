@@ -61,16 +61,16 @@ export function PageHeader({
       </div>
 
       {/* Header Inner Body */}
-      <div className="p-4 sm:p-5 bg-[#FAF8F5] space-y-3">
+      <div className="p-4 sm:p-5 bg-[#FAF8F5] dark:bg-[#121214] space-y-3">
         {hasDirectProps ? (
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4">
             {/* Left Column: Context Eyebrow + Title + Subtitle */}
             <div className="space-y-1 min-w-0 max-w-2xl">
               {/* Context Eyebrow & Badges */}
               {(eyebrow || badge) && (
-                <div className="flex items-center flex-wrap gap-2 text-xs font-mono text-[#853827]">
+                <div className="flex items-center flex-wrap gap-2 text-xs font-mono text-[#853827] dark:text-brand-400">
                   {eyebrow && (
-                    <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30">
+                    <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-500/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30">
                       {eyebrow}
                     </span>
                   )}
@@ -80,14 +80,14 @@ export function PageHeader({
 
               {/* Main Title H1 */}
               {title && (
-                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight font-sans flex items-center gap-2 flex-wrap leading-snug">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-zinc-100 tracking-tight font-sans flex items-center gap-2 flex-wrap leading-snug">
                   <span>{title}</span>
                 </h1>
               )}
 
               {/* Subtitle */}
               {description && (
-                <p className="text-xs sm:text-sm text-[#524B42] leading-relaxed max-w-xl">
+                <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-xl">
                   {description}
                 </p>
               )}
@@ -103,16 +103,16 @@ export function PageHeader({
         ) : null}
 
         {/* Children Slot (e.g. Search Bars, Filter Chips, Sub-controls, or Compound slots) */}
-        {children && <div className={hasDirectProps ? "pt-2 border-t border-[#7A756D]/20" : ""}>{children}</div>}
+        {children && <div className={hasDirectProps ? "pt-2 border-t border-[#7A756D]/20 dark:border-zinc-800" : ""}>{children}</div>}
       </div>
 
       {/* Retro Status Bar at Bottom of Header */}
-      <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none">
+      <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t-2 border-[#FFFFFF] dark:border-t-[#3F3F46] flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-zinc-400 select-none">
         <span className="flex items-center gap-1.5 truncate">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
           <span>STATUS: ACTIVE · SYSTEM VERIFIED</span>
         </span>
-        <span className="text-[#8A8378] hidden sm:inline text-[10px]">VELQORA_KERNEL · 64-BIT</span>
+        <span className="text-[#8A8378] dark:text-zinc-500 hidden sm:inline text-[10px]">VELQORA_KERNEL · 64-BIT</span>
       </div>
     </header>
   );
@@ -129,7 +129,7 @@ PageHeader.Title = function PageHeaderTitle({
   return (
     <h1
       className={cn(
-        "text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight font-sans flex items-center gap-2 flex-wrap leading-snug",
+        "text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-zinc-100 tracking-tight font-sans flex items-center gap-2 flex-wrap leading-snug",
         className
       )}
     >
@@ -146,7 +146,7 @@ PageHeader.Description = function PageHeaderDescription({
   children: React.ReactNode;
 }) {
   return (
-    <p className={cn("text-xs sm:text-sm text-[#524B42] leading-relaxed max-w-xl", className)}>
+    <p className={cn("text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-xl", className)}>
       {children}
     </p>
   );
@@ -174,7 +174,7 @@ PageHeader.Eyebrow = function PageHeaderEyebrow({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30", className)}>
+    <div className={cn("inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-500/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30", className)}>
       {children}
     </div>
   );

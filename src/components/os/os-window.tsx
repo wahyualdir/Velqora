@@ -117,18 +117,18 @@ export function OSWindow({
 
       {/* Window Body */}
       {!isMinimized && (
-        <div className="flex-1 flex flex-col min-h-0 bg-[#FFFFFF]">
+        <div className="flex-1 flex flex-col min-h-0 bg-[#FFFFFF] dark:bg-[#121214]">
           {/* Main Content Area */}
           <div className={`flex-1 overflow-auto ${bodyClassName}`}>{children}</div>
 
           {/* Retro Inset Status Bar */}
           {statusText && (
-            <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none shrink-0">
+            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t-2 border-[#FFFFFF] dark:border-t-[#3F3F46] flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-zinc-400 select-none shrink-0">
               <span className="flex items-center gap-1.5 truncate pr-2">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981] shrink-0" />
                 {statusText}
               </span>
-              <span className="text-[#8A8378] hidden sm:inline shrink-0">VELQORA_KERNEL · 64-BIT</span>
+              <span className="text-[#8A8378] dark:text-zinc-500 hidden sm:inline shrink-0">VELQORA_KERNEL · 64-BIT</span>
             </div>
           )}
         </div>
