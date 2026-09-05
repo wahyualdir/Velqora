@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SIDEBAR_CATEGORIES } from "@/lib/constants";
 import {
@@ -36,7 +36,7 @@ export function Sidebar({
   onToggleCollapse,
 }: SidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [currentQuery, setCurrentQuery] = useState("");
   const { t } = useLanguage();
   const { isApp } = useSurface();
   const [isOwner, setIsOwner] = useState(false);
@@ -53,13 +53,31 @@ export function Sidebar({
     return initial;
   });
 
+  // Track window.location.search on client without triggering Next.js SSG build bailouts
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentQuery(window.location.search);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      if (typeof window !== "undefined") {
+        setCurrentQuery(window.location.search);
+      }
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    return () => window.removeEventListener("popstate", handleLocationChange);
+  }, []);
+
   // Accurate active state helper for sub-items with query params
   const isSubActiveCheck = (sub: any, link: any) => {
+    const searchParams = new URLSearchParams(currentQuery);
     if (sub.href.includes("?")) {
       const [subPath, subQuery] = sub.href.split("?");
       if (pathname !== subPath) return false;
       const [qKey, qVal] = subQuery.split("=");
-      return searchParams?.get(qKey) === qVal;
+      return searchParams.get(qKey) === qVal;
     }
     if (pathname !== sub.href) return false;
     // Check if any sibling sub-item has query parameter matching current URL
@@ -68,7 +86,7 @@ export function Sidebar({
       const [sibPath, sibQuery] = sib.href.split("?");
       if (pathname !== sibPath) return false;
       const [qKey, qVal] = sibQuery.split("=");
-      return searchParams?.get(qKey) === qVal;
+      return searchParams.get(qKey) === qVal;
     });
     return !hasSiblingMatch;
   };
@@ -91,7 +109,7 @@ export function Sidebar({
         }
       });
     });
-  }, [pathname, searchParams]);
+  }, [pathname, currentQuery]);
 
   // Toggle accordion item
   const toggleMenu = (href: string, e?: React.MouseEvent) => {
