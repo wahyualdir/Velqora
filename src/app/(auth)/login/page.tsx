@@ -248,39 +248,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between bg-surface-subtle text-ink overflow-x-hidden selection:bg-brand/20 selection:text-brand">
+    <div className="relative min-h-screen flex flex-col justify-between vt-desktop-bg text-[#1C1917] overflow-x-hidden selection:bg-[#C2553A]/20 selection:text-[#C2553A]">
 
       {/* Subtle Ambient Background */}
       <TechBackground />
 
-      {/* Main Single Centered Card Login Layout */}
+      {/* Main Single Centered Window Login Layout */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 w-full">
-        <div className="w-full max-w-[420px] mx-auto text-center space-y-3">
+        <div className="w-full max-w-[430px] mx-auto text-left space-y-3">
 
-          {/* Primary Card: Login Form with Walking Cat at the bottom */}
+          {/* Primary Window: LOGIN.EXE with Walking Cat at the bottom */}
           <div
-            className={`relative rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
+            className={`vt-window rounded-none overflow-hidden shadow-md text-left ${
               isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
             }`}
           >
-            {/* Inner Content */}
-            <div className="relative z-10 space-y-5">
-              {/* Header: Brand Mark Logo & Name (matching Den style in video) */}
-              <div className="flex items-center justify-center gap-2 pt-1 animate-logo-entrance motion-reduce:animate-none">
-                <VelqoraMark size={22} />
-                <span className="font-bold text-lg text-ink tracking-tight font-display">Velqora</span>
+            {/* Window Titlebar */}
+            <div className="vt-titlebar px-2.5 py-1.5 flex items-center justify-between select-none">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
+                <VelqoraMark size={16} />
+                <span className="font-mono text-xs font-bold tracking-wide text-white truncate uppercase">
+                  LOGIN.EXE — VELQORA ACADEMIC AUTH
+                </span>
               </div>
+              {/* Controls */}
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <button type="button" className="vt-window-btn" title="Minimize">_</button>
+                <button type="button" className="vt-window-btn font-sans" title="Maximize">□</button>
+                <Link href="/" className="vt-window-btn vt-window-btn-close flex items-center justify-center" title="Close">×</Link>
+              </div>
+            </div>
 
+            {/* Retro Window Menu Bar */}
+            <div className="px-3 py-1 bg-[#ECE9D8] border-b border-[#7A756D] flex items-center gap-3 text-[11px] font-mono text-[#1C1917] select-none">
+              <span className="cursor-pointer hover:underline">File</span>
+              <span className="cursor-pointer hover:underline">Edit</span>
+              <span className="cursor-pointer hover:underline">View</span>
+              <span className="cursor-pointer hover:underline">Help</span>
+            </div>
+
+            {/* Inner Content Body */}
+            <div className="p-5 sm:p-6 bg-[#FAF8F5] space-y-4">
               {/* Header Title & Subtitle */}
               <div className="space-y-1.5 text-center">
-                <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight font-display">
+                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30">
+                  WORKSPACE // AUTHENTICATION
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight font-sans">
                   {isForgotPassword
                     ? resetSent
                       ? "Cek Email Anda"
                       : "Reset Password"
                     : "Masuk ke Akun"}
                 </h1>
-                <p className="text-xs sm:text-[13px] text-ink-muted leading-relaxed max-w-xs mx-auto">
+                <p className="text-xs text-[#524B42] leading-relaxed max-w-xs mx-auto font-sans">
                   {isForgotPassword ? (
                     resetSent ? (
                       `Instruksi pemulihan telah dikirim ke ${email}`
@@ -295,10 +316,10 @@ export default function LoginPage() {
 
               {isForgotPassword ? (
                 resetSent ? (
-                  <div className="space-y-3.5 text-center py-2 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                    <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-800 text-xs sm:text-sm leading-relaxed flex items-center justify-center gap-2" aria-live="polite">
+                  <div className="space-y-3.5 text-center py-2 animate-fade-in-up">
+                    <div className="p-3.5 border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF] text-emerald-800 text-xs sm:text-sm leading-relaxed flex items-center justify-center gap-2 font-mono">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Tautan pemulihan telah dikirim ke <strong>{email}</strong>.</span>
+                      <span>Tautan pemulihan dikirim ke <strong>{email}</strong></span>
                     </div>
                     <button
                       type="button"
@@ -306,31 +327,19 @@ export default function LoginPage() {
                         setIsForgotPassword(false);
                         setResetSent(false);
                       }}
-                      className="w-full py-2.5 px-4 rounded-[10px] text-xs sm:text-sm font-semibold text-ink bg-surface-subtle hover:bg-surface border border-border transition-all min-h-[42px] cursor-pointer"
+                      className="w-full py-2 px-4 vt-btn-chrome text-xs font-mono font-bold"
                     >
                       Kembali ke Halaman Masuk
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleResetPassword} className="space-y-4 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
+                  <form onSubmit={handleResetPassword} className="space-y-3.5 animate-fade-in-up">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
                         Email Akun
                       </label>
-                      <div
-                        className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                          focusedField === "reset-email"
-                            ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                            : "border-border hover:border-border-focus"
-                        }`}
-                      >
-                        <Mail
-                          className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                            focusedField === "reset-email"
-                              ? "text-brand"
-                              : "text-ink-muted"
-                          }`}
-                        />
+                      <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                        <Mail className="absolute left-3 w-4 h-4 text-[#8A8378]" />
                         <input
                           type="email"
                           value={email}
@@ -341,7 +350,7 @@ export default function LoginPage() {
                           disabled={loading}
                           required
                           autoComplete="email"
-                          className="w-full bg-surface pl-10 pr-4 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 transition-colors"
+                          className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50"
                         />
                       </div>
                     </div>
@@ -349,17 +358,17 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-[10px] text-sm font-semibold text-white bg-brand hover:bg-brand-hover hover:-translate-y-[1px] active:translate-y-0 active:scale-[0.99] transition-all duration-150 shadow-sm hover:shadow-md cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none min-h-[46px]"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 vt-btn-terracotta text-xs font-mono font-bold"
                     >
                       {loading ? (
-                        <div className="flex items-center gap-2" aria-live="polite">
-                          <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-white shrink-0" />
                           <span>Memproses...</span>
                         </div>
                       ) : (
                         <>
-                          <span>Kirim Link Reset</span>
-                          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
+                          <span>KIRIM LINK RESET</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </>
                       )}
                     </button>
@@ -367,7 +376,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setIsForgotPassword(false)}
-                      className="w-full text-center text-xs sm:text-sm text-ink-muted hover:text-ink transition-colors pt-1 cursor-pointer"
+                      className="w-full text-center text-xs font-mono text-[#524B42] hover:text-[#C2553A] hover:underline pt-1 cursor-pointer"
                     >
                       Kembali ke Login
                     </button>
@@ -376,14 +385,14 @@ export default function LoginPage() {
               ) : (
                 <>
                   {/* OAuth Buttons (Google & GitHub) */}
-                  <div className="grid grid-cols-2 gap-3 animate-fade-in-up" style={{ animationDelay: "220ms" }}>
+                  <div className="grid grid-cols-2 gap-2.5">
                     <button
                       type="button"
                       onClick={handleGoogleLogin}
                       disabled={loading}
-                      className="group flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-[10px] text-xs sm:text-sm font-medium text-ink bg-surface hover:bg-surface-subtle border border-border hover:border-border-focus shadow-2xs transition-all duration-150 disabled:opacity-50 min-h-[42px] cursor-pointer"
+                      className="flex items-center justify-center gap-2 py-2 px-3 vt-btn-chrome text-xs font-mono font-bold disabled:opacity-50"
                     >
-                      <GoogleIcon className="w-4 h-4 shrink-0 transition-transform duration-150 group-hover:scale-105" />
+                      <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
                       <span>Google</span>
                     </button>
 
@@ -391,46 +400,34 @@ export default function LoginPage() {
                       type="button"
                       onClick={handleGithubLogin}
                       disabled={loading}
-                      className="group flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-[10px] text-xs sm:text-sm font-medium text-ink bg-surface hover:bg-surface-subtle border border-border hover:border-border-focus shadow-2xs transition-all duration-150 disabled:opacity-50 min-h-[42px] cursor-pointer"
+                      className="flex items-center justify-center gap-2 py-2 px-3 vt-btn-chrome text-xs font-mono font-bold disabled:opacity-50"
                     >
-                      <GitHubIcon className="w-4 h-4 shrink-0 text-ink transition-transform duration-150 group-hover:scale-105" />
+                      <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-[#1C1917]" />
                       <span>GitHub</span>
                     </button>
                   </div>
 
                   {/* Divider */}
-                  <div className="relative animate-fade-in-up py-1" style={{ animationDelay: "250ms" }}>
+                  <div className="relative py-1">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border" />
+                      <div className="w-full border-t border-[#7A756D]/30" />
                     </div>
-                    <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                      <span className="bg-surface px-3 py-0.5 text-ink-muted font-medium rounded-full border border-border">
-                        atau masuk via email
+                    <div className="relative flex justify-center text-[10px] uppercase tracking-wider font-mono">
+                      <span className="bg-[#FAF8F5] px-2.5 py-0.5 text-[#853827] font-bold">
+                        atau via email
                       </span>
                     </div>
                   </div>
 
                   {/* Form Input Email & Password */}
-                  <form onSubmit={handleSubmit} className="space-y-4 pt-0.5">
+                  <form onSubmit={handleSubmit} className="space-y-3.5 pt-0.5">
                     {/* Email Field */}
-                    <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
-                      <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
                         Email
                       </label>
-                      <div
-                        className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                          focusedField === "email"
-                            ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                            : "border-border hover:border-border-focus"
-                        }`}
-                      >
-                        <Mail
-                          className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                            focusedField === "email"
-                              ? "text-brand"
-                              : "text-ink-muted"
-                          }`}
-                        />
+                      <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                        <Mail className="absolute left-3 w-4 h-4 text-[#8A8378]" />
                         <input
                           id="login-email-input"
                           type="email"
@@ -442,30 +439,18 @@ export default function LoginPage() {
                           disabled={loading}
                           required
                           autoComplete="email"
-                          className="w-full bg-surface pl-10 pr-4 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
+                          className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
                         />
                       </div>
                     </div>
 
                     {/* Password Field */}
-                    <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "310ms" }}>
-                      <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
                         Password
                       </label>
-                      <div
-                        className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                          focusedField === "password"
-                            ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                            : "border-border hover:border-border-focus"
-                        }`}
-                      >
-                        <Lock
-                          className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                            focusedField === "password"
-                              ? "text-brand"
-                              : "text-ink-muted"
-                          }`}
-                        />
+                      <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                        <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
                         <input
                           id="login-password-input"
                           type={showPassword ? "text" : "password"}
@@ -477,36 +462,33 @@ export default function LoginPage() {
                           disabled={loading}
                           required
                           autoComplete="current-password"
-                          className="w-full bg-surface pl-10 pr-11 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
+                          className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
                         />
-                        {/* Eye Toggle with Focus Retention */}
                         <button
                           id="login-password-toggle"
                           type="button"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3.5 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
+                          className="absolute right-2.5 p-1 text-[#8A8378] hover:text-[#1C1917] cursor-pointer"
                           tabIndex={-1}
                           aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                         >
-                          <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
-                            {showPassword ? (
-                              <EyeOff className="w-4 h-4 text-brand transition-all duration-150" />
-                            ) : (
-                              <Eye className="w-4 h-4 transition-all duration-150" />
-                            )}
-                          </span>
+                          {showPassword ? (
+                            <EyeOff className="w-4 h-4 text-[#C2553A]" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
                         </button>
                       </div>
 
-                      {/* Remember Me & Forgot Password Row (Settigation Video Style) */}
-                      <div className="flex items-center justify-between pt-1 text-xs">
-                        <label className="flex items-center gap-2 text-ink-muted hover:text-ink cursor-pointer select-none">
+                      {/* Remember Me & Forgot Password Row */}
+                      <div className="flex items-center justify-between pt-1 text-xs font-mono">
+                        <label className="flex items-center gap-1.5 text-[#524B42] hover:text-[#1C1917] cursor-pointer select-none">
                           <input
                             type="checkbox"
                             checked={rememberMe}
                             onChange={(e) => setRememberMe(e.target.checked)}
-                            className="w-3.5 h-3.5 rounded border-border text-brand focus:ring-brand/20 accent-brand cursor-pointer"
+                            className="w-3.5 h-3.5 accent-[#C2553A] cursor-pointer"
                           />
                           <span>Ingat saya</span>
                         </label>
@@ -516,15 +498,15 @@ export default function LoginPage() {
                             setIsForgotPassword(true);
                             setResetSent(false);
                           }}
-                          className="text-[11px] sm:text-xs text-ink-muted hover:text-brand hover:underline transition-colors cursor-pointer"
+                          className="text-[11px] text-[#853827] hover:underline cursor-pointer"
                         >
                           Lupa password?
                         </button>
                       </div>
                     </div>
 
-                    {/* Primary Submit Button with 3D Door Portal (Settigation Video Style) */}
-                    <div className="pt-2">
+                    {/* Primary Submit Button with 3D Door Portal */}
+                    <div className="pt-1">
                       <DoorSubmitButton
                         id="login-submit-button"
                         loading={loading}
@@ -537,35 +519,37 @@ export default function LoginPage() {
                 </>
               )}
 
-              {/* 🐾 Walking Cat Easter Egg (Google Colab Style at the very bottom inside card) */}
+              {/* 🐾 Walking Cat Easter Egg */}
               <WalkingCat />
+            </div>
+
+            {/* Retro Inset Status Bar */}
+            <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none">
+              <span className="flex items-center gap-1.5 truncate">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                {loading ? "AUTHENTICATING..." : "SYSTEM READY · 256-BIT SECURE"}
+              </span>
+              <span className="text-[#8A8378] hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
             </div>
           </div>
 
           {/* Secondary Switcher Box */}
-          <div
-            className="rounded-xl border border-border bg-surface p-3.5 text-center text-xs sm:text-sm text-ink-muted shadow-2xs animate-fade-in-up"
-            style={{ animationDelay: "370ms" }}
-          >
+          <div className="vt-window rounded-none p-3 text-center text-xs font-mono text-[#524B42] bg-[#FAF8F5] shadow-xs">
             Belum memiliki akun?{" "}
             <Link
               href="/register"
-              className="font-bold text-brand hover:text-brand-hover underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
+              className="font-bold text-[#C2553A] hover:underline inline-flex items-center gap-1"
             >
-              <span>Daftar Sekarang</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-150" />
+              <span>Daftar Akun Baru ▸</span>
             </Link>
           </div>
         </div>
       </main>
 
       {/* Clean Footer */}
-      <footer
-        className="w-full py-6 px-4 border-t border-border z-10 flex items-center justify-center max-w-4xl mx-auto text-center animate-fade-in-up"
-        style={{ animationDelay: "400ms" }}
-      >
-        <p className="text-xs text-ink-muted leading-relaxed">
-          &copy; 2026 <span className="text-ink font-medium">JOBLIB505 FORUM GROUP</span>. Semua hak dilindungi undang-undang.
+      <footer className="w-full py-4 px-4 border-t border-[#7A756D]/30 z-10 flex items-center justify-center max-w-4xl mx-auto text-center font-mono text-xs text-[#8A8378]">
+        <p>
+          &copy; 2026 VELQORA ACADEMIC OS. SEMUA HAK DILINDUNGI UNDANG-UNDANG.
         </p>
       </footer>
     </div>

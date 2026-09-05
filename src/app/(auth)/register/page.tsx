@@ -17,7 +17,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
-import { RegisterTypingIllustration } from "@/components/ui/auth-illustrations";
+import { WalkingCat } from "@/components/ui/walking-cat";
 import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
@@ -83,7 +83,7 @@ export default function RegisterPage() {
 
   // Password strength calculation
   const getPasswordStrength = () => {
-    if (!password) return { label: "", score: 0, color: "bg-border" };
+    if (!password) return { label: "", score: 0, color: "bg-[#ECE9D8]" };
     let score = 0;
     if (password.length >= 6) score += 1;
     if (password.length >= 8) score += 1;
@@ -93,7 +93,7 @@ export default function RegisterPage() {
 
     if (score <= 2) return { label: "Lemah", score: 1, color: "bg-rose-500" };
     if (score <= 3) return { label: "Sedang", score: 2, color: "bg-amber-500" };
-    return { label: "Kuat", score: 3, color: "bg-emerald-500" };
+    return { label: "Kuat", score: 3, color: "bg-emerald-600" };
   };
 
   const passwordStrength = getPasswordStrength();
@@ -237,371 +237,307 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between bg-surface-subtle text-ink overflow-x-hidden selection:bg-brand/20 selection:text-brand">
+    <div className="relative min-h-screen flex flex-col justify-between vt-desktop-bg text-[#1C1917] overflow-x-hidden selection:bg-[#C2553A]/20 selection:text-[#C2553A]">
 
-      {/* Subtle Background */}
+      {/* Ambient Background */}
       <TechBackground />
 
-      {/* Main Register Layout (Responsive Split 45/55 on Desktop, Focused on Mobile) */}
+      {/* Main Single Centered Retro OS Window Register Layout */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 w-full">
-        <div className="w-full max-w-[420px] lg:max-w-[920px] grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="w-full max-w-[440px] mx-auto text-left space-y-3">
 
-          {/* Left Column: Form & Switcher */}
-          <div className="lg:col-span-6 w-full max-w-[420px] mx-auto flex flex-col justify-between space-y-4">
+          {/* Primary Window: REGISTER.EXE */}
+          <div
+            className={`vt-window rounded-none overflow-hidden shadow-md text-left ${
+              isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
+            }`}
+          >
+            {/* Window Titlebar */}
+            <div className="vt-titlebar px-2.5 py-1.5 flex items-center justify-between select-none">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
+                <VelqoraMark size={16} />
+                <span className="font-mono text-xs font-bold tracking-wide text-white truncate uppercase">
+                  REGISTER.EXE — CREATE NEW VELQORA ACCOUNT
+                </span>
+              </div>
+              {/* Controls */}
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <button type="button" className="vt-window-btn" title="Minimize">_</button>
+                <button type="button" className="vt-window-btn font-sans" title="Maximize">□</button>
+                <Link href="/" className="vt-window-btn vt-window-btn-close flex items-center justify-center" title="Close">×</Link>
+              </div>
+            </div>
 
-            {/* 1. Primary Card: Register Form */}
-            <div
-              className={`relative rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm text-left overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none ${
-                isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
-              }`}
-            >
-              {/* Inner Content Layer */}
-              <div className="relative z-10 space-y-4">
-                {/* Header: Brand Mark Logo with Fade-In + Scale Entrance */}
-                <div className="flex flex-col items-center justify-center pt-0.5 animate-logo-entrance motion-reduce:animate-none">
-                  <VelqoraMark size={32} />
+            {/* Retro Window Menu Bar */}
+            <div className="px-3 py-1 bg-[#ECE9D8] border-b border-[#7A756D] flex items-center gap-3 text-[11px] font-mono text-[#1C1917] select-none">
+              <span className="cursor-pointer hover:underline">File</span>
+              <span className="cursor-pointer hover:underline">Edit</span>
+              <span className="cursor-pointer hover:underline">View</span>
+              <span className="cursor-pointer hover:underline">Help</span>
+            </div>
+
+            {/* Inner Content Body */}
+            <div className="p-5 sm:p-6 bg-[#FAF8F5] space-y-4">
+              {/* Header Title & Subtitle */}
+              <div className="space-y-1.5 text-center">
+                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30">
+                  WORKSPACE // NEW USER ENROLLMENT
                 </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight font-sans">
+                  Daftar Akun Baru
+                </h1>
+                <p className="text-xs text-[#524B42] leading-relaxed max-w-xs mx-auto font-sans">
+                  Buat akun untuk mulai mengelola modul, jadwal, dan asisten AI Anda
+                </p>
+              </div>
 
-                {/* Header Title & Subtitle */}
-                <div className="space-y-1.5 text-center">
-                  <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight font-display">
-                    Daftar Akun Baru
-                  </h1>
-                  <p className="text-xs sm:text-[13px] text-ink-muted leading-relaxed max-w-xs mx-auto">
-                    Buat akun untuk mulai mengelola modul, jadwal, dan asisten AI Anda
-                  </p>
+              {/* OAuth Buttons (Google & GitHub) */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  disabled={loading}
+                  className="flex items-center justify-center gap-2 py-2 px-3 vt-btn-chrome text-xs font-mono font-bold disabled:opacity-50"
+                >
+                  <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
+                  <span>Google</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGithubLogin}
+                  disabled={loading}
+                  className="flex items-center justify-center gap-2 py-2 px-3 vt-btn-chrome text-xs font-mono font-bold disabled:opacity-50"
+                >
+                  <GitHubIcon className="w-3.5 h-3.5 shrink-0 text-[#1C1917]" />
+                  <span>GitHub</span>
+                </button>
+              </div>
+
+              {/* Divider */}
+              <div className="relative py-1">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[#7A756D]/30" />
                 </div>
-
-                {/* OAuth Buttons (Google & GitHub) */}
-                <div className="grid grid-cols-2 gap-3 animate-fade-in-up" style={{ animationDelay: "180ms" }}>
-                  <button
-                    type="button"
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                    className="group flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-[10px] text-xs sm:text-sm font-medium text-ink bg-surface hover:bg-surface-subtle border border-border hover:border-border-focus shadow-2xs transition-all duration-150 disabled:opacity-50 min-h-[42px] cursor-pointer"
-                  >
-                    <GoogleIcon className="w-4 h-4 shrink-0 transition-transform duration-150 group-hover:scale-105" />
-                    <span>Google</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleGithubLogin}
-                    disabled={loading}
-                    className="group flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-[10px] text-xs sm:text-sm font-medium text-ink bg-surface hover:bg-surface-subtle border border-border hover:border-border-focus shadow-2xs transition-all duration-150 disabled:opacity-50 min-h-[42px] cursor-pointer"
-                  >
-                    <GitHubIcon className="w-4 h-4 shrink-0 text-ink transition-transform duration-150 group-hover:scale-105" />
-                    <span>GitHub</span>
-                  </button>
+                <div className="relative flex justify-center text-[10px] uppercase tracking-wider font-mono">
+                  <span className="bg-[#FAF8F5] px-2.5 py-0.5 text-[#853827] font-bold">
+                    atau daftar via email
+                  </span>
                 </div>
+              </div>
 
-                {/* Divider */}
-                <div className="relative animate-fade-in-up py-1" style={{ animationDelay: "210ms" }}>
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
+              {/* Form Input Fields */}
+              <form onSubmit={handleRegister} className="space-y-3.5 pt-0.5">
+                {/* Full Name Field */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                    Nama Lengkap
+                  </label>
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                    <User className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                    <input
+                      id="register-name-input"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      onFocus={() => setFocusedField("fullName")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Nama lengkap Anda"
+                      disabled={loading}
+                      required
+                      className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                    />
                   </div>
-                  <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                    <span className="bg-surface px-3 py-0.5 text-ink-muted font-medium rounded-full border border-border">
-                      atau daftar via email
-                    </span>
+                </div>
+
+                {/* Email Field */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                    Email
+                  </label>
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                    <Mail className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                    <input
+                      id="register-email-input"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onFocus={() => setFocusedField("email")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="nama@email.com"
+                      disabled={loading}
+                      required
+                      autoComplete="email"
+                      className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                    />
                   </div>
                 </div>
 
-                {/* Form Input Fields */}
-                <form onSubmit={handleRegister} className="space-y-3.5 pt-0.5">
-                  {/* Full Name Field */}
-                  <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "240ms" }}>
-                    <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
-                      Nama Lengkap
+                {/* Password Field */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                      Password
                     </label>
-                    <div
-                      className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                        focusedField === "fullName"
-                          ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                          : "border-border hover:border-border-focus"
-                      }`}
-                    >
-                      <User
-                        className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "fullName"
-                            ? "text-brand"
-                            : "text-ink-muted"
-                        }`}
-                      />
-                      <input
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        onFocus={() => setFocusedField("fullName")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="Nama lengkap Anda"
-                        disabled={loading}
-                        required
-                        className="w-full bg-surface pl-10 pr-4 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email Field */}
-                  <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "270ms" }}>
-                    <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
-                      Email
-                    </label>
-                    <div
-                      className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                        focusedField === "email"
-                          ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                          : "border-border hover:border-border-focus"
-                      }`}
-                    >
-                      <Mail
-                        className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "email"
-                            ? "text-brand"
-                            : "text-ink-muted"
-                        }`}
-                      />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setFocusedField("email")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="nama@email.com"
-                        disabled={loading}
-                        required
-                        autoComplete="email"
-                        className="w-full bg-surface pl-10 pr-4 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Password Field */}
-                  <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
-                        Password
-                      </label>
-                      {password && (
-                        <span className="text-[10px] text-ink-muted">
-                          Kekuatan: <span className="font-semibold text-ink">{passwordStrength.label}</span>
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                        focusedField === "password"
-                          ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                          : "border-border hover:border-border-focus"
-                      }`}
-                    >
-                      <Lock
-                        className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "password"
-                            ? "text-brand"
-                            : "text-ink-muted"
-                        }`}
-                      />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setFocusedField("password")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="Minimal 6 karakter"
-                        disabled={loading}
-                        required
-                        minLength={6}
-                        autoComplete="new-password"
-                        className="w-full bg-surface pl-10 pr-11 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
-                        tabIndex={-1}
-                        aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-                      >
-                        <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
-                          {showPassword ? (
-                            <EyeOff className="w-4 h-4 text-brand transition-all duration-150" />
-                          ) : (
-                            <Eye className="w-4 h-4 transition-all duration-150" />
-                          )}
-                        </span>
-                      </button>
-                    </div>
-
-                    {/* Password Strength Meter */}
                     {password && (
-                      <div className="grid grid-cols-3 gap-1 pt-0.5 animate-fade-in">
-                        <div className={`h-1 rounded-full ${passwordStrength.score >= 1 ? passwordStrength.color : "bg-border"}`} />
-                        <div className={`h-1 rounded-full ${passwordStrength.score >= 2 ? passwordStrength.color : "bg-border"}`} />
-                        <div className={`h-1 rounded-full ${passwordStrength.score >= 3 ? passwordStrength.color : "bg-border"}`} />
-                      </div>
+                      <span className="text-[10px] font-mono">
+                        Kekuatan: <span className="font-bold text-[#1C1917]">{passwordStrength.label}</span>
+                      </span>
                     )}
                   </div>
-
-                  {/* Confirm Password Field */}
-                  <div className="space-y-1.5 animate-fade-in-up" style={{ animationDelay: "330ms" }}>
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-semibold text-ink uppercase tracking-wider block">
-                        Konfirmasi Password
-                      </label>
-                      {confirmPassword && (
-                        <span className="text-[10px]">
-                          {password === confirmPassword ? (
-                            <span className="text-emerald-600 font-semibold flex items-center gap-0.5">
-                              <CheckCircle2 className="w-3 h-3" /> Cocok
-                            </span>
-                          ) : (
-                            <span className="text-rose-500 font-semibold">Tidak cocok</span>
-                          )}
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className={`relative flex items-center rounded-[10px] border bg-surface transition-all duration-200 overflow-hidden ${
-                        focusedField === "confirmPassword"
-                          ? "border-brand ring-4 ring-brand/10 shadow-xs"
-                          : "border-border hover:border-border-focus"
-                      }`}
-                    >
-                      <Lock
-                        className={`absolute left-3.5 w-4 h-4 transition-colors duration-200 ${
-                          focusedField === "confirmPassword"
-                            ? "text-brand"
-                            : "text-ink-muted"
-                        }`}
-                      />
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        onFocus={() => setFocusedField("confirmPassword")}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder="Ulangi password"
-                        disabled={loading}
-                        required
-                        autoComplete="new-password"
-                        className="w-full bg-surface pl-10 pr-11 py-3 min-h-[44px] text-[15px] text-ink placeholder:text-ink-placeholder focus:outline-hidden disabled:opacity-50 font-medium transition-colors"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3.5 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
-                        tabIndex={-1}
-                        aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
-                      >
-                        <span className="inline-flex items-center justify-center transition-transform duration-150 ease-out hover:scale-110 active:scale-90">
-                          {showConfirmPassword ? (
-                            <EyeOff className="w-4 h-4 text-brand transition-all duration-150" />
-                          ) : (
-                            <Eye className="w-4 h-4 transition-all duration-150" />
-                          )}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Terms Note */}
-                  <p className="text-[10.5px] text-ink-muted text-center leading-relaxed pt-0.5 animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-                    Dengan mendaftar, Anda menyetujui Ketentuan Layanan & Kebijakan Privasi Velqora.
-                  </p>
-
-                  {/* Submit Button */}
-                  <div className="pt-2">
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                    <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                    <input
+                      id="register-password-input"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onFocus={() => setFocusedField("password")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Minimal 6 karakter"
+                      disabled={loading}
+                      required
+                      minLength={6}
+                      autoComplete="new-password"
+                      className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                    />
                     <button
-                      type="submit"
-                      disabled={loading || isSuccess}
-                      aria-live="polite"
-                      className="group w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-[10px] text-sm sm:text-base font-semibold text-white bg-brand hover:bg-brand-hover hover:-translate-y-[1px] active:translate-y-0 active:scale-[0.99] transition-all duration-150 shadow-sm hover:shadow-md cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none min-h-[46px]"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2.5 p-1 text-[#8A8378] hover:text-[#1C1917] cursor-pointer"
+                      tabIndex={-1}
+                      aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                     >
-                      {loading ? (
-                        <div className="flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-[spin_600ms_linear_infinite] text-white shrink-0" />
-                          <span>Mendaftarkan...</span>
-                        </div>
-                      ) : isSuccess ? (
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-white shrink-0 animate-scale-in" />
-                          <span>Pendaftaran Berhasil!</span>
-                        </div>
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4 text-[#C2553A]" />
                       ) : (
-                        <>
-                          <span>Daftar Akun</span>
-                          <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-0.5" />
-                        </>
+                        <Eye className="w-4 h-4" />
                       )}
                     </button>
                   </div>
-                </form>
-              </div>
+
+                  {/* Password Strength Meter */}
+                  {password && (
+                    <div className="grid grid-cols-3 gap-1 pt-1">
+                      <div className={`h-1.5 border border-[#7A756D]/40 ${passwordStrength.score >= 1 ? passwordStrength.color : "bg-[#ECE9D8]"}`} />
+                      <div className={`h-1.5 border border-[#7A756D]/40 ${passwordStrength.score >= 2 ? passwordStrength.color : "bg-[#ECE9D8]"}`} />
+                      <div className={`h-1.5 border border-[#7A756D]/40 ${passwordStrength.score >= 3 ? passwordStrength.color : "bg-[#ECE9D8]"}`} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                      Konfirmasi Password
+                    </label>
+                    {confirmPassword && (
+                      <span className="text-[10px] font-mono">
+                        {password === confirmPassword ? (
+                          <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                            <CheckCircle2 className="w-3 h-3" /> Cocok
+                          </span>
+                        ) : (
+                          <span className="text-rose-600 font-bold">Tidak cocok</span>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
+                    <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                    <input
+                      id="register-confirm-password-input"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onFocus={() => setFocusedField("confirmPassword")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Ulangi password"
+                      disabled={loading}
+                      required
+                      autoComplete="new-password"
+                      className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-2.5 p-1 text-[#8A8378] hover:text-[#1C1917] cursor-pointer"
+                      tabIndex={-1}
+                      aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4 text-[#C2553A]" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Terms Note */}
+                <p className="text-[11px] font-mono text-[#524B42] text-center leading-relaxed pt-0.5">
+                  Dengan mendaftar, Anda menyetujui Ketentuan Layanan & Kebijakan Privasi Velqora.
+                </p>
+
+                {/* Submit Button */}
+                <div className="pt-1">
+                  <button
+                    type="submit"
+                    disabled={loading || isSuccess}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 vt-btn-terracotta text-xs font-mono font-bold disabled:opacity-50 cursor-pointer"
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-white shrink-0" />
+                        <span>Mendaftarkan Akun...</span>
+                      </div>
+                    ) : isSuccess ? (
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0" />
+                        <span>Pendaftaran Berhasil!</span>
+                      </div>
+                    ) : (
+                      <>
+                        <span>DAFTAR AKUN BARU</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              {/* 🐾 Walking Cat Easter Egg */}
+              <WalkingCat />
             </div>
 
-            {/* Secondary Switcher Box */}
-            <div
-              className="rounded-xl border border-border bg-surface p-3.5 text-center text-xs sm:text-sm text-ink-muted shadow-2xs animate-fade-in-up"
-              style={{ animationDelay: "370ms" }}
+            {/* Retro Inset Status Bar */}
+            <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none">
+              <span className="flex items-center gap-1.5 truncate">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                {loading ? "REGISTERING USER..." : "SYSTEM READY · ENROLLMENT PORTAL"}
+              </span>
+              <span className="text-[#8A8378] hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
+            </div>
+          </div>
+
+          {/* Secondary Switcher Box */}
+          <div className="vt-window rounded-none p-3 text-center text-xs font-mono text-[#524B42] bg-[#FAF8F5] shadow-xs">
+            Sudah memiliki akun?{" "}
+            <Link
+              href="/login"
+              className="font-bold text-[#C2553A] hover:underline inline-flex items-center gap-1"
             >
-              Sudah memiliki akun?{" "}
-              <Link
-                href="/login"
-                className="font-bold text-brand hover:text-brand-hover underline underline-offset-4 transition-colors ml-1 inline-flex items-center gap-1 group"
-              >
-                <span>Masuk ke Akun</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-150" />
-              </Link>
-            </div>
+              <span>Masuk ke Akun ▸</span>
+            </Link>
           </div>
-
-          {/* Right Column (55% Desktop): Modern SaaS 2D Minimalist Illustration Showcase */}
-          <div
-            className="lg:col-span-6 hidden lg:flex flex-col items-center justify-between p-8 rounded-2xl border border-border/80 bg-gradient-to-br from-brand-light to-surface-subtle shadow-sm w-full h-full text-center overflow-hidden opacity-0 animate-card-entrance motion-reduce:opacity-100 motion-reduce:animate-none space-y-5"
-            style={{ animationDelay: "200ms" }}
-          >
-            {/* Top Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/90 text-brand border border-brand-light text-xs font-semibold tracking-wide shadow-2xs">
-              <span>Mulai Lebih Awal</span>
-            </div>
-
-            {/* 2D Vector Illustration */}
-            <div className="w-full flex items-center justify-center py-2">
-              <RegisterTypingIllustration className="w-full max-w-[310px] h-auto transition-transform duration-500 hover:scale-[1.02]" />
-            </div>
-
-            {/* Caption & Feature Tags */}
-            <div className="space-y-2.5">
-              <h2 className="text-base sm:text-lg font-bold font-display text-ink tracking-tight">
-                Bangun Kebiasaan Belajar Rapi
-              </h2>
-              <p className="text-xs sm:text-[13px] text-ink-muted leading-relaxed max-w-xs mx-auto">
-                Satu akun untuk sinkronisasi jadwal, arsip catatan, dan panduan belajar cerdas sepanjang semester.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px] font-semibold">
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-border text-ink shadow-2xs">
-                  Gratis Selamanya
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-border text-ink shadow-2xs">
-                  Data Terisolasi Aman
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-brand/30 text-brand shadow-2xs">
-                  Akses Web & Mobile
-                </span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </main>
 
       {/* Clean Footer */}
-      <footer
-        className="w-full py-6 px-4 border-t border-border z-10 flex items-center justify-center max-w-4xl mx-auto text-center animate-fade-in-up"
-        style={{ animationDelay: "400ms" }}
-      >
-        <p className="text-xs text-ink-muted leading-relaxed">
-          &copy; 2026 <span className="text-ink font-medium">JOBLIB505 FORUM GROUP</span>. Semua hak dilindungi undang-undang.
+      <footer className="w-full py-4 px-4 border-t border-[#7A756D]/30 z-10 flex items-center justify-center max-w-4xl mx-auto text-center font-mono text-xs text-[#8A8378]">
+        <p>
+          &copy; 2026 VELQORA ACADEMIC OS. SEMUA HAK DILINDUNGI UNDANG-UNDANG.
         </p>
       </footer>
     </div>

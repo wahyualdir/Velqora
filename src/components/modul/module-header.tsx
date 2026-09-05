@@ -29,42 +29,43 @@ export function ModuleHeader({
       actions={
         <>
           {onOpenSorter && (
-            <Button
-              size="sm"
-              variant="outline"
+            <button
+              type="button"
               onClick={onOpenSorter}
-              className="gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+              className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+              <Sparkles className="w-3.5 h-3.5 text-[#C2553A]" />
               <span className="hidden sm:inline">Klasifikasi Kategori</span>
-            </Button>
+            </button>
           )}
 
-          <Link href="/dashboard/modul/baru">
-            <Button size="sm" className="gap-1.5 text-xs font-semibold shadow-xs">
-              <Plus className="w-3.5 h-3.5" />
-              <span>Tambah Modul</span>
-            </Button>
+          <Link
+            href="/dashboard/modul/baru"
+            className="vt-btn-terracotta text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Tambah Modul</span>
           </Link>
 
-          <Link href="/dashboard/modul/baru?mode=project">
-            <Button size="sm" variant="secondary" className="gap-1.5 text-xs font-medium">
-              <FolderCode className="w-3.5 h-3.5" />
-              <span>Project Baru</span>
-            </Button>
+          <Link
+            href="/dashboard/modul/baru?mode=project"
+            className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
+          >
+            <FolderCode className="w-3.5 h-3.5" />
+            <span>Project Baru</span>
           </Link>
         </>
       }
     >
       {/* Mode Switcher Tabs */}
-      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-secondary/70 border border-border w-fit max-w-full overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1 bg-[#ECE9D8] border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] w-fit max-w-full overflow-x-auto">
         <button
           type="button"
           onClick={() => onModeChange("all")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold shrink-0 cursor-pointer ${
             contentMode === "all"
-              ? "bg-surface text-text-primary shadow-xs border border-border/80"
-              : "text-text-secondary hover:text-text-primary hover:bg-surface/50 border border-transparent"
+              ? "vt-btn-terracotta shadow-xs"
+              : "vt-btn-chrome"
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -74,10 +75,10 @@ export function ModuleHeader({
         <button
           type="button"
           onClick={() => onModeChange("module")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold shrink-0 cursor-pointer ${
             contentMode === "module"
-              ? "bg-surface text-brand-600 dark:text-brand-400 shadow-xs border border-border/80"
-              : "text-text-secondary hover:text-text-primary hover:bg-surface/50 border border-transparent"
+              ? "vt-btn-terracotta shadow-xs"
+              : "vt-btn-chrome"
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
@@ -87,10 +88,10 @@ export function ModuleHeader({
         <button
           type="button"
           onClick={() => onModeChange("project")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold shrink-0 cursor-pointer ${
             contentMode === "project"
-              ? "bg-surface text-blue-600 dark:text-blue-400 shadow-xs border border-border/80"
-              : "text-text-secondary hover:text-text-primary hover:bg-surface/50 border border-transparent"
+              ? "vt-btn-terracotta shadow-xs"
+              : "vt-btn-chrome"
           }`}
         >
           <Code2 className="w-3.5 h-3.5" />
