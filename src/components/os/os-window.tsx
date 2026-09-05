@@ -15,6 +15,7 @@ export interface OSWindowProps {
   className?: string;
   initialCollapsed?: boolean;
   defaultMaximized?: boolean;
+  bodyClassName?: string;
 }
 
 export function OSWindow({
@@ -22,7 +23,7 @@ export function OSWindow({
   title,
   icon,
   statusText,
-  isActive = false,
+  isActive = true,
   onClose,
   onMinimize,
   onMaximize,
@@ -30,6 +31,7 @@ export function OSWindow({
   className = "",
   initialCollapsed = false,
   defaultMaximized = false,
+  bodyClassName = "",
 }: OSWindowProps) {
   const [isMinimized, setIsMinimized] = useState(initialCollapsed);
   const [isMaximized, setIsMaximized] = useState(defaultMaximized);
@@ -64,24 +66,24 @@ export function OSWindow({
   return (
     <div
       id={id}
-      className={`vt-window rounded-sm flex flex-col transition-all duration-200 ${
+      className={`vt-window rounded-none flex flex-col transition-all duration-150 ${
         isMaximized ? "w-full" : ""
       } ${className}`}
     >
-      {/* Title Bar */}
+      {/* Title Bar (Velqora Signature Terracotta Gradient) */}
       <div
-        className={`px-3 py-1.5 flex items-center justify-between select-none cursor-default ${
-          isActive ? "vt-titlebar-active" : "vt-titlebar"
+        className={`px-2.5 py-1 flex items-center justify-between select-none cursor-default ${
+          isActive ? "vt-titlebar" : "vt-titlebar-inactive"
         }`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
-          {icon && <span className="flex-shrink-0 text-sm text-cyan-400">{icon}</span>}
-          <span className="font-mono text-xs font-bold tracking-wide text-slate-200 truncate uppercase">
+          {icon && <span className="flex-shrink-0 text-sm text-amber-200">{icon}</span>}
+          <span className="font-mono text-xs font-bold tracking-wide text-white truncate uppercase shadow-xs">
             {title}
           </span>
         </div>
 
-        {/* Window Controls */}
+        {/* Retro Window Controls: _ , □ , × */}
         <div className="flex items-center gap-1 flex-shrink-0">
           <button
             type="button"
@@ -97,7 +99,7 @@ export function OSWindow({
             onClick={handleMaximize}
             aria-label="Maximize window"
             title="Maximize"
-            className="vt-window-btn"
+            className="vt-window-btn font-sans"
           >
             {isMaximized ? "❐" : "□"}
           </button>
@@ -113,20 +115,20 @@ export function OSWindow({
         </div>
       </div>
 
-      {/* Window Body (Hidden if Minimized) */}
+      {/* Window Body */}
       {!isMinimized && (
-        <div className="flex-1 flex flex-col min-h-0 bg-[#0C1017]">
+        <div className={`flex-1 flex flex-col min-h-0 bg-[#FFFFFF] ${bodyClassName}`}>
           {/* Main Content Area */}
           <div className="flex-1 overflow-auto">{children}</div>
 
-          {/* Status Bar */}
+          {/* Retro Inset Status Bar */}
           {statusText && (
-            <div className="px-3 py-1 bg-[#090D14] border-t border-[#1E293B] flex items-center justify-between text-[10px] font-mono text-slate-400 select-none">
+            <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none">
               <span className="flex items-center gap-1.5 truncate">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 {statusText}
               </span>
-              <span className="text-slate-600 hidden sm:inline">VELQORA_OS · 64-BIT</span>
+              <span className="text-[#8A8378] hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
             </div>
           )}
         </div>

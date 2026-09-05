@@ -3,68 +3,60 @@ import type { Metadata } from "next";
 import { 
   OSTopBar, 
   OSTaskbar, 
-  OSDesktopIcons, 
   OSHeroWindow, 
-  InteractiveTerminal, 
-  CurriculumExplorer, 
   NotepadManifesto, 
-  CompanionShowcase, 
-  RunDialogCTA, 
-  MarqueeTicker 
+  CurriculumExplorer, 
+  SystemMonitorWindow, 
+  MarqueeTicker, 
+  RunDialogCTA 
 } from "@/components/os";
 
 export const metadata: Metadata = {
-  title: "Velqora OS — Learning Environment & Kurikulum Web Modern",
+  title: "Velqora — Sistem Operasi Belajar Mahasiswa & Kurikulum Web Modern",
   description:
-    "Sistem Operasi Pembelajaran Web Modern: 12 Modul Terstandarisasi, Interactive Terminal Monitor, Curriculum Explorer, dan Kompatibilitas Docker & CI/CD.",
+    "Platform workspace pembelajaran web modern berstandar industri: 12 Modul Kurikulum Terstandarisasi, 84 Soal Kuis, Interactive Terminal, dan AI Tutor.",
   keywords: [
-    "Velqora OS",
+    "Velqora",
     "Vintec Learn",
     "Pengembangan Aplikasi Web Modern",
     "Learning OS",
     "Next.js 15",
     "React 19",
-    "Curriculum Explorer",
+    "Kurikulum Web",
   ],
 };
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen vt-desktop-bg text-slate-100 font-sans antialiased relative selection:bg-[#FF2E93] selection:text-white pb-14">
-      {/* CRT Scanlines Overlay */}
+    <div className="min-h-screen vt-desktop-bg text-[#1C1917] font-sans antialiased relative selection:bg-[#C2553A] selection:text-white pb-16">
+      {/* CRT Scanlines Warm Overlay */}
       <div className="fixed inset-0 vt-scanlines pointer-events-none z-40" />
 
-      {/* Retro OS Top Menu Bar */}
+      {/* Retro OS Top Menu Bar (Vintec Exact Menu: VELQORA_, File, Edit, View, Go, Help) */}
       <OSTopBar />
 
-      {/* Marquee Ticker */}
-      <MarqueeTicker />
-
-      {/* Desktop Workspace */}
-      <main className="relative z-10 space-y-8 pt-2 pb-16">
-        {/* Desktop Shortcuts */}
-        <OSDesktopIcons />
-
-        {/* Hero Window */}
+      {/* Main Workspace Area */}
+      <main className="relative z-10 space-y-4 pt-2">
+        {/* Section Hero: 3-Column Layout (Left Window + Center Shortcuts + Right MONITOR.EXE with 3D Canvas) */}
         <OSHeroWindow />
 
-        {/* Interactive Terminal (MONITOR.EXE) */}
-        <InteractiveTerminal />
-
-        {/* Curriculum Explorer: 12 Modules (C:\Velqora\Curriculum_Explorer\) */}
-        <CurriculumExplorer />
-
-        {/* Notepad Manifesto (README.txt) */}
+        {/* Section 01: MANIFESTO (README.TXT — NOTEPAD) */}
         <NotepadManifesto />
 
-        {/* Companion App Showcase (Velqora_Companion.exe) */}
-        <CompanionShowcase />
+        {/* Section 02: KURIKULUM (C:\VELQORA\CURRICULUM_EXPLORER) */}
+        <CurriculumExplorer />
 
-        {/* Run Dialog CTA (RUN.EXE) */}
+        {/* Section 03: ANGKA & COMPANION (SYSTEM_MONITOR.EXE, SYSTEM_FEATURES.DLL, & VELQORA_COMPANION.EXE) */}
+        <SystemMonitorWindow />
+
+        {/* Marquee Ticker Ribbon */}
+        <MarqueeTicker />
+
+        {/* Section 04: MULAI (RUN.EXE — JALANKAN) */}
         <RunDialogCTA />
       </main>
 
-      {/* Retro OS Bottom Taskbar */}
+      {/* Retro OS Bottom Taskbar (Vintec Exact Taskbar: Start Button, Copyright, Status, Real-time Clock) */}
       <OSTaskbar />
     </div>
   );

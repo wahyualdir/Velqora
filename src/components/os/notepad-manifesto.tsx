@@ -2,63 +2,55 @@
 
 import React from "react";
 import { OSWindow } from "./os-window";
-import { FileText, Check } from "lucide-react";
+import { FileText } from "lucide-react";
 
 export function NotepadManifesto() {
   return (
-    <div id="notepad-section" className="w-full max-w-4xl mx-auto px-4 my-10">
+    <div id="notepad-section" className="w-full max-w-7xl mx-auto px-2 sm:px-4 my-8">
       <OSWindow
-        title="README.txt — Notepad (Manifesto Dosen & Pedoman Belajar)"
-        icon={<FileText className="w-4 h-4 text-amber-400" />}
-        statusText="LINES: 48 · CHARS: 2840 · ENCODING: UTF-8 · DOS/WINDOWS"
-        className="shadow-2xl"
+        title="README.TXT — NOTEPAD"
+        icon={<FileText className="w-4 h-4 text-amber-600" />}
+        statusText="LINES: 42 · CHARS: 2180 · ANSI / WINDOWS-1252"
+        className="shadow-md"
+        bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] text-[#1C1917]"
       >
-        <div className="p-4 sm:p-6 bg-[#0B0E14] font-mono text-xs text-slate-300 leading-relaxed space-y-4 select-text">
-          {/* Notepad Header Bar */}
-          <div className="flex items-center gap-4 text-[11px] text-slate-500 border-b border-slate-800 pb-2">
-            <span>File</span>
-            <span>Edit</span>
-            <span>Search</span>
-            <span>Help</span>
+        {/* Windows Notepad Menu Bar: File Edit Format View Help */}
+        <div className="flex items-center gap-4 text-xs font-mono text-[#524B42] pb-3 mb-4 border-b border-[#E5DDD5] select-none">
+          <span className="hover:text-[#C2553A] cursor-pointer">File</span>
+          <span className="hover:text-[#C2553A] cursor-pointer">Edit</span>
+          <span className="hover:text-[#C2553A] cursor-pointer">Format</span>
+          <span className="hover:text-[#C2553A] cursor-pointer">View</span>
+          <span className="hover:text-[#C2553A] cursor-pointer">Help</span>
+        </div>
+
+        {/* Section Header Tag (Vintec Exact) */}
+        <div className="space-y-3 font-mono">
+          <div className="text-xs text-[#C2553A] font-bold tracking-wider uppercase">
+            01 — MANIFESTO
           </div>
 
-          <div className="text-amber-300 font-bold text-sm">
-            ================================================================================<br />
-            VELQORA OS :: MANIFESTO REKAYASA WEB LEVEL PRODUKSI<br />
-            ================================================================================
-          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] tracking-tight">
+            Belajar web bukan menghafal sintaks.
+          </h2>
 
-          <p>
-            Kepada Mahasiswa dan Calon Engineer:
-          </p>
+          <div className="space-y-4 text-xs sm:text-sm text-[#44403C] leading-relaxed pt-2">
+            <p>
+              Di era kecerdasan buatan, sintaks dan fungsi bawaan bahasa pemrograman dapat dihasilkan dalam hitungan detik. 
+              Yang tidak bisa digantikan oleh AI adalah <strong>intuisi arsitektur</strong>: memahami di mana batas peramban dan server, 
+              mengapa autentikasi di <code>localStorage</code> adalah dosa besar keamanan, dan bagaimana mencegah sistem database 
+              tumbang akibat <em>connection exhaustion</em> di arsitektur serverless.
+            </p>
 
-          <p>
-            Di industri teknologi hari ini, batas antara &quot;bisa bikin website sederhana&quot; dan &quot;mampu merancang sistem produksi yang tidak tumbang di jam 3 pagi&quot; sangatlah jauh.
-          </p>
-
-          <div className="bg-[#070A0F] p-4 rounded border border-slate-800 space-y-2 text-slate-300">
-            <div className="text-[#00F2FE] font-bold">3 HUKUM BESI VELQORA:</div>
-            <div className="flex items-start gap-2">
-              <span className="text-[#FF2E93] font-bold">1.</span>
-              <span><strong>Bukan Hafalan Sintaks:</strong> Sintaks bisa dicari di dokumentasi dalam 5 detik. Yang Anda butuhkan adalah intuisi arsitektur, pemahaman boundary runtime, dan kemampuan threat modeling.</span>
+            <div className="p-4 bg-[#FAF8F5] border-l-4 border-[#C2553A] space-y-2 text-xs">
+              <div className="font-bold text-[#C2553A]">PEDOMAN REKAYASA VELQORA:</div>
+              <div>• <strong>Kode Nyata, Bukan Cuplikan Klise:</strong> Setiap modul menyajikan implementasi TypeScript lengkap siap produksi.</div>
+              <div>• <strong>Studi Kasus Insiden Nyata:</strong> Pelajari investigasi kegagalan Black Friday crash, serangan supply-chain XSS, dan testing mirage.</div>
+              <div>• <strong>Evaluasi Berpikir Kritis:</strong> 7 soal skenario analitis di setiap modul untuk menguji kedalaman intuisi Anda.</div>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="text-[#FF2E93] font-bold">2.</span>
-              <span><strong>Keamanan Bukan Aksesori:</strong> Jangan pernah simpan auth token di localStorage. Jangan pernah percayai user ID dari client. Defense-in-depth dimulai dari baris kode pertama.</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-[#FF2E93] font-bold">3.</span>
-              <span><strong>Bebas dari Klise &amp; Tutorial Neraka:</strong> Seluruh modul dilengkapi studi kasus kegagalan nyata di lapangan: dari insiden crash Black Friday hingga kebocoran kredensial kontainer.</span>
-            </div>
-          </div>
 
-          <p>
-            Gunakan 12 modul yang telah kami sediakan di dalam <strong>Curriculum Explorer</strong> sebagai pegangan diktat kuliah Anda. Kerjakan latihan dasar, selesaikan tugas mandiri dengan acceptance criteria ketat, dan uji pemahaman Anda pada evaluasi 7 soal di setiap modul.
-          </p>
-
-          <div className="pt-2 text-slate-500 text-[11px] border-t border-slate-800 flex items-center justify-between">
-            <span>Disusun oleh: Senior Full-stack Engineer &amp; Dosen Praktisi (10 Thn Pengalaman)</span>
-            <span className="text-emerald-400">STATUS: APPROVED FOR SEMESTER 3</span>
+            <p className="text-xs text-[#7A756D] italic pt-1">
+              — Diktat Kurikulum Resmi S1 Informatika / Sistem Informasi (10 Tahun Pengalaman Praktisi)
+            </p>
           </div>
         </div>
       </OSWindow>
