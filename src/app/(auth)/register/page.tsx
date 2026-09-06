@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
 import { WalkingCat } from "@/components/ui/walking-cat";
+import { RetroLoadingDialog } from "@/components/ui/retro-loading-dialog";
 import { isOwnerUser } from "@/lib/utils";
 
 /* ============================================================
@@ -74,6 +75,7 @@ export default function RegisterPage() {
   // Micro-interaction states: error shake & positive success pulse
   const [isShaking, setIsShaking] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showLoadingDialog, setShowLoadingDialog] = useState(false);
 
   const triggerErrorState = (message: string) => {
     setIsShaking(true);
@@ -214,10 +216,7 @@ export default function RegisterPage() {
           }
           setIsSuccess(true);
           toast.success(`Pendaftaran berhasil! Selamat datang di Velqora, ${fullName.trim()}!`);
-          setTimeout(() => {
-            router.push("/dashboard");
-            router.refresh();
-          }, 400);
+          setShowLoadingDialog(true);
           return;
         }
 
@@ -540,6 +539,24 @@ export default function RegisterPage() {
           &copy; 2026 VELQORA ACADEMIC OS. SEMUA HAK DILINDUNGI UNDANG-UNDANG.
         </p>
       </footer>
+
+      {/* Retro OS Loading Transition Modal Dialog (Windows 95/98 Replica with Terracotta Theme) */}
+      <RetroLoadingDialog
+        isOpen={showLoadingDialog}
+        title="Loading..."
+        subtitle="Mendaftarkan & menyiapkan workspace pengguna..."
+        durationMs={2200}
+        totalBlocks={20}
+        onComplete={() => {
+          router.push("/dashboard");
+          router.refresh();
+        }}
+        onCancel={() => {
+          setShowLoadingDialog(false);
+          setIsSuccess(false);
+          setLoading(false);
+        }}
+      />
     </div>
   );
 }
