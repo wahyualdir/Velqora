@@ -269,7 +269,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Retro Window Menu Bar */}
-            <div className="px-3 py-1 bg-[#ECE9D8] border-b border-[#7A756D] flex items-center gap-3 text-[11px] font-mono text-[#1C1917] select-none">
+            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-b border-[#7A756D] dark:border-zinc-800 flex items-center gap-3 text-[11px] font-mono text-[#1C1917] dark:text-zinc-300 select-none">
               <span className="cursor-pointer hover:underline">File</span>
               <span className="cursor-pointer hover:underline">Edit</span>
               <span className="cursor-pointer hover:underline">View</span>
@@ -277,16 +277,16 @@ export default function RegisterPage() {
             </div>
 
             {/* Inner Content Body */}
-            <div className="p-5 sm:p-6 bg-[#FAF8F5] space-y-4">
+            <div className="p-5 sm:p-6 bg-[#FAF8F5] dark:bg-[#141416] space-y-4">
               {/* Header Title & Subtitle */}
               <div className="space-y-1.5 text-center">
-                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30">
+                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-950/40 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30">
                   WORKSPACE // NEW USER ENROLLMENT
                 </div>
-                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight font-sans">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-zinc-100 tracking-tight font-sans">
                   Daftar Akun Baru
                 </h1>
-                <p className="text-xs text-[#524B42] leading-relaxed max-w-xs mx-auto font-sans">
+                <p className="text-xs text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-xs mx-auto font-sans">
                   Buat akun untuk mulai mengelola modul, jadwal, dan asisten AI Anda
                 </p>
               </div>
@@ -330,11 +330,11 @@ export default function RegisterPage() {
               <form onSubmit={handleRegister} className="space-y-3.5 pt-0.5">
                 {/* Full Name Field */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                  <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
                     Nama Lengkap
                   </label>
-                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
-                    <User className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
+                    <User className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
                     <input
                       id="register-name-input"
                       type="text"
@@ -345,18 +345,18 @@ export default function RegisterPage() {
                       placeholder="Nama lengkap Anda"
                       disabled={loading}
                       required
-                      className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                      className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
                     />
                   </div>
                 </div>
 
                 {/* Email Field */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                  <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
                     Email
                   </label>
-                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
-                    <Mail className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
+                    <Mail className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
                     <input
                       id="register-email-input"
                       type="email"
@@ -368,7 +368,7 @@ export default function RegisterPage() {
                       disabled={loading}
                       required
                       autoComplete="email"
-                      className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                      className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
                     />
                   </div>
                 </div>
@@ -376,17 +376,17 @@ export default function RegisterPage() {
                 {/* Password Field */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                    <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
                       Password
                     </label>
                     {password && (
                       <span className="text-[10px] font-mono">
-                        Kekuatan: <span className="font-bold text-[#1C1917]">{passwordStrength.label}</span>
+                        Kekuatan: <span className="font-bold text-[#1C1917] dark:text-zinc-100">{passwordStrength.label}</span>
                       </span>
                     )}
                   </div>
-                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
-                    <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
+                    <Lock className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
                     <input
                       id="register-password-input"
                       type={showPassword ? "text" : "password"}
@@ -399,12 +399,12 @@ export default function RegisterPage() {
                       required
                       minLength={6}
                       autoComplete="new-password"
-                      className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                      className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-2.5 p-1 text-[#8A8378] hover:text-[#1C1917] cursor-pointer"
+                      className="absolute right-2.5 p-1 text-[#8A8378] dark:text-zinc-500 hover:text-[#1C1917] dark:hover:text-zinc-200 cursor-pointer"
                       tabIndex={-1}
                       aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                     >
@@ -419,9 +419,9 @@ export default function RegisterPage() {
                   {/* Password Strength Meter */}
                   {password && (
                     <div className="grid grid-cols-3 gap-1 pt-1">
-                      <div className={`h-1.5 border border-[#7A756D]/40 ${passwordStrength.score >= 1 ? passwordStrength.color : "bg-[#ECE9D8]"}`} />
-                      <div className={`h-1.5 border border-[#7A756D]/40 ${passwordStrength.score >= 2 ? passwordStrength.color : "bg-[#ECE9D8]"}`} />
-                      <div className={`h-1.5 border border-[#7A756D]/40 ${passwordStrength.score >= 3 ? passwordStrength.color : "bg-[#ECE9D8]"}`} />
+                      <div className={`h-1.5 border border-[#7A756D]/40 dark:border-zinc-700 ${passwordStrength.score >= 1 ? passwordStrength.color : "bg-[#ECE9D8] dark:bg-zinc-800"}`} />
+                      <div className={`h-1.5 border border-[#7A756D]/40 dark:border-zinc-700 ${passwordStrength.score >= 2 ? passwordStrength.color : "bg-[#ECE9D8] dark:bg-zinc-800"}`} />
+                      <div className={`h-1.5 border border-[#7A756D]/40 dark:border-zinc-700 ${passwordStrength.score >= 3 ? passwordStrength.color : "bg-[#ECE9D8] dark:bg-zinc-800"}`} />
                     </div>
                   )}
                 </div>
@@ -429,23 +429,23 @@ export default function RegisterPage() {
                 {/* Confirm Password Field */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                    <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
                       Konfirmasi Password
                     </label>
                     {confirmPassword && (
                       <span className="text-[10px] font-mono">
                         {password === confirmPassword ? (
-                          <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                          <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-0.5">
                             <CheckCircle2 className="w-3 h-3" /> Cocok
                           </span>
                         ) : (
-                          <span className="text-rose-600 font-bold">Tidak cocok</span>
+                          <span className="text-rose-600 dark:text-rose-400 font-bold">Tidak cocok</span>
                         )}
                       </span>
                     )}
                   </div>
-                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
-                    <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                  <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
+                    <Lock className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
                     <input
                       id="register-confirm-password-input"
                       type={showConfirmPassword ? "text" : "password"}
@@ -457,12 +457,12 @@ export default function RegisterPage() {
                       disabled={loading}
                       required
                       autoComplete="new-password"
-                      className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                      className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-2.5 p-1 text-[#8A8378] hover:text-[#1C1917] cursor-pointer"
+                      className="absolute right-2.5 p-1 text-[#8A8378] dark:text-zinc-500 hover:text-[#1C1917] dark:hover:text-zinc-200 cursor-pointer"
                       tabIndex={-1}
                       aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
                     >
@@ -476,7 +476,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Terms Note */}
-                <p className="text-[11px] font-mono text-[#524B42] text-center leading-relaxed pt-0.5">
+                <p className="text-[11px] font-mono text-[#524B42] dark:text-zinc-400 text-center leading-relaxed pt-0.5">
                   Dengan mendaftar, Anda menyetujui Ketentuan Layanan & Kebijakan Privasi Velqora.
                 </p>
 
@@ -512,12 +512,12 @@ export default function RegisterPage() {
             </div>
 
             {/* Retro Inset Status Bar */}
-            <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none">
+            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t-2 border-[#FFFFFF] dark:border-t-zinc-800 flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-zinc-400 select-none">
               <span className="flex items-center gap-1.5 truncate">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 {loading ? "REGISTERING USER..." : "SYSTEM READY · ENROLLMENT PORTAL"}
               </span>
-              <span className="text-[#8A8378] hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
+              <span className="text-[#8A8378] dark:text-zinc-500 hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
             </div>
           </div>
 

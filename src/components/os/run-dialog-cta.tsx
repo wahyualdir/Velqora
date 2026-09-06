@@ -13,7 +13,7 @@ export function RunDialogCTA() {
         icon={<Play className="w-3.5 h-3.5 text-amber-200 fill-current" />}
         statusText="SYSTEM PROMPT ACTIVE"
         className="shadow-md"
-        bodyClassName="p-6 sm:p-8 bg-[#FFFFFF] text-[#1C1917] font-mono space-y-4"
+        bodyClassName="p-6 sm:p-8 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 font-mono space-y-4"
       >
         <div className="space-y-2">
           {/* Tag: 04 — MULAI (Exact Vintec Learn) */}
@@ -21,11 +21,11 @@ export function RunDialogCTA() {
             04 — MULAI
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
             Siap belajar serius?
           </h2>
 
-          <p className="text-xs sm:text-sm text-[#524B42] font-sans max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 font-sans max-w-2xl leading-relaxed">
             Akses 12 modul lengkap, uji kemampuan dengan 84 soal kuis terarah, dan bangun 
             pemahaman rekayasa web modern tingkat lanjut bersama Velqora.
           </p>

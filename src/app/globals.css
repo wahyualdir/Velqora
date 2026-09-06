@@ -112,6 +112,16 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #141416 inset !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
+  caret-color: #f4f4f5 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* ========================================
    1. BASE COLOR PALETTE & SURFACES
    ======================================== */
@@ -144,13 +154,12 @@ input:-webkit-autofill:active {
 }
 
 /* ========================================
-   1.1 APP SURFACE THEME (Standalone PWA — Formal, Clean, Pure White)
+   1.1 APP SURFACE THEME (Standalone PWA)
    ======================================== */
 
-html[data-surface="app"],
-html.dark[data-surface="app"],
 html.light[data-surface="app"],
-[data-surface="app"] {
+html:not(.dark)[data-surface="app"],
+[data-surface="app"]:not(.dark) {
   --color-background: #ffffff;
   --color-surface: #f8fafc;
   --color-surface-secondary: #f1f5f9;
@@ -183,38 +192,69 @@ html.light[data-surface="app"],
   --radius-btn: 0.5rem;
 }
 
+html.dark[data-surface="app"],
+[data-surface="app"].dark,
+.dark [data-surface="app"] {
+  --color-background: #09090b;
+  --color-surface: #141416;
+  --color-surface-secondary: #1c1c20;
+  --color-surface-tertiary: #232328;
+  --color-surface-hover: #2b2b32;
+
+  --color-border: #27272a;
+  --color-border-hover: #3f3f46;
+
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+
+  --color-sidebar: #101012;
+  --color-sidebar-hover: #18181b;
+  --color-sidebar-active: #c2553a;
+  --color-sidebar-text: #a1a1aa;
+  --color-sidebar-text-active: #f4f4f5;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-2xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-subtle: 0 1px 4px rgba(0, 0, 0, 0.35);
+
+  --density-card-p: 1rem;
+  --radius-card: 0.75rem;
+  --radius-btn: 0.5rem;
+}
+
 html[data-surface="app"] body,
 [data-surface="app"] body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
 }
 
-/* App Surface High-Contrast Typography & Surface Refinement */
-[data-surface="app"] {
+/* App Surface High-Contrast Typography & Surface Refinement (Light Only) */
+[data-surface="app"]:not(.dark) {
   color: #0f172a;
 }
 
-[data-surface="app"] .text-text-primary {
+[data-surface="app"]:not(.dark) .text-text-primary {
   color: #0f172a;
 }
 
-[data-surface="app"] .text-text-secondary {
+[data-surface="app"]:not(.dark) .text-text-secondary {
   color: #334155;
 }
 
-[data-surface="app"] .text-text-tertiary {
+[data-surface="app"]:not(.dark) .text-text-tertiary {
   color: #64748b;
 }
 
-[data-surface="app"] .bg-surface {
+[data-surface="app"]:not(.dark) .bg-surface {
   background-color: #ffffff;
 }
 
-[data-surface="app"] .bg-surface-secondary {
+[data-surface="app"]:not(.dark) .bg-surface-secondary {
   background-color: #f8fafc;
 }
 
-[data-surface="app"] .border-border {
+[data-surface="app"]:not(.dark) .border-border {
   border-color: #e2e8f0;
 }
 
@@ -248,14 +288,63 @@ html[data-surface="app"] body,
   color: #1c1917;
 }
 
+/* ========================================
+   2.1 DARK MODE PALETTE (Warm Obsidian & Zinc)
+   ======================================== */
+
+.dark,
+:root.dark,
+html.dark,
+html.dark[data-surface="web"],
+.dark[data-surface="web"],
+html.dark:not([data-surface]),
+.dark:not([data-surface]) {
+  --color-background: #09090b;
+  --color-surface: #141416;
+  --color-surface-secondary: #1c1c20;
+  --color-surface-tertiary: #232328;
+  --color-surface-hover: #2b2b32;
+
+  --color-border: #27272a;
+  --color-border-hover: #3f3f46;
+
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+
+  --color-sidebar: #101012;
+  --color-sidebar-hover: #18181b;
+  --color-sidebar-active: #c2553a;
+  --color-sidebar-text: #a1a1aa;
+  --color-sidebar-text-active: #f4f4f5;
+}
+
+.dark body,
+html.dark body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
 /* High Contrast Mode Adjustments */
-html[data-contrast="high"] {
+html[data-contrast="high"]:not(.dark) {
   --color-surface: #ffffff;
   --color-surface-secondary: #f5f3ee;
   --color-border: #78716c;
   --color-border-hover: #57534e;
   --color-text-primary: #0c0a09;
   --color-text-secondary: #1c1917;
+}
+
+html[data-contrast="high"].dark,
+html[data-contrast="high"] .dark {
+  --color-background: #000000;
+  --color-surface: #0a0a0c;
+  --color-surface-secondary: #121214;
+  --color-border: #3f3f46;
+  --color-border-hover: #52525b;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d4d4d8;
+  --color-text-tertiary: #a1a1aa;
 }
 
 /* UI Density Controls */

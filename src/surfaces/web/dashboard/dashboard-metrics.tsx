@@ -26,7 +26,7 @@ export function DashboardMetrics({
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="vt-window p-3.5 sm:p-4 bg-[#FFFFFF] space-y-2 h-full flex flex-col justify-between"
+            className="vt-window p-3.5 sm:p-4 bg-[#FFFFFF] dark:bg-[#18181B] space-y-2 h-full flex flex-col justify-between"
           >
             <Skeleton className="h-3 w-16" />
             <Skeleton className="h-7 w-12" />
@@ -79,26 +79,26 @@ export function DashboardMetrics({
           <Link
             key={item.label}
             href={item.href}
-            className="vt-window bg-[#FFFFFF] p-3.5 sm:p-4 hover:bg-[#FAF8F5] transition-all group flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-r-[#7A756D] border-b-[#7A756D]"
+            className="vt-window bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/80 transition-all group flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-r-[#7A756D] dark:border-r-[#09090B] border-b-[#7A756D] dark:border-b-[#09090B]"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold text-[#524B42] truncate">
+                <span className="text-[11px] font-bold text-[#524B42] dark:text-zinc-400 truncate">
                   {item.label}
                 </span>
-                <div className="w-6 h-6 bg-[#FAF8F5] border border-[#D6CEC4] flex items-center justify-center text-[#C2553A] group-hover:scale-105 transition-transform">
+                <div className="w-6 h-6 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 flex items-center justify-center text-[#C2553A] dark:text-brand-400 group-hover:scale-105 transition-transform">
                   <Icon className="w-3.5 h-3.5" />
                 </div>
               </div>
 
-              <div className="text-2xl sm:text-3xl font-black text-[#1C1917] tracking-tight">
+              <div className="text-2xl sm:text-3xl font-black text-[#1C1917] dark:text-zinc-100 tracking-tight">
                 {item.value}
               </div>
             </div>
 
-            <div className="mt-3 pt-2 border-t border-[#E5DDD5] flex items-center justify-between text-[10px] text-[#7A756D]">
+            <div className="mt-3 pt-2 border-t border-[#E5DDD5] dark:border-zinc-800 flex items-center justify-between text-[10px] text-[#7A756D] dark:text-zinc-400">
               <span>{item.hint}</span>
-              <ArrowRight className="w-3 h-3 text-[#C2553A] group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-[#C2553A] dark:text-brand-400 group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
         );

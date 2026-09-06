@@ -24,7 +24,7 @@ export function DashboardFocus({
 }: DashboardFocusProps) {
   if (loading) {
     return (
-      <div className="vt-window p-4 bg-[#FFFFFF] space-y-2.5">
+      <div className="vt-window p-4 bg-[#FFFFFF] dark:bg-[#18181B] space-y-2.5">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-3 w-1/2" />
@@ -40,23 +40,23 @@ export function DashboardFocus({
         icon={<Sparkles className="w-4 h-4 text-amber-200" />}
         statusText="STATUS: INITIALIZING FIRST MODULE"
         className="shadow-sm"
-        bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] text-[#1C1917] font-mono"
+        bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 font-mono"
       >
         <div className="flex items-start gap-3.5">
-          <div className="w-9 h-9 bg-[#FAF3EF] border border-[#C2553A]/30 flex items-center justify-center text-[#C2553A] shrink-0 mt-0.5">
+          <div className="w-9 h-9 bg-[#FAF3EF] dark:bg-brand-500/15 border border-[#C2553A]/30 dark:border-brand-500/30 flex items-center justify-center text-[#C2553A] dark:text-brand-400 shrink-0 mt-0.5">
             <Sparkles className="w-4 h-4" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-sm sm:text-base font-bold text-[#1C1917] font-sans">
+            <h2 className="text-sm sm:text-base font-bold text-[#1C1917] dark:text-zinc-100 font-sans">
               Mulai Susun Workspace Akademis Anda
             </h2>
-            <p className="text-xs sm:text-sm text-[#524B42] leading-relaxed max-w-2xl font-sans">
+            <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-2xl font-sans">
               Tambahkan modul perkuliahan semester ini, unggah slide dosen, atau buat daftar tugas agar seluruh bahan belajar terorganisir rapi.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap pt-3 mt-3 border-t border-[#E5DDD5]">
+        <div className="flex items-center gap-2.5 flex-wrap pt-3 mt-3 border-t border-[#E5DDD5] dark:border-zinc-800">
           <Link href="/dashboard/modul/baru">
             <button type="button" className="px-3.5 py-1.5 vt-btn-terracotta text-xs font-bold flex items-center gap-1.5 shadow-sm">
               <Plus className="w-3.5 h-3.5" />
@@ -65,13 +65,13 @@ export function DashboardFocus({
           </Link>
           <Link href="/dashboard/materi/baru">
             <button type="button" className="px-3 py-1.5 vt-btn-chrome text-xs font-semibold flex items-center gap-1.5">
-              <Upload className="w-3.5 h-3.5 text-[#C2553A]" />
+              <Upload className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
               <span>Unggah Materi</span>
             </button>
           </Link>
           <Link href="/dashboard/panduan">
             <button type="button" className="px-3 py-1.5 vt-btn-chrome text-xs font-semibold flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-[#C2553A]" />
+              <BookOpen className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
               <span>Panduan Penggunaan</span>
             </button>
           </Link>
@@ -96,35 +96,35 @@ export function DashboardFocus({
         icon={<Layers className="w-4 h-4 text-amber-200" />}
         statusText={`STATUS: IN PROGRESS · ${activeModule.category?.name || "UMUM"} · ${activeModule.kind === "project" ? "PROYEK" : "MODUL"}`}
         className="shadow-sm"
-        bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] text-[#1C1917] font-mono"
+        bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 font-mono"
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2 min-w-0">
             <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-xs font-bold text-[#C2553A]">
+              <span className="text-xs font-bold text-[#C2553A] dark:text-brand-400">
                 Fokus Belajar Aktif
               </span>
-              <span className="text-[#8A8378]">•</span>
-              <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917] text-[11px] font-bold">
+              <span className="text-[#8A8378] dark:text-zinc-500">•</span>
+              <span className="px-2 py-0.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 text-[11px] font-bold">
                 {activeModule.category?.name || "Umum"}
               </span>
-              <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917] text-[11px] font-bold">
+              <span className="px-2 py-0.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 text-[11px] font-bold">
                 {activeModule.kind === "project" ? "Proyek" : "Modul"}
               </span>
               {isUrgent && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 border border-amber-300">
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 border border-amber-300 dark:border-amber-700/50">
                   <AlertCircle className="w-3 h-3" />
                   <span>Tenggat tugas {days === 0 ? "hari ini" : "besok"}</span>
                 </span>
               )}
             </div>
 
-            <h2 className="text-base sm:text-xl font-bold text-[#1C1917] font-sans truncate">
+            <h2 className="text-base sm:text-xl font-bold text-[#1C1917] dark:text-zinc-100 font-sans truncate">
               {activeModule.title}
             </h2>
 
             {activeModule.description && (
-              <p className="text-xs sm:text-[13px] text-[#524B42] line-clamp-1 max-w-2xl font-sans">
+              <p className="text-xs sm:text-[13px] text-[#524B42] dark:text-zinc-400 line-clamp-1 max-w-2xl font-sans">
                 {activeModule.description}
               </p>
             )}
@@ -153,21 +153,21 @@ export function DashboardFocus({
         icon={<BookOpen className="w-4 h-4 text-amber-200" />}
         statusText="STATUS: LAST VIEWED MATERIAL"
         className="shadow-sm"
-        bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] text-[#1C1917] font-mono"
+        bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 font-mono"
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-xs font-bold text-[#C2553A]">
+              <span className="text-xs font-bold text-[#C2553A] dark:text-brand-400">
                 Materi Terakhir Dibuka
               </span>
-              <span className="text-[#8A8378]">•</span>
-              <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917] text-[11px] font-bold">
+              <span className="text-[#8A8378] dark:text-zinc-500">•</span>
+              <span className="px-2 py-0.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 text-[11px] font-bold">
                 {activeView.category?.name || "Bahan Ajar"}
               </span>
             </div>
 
-            <h2 className="text-base sm:text-xl font-bold text-[#1C1917] font-sans truncate">
+            <h2 className="text-base sm:text-xl font-bold text-[#1C1917] dark:text-zinc-100 font-sans truncate">
               {activeView.title}
             </h2>
           </div>

@@ -18,18 +18,18 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
       icon={<Sparkles className="w-4 h-4 text-amber-200" />}
       statusText="USER LOGGED IN · REPOSITORI & JADWAL DISINKRONISASI"
       className="shadow-sm"
-      bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] text-[#1C1917] flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono"
+      bodyClassName="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono"
     >
       <div className="space-y-1.5 font-mono">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30">
+          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-500/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30">
             WORKSPACE // DASHBOARD KULIAH
           </span>
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold font-sans text-[#1C1917] tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
           {displayName ? `Selamat datang kembali, ${displayName}.` : "Selamat datang di Velqora."}
         </h1>
-        <p className="text-xs text-[#524B42] leading-relaxed max-w-2xl font-sans">
+        <p className="text-xs text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-2xl font-sans">
           Lanjutkan modul perkuliahan aktif, pantau tenggat tugas semester, atau eksplorasi kode di playground.
         </p>
       </div>
@@ -51,7 +51,7 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
             type="button"
             className="px-3 py-1.5 vt-btn-chrome text-xs font-semibold flex items-center gap-1.5"
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#C2553A]" />
+            <BookOpen className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
             <span>Unggah Materi</span>
           </button>
         </Link>
@@ -61,7 +61,7 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
             type="button"
             className="px-3 py-1.5 vt-btn-chrome text-xs font-semibold flex items-center gap-1.5"
           >
-            <CheckSquare className="w-3.5 h-3.5 text-[#C2553A]" />
+            <CheckSquare className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
             <span>Buat Tugas</span>
           </button>
         </Link>

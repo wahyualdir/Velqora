@@ -17,19 +17,19 @@ export function SystemMonitorWindow() {
             title="SYSTEM_MONITOR.EXE"
             statusText="TELEMETRY 100% HEALTHY"
             className="flex-1 shadow-md"
-            bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] text-[#1C1917] flex flex-col justify-between"
+            bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 flex flex-col justify-between"
           >
             <div className="space-y-4">
               {/* Tag: 03 — ANGKA (Exact Vintec Learn) */}
-              <div className="text-xs font-mono text-[#C2553A] font-bold tracking-wider uppercase">
+              <div className="text-xs font-mono text-[#C2553A] dark:text-brand-400 font-bold tracking-wider uppercase">
                 03 — ANGKA
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
                 Dibangun untuk kejelasan.
               </h2>
 
-              <p className="text-xs sm:text-sm text-[#524B42] font-sans leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 font-sans leading-relaxed">
                 Bukan sekadar video tutorial yang ditonton sambil lalu. Diktat kurikulum mandiri dengan 
                 standar evaluasi komprehensif, latihan terstruktur, dan pembongkaran studi kasus nyata.
               </p>
@@ -37,43 +37,43 @@ export function SystemMonitorWindow() {
               {/* 3 Stat Progress Cards */}
               <div className="space-y-3 pt-2 font-mono">
                 {/* Stat 1 */}
-                <div className="p-3 bg-[#FAF8F5] border border-[#E5DDD5] rounded-xs space-y-1.5">
+                <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917]">12 MODUL TERSTANDARISASI</span>
-                    <span className="text-[#C2553A] font-bold">12 / 12 (100%)</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">12 MODUL TERSTANDARISASI</span>
+                    <span className="text-[#C2553A] dark:text-brand-400 font-bold">12 / 12 (100%)</span>
                   </div>
-                  <div className="w-full h-2 bg-[#E5DDD5] rounded-none overflow-hidden">
+                  <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#C2553A] w-full" />
                   </div>
-                  <div className="text-[10px] text-[#7A756D]">
+                  <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
                     Dari Client-Server HTTP hingga Containerization Docker &amp; CI/CD.
                   </div>
                 </div>
 
                 {/* Stat 2 */}
-                <div className="p-3 bg-[#FAF8F5] border border-[#E5DDD5] rounded-xs space-y-1.5">
+                <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917]">84 SOAL KUIS SIAP DIJALANKAN</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">84 SOAL KUIS SIAP DIJALANKAN</span>
                     <span className="text-[#10B981] font-bold">84 / 84 (100%)</span>
                   </div>
-                  <div className="w-full h-2 bg-[#E5DDD5] rounded-none overflow-hidden">
+                  <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#10B981] w-full" />
                   </div>
-                  <div className="text-[10px] text-[#7A756D]">
+                  <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
                     7 soal skenario analitis lengkap dengan kunci jawaban &amp; pembahasan rasional per modul.
                   </div>
                 </div>
 
                 {/* Stat 3 */}
-                <div className="p-3 bg-[#FAF8F5] border border-[#E5DDD5] rounded-xs space-y-1.5">
+                <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917]">100% AKSES SEUMUR HIDUP</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">100% AKSES SEUMUR HIDUP</span>
                     <span className="text-[#F59E0B] font-bold">LIFETIME</span>
                   </div>
-                  <div className="w-full h-2 bg-[#E5DDD5] rounded-none overflow-hidden">
+                  <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#F59E0B] w-full" />
                   </div>
-                  <div className="text-[10px] text-[#7A756D]">
+                  <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
                     Bebas diakses kapan pun untuk bahan referensi skripsi, magang, dan proyek industri.
                   </div>
                 </div>
@@ -81,19 +81,19 @@ export function SystemMonitorWindow() {
             </div>
 
             {/* Bottom Chips: SYSTEM_FEATURES.DLL */}
-            <div className="pt-4 mt-4 border-t border-[#E5DDD5] flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
+            <div className="pt-4 mt-4 border-t border-[#E5DDD5] dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917]">
+                <span className="px-2 py-0.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200">
                   ▦ Curated Paths
                 </span>
-                <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917]">
+                <span className="px-2 py-0.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200">
                   ▤ Premium Diktat
                 </span>
-                <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917]">
+                <span className="px-2 py-0.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200">
                   ◨ Zero Klise
                 </span>
               </div>
-              <span className="text-emerald-700 font-bold flex items-center gap-1">
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>◆ Verified Quality</span>
               </span>
@@ -109,31 +109,31 @@ export function SystemMonitorWindow() {
             title="VELQORA_COMPANION.EXE"
             statusText="APPLICATION · DESKTOP"
             className="flex-1 shadow-md"
-            bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] text-[#1C1917] flex flex-col justify-between"
+            bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 flex flex-col justify-between"
           >
             <div className="space-y-4 font-mono">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] text-[#C2553A] font-bold uppercase">
+                <span className="text-[11px] text-[#C2553A] dark:text-brand-400 font-bold uppercase">
                   COMPANION AGENT
                 </span>
-                <span className="text-[10px] text-[#7A756D] bg-[#FAF8F5] px-2 py-0.5 border border-[#E5DDD5]">
+                <span className="text-[10px] text-[#7A756D] dark:text-zinc-400 bg-[#FAF8F5] dark:bg-zinc-800 px-2 py-0.5 border border-[#E5DDD5] dark:border-zinc-700">
                   v1.0.0
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold font-sans text-[#1C1917] tracking-tight leading-snug">
+              <h3 className="text-xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight leading-snug">
                 Sinkronkan Latihan ke Terminal Lokal Anda.
               </h3>
 
-              <p className="text-xs text-[#524B42] font-sans leading-relaxed">
+              <p className="text-xs text-[#524B42] dark:text-zinc-400 font-sans leading-relaxed">
                 Jalankan tugas mandiri dan unit test Vitest langsung dari VS Code Anda. 
                 Velqora Companion mendeteksi eksekusi tes lokal dan mengirimkan skor kelulusan secara otomatis.
               </p>
 
               {/* Supported Platforms */}
-              <div className="p-3 bg-[#FAF8F5] border border-[#E5DDD5] space-y-2 text-xs">
-                <div className="text-[#1C1917] font-bold text-[11px]">Kompatibilitas Sistem:</div>
-                <div className="flex items-center gap-3 text-[#524B42] text-[11px]">
+              <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 space-y-2 text-xs">
+                <div className="text-[#1C1917] dark:text-zinc-100 font-bold text-[11px]">Kompatibilitas Sistem:</div>
+                <div className="flex items-center gap-3 text-[#524B42] dark:text-zinc-400 text-[11px]">
                   <span>Windows x64</span>
                   <span>•</span>
                   <span>macOS Apple Silicon</span>

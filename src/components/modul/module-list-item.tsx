@@ -263,11 +263,11 @@ export function ModuleListItem({
                 </span>
               </h4>
 
-              <div className="divide-y divide-[#7A756D]/20 border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF] overflow-hidden">
+              <div className="divide-y divide-[#7A756D]/20 dark:divide-zinc-800 border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] overflow-hidden">
                 {chapters.map((chapter, index) => (
                   <div
                     key={chapter.id || index}
-                    className="flex items-center justify-between p-2.5 sm:px-3 hover:bg-[#FAF8F5] transition-colors text-xs font-mono"
+                    className="flex items-center justify-between p-2.5 sm:px-3 hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/60 transition-colors text-xs font-mono"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <button
@@ -293,8 +293,8 @@ export function ModuleListItem({
                       <span
                         className={`truncate font-medium font-sans text-xs ${
                           chapter.is_completed
-                            ? "line-through text-[#8A8378]"
-                            : "text-[#1C1917]"
+                            ? "line-through text-[#8A8378] dark:text-zinc-500"
+                            : "text-[#1C1917] dark:text-zinc-100"
                         }`}
                       >
                         {index + 1}. {chapter.title}
@@ -302,7 +302,7 @@ export function ModuleListItem({
                     </div>
 
                     {chapter.duration_minutes && (
-                      <span className="text-[10.5px] font-mono text-[#8A8378] shrink-0">
+                      <span className="text-[10.5px] font-mono text-[#8A8378] dark:text-zinc-400 shrink-0">
                         {chapter.duration_minutes} mnt
                       </span>
                     )}
@@ -315,18 +315,18 @@ export function ModuleListItem({
           {/* 2. Attached Drive Files */}
           {driveFiles.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-[#853827] uppercase tracking-wider font-mono">
+              <h4 className="text-xs font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider font-mono">
                 Berkas & Lampiran Terkait ({driveFiles.length})
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {driveFiles.map((file) => (
                   <div
                     key={file.id}
-                    className="flex items-center justify-between p-2.5 border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF] hover:bg-[#FAF8F5] transition-colors text-xs font-mono"
+                    className="flex items-center justify-between p-2.5 border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/60 transition-colors text-xs font-mono"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <FileCode className="w-3.5 h-3.5 text-[#C2553A] shrink-0" />
-                      <span className="truncate text-[#1C1917] font-medium font-sans">
+                      <FileCode className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400 shrink-0" />
+                      <span className="truncate text-[#1C1917] dark:text-zinc-100 font-medium font-sans">
                         {file.name}
                       </span>
                     </div>

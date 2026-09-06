@@ -87,23 +87,23 @@ export default function ResetPasswordPage() {
             </div>
 
             {/* Retro Window Menu Bar */}
-            <div className="px-3 py-1 bg-[#ECE9D8] border-b border-[#7A756D] flex items-center gap-3 text-[11px] font-mono text-[#1C1917] select-none">
+            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-b border-[#7A756D] dark:border-zinc-800 flex items-center gap-3 text-[11px] font-mono text-[#1C1917] dark:text-zinc-300 select-none">
               <span className="cursor-pointer hover:underline">File</span>
               <span className="cursor-pointer hover:underline">Security</span>
               <span className="cursor-pointer hover:underline">Help</span>
             </div>
 
             {/* Inner Content Body */}
-            <div className="p-5 sm:p-6 bg-[#FAF8F5] space-y-4">
+            <div className="p-5 sm:p-6 bg-[#FAF8F5] dark:bg-[#141416] space-y-4">
               {/* Header Title & Subtitle */}
               <div className="space-y-1.5 text-center">
-                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] text-[#C2553A] border border-[#C2553A]/30">
+                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-950/40 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30">
                   SECURITY // PASSWORD RECOVERY
                 </div>
-                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight font-sans">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-zinc-100 tracking-tight font-sans">
                   {isSuccess ? "Password Diperbarui!" : "Buat Password Baru"}
                 </h1>
-                <p className="text-xs text-[#524B42] leading-relaxed max-w-xs mx-auto font-sans">
+                <p className="text-xs text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-xs mx-auto font-sans">
                   {isSuccess
                     ? "Password Anda berhasil diubah. Mengalihkan ke halaman login..."
                     : "Masukkan password baru akun Anda di bawah ini"}
@@ -112,8 +112,8 @@ export default function ResetPasswordPage() {
 
               {isSuccess ? (
                 <div className="space-y-3.5 text-center py-2 animate-fade-in">
-                  <div className="p-3.5 border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF] text-emerald-800 text-xs sm:text-sm leading-relaxed flex items-center justify-center gap-2 font-mono">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <div className="p-3.5 border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214] text-emerald-800 dark:text-emerald-400 text-xs sm:text-sm leading-relaxed flex items-center justify-center gap-2 font-mono">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>Kata sandi akun Anda telah diperbarui dengan aman.</span>
                   </div>
                   <button
@@ -128,11 +128,11 @@ export default function ResetPasswordPage() {
                 <form onSubmit={handleUpdatePassword} className="space-y-3.5 pt-1">
                   {/* Password Baru */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                    <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
                       Password Baru
                     </label>
-                    <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
-                      <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                    <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
+                      <Lock className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
                       <input
                         type={showPassword ? "text" : "password"}
                         value={password}
@@ -142,12 +142,12 @@ export default function ResetPasswordPage() {
                         placeholder="Minimal 6 karakter"
                         disabled={loading}
                         required
-                        className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                        className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2.5 p-1 text-[#8A8378] hover:text-[#1C1917] cursor-pointer"
+                        className="absolute right-2.5 p-1 text-[#8A8378] dark:text-zinc-500 hover:text-[#1C1917] dark:hover:text-zinc-200 cursor-pointer"
                         tabIndex={-1}
                       >
                         {showPassword ? (
@@ -161,11 +161,11 @@ export default function ResetPasswordPage() {
 
                   {/* Konfirmasi Password */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-mono font-bold text-[#853827] uppercase tracking-wider block">
+                    <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
                       Konfirmasi Password
                     </label>
-                    <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] bg-[#FFFFFF]">
-                      <Lock className="absolute left-3 w-4 h-4 text-[#8A8378]" />
+                    <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
+                      <Lock className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
                       <input
                         type={showPassword ? "text" : "password"}
                         value={confirmPassword}
@@ -175,7 +175,7 @@ export default function ResetPasswordPage() {
                         placeholder="Ulangi password baru"
                         disabled={loading}
                         required
-                        className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] placeholder:text-[#8A8378] focus:outline-hidden disabled:opacity-50 font-medium"
+                        className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
                       />
                     </div>
                   </div>
@@ -205,21 +205,21 @@ export default function ResetPasswordPage() {
             </div>
 
             {/* Retro Inset Status Bar */}
-            <div className="px-3 py-1 bg-[#ECE9D8] border-t-2 border-[#FFFFFF] flex items-center justify-between text-[11px] font-mono text-[#524B42] select-none">
+            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t-2 border-[#FFFFFF] dark:border-t-zinc-800 flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-zinc-400 select-none">
               <span className="flex items-center gap-1.5 truncate">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 {loading ? "UPDATING CREDENTIALS..." : "SYSTEM READY · RECOVERY SECURE"}
               </span>
-              <span className="text-[#8A8378] hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
+              <span className="text-[#8A8378] dark:text-zinc-500 hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
             </div>
           </div>
 
           {/* Secondary Switcher Box */}
-          <div className="vt-window rounded-none p-3 text-center text-xs font-mono text-[#524B42] bg-[#FAF8F5] shadow-xs">
+          <div className="vt-window rounded-none p-3 text-center text-xs font-mono text-[#524B42] dark:text-zinc-400 bg-[#FAF8F5] dark:bg-[#141416] shadow-xs">
             Batal pemulihan?{" "}
             <Link
               href="/login"
-              className="font-bold text-[#C2553A] hover:underline inline-flex items-center gap-1"
+              className="font-bold text-[#C2553A] dark:text-brand-400 hover:underline inline-flex items-center gap-1"
             >
               <span>Kembali ke Halaman Masuk ▸</span>
             </Link>

@@ -113,14 +113,14 @@ export function CurriculumExplorer() {
         icon={<Folder className="w-4 h-4 text-amber-200" />}
         statusText="4 object(s) | 12 modul lengkap | My Computer"
         className="shadow-md"
-        bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] text-[#1C1917]"
+        bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100"
       >
         {/* Windows Explorer Address Bar (Exact Vintec Learn) */}
-        <div className="flex items-center gap-2 pb-4 mb-4 border-b border-[#E5DDD5] font-mono text-xs select-none">
-          <span className="text-[#6B6560] font-bold">Address</span>
-          <div className="flex-1 px-3 py-1 bg-[#FAF8F5] border border-[#D6CEC4] text-[#1C1917] font-bold flex items-center justify-between">
+        <div className="flex items-center gap-2 pb-4 mb-4 border-b border-[#E5DDD5] dark:border-zinc-800 font-mono text-xs select-none">
+          <span className="text-[#6B6560] dark:text-zinc-400 font-bold">Address</span>
+          <div className="flex-1 px-3 py-1 bg-[#FAF8F5] dark:bg-[#1a1a1e] border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 font-bold flex items-center justify-between">
             <span>C:\Velqora\Koleksi\</span>
-            <span className="text-[10px] text-[#A89F91]">EXPLORER</span>
+            <span className="text-[10px] text-[#A89F91] dark:text-zinc-500">EXPLORER</span>
           </div>
           <button
             type="button"
@@ -135,10 +135,10 @@ export function CurriculumExplorer() {
           <div className="text-xs text-[#C2553A] font-bold tracking-wider uppercase">
             02 — KURIKULUM · 4 DARI 12 MODUL
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
             Koleksi untuk kerja nyata.
           </h2>
-          <p className="text-xs sm:text-sm text-[#524B42] font-sans max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 font-sans max-w-2xl leading-relaxed">
             Dari fondasi protokol web hingga kontainerisasi aplikasi ke server produksi. 
             Disusun bertahap mengikuti kurikulum baku perkuliahan.
           </p>
@@ -150,21 +150,21 @@ export function CurriculumExplorer() {
             <div
               key={col.id}
               onClick={() => setSelectedCollection(col)}
-              className="p-4 bg-[#FAF8F5] border-2 border-t-[#FFFFFF] border-l-[#FFFFFF] border-r-[#C5BCB0] border-b-[#C5BCB0] flex flex-col justify-between hover:bg-[#F5EFEB] transition-all cursor-pointer group shadow-xs hover:shadow-md"
+              className="p-4 bg-[#FAF8F5] dark:bg-[#18181b] border-2 border-t-[#FFFFFF] dark:border-t-zinc-700 border-l-[#FFFFFF] dark:border-l-zinc-700 border-r-[#C5BCB0] dark:border-r-zinc-900 border-b-[#C5BCB0] dark:border-b-zinc-900 flex flex-col justify-between hover:bg-[#F5EFEB] dark:hover:bg-[#202024] transition-all cursor-pointer group shadow-xs hover:shadow-md"
             >
               <div>
                 <div className="text-[10px] font-mono font-bold text-[#C2553A] tracking-wider mb-2">
                   {col.tag}
                 </div>
-                <h3 className="text-sm font-bold font-sans text-[#1C1917] group-hover:text-[#C2553A] transition-colors leading-snug">
+                <h3 className="text-sm font-bold font-sans text-[#1C1917] dark:text-zinc-100 group-hover:text-[#C2553A] transition-colors leading-snug">
                   {col.title}
                 </h3>
-                <p className="text-xs text-[#524B42] mt-2 font-sans line-clamp-3 leading-relaxed">
+                <p className="text-xs text-[#524B42] dark:text-zinc-400 mt-2 font-sans line-clamp-3 leading-relaxed">
                   {col.description}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-[#E5DDD5] font-mono text-xs flex items-center justify-between text-[#C2553A] font-bold group-hover:translate-x-0.5 transition-transform">
+              <div className="mt-4 pt-3 border-t border-[#E5DDD5] dark:border-zinc-800 font-mono text-xs flex items-center justify-between text-[#C2553A] font-bold group-hover:translate-x-0.5 transition-transform">
                 <span className="text-[11px]">{col.lessonCount}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </div>
@@ -173,7 +173,7 @@ export function CurriculumExplorer() {
         </div>
 
         {/* Bottom Action: Lihat semua 12 modul ▸ */}
-        <div className="mt-6 pt-4 border-t border-[#E5DDD5] flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-6 pt-4 border-t border-[#E5DDD5] dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setShowAllModal(true)}
@@ -183,7 +183,7 @@ export function CurriculumExplorer() {
             <span>▸</span>
           </button>
 
-          <span className="text-xs font-mono text-[#7A756D]">
+          <span className="text-xs font-mono text-[#7A756D] dark:text-zinc-400">
             Seluruh berkas markdown tersedia di <code>docs/modul/</code>
           </span>
         </div>
@@ -206,28 +206,28 @@ export function CurriculumExplorer() {
               </button>
             </div>
 
-            <div className="p-5 bg-[#FFFFFF] text-[#1C1917] font-mono text-xs space-y-3 max-h-[75vh] overflow-y-auto">
+            <div className="p-5 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 font-mono text-xs space-y-3 max-h-[75vh] overflow-y-auto">
               <div className="text-xs text-[#C2553A] font-bold">
                 KURIKULUM RESMI (36 SKS TOTAL · LEVEL ENTERPRISE)
               </div>
 
-              <div className="space-y-2 divide-y divide-[#E5DDD5]">
+              <div className="space-y-2 divide-y divide-[#E5DDD5] dark:divide-zinc-800">
                 {ALL_12_MODULES.map((m) => (
                   <div key={m.id} className="pt-2 flex items-start justify-between gap-3">
                     <div className="flex items-start gap-2">
                       <span className="font-bold text-[#C2553A] min-w-[24px]">
                         [{m.id}]
                       </span>
-                      <span className="text-[#1C1917] font-semibold">{m.title}</span>
+                      <span className="text-[#1C1917] dark:text-zinc-200 font-semibold">{m.title}</span>
                     </div>
-                    <span className="text-[10px] text-[#7A756D] whitespace-nowrap bg-[#FAF8F5] px-2 py-0.5 border border-[#E5DDD5]">
+                    <span className="text-[10px] text-[#7A756D] dark:text-zinc-400 whitespace-nowrap bg-[#FAF8F5] dark:bg-zinc-800/80 px-2 py-0.5 border border-[#E5DDD5] dark:border-zinc-700">
                       {m.dur}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-4 border-t border-[#E5DDD5] flex justify-end gap-2">
+              <div className="pt-4 border-t border-[#E5DDD5] dark:border-zinc-800 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAllModal(false)}
@@ -265,24 +265,24 @@ export function CurriculumExplorer() {
               </button>
             </div>
 
-            <div className="p-5 bg-[#FFFFFF] text-[#1C1917] font-mono text-xs space-y-4">
+            <div className="p-5 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 font-mono text-xs space-y-4">
               <div>
                 <span className="text-[10px] text-[#C2553A] font-bold">KOLEKSI PEMBELAJARAN</span>
-                <h3 className="text-base font-bold text-[#1C1917] mt-1">{selectedCollection.title}</h3>
-                <p className="text-xs text-[#524B42] mt-2 leading-relaxed">{selectedCollection.description}</p>
+                <h3 className="text-base font-bold text-[#1C1917] dark:text-zinc-100 mt-1">{selectedCollection.title}</h3>
+                <p className="text-xs text-[#524B42] dark:text-zinc-400 mt-2 leading-relaxed">{selectedCollection.description}</p>
               </div>
 
-              <div className="space-y-1.5 bg-[#FAF8F5] p-3 border border-[#E5DDD5] rounded-xs">
+              <div className="space-y-1.5 bg-[#FAF8F5] dark:bg-[#1a1a1e] p-3 border border-[#E5DDD5] dark:border-zinc-700 rounded-xs">
                 <div className="font-bold text-[#C2553A] text-[11px] mb-1">Modul yang Termasuk:</div>
                 {selectedCollection.modulesIncluded.map((modTitle, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-slate-700 text-xs">
+                  <div key={idx} className="flex items-center gap-2 text-slate-700 dark:text-zinc-300 text-xs">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                     <span>{modTitle}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-2 flex justify-end gap-2 border-t border-[#E5DDD5]">
+              <div className="pt-2 flex justify-end gap-2 border-t border-[#E5DDD5] dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setSelectedCollection(null)}
