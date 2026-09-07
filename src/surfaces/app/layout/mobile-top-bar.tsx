@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Search, Menu } from "lucide-react";
+import { ArrowLeft, Search, Menu, Sun, Moon } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 interface MobileTopBarProps {
@@ -26,6 +27,13 @@ export function MobileTopBar({
 }: MobileTopBarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isDashboardHome = pathname === "/dashboard" || pathname === "/";
   const shouldShowBack = showBack !== undefined ? showBack : !isDashboardHome;
 
@@ -96,6 +104,22 @@ export function MobileTopBar({
                   className="h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:scale-95 transition-all cursor-pointer"
                 >
                   <Search className="w-4 h-4" />
+                </button>
+              )}
+
+              {mounted && (
+                <button
+                  type="button"
+                  onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                  aria-label="Ganti Tema"
+                  className="h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-secondary active:scale-95 transition-all cursor-pointer"
+                  title={resolvedTheme === "dark" ? "Mode Terang" : "Mode Gelap"}
+                >
+                  {resolvedTheme === "dark" ? (
+                    <Sun className="w-4 h-4 text-amber-400" />
+                  ) : (
+                    <Moon className="w-4 h-4 text-brand-600" />
+                  )}
                 </button>
               )}
 

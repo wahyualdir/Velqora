@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Command, Crown, Download, CheckCircle2, Menu } from "lucide-react";
+import { Search, Command, Crown, Download, CheckCircle2, Menu, Sun, Moon } from "lucide-react";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
 import { useExperience } from "@/context/experience-context";
 import { useLanguage } from "@/context/language-context";
+import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { isAdminUser, cn } from "@/lib/utils";
 
@@ -27,6 +28,16 @@ export function DesktopTopBar({
   const [isAdmin, setIsAdmin] = useState(false);
   const { t } = useLanguage();
   const { isPwaStandalone, canInstallPwa, promptInstallPwa } = useExperience();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
 
   useEffect(() => {
     async function checkAdminStatus() {
@@ -143,6 +154,23 @@ export function DesktopTopBar({
               {t("statusOnline")}
             </span>
           </div>
+
+          {/* Quick Theme Switcher (Matahari / Bulan) */}
+          {mounted && (
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="vt-btn-chrome h-8 w-8 min-w-[32px] flex items-center justify-center cursor-pointer text-[#1C1917] dark:text-[#F4F4F5]"
+              title={resolvedTheme === "dark" ? "Beralih ke Mode Terang (Light)" : "Beralih ke Mode Gelap (Dark)"}
+              aria-label="Ganti Tema"
+            >
+              {resolvedTheme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-[#853827]" />
+              )}
+            </button>
+          )}
 
           {/* Notifications Center */}
           <div className="vt-btn-chrome h-8 flex items-center justify-center px-1">
