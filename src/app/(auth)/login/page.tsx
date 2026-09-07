@@ -16,7 +16,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { TechBackground } from "@/components/ui/tech-background";
 import { VelqoraMark } from "@/components/ui/logo";
-import { WalkingCat } from "@/components/ui/walking-cat";
+import { MonsterCompanion } from "@/components/ui/monster-companion";
 import { DoorSubmitButton } from "@/components/ui/door-submit-button";
 import { RetroLoadingDialog } from "@/components/ui/retro-loading-dialog";
 import { isOwnerUser } from "@/lib/utils";
@@ -522,8 +522,8 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* 🐾 Walking Cat Easter Egg */}
-              <WalkingCat />
+              {/* 👾 Monster Companion: Walking Sulley & Stationary Greeting Blinking Mike */}
+              <MonsterCompanion focusedField={focusedField} loading={loading} />
             </div>
 
             {/* Retro Inset Status Bar */}
