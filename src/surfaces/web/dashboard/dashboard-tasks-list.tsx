@@ -4,8 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { CheckSquare, ArrowRight, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { daysUntilDeadline } from "@/lib/utils";
+import { OSWindow } from "@/components/os/os-window";
 
 interface DashboardTasksListProps {
   loading: boolean;
@@ -14,46 +14,53 @@ interface DashboardTasksListProps {
 
 export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) {
   return (
-    <div className="rounded-2xl border border-border bg-surface overflow-hidden shadow-2xs">
-      <div className="p-4 sm:px-5 bg-surface-secondary/40 border-b border-border flex items-center justify-between select-none">
-        <span className="font-bold text-sm text-text-primary flex items-center gap-2 font-display">
-          <div className="w-7 h-7 rounded-lg bg-brand-500/10 text-brand-600 flex items-center justify-center">
-            <CheckSquare className="w-4 h-4" />
-          </div>
+    <OSWindow
+      title="TASKS_MONITOR.EXE — DAFTAR TUGAS"
+      icon={<CheckSquare className="w-4 h-4 text-amber-200" />}
+      statusText={`${tasks.length} TUGAS TERJADWAL`}
+      className="shadow-sm"
+      bodyClassName="p-0 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100"
+    >
+      <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border-b border-[#E5DDD5] dark:border-zinc-800 flex items-center justify-between font-mono text-xs select-none">
+        <span className="font-bold text-[#1C1917] dark:text-zinc-100 flex items-center gap-1.5">
+          <CheckSquare className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
           <span>Tugas &amp; Tenggat</span>
         </span>
         <Link
           href="/dashboard/tugas"
-          className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 transition-colors flex items-center gap-1"
+          className="text-xs font-bold text-[#C2553A] dark:text-brand-400 hover:text-[#B84A2B] dark:hover:text-brand-300 transition-colors flex items-center gap-1"
         >
           <span>Kelola</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
 
       {loading ? (
-        <div className="p-4 space-y-2.5">
-          <Skeleton className="h-12 rounded-xl" />
-          <Skeleton className="h-12 rounded-xl" />
-          <Skeleton className="h-12 rounded-xl" />
+        <div className="p-3 space-y-2">
+          <Skeleton className="h-12 rounded-none" />
+          <Skeleton className="h-12 rounded-none" />
+          <Skeleton className="h-12 rounded-none" />
         </div>
       ) : tasks.length === 0 ? (
-        <div className="p-6 text-center space-y-2">
-          <p className="text-xs font-bold text-text-primary">Semua tugas telah selesai.</p>
-          <p className="text-xs text-text-secondary">
+        <div className="p-5 text-center space-y-2 font-mono">
+          <p className="text-xs font-bold text-[#1C1917] dark:text-zinc-100">Semua tugas telah selesai.</p>
+          <p className="text-[11px] text-[#7A756D] dark:text-zinc-400">
             Tidak ada tenggat waktu mendesak yang menunggu dikerjakan.
           </p>
           <div className="pt-2">
             <Link href="/dashboard/tugas/baru">
-              <Button size="sm" variant="outline" className="gap-1.5 text-xs font-semibold mx-auto">
-                <Plus className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                <span>Tambah Tugas</span>
-              </Button>
+              <button
+                type="button"
+                className="px-3.5 py-1.5 vt-btn-chrome text-xs font-bold flex items-center gap-1.5 mx-auto"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
+                <span>+ Tambah Tugas</span>
+              </button>
             </Link>
           </div>
         </div>
       ) : (
-        <div className="divide-y divide-border/60">
+        <div className="divide-y divide-[#E5DDD5] dark:divide-zinc-800 font-mono">
           {tasks.map((task) => {
             const days = task.deadline ? daysUntilDeadline(task.deadline) : null;
             const isUrgent = days !== null && days <= 2 && days >= 0;
@@ -63,22 +70,22 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
               <Link
                 key={task.id}
                 href="/dashboard/tugas"
-                className="group block p-3.5 sm:px-4 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors"
+                className="group block p-3 sm:px-3.5 hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/60 transition-colors"
               >
-                <div className="space-y-1.5">
+                <div className="space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-primary text-[10.5px] font-semibold uppercase">
+                    <span className="px-1.5 py-0.2 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 text-[10px] font-bold uppercase">
                       {task.priority || "Normal"}
                     </span>
 
                     {task.deadline && (
                       <span
-                        className={`text-[11px] font-bold font-mono ${
+                        className={`text-[10px] font-bold font-mono ${
                           isLate
-                            ? "text-rose-600 dark:text-rose-400"
+                            ? "text-red-600 dark:text-red-400"
                             : isUrgent
                             ? "text-amber-600 dark:text-amber-400"
-                            : "text-text-tertiary"
+                            : "text-[#7A756D] dark:text-zinc-400"
                         }`}
                       >
                         {isLate
@@ -89,10 +96,10 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
+                  <h3 className="text-xs font-bold font-sans text-[#1C1917] dark:text-zinc-100 group-hover:text-[#C2553A] dark:group-hover:text-brand-400 transition-colors truncate">
                     {task.title}
                   </h3>
-                  <p className="text-xs text-text-secondary truncate">
+                  <p className="text-[11px] text-[#524B42] dark:text-zinc-400 truncate font-sans">
                     {task.subject || "Tugas Mandiri"}
                   </p>
                 </div>
@@ -101,6 +108,6 @@ export function DashboardTasksList({ loading, tasks }: DashboardTasksListProps) 
           })}
         </div>
       )}
-    </div>
+    </OSWindow>
   );
 }

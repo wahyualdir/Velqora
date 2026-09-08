@@ -26,10 +26,10 @@ export function DashboardMetrics({
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="rounded-2xl border border-border bg-surface p-4 sm:p-5 space-y-3 shadow-2xs h-full flex flex-col justify-between"
+            className="vt-window p-3.5 sm:p-4 bg-[#FFFFFF] dark:bg-[#18181B] space-y-2 h-full flex flex-col justify-between"
           >
-            <Skeleton className="h-4 w-20 rounded-md" />
-            <Skeleton className="h-8 w-14 rounded-lg" />
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-7 w-12" />
           </div>
         ))}
       </div>
@@ -43,9 +43,7 @@ export function DashboardMetrics({
       href: "/dashboard/modul",
       icon: Layers,
       hint: "Kurikulum aktif",
-      color: "text-brand-600 dark:text-brand-400",
-      bg: "bg-brand-500/10",
-      border: "border-brand-500/20",
+      accent: "#C2553A",
     },
     {
       label: "Bahan Materi",
@@ -53,9 +51,7 @@ export function DashboardMetrics({
       href: "/dashboard/materi",
       icon: BookOpen,
       hint: "Diktat & slide",
-      color: "text-brand-600 dark:text-brand-400",
-      bg: "bg-brand-500/10",
-      border: "border-brand-500/20",
+      accent: "#C2553A",
     },
     {
       label: "Tugas Aktif",
@@ -63,9 +59,7 @@ export function DashboardMetrics({
       href: "/dashboard/tugas",
       icon: CheckSquare,
       hint: "Menunggu tuntas",
-      color: "text-amber-600 dark:text-amber-400",
-      bg: "bg-amber-500/10",
-      border: "border-amber-500/20",
+      accent: "#F59E0B",
     },
     {
       label: "Berkas Tersimpan",
@@ -73,40 +67,38 @@ export function DashboardMetrics({
       href: "/dashboard/file",
       icon: Files,
       hint: "Arsip dokumen",
-      color: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-emerald-500/10",
-      border: "border-emerald-500/20",
+      accent: "#10B981",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-fr select-none">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-fr select-none font-mono">
       {metrics.map((item) => {
         const Icon = item.icon;
         return (
           <Link
             key={item.label}
             href={item.href}
-            className="rounded-2xl border border-border bg-surface p-4 sm:p-5 hover:border-brand-500/40 hover:bg-surface-secondary/40 transition-all group flex flex-col justify-between shadow-2xs hover:shadow-xs cursor-pointer"
+            className="vt-window bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/80 transition-all group flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-r-[#7A756D] dark:border-r-[#09090B] border-b-[#7A756D] dark:border-b-[#09090B]"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-text-secondary truncate">
+                <span className="text-[11px] font-bold text-[#524B42] dark:text-zinc-400 truncate">
                   {item.label}
                 </span>
-                <div className={`w-8 h-8 rounded-xl ${item.bg} border ${item.border} flex items-center justify-center ${item.color} group-hover:scale-105 transition-transform`}>
-                  <Icon className="w-4 h-4" />
+                <div className="w-6 h-6 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 flex items-center justify-center text-[#C2553A] dark:text-brand-400 group-hover:scale-105 transition-transform">
+                  <Icon className="w-3.5 h-3.5" />
                 </div>
               </div>
 
-              <div className="text-2xl sm:text-3xl font-bold font-mono text-text-primary tracking-tight">
+              <div className="text-2xl sm:text-3xl font-black text-[#1C1917] dark:text-zinc-100 tracking-tight">
                 {item.value}
               </div>
             </div>
 
-            <div className="mt-3 pt-2.5 border-t border-border/60 flex items-center justify-between text-[11px] text-text-tertiary">
+            <div className="mt-3 pt-2 border-t border-[#E5DDD5] dark:border-zinc-800 flex items-center justify-between text-[10px] text-[#7A756D] dark:text-zinc-400">
               <span>{item.hint}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-[#C2553A] dark:text-brand-400 group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
         );
