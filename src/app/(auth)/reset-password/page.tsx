@@ -94,7 +94,7 @@ export default function ResetPasswordPage() {
             </div>
 
             {/* Inner Content Body */}
-            <div className="p-5 sm:p-6 bg-[#FAF8F5] dark:bg-[#141416] space-y-4">
+            <div className="p-3.5 sm:p-6 bg-[#FAF8F5] dark:bg-[#141416] space-y-4">
               {/* Header Title & Subtitle */}
               <div className="space-y-1.5 text-center">
                 <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-950/40 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30">

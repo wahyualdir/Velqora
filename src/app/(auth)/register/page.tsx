@@ -242,7 +242,7 @@ export default function RegisterPage() {
       <TechBackground />
 
       {/* Main Single Centered Retro OS Window Register Layout */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 w-full">
+      <main className="flex-1 flex flex-col items-center justify-center px-3.5 sm:px-6 py-8 sm:py-12 z-10 w-full">
         <div className="w-full max-w-[440px] mx-auto text-left space-y-3">
 
           {/* Primary Window: REGISTER.EXE */}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Layers, ChevronRight, ArrowRight, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { OSWindow } from "@/components/os/os-window";
+import { Button } from "@/components/ui/button";
 
 interface DashboardModulesListProps {
   loading: boolean;
@@ -14,32 +14,28 @@ interface DashboardModulesListProps {
 
 export function DashboardModulesList({ loading, modules }: DashboardModulesListProps) {
   return (
-    <OSWindow
-      title="MODULES_EXPLORER.EXE — KURIKULUM SEDANG DIPELAJARI"
-      icon={<Layers className="w-4 h-4 text-amber-200" />}
-      statusText={`${modules.length} MODUL AKTIF · DOUBLE-CLICK ATAU KLIK UNTUK MEMBUKA`}
-      className="shadow-sm"
-      bodyClassName="p-0 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100"
-    >
-      <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border-b border-[#E5DDD5] dark:border-zinc-800 flex items-center justify-between font-mono text-xs select-none">
-        <span className="font-bold text-[#1C1917] dark:text-zinc-100 flex items-center gap-1.5">
-          <Layers className="w-3.5 h-3.5 text-[#C2553A] dark:text-brand-400" />
+    <div className="rounded-2xl border border-border bg-surface overflow-hidden shadow-2xs">
+      <div className="p-4 sm:px-5 bg-surface-secondary/40 border-b border-border flex items-center justify-between select-none">
+        <span className="font-bold text-sm text-text-primary flex items-center gap-2 font-display">
+          <div className="w-7 h-7 rounded-lg bg-brand-500/10 text-brand-600 flex items-center justify-center">
+            <Layers className="w-4 h-4" />
+          </div>
           <span>Daftar Modul Kuliah</span>
         </span>
         <Link
           href="/dashboard/modul"
-          className="text-xs font-bold text-[#C2553A] dark:text-brand-400 hover:text-[#B84A2B] dark:hover:text-brand-300 transition-colors flex items-center gap-1"
+          className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 transition-colors flex items-center gap-1"
         >
           <span>Semua Modul</span>
-          <ArrowRight className="w-3 h-3" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
 
       {loading ? (
-        <div className="p-3 space-y-2">
-          <Skeleton className="h-14 rounded-none" />
-          <Skeleton className="h-14 rounded-none" />
-          <Skeleton className="h-14 rounded-none" />
+        <div className="p-4 space-y-2.5">
+          <Skeleton className="h-14 rounded-xl" />
+          <Skeleton className="h-14 rounded-xl" />
+          <Skeleton className="h-14 rounded-xl" />
         </div>
       ) : modules.length === 0 ? (
         <div className="p-6">
@@ -49,44 +45,41 @@ export function DashboardModulesList({ loading, modules }: DashboardModulesListP
             description="Simpan materi atau proyek yang sedang Anda pelajari agar terstruktur dan mudah dilanjutkan."
             action={
               <Link href="/dashboard/modul/baru">
-                <button
-                  type="button"
-                  className="px-3.5 py-1.5 vt-btn-terracotta text-xs font-bold flex items-center gap-1.5 shadow-sm"
-                >
+                <Button size="sm" className="gap-1.5 text-xs font-semibold shadow-2xs">
                   <Plus className="w-3.5 h-3.5" />
                   <span>Tambah Modul</span>
-                </button>
+                </Button>
               </Link>
             }
           />
         </div>
       ) : (
-        <div className="divide-y divide-[#E5DDD5] dark:divide-zinc-800 font-mono">
+        <div className="divide-y divide-border/60">
           {modules.map((mod) => (
             <Link
               key={mod.id}
               href={`/dashboard/modul?module=${mod.id}`}
-              className="group flex items-center justify-between p-3 sm:px-4 hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/60 transition-colors"
+              className="group flex items-center justify-between p-3.5 sm:px-5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors"
             >
               <div className="space-y-1 min-w-0 flex-1 pr-3">
                 <div className="flex items-center gap-2 flex-wrap text-xs">
-                  <span className="px-1.5 py-0.2 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-md bg-surface-secondary border border-border text-text-primary text-[10.5px] font-medium">
                     {mod.category?.name || "Umum"}
                   </span>
-                  <span className="text-[10px] text-[#7A756D] dark:text-zinc-400">
+                  <span className="text-[11px] text-text-tertiary">
                     {mod.kind === "project" ? "Proyek Kode" : "Modul Belajar"}
                   </span>
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold font-sans text-[#1C1917] dark:text-zinc-100 group-hover:text-[#C2553A] dark:group-hover:text-brand-400 transition-colors leading-snug truncate">
+                <h3 className="text-xs sm:text-sm font-bold text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors leading-snug truncate">
                   {mod.title}
                 </h3>
                 {mod.description && (
-                  <p className="text-[11px] text-[#524B42] dark:text-zinc-400 truncate max-w-xl font-sans">
+                  <p className="text-xs text-text-secondary truncate max-w-xl">
                     {mod.description}
                   </p>
                 )}
               </div>
-              <div className="shrink-0 flex items-center gap-1 text-xs font-bold text-[#C2553A] dark:text-brand-400 group-hover:translate-x-0.5 transition-transform">
+              <div className="shrink-0 flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-400 group-hover:translate-x-0.5 transition-transform">
                 <span className="hidden sm:inline">Buka</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
@@ -94,6 +87,6 @@ export function DashboardModulesList({ loading, modules }: DashboardModulesListP
           ))}
         </div>
       )}
-    </OSWindow>
+    </div>
   );
 }

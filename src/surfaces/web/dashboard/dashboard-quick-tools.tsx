@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { Code2, Bot, BrainCircuit, ScanLine, ChevronRight, Wrench } from "lucide-react";
-import { OSWindow } from "@/components/os/os-window";
 
 export function DashboardQuickTools() {
   const tools = [
@@ -34,44 +33,43 @@ export function DashboardQuickTools() {
   ];
 
   return (
-    <OSWindow
-      title="QUICK_TOOLS.DLL — ALAT PRAKTIK"
-      icon={<Wrench className="w-4 h-4 text-amber-200" />}
-      statusText="4 UTILITIES READY"
-      className="shadow-sm"
-      bodyClassName="p-0 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100"
-    >
-      <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border-b border-[#E5DDD5] dark:border-zinc-800 font-mono text-xs font-bold text-[#1C1917] dark:text-zinc-100 select-none">
-        Alat Praktik &amp; Utilitas
+    <div className="rounded-2xl border border-border bg-surface overflow-hidden shadow-2xs">
+      <div className="p-4 sm:px-5 bg-surface-secondary/40 border-b border-border flex items-center justify-between select-none">
+        <span className="font-bold text-sm text-text-primary flex items-center gap-2 font-display">
+          <div className="w-7 h-7 rounded-lg bg-brand-500/10 text-brand-600 flex items-center justify-center">
+            <Wrench className="w-4 h-4" />
+          </div>
+          <span>Alat Praktik &amp; Utilitas</span>
+        </span>
       </div>
 
-      <div className="divide-y divide-[#E5DDD5] dark:divide-zinc-800 font-mono">
+      <div className="divide-y divide-border/60">
         {tools.map((tool) => {
           const Icon = tool.icon;
           return (
             <Link
               key={tool.title}
               href={tool.href}
-              className="group flex items-center justify-between p-3 sm:px-3.5 hover:bg-[#FAF8F5] dark:hover:bg-zinc-800/60 transition-colors"
+              className="group flex items-center justify-between p-3.5 sm:px-4 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="p-1.5 bg-[#FAF8F5] dark:bg-zinc-800 border border-[#D6CEC4] dark:border-zinc-700 text-[#C2553A] dark:text-brand-400 group-hover:scale-105 transition-transform shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs font-bold font-sans text-[#1C1917] dark:text-zinc-100 group-hover:text-[#C2553A] dark:group-hover:text-brand-400 transition-colors truncate">
+                  <h3 className="text-xs sm:text-sm font-bold text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
                     {tool.title}
                   </h3>
-                  <p className="text-[11px] text-[#524B42] dark:text-zinc-400 truncate font-sans">
+                  <p className="text-xs text-text-secondary truncate">
                     {tool.description}
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#C2553A] dark:text-brand-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              <ChevronRight className="w-4 h-4 text-brand-600 dark:text-brand-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
             </Link>
           );
         })}
       </div>
-    </OSWindow>
+    </div>
   );
 }
