@@ -78,15 +78,15 @@ export default function BackupPage() {
 
   return (
     <PageContainer className="max-w-5xl space-y-6 pb-14">
-      {/* 1. Header */}
+      {/* 1. Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
+
+      {/* 2. Header */}
       <PageHeader
         eyebrow="Pemulihan Data"
         title="Cadangan & Pemulihan Data"
         description="Ekspor materi, tugas, modul, dan riwayat belajar Anda ke berkas JSON atau pulihkan data kapan saja."
       />
-
-      {/* 2. Sub-Navigation Tabs */}
-      <SubNavTabs category="settings" />
 
       {/* 3. Main Backup & Restore Grid */}
       <PageSection>

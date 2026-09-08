@@ -40,6 +40,12 @@ export function ConverterToolSelector({
               <p className="text-[11px] text-text-secondary line-clamp-2 leading-relaxed">
                 {opt.description}
               </p>
+              {isSelected && (
+                <div className="flex items-center justify-between pt-1 text-[10px] font-semibold text-brand-600 dark:text-brand-400">
+                  <span className="flex items-center gap-1">✓ Siap Digunakan</span>
+                  <span className="underline underline-offset-2">Lanjut ke Form ↓</span>
+                </div>
+              )}
             </button>
           );
         })}

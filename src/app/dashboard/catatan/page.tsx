@@ -230,6 +230,9 @@ export default function CatatanPage() {
 
   return (
     <PageContainer className="space-y-6 sm:space-y-8 pb-12">
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="documents" />
+
       {/* Header */}
       <PageHeader
         eyebrow="Catatan"
@@ -241,9 +244,6 @@ export default function CatatanPage() {
           </Button>
         }
       />
-
-      {/* Sub-Navigation Tabs */}
-      <SubNavTabs category="documents" />
 
       {/* Filter & Search Console */}
       <PageSection>
@@ -538,12 +538,12 @@ export default function CatatanPage() {
               placeholder="Tulis ringkasan, instruksi, rumus, atau catatan kode di sini..."
               value={noteContent}
               onChange={(e) => setNoteContent(e.target.value)}
-              rows={7}
+              rows={5}
               required
             />
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-border">
+          <div className="sticky bottom-0 bg-surface/95 backdrop-blur-xs flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-3 pb-1 border-t border-border mt-2 z-10">
             <Checkbox
               checked={notePinned}
               onChange={(e) => setNotePinned(e.target.checked)}
@@ -560,7 +560,7 @@ export default function CatatanPage() {
               >
                 Batal
               </Button>
-              <Button type="submit" size="sm" className="w-full sm:w-auto">
+              <Button type="submit" size="sm" className="w-full sm:w-auto font-semibold">
                 Simpan Catatan
               </Button>
             </div>

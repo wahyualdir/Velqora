@@ -123,7 +123,10 @@ export default function BookmarkPage() {
 
   return (
     <PageContainer className="space-y-6 pb-14">
-      {/* 1. Header */}
+      {/* 1. Sub-Navigation Tabs */}
+      <SubNavTabs category="documents" />
+
+      {/* 2. Header */}
       <PageHeader
         eyebrow="Tersimpan"
         title="Materi Tersimpan"
@@ -147,9 +150,6 @@ export default function BookmarkPage() {
           </div>
         }
       />
-
-      {/* 2. Sub-Navigation Tabs */}
-      <SubNavTabs category="documents" />
 
       {/* 3. Filter & Search Toolbar */}
       <PageSection>

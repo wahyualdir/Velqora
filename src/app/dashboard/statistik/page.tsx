@@ -18,7 +18,6 @@ import {
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageSection } from "@/components/ui/section";
-import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getUserStudyStats } from "@/actions/study-actions";
 
 type PeriodFilter = "today" | "week" | "month" | "all";
@@ -211,9 +210,6 @@ export default function StatistikPage() {
           </div>
         }
       />
-
-      {/* Sub-Navigation Tabs */}
-      <SubNavTabs category="settings" />
 
       {/* ─── SECTION 2: 4 KPI SUMMARY CARDS ─── */}
       <PageSection>

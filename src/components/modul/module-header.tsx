@@ -29,43 +29,43 @@ export function ModuleHeader({
       actions={
         <>
           {onOpenSorter && (
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={onOpenSorter}
-              className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
+              className="gap-1.5 text-xs font-semibold cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#C2553A]" />
+              <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
               <span className="hidden sm:inline">Klasifikasi Kategori</span>
-            </button>
+            </Button>
           )}
 
-          <Link
-            href="/dashboard/modul/baru"
-            className="vt-btn-terracotta text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Tambah Modul</span>
+          <Link href="/dashboard/modul/baru">
+            <Button size="sm" className="gap-1.5 text-xs font-semibold cursor-pointer">
+              <Plus className="w-3.5 h-3.5" />
+              <span>Tambah Modul</span>
+            </Button>
           </Link>
 
-          <Link
-            href="/dashboard/modul/baru?mode=project"
-            className="vt-btn-chrome text-xs font-mono font-bold flex items-center gap-1.5 py-1.5 px-3 cursor-pointer"
-          >
-            <FolderCode className="w-3.5 h-3.5" />
-            <span>Project Baru</span>
+          <Link href="/dashboard/modul/baru?mode=project">
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold cursor-pointer">
+              <FolderCode className="w-3.5 h-3.5" />
+              <span>Project Baru</span>
+            </Button>
           </Link>
         </>
       }
     >
       {/* Mode Switcher Tabs */}
-      <div className="flex items-center gap-1.5 p-1 bg-[#ECE9D8] border-t-2 border-l-2 border-[#7A756D] border-b border-r border-[#FFFFFF] w-fit max-w-full overflow-x-auto">
+      <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border w-fit max-w-full overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => onModeChange("all")}
-          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold shrink-0 cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
             contentMode === "all"
-              ? "vt-btn-terracotta shadow-xs"
-              : "vt-btn-chrome"
+              ? "bg-brand-600 text-white font-bold shadow-xs"
+              : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -75,10 +75,10 @@ export function ModuleHeader({
         <button
           type="button"
           onClick={() => onModeChange("module")}
-          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold shrink-0 cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
             contentMode === "module"
-              ? "vt-btn-terracotta shadow-xs"
-              : "vt-btn-chrome"
+              ? "bg-brand-600 text-white font-bold shadow-xs"
+              : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
@@ -88,10 +88,10 @@ export function ModuleHeader({
         <button
           type="button"
           onClick={() => onModeChange("project")}
-          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold shrink-0 cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
             contentMode === "project"
-              ? "vt-btn-terracotta shadow-xs"
-              : "vt-btn-chrome"
+              ? "bg-brand-600 text-white font-bold shadow-xs"
+              : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
           }`}
         >
           <Code2 className="w-3.5 h-3.5" />

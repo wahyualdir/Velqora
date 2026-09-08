@@ -26,7 +26,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref
   ) => {
-    const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+    const cleanLabel = label ? label.replace(/\s*\*+$/, "").trim() : "";
+    const inputId = id || (cleanLabel ? cleanLabel.toLowerCase().replace(/\s+/g, "-") : undefined);
     const helperId = inputId ? `${inputId}-helper` : undefined;
     const errorId = inputId ? `${inputId}-error` : undefined;
 
@@ -38,7 +39,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               htmlFor={inputId}
               className="block text-xs sm:text-sm font-medium text-text-secondary select-none"
             >
-              {label}
+              {cleanLabel}
               {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
             </label>
             {optional && (

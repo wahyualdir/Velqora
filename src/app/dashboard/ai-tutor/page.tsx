@@ -78,6 +78,9 @@ function AITutorContent() {
 
   // Fetch Ingested User Modules for AI Knowledge Base
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setShowSidebar(false);
+    }
     getUserKnowledgeModulesAction().then((mods) => {
       if (mods && Array.isArray(mods)) {
         setUserModules(mods);

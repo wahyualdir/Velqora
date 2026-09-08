@@ -97,15 +97,15 @@ export default function TagPage() {
 
   return (
     <PageContainer className="space-y-6 sm:space-y-8 pb-12">
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
+
       {/* Header */}
       <PageHeader
         eyebrow="Label"
         title="Label & Tag Topik"
         description="Buat label penanda topik untuk mengelompokkan materi dan tugas secara fleksibel."
       />
-
-      {/* Sub-Navigation Tabs */}
-      <SubNavTabs category="settings" />
 
       {/* Create Form */}
       <PageSection>

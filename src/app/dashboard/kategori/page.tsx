@@ -148,6 +148,9 @@ export default function KategoriPage() {
 
   return (
     <PageContainer className="space-y-6 sm:space-y-8 pb-12">
+      {/* Sub-Navigation Tabs */}
+      <SubNavTabs category="settings" />
+
       <PageHeader
         eyebrow="Taksonomi"
         title="Kategori Pembelajaran"
@@ -166,9 +169,6 @@ export default function KategoriPage() {
           ) : undefined
         }
       />
-
-      {/* Sub-Navigation Tabs */}
-      <SubNavTabs category="settings" />
 
       {/* Form Tambah Kategori / Sub-Kategori */}
       <PageSection>

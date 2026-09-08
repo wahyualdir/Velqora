@@ -126,6 +126,16 @@ export default function FileConverterPage() {
       setInputMode("file");
       setFileTextContent("");
     }
+
+    // Smooth scroll to workbench so user immediately sees the active tool ready to use
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        const el = document.getElementById("converter-workbench");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -512,31 +522,33 @@ export default function FileConverterPage() {
         />
 
         {/* Main Conversion Workbench */}
-        <ConverterWorkbench
-          selectedOption={selectedOption}
-          selectedFile={selectedFile}
-          fileTextContent={fileTextContent}
-          onChangeFileTextContent={setFileTextContent}
-          inputMode={inputMode}
-          onChangeInputMode={setInputMode}
-          onFileSelect={handleFileChange}
-          onClearFile={() => setSelectedFile(null)}
-          isConverting={isConverting}
-          progress={progress}
-          onConvert={handleConvert}
-          convertedResult={convertedResult}
-          isCopied={isCopied}
-          onCopyText={handleCopyResultText}
-          hdScale={hdScale}
-          onChangeHdScale={setHdScale}
-          pasfotoRatio={pasfotoRatio}
-          onChangePasfotoRatio={setPasfotoRatio}
-          photoBgColor={photoBgColor}
-          onChangePhotoBgColor={setPhotoBgColor}
-          camFilterMode={camFilterMode}
-          onChangeCamFilterMode={setCamFilterMode}
-          onOpenCamScannerCamera={() => startCamera("environment")}
-        />
+        <div id="converter-workbench" className="scroll-mt-6">
+          <ConverterWorkbench
+            selectedOption={selectedOption}
+            selectedFile={selectedFile}
+            fileTextContent={fileTextContent}
+            onChangeFileTextContent={setFileTextContent}
+            inputMode={inputMode}
+            onChangeInputMode={setInputMode}
+            onFileSelect={handleFileChange}
+            onClearFile={() => setSelectedFile(null)}
+            isConverting={isConverting}
+            progress={progress}
+            onConvert={handleConvert}
+            convertedResult={convertedResult}
+            isCopied={isCopied}
+            onCopyText={handleCopyResultText}
+            hdScale={hdScale}
+            onChangeHdScale={setHdScale}
+            pasfotoRatio={pasfotoRatio}
+            onChangePasfotoRatio={setPasfotoRatio}
+            photoBgColor={photoBgColor}
+            onChangePhotoBgColor={setPhotoBgColor}
+            camFilterMode={camFilterMode}
+            onChangeCamFilterMode={setCamFilterMode}
+            onOpenCamScannerCamera={() => startCamera("environment")}
+          />
+        </div>
 
         {/* Camera Modal for CamScanner */}
         {isCameraOpen && (

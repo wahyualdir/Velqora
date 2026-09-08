@@ -14,6 +14,7 @@ import { MaterialFilters } from "@/components/materi/material-filters";
 import { MaterialListItem } from "@/components/materi/material-list-item";
 import { MobileMaterialList } from "@/surfaces/app/materi/mobile-material-list";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
+import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { toast } from "sonner";
 
 function MateriContent() {
@@ -154,6 +155,9 @@ function MateriContent() {
 
   return (
     <PageContainer className="space-y-6 pb-14">
+      {/* ─── Navigation Tabs ─── */}
+      <SubNavTabs category="documents" />
+
       {/* ─── 1. Header & Actions ─── */}
       <MaterialHeader totalCount={materials.length} />
 
