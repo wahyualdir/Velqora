@@ -21,6 +21,7 @@ import {
   HardDriveDownload,
   BarChart3,
 } from "lucide-react";
+import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 
 interface SubNavTabItem {
   label: string;
@@ -52,7 +53,7 @@ const TASK_TABS: SubNavTabItem[] = [
 ];
 
 const SETTINGS_TABS: SubNavTabItem[] = [
-  { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: Sliders },
+  { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: SettingsGearIcon },
   { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: FolderOpen },
   { label: "Label & Tag", href: "/dashboard/tag", icon: Tag },
   { label: "Cadangan Data", href: "/dashboard/backup", icon: HardDriveDownload },

@@ -124,9 +124,9 @@ export const SIDEBAR_CATEGORIES = [
       {
         label: "Pengaturan Workspace",
         href: "/dashboard/pengaturan",
-        icon: "Sliders",
+        icon: "Settings",
         subItems: [
-          { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: "Sliders" },
+          { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: "Settings" },
           { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: "FolderOpen" },
           { label: "Label & Tag", href: "/dashboard/tag", icon: "Tag" },
           { label: "Cadangan Data", href: "/dashboard/backup", icon: "HardDriveDownload" },

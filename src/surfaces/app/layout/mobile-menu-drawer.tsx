@@ -9,16 +9,29 @@ import {
   Files,
   Code2,
   ScanLine,
-  Settings,
   HelpCircle,
   Download,
   ChevronRight,
 } from "lucide-react";
+import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 import { MobileBottomSheet } from "./mobile-bottom-sheet";
 import { useExperience } from "@/context/experience-context";
 import { cn } from "@/lib/utils";
 
-interface MobileMenuDrawerProps {
+interface MenuItem {
+  label: string;
+  href: string;
+  icon: React.ElementType;
+  description: string;
+  isAi?: boolean;
+}
+
+interface MenuSection {
+  title: string;
+  items: MenuItem[];
+}
+
+export interface MobileMenuDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -27,7 +40,7 @@ export function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerProps) {
   const pathname = usePathname();
   const { canInstallPwa, promptInstallPwa, isPwaStandalone } = useExperience();
 
-  const menuSections = [
+  const menuSections: MenuSection[] = [
     {
       title: "Alat Akademik & AI",
       items: [
@@ -70,7 +83,7 @@ export function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerProps) {
         {
           label: "Pengaturan Akun & Tampilan",
           href: "/dashboard/pengaturan",
-          icon: Settings,
+          icon: SettingsGearIcon,
           description: "Tema, profil, notifikasi & preferensi",
         },
         {

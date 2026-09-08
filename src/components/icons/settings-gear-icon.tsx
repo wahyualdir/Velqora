@@ -1,0 +1,256 @@
+import React from "react";
+
+export interface SettingsGearIconProps extends React.SVGProps<SVGSVGElement> {
+  size?: number | string;
+  className?: string;
+}
+
+/**
+ * Pixel-art Settings Gear Logo / Icon matching the retro 2.5D design.
+ * Built with crispEdges vector rectangles for flawless pixel scaling at any resolution.
+ */
+export function SettingsGearIcon({
+  size = 20,
+  className = "inline-block shrink-0",
+  width,
+  height,
+  ...props
+}: SettingsGearIconProps) {
+  const w = width ?? size;
+  const h = height ?? size;
+
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="crispEdges"
+      width={w}
+      height={h}
+      className={className}
+      role="img"
+      aria-label="Logo Pengaturan"
+      {...props}
+    >
+      {/* 1. Dark indigo charcoal outline (#2b253b) */}
+      <g fill="#2b253b">
+        <rect x="13" y="4" width="5" height="1" />
+        <rect x="8" y="5" width="2" height="1" />
+        <rect x="13" y="5" width="1" height="1" />
+        <rect x="17" y="5" width="1" height="1" />
+        <rect x="21" y="5" width="2" height="1" />
+        <rect x="7" y="6" width="1" height="1" />
+        <rect x="10" y="6" width="1" height="1" />
+        <rect x="13" y="6" width="1" height="1" />
+        <rect x="17" y="6" width="1" height="1" />
+        <rect x="20" y="6" width="1" height="1" />
+        <rect x="23" y="6" width="1" height="1" />
+        <rect x="6" y="7" width="1" height="1" />
+        <rect x="11" y="7" width="2" height="1" />
+        <rect x="18" y="7" width="2" height="1" />
+        <rect x="24" y="7" width="1" height="1" />
+        <rect x="6" y="8" width="1" height="1" />
+        <rect x="24" y="8" width="1" height="1" />
+        <rect x="6" y="9" width="2" height="1" />
+        <rect x="13" y="9" width="5" height="1" />
+        <rect x="23" y="9" width="2" height="1" />
+        <rect x="6" y="10" width="1" height="1" />
+        <rect x="11" y="10" width="2" height="1" />
+        <rect x="18" y="10" width="2" height="1" />
+        <rect x="24" y="10" width="1" height="1" />
+        <rect x="6" y="11" width="1" height="1" />
+        <rect x="11" y="11" width="1" height="1" />
+        <rect x="19" y="11" width="1" height="1" />
+        <rect x="24" y="11" width="1" height="1" />
+        <rect x="5" y="12" width="1" height="1" />
+        <rect x="10" y="12" width="1" height="1" />
+        <rect x="14" y="12" width="4" height="1" />
+        <rect x="20" y="12" width="1" height="1" />
+        <rect x="25" y="12" width="1" height="1" />
+        <rect x="5" y="13" width="1" height="1" />
+        <rect x="10" y="13" width="1" height="1" />
+        <rect x="13" y="13" width="1" height="1" />
+        <rect x="18" y="13" width="1" height="1" />
+        <rect x="20" y="13" width="1" height="1" />
+        <rect x="25" y="13" width="1" height="1" />
+        <rect x="5" y="14" width="1" height="1" />
+        <rect x="10" y="14" width="1" height="1" />
+        <rect x="13" y="14" width="1" height="1" />
+        <rect x="18" y="14" width="1" height="1" />
+        <rect x="20" y="14" width="1" height="1" />
+        <rect x="25" y="14" width="1" height="1" />
+        <rect x="5" y="15" width="1" height="1" />
+        <rect x="10" y="15" width="1" height="1" />
+        <rect x="13" y="15" width="1" height="1" />
+        <rect x="18" y="15" width="1" height="1" />
+        <rect x="20" y="15" width="1" height="1" />
+        <rect x="25" y="15" width="1" height="1" />
+        <rect x="5" y="16" width="3" height="1" />
+        <rect x="10" y="16" width="1" height="1" />
+        <rect x="13" y="16" width="1" height="1" />
+        <rect x="18" y="16" width="1" height="1" />
+        <rect x="20" y="16" width="1" height="1" />
+        <rect x="23" y="16" width="3" height="1" />
+        <rect x="5" y="17" width="1" height="1" />
+        <rect x="11" y="17" width="1" height="1" />
+        <rect x="14" y="17" width="4" height="1" />
+        <rect x="19" y="17" width="1" height="1" />
+        <rect x="25" y="17" width="1" height="1" />
+        <rect x="5" y="18" width="1" height="1" />
+        <rect x="11" y="18" width="2" height="1" />
+        <rect x="18" y="18" width="2" height="1" />
+        <rect x="25" y="18" width="1" height="1" />
+        <rect x="5" y="19" width="1" height="1" />
+        <rect x="13" y="19" width="5" height="1" />
+        <rect x="25" y="19" width="1" height="1" />
+        <rect x="6" y="20" width="1" height="1" />
+        <rect x="24" y="20" width="1" height="1" />
+        <rect x="6" y="21" width="1" height="1" />
+        <rect x="11" y="21" width="2" height="1" />
+        <rect x="18" y="21" width="2" height="1" />
+        <rect x="24" y="21" width="1" height="1" />
+        <rect x="6" y="22" width="2" height="1" />
+        <rect x="10" y="22" width="1" height="1" />
+        <rect x="20" y="22" width="1" height="1" />
+        <rect x="23" y="22" width="2" height="1" />
+        <rect x="6" y="23" width="1" height="1" />
+        <rect x="8" y="23" width="2" height="1" />
+        <rect x="21" y="23" width="2" height="1" />
+        <rect x="24" y="23" width="1" height="1" />
+        <rect x="6" y="24" width="1" height="1" />
+        <rect x="11" y="24" width="9" height="1" />
+        <rect x="24" y="24" width="1" height="1" />
+        <rect x="7" y="25" width="1" height="1" />
+        <rect x="10" y="25" width="1" height="1" />
+        <rect x="13" y="25" width="1" height="1" />
+        <rect x="17" y="25" width="1" height="1" />
+        <rect x="20" y="25" width="1" height="1" />
+        <rect x="23" y="25" width="1" height="1" />
+        <rect x="8" y="26" width="2" height="1" />
+        <rect x="13" y="26" width="1" height="1" />
+        <rect x="17" y="26" width="1" height="1" />
+        <rect x="21" y="26" width="2" height="1" />
+        <rect x="13" y="27" width="5" height="1" />
+      </g>
+
+      {/* 2. Pure white highlight (#ffffff) */}
+      <g fill="#ffffff">
+        <rect x="14" y="5" width="3" height="1" />
+        <rect x="8" y="6" width="2" height="1" />
+        <rect x="14" y="6" width="3" height="1" />
+        <rect x="7" y="7" width="4" height="1" />
+        <rect x="13" y="7" width="5" height="1" />
+        <rect x="7" y="8" width="11" height="1" />
+        <rect x="8" y="9" width="5" height="1" />
+        <rect x="8" y="10" width="3" height="1" />
+        <rect x="13" y="10" width="5" height="1" />
+        <rect x="8" y="11" width="3" height="1" />
+        <rect x="12" y="11" width="5" height="1" />
+        <rect x="6" y="12" width="4" height="1" />
+        <rect x="11" y="12" width="3" height="1" />
+        <rect x="6" y="13" width="4" height="1" />
+        <rect x="11" y="13" width="2" height="1" />
+        <rect x="6" y="14" width="4" height="1" />
+        <rect x="11" y="14" width="2" height="1" />
+        <rect x="6" y="15" width="4" height="1" />
+        <rect x="11" y="15" width="2" height="1" />
+        <rect x="14" y="15" width="4" height="1" />
+        <rect x="8" y="16" width="2" height="1" />
+        <rect x="11" y="16" width="1" height="1" />
+        <rect x="14" y="16" width="4" height="1" />
+        <rect x="8" y="17" width="1" height="1" />
+      </g>
+
+      {/* 3. Light ice blue specular (#ebf5fc) */}
+      <g fill="#ebf5fc">
+        <rect x="21" y="6" width="2" height="1" />
+        <rect x="20" y="7" width="3" height="1" />
+        <rect x="18" y="8" width="4" height="1" />
+        <rect x="18" y="9" width="3" height="1" />
+        <rect x="17" y="11" width="2" height="1" />
+        <rect x="18" y="12" width="1" height="1" />
+        <rect x="12" y="16" width="1" height="1" />
+        <rect x="9" y="17" width="2" height="1" />
+        <rect x="12" y="17" width="2" height="1" />
+        <rect x="8" y="18" width="3" height="1" />
+        <rect x="7" y="19" width="4" height="1" />
+        <rect x="7" y="20" width="3" height="1" />
+        <rect x="7" y="21" width="2" height="1" />
+      </g>
+
+      {/* 4. Main gear face ice blue (#d4e4f0) */}
+      <g fill="#d4e4f0">
+        <rect x="23" y="7" width="1" height="1" />
+        <rect x="22" y="8" width="2" height="1" />
+        <rect x="21" y="9" width="2" height="1" />
+        <rect x="20" y="10" width="3" height="1" />
+        <rect x="20" y="11" width="3" height="1" />
+        <rect x="19" y="12" width="1" height="1" />
+        <rect x="21" y="12" width="1" height="1" />
+        <rect x="19" y="13" width="1" height="1" />
+        <rect x="19" y="14" width="1" height="1" />
+        <rect x="19" y="15" width="1" height="1" />
+        <rect x="19" y="16" width="1" height="1" />
+        <rect x="18" y="17" width="1" height="1" />
+        <rect x="13" y="18" width="5" height="1" />
+        <rect x="11" y="19" width="2" height="1" />
+        <rect x="10" y="20" width="4" height="1" />
+        <rect x="9" y="21" width="2" height="1" />
+        <rect x="8" y="22" width="2" height="1" />
+      </g>
+
+      {/* 5. 3D Bottom Extrusion Slate (#444d69) */}
+      <g fill="#444d69">
+        <rect x="7" y="10" width="1" height="1" />
+        <rect x="23" y="10" width="1" height="1" />
+        <rect x="7" y="11" width="1" height="1" />
+        <rect x="23" y="11" width="1" height="1" />
+        <rect x="6" y="17" width="2" height="1" />
+        <rect x="23" y="17" width="2" height="1" />
+        <rect x="6" y="18" width="2" height="1" />
+        <rect x="23" y="18" width="2" height="1" />
+        <rect x="6" y="19" width="1" height="1" />
+        <rect x="24" y="19" width="1" height="1" />
+        <rect x="11" y="22" width="2" height="1" />
+        <rect x="18" y="22" width="2" height="1" />
+        <rect x="7" y="23" width="1" height="1" />
+        <rect x="10" y="23" width="3" height="1" />
+        <rect x="18" y="23" width="3" height="1" />
+        <rect x="23" y="23" width="1" height="1" />
+        <rect x="7" y="24" width="4" height="1" />
+        <rect x="20" y="24" width="4" height="1" />
+        <rect x="8" y="25" width="2" height="1" />
+        <rect x="14" y="25" width="3" height="1" />
+        <rect x="21" y="25" width="2" height="1" />
+        <rect x="14" y="26" width="3" height="1" />
+      </g>
+
+      {/* 6. Soft crease / facet midtone (#a6c1d6) */}
+      <g fill="#a6c1d6">
+        <rect x="22" y="12" width="3" height="1" />
+        <rect x="21" y="13" width="4" height="1" />
+        <rect x="21" y="14" width="4" height="1" />
+        <rect x="21" y="15" width="4" height="1" />
+        <rect x="21" y="16" width="2" height="1" />
+        <rect x="20" y="17" width="3" height="1" />
+        <rect x="20" y="18" width="3" height="1" />
+        <rect x="18" y="19" width="6" height="1" />
+        <rect x="14" y="20" width="10" height="1" />
+        <rect x="13" y="21" width="5" height="1" />
+        <rect x="20" y="21" width="4" height="1" />
+        <rect x="13" y="22" width="5" height="1" />
+        <rect x="21" y="22" width="2" height="1" />
+        <rect x="13" y="23" width="5" height="1" />
+      </g>
+
+      {/* 7. Inner Hole Cavity (#242030) */}
+      <g fill="#242030">
+        <rect x="14" y="13" width="4" height="1" />
+        <rect x="14" y="14" width="4" height="1" />
+      </g>
+    </svg>
+  );
+}
+
+export const PixelSettingsGear = SettingsGearIcon;
+export default SettingsGearIcon;

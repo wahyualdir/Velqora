@@ -20,7 +20,6 @@ import {
   PenLine,
   Compass,
   HardDriveDownload,
-  Settings,
   Plus,
   Palette,
   Command,
@@ -30,6 +29,7 @@ import {
   Layers,
   Code2,
 } from "lucide-react";
+import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 import { useThemeAccent } from "@/context/theme-accent-context";
 import { toast } from "sonner";
 
@@ -240,7 +240,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         title: "Pengaturan",
         subtitle: "Kelola profil, tampilan, dan preferensi akun Anda",
         category: "Navigasi",
-        icon: Settings,
+        icon: SettingsGearIcon,
         action: () => navigateTo("/dashboard/pengaturan"),
         keywords: ["pengaturan", "settings", "profil", "tema", "password"],
       },

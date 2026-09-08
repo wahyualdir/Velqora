@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   LogOut,
-  Settings,
   Camera,
   Crown,
   Shield,
@@ -15,6 +14,7 @@ import {
   ChevronDown,
   Download,
 } from "lucide-react";
+import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 import { createClient } from "@/lib/supabase/client";
 import { STORAGE_BUCKET } from "@/lib/constants";
 import { isAdminUser, isOwnerUser } from "@/lib/utils";
@@ -351,7 +351,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-text-primary hover:bg-surface-secondary border border-border/60 hover:border-border transition-all cursor-pointer"
               >
                 <div className="w-7 h-7 rounded-lg bg-surface-secondary border border-border/80 flex items-center justify-center text-text-primary shrink-0">
-                  <Settings className="w-3.5 h-3.5" />
+                  <SettingsGearIcon className="w-4 h-4" />
                 </div>
                 <span>Pengaturan Akun & Profil</span>
               </Link>
@@ -520,7 +520,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-text-primary hover:bg-surface-secondary border border-border/60 hover:border-border transition-all cursor-pointer"
             >
               <div className="w-7 h-7 rounded-lg bg-surface-secondary border border-border/80 flex items-center justify-center text-text-primary shrink-0">
-                <Settings className="w-3.5 h-3.5" />
+                <SettingsGearIcon className="w-4 h-4" />
               </div>
               <span>Pengaturan Akun & Profil</span>
             </Link>

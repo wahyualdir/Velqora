@@ -38,8 +38,11 @@ import {
   Calendar,
 } from "lucide-react";
 import { TranslationKey } from "@/lib/i18n/translations";
+import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 
 export const iconMap: Record<string, React.ElementType> = {
+  Settings: SettingsGearIcon,
+  SettingsGear: SettingsGearIcon,
   LayoutGrid,
   LayoutDashboard,
   BarChart3,
