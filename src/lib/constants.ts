@@ -127,7 +127,7 @@ export const SIDEBAR_CATEGORIES = [
         icon: "Settings",
         subItems: [
           { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: "Settings" },
-          { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: "FolderOpen" },
+          { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: "FolderPixel" },
           { label: "Label & Tag", href: "/dashboard/tag", icon: "Tag" },
           { label: "Cadangan Data", href: "/dashboard/backup", icon: "HardDriveDownload" },
         ],
@@ -435,7 +435,7 @@ export const SIDEBAR_LINKS = [
   { label: "Jadwal & Reminder", href: "/dashboard/jadwal", icon: "Calendar" },
   { label: "Asisten AI", href: "/dashboard/ai-tutor", icon: "Bot" },
   { label: "Statistik & Progres", href: "/dashboard/statistik", icon: "BarChart3" },
-  { label: "Kategori", href: "/dashboard/kategori", icon: "FolderOpen" },
+  { label: "Kategori", href: "/dashboard/kategori", icon: "FolderPixel" },
   { label: "Tag", href: "/dashboard/tag", icon: "Tags" },
   { label: "File", href: "/dashboard/file", icon: "FileBox" },
   { label: "Backup", href: "/dashboard/backup", icon: "Download" },

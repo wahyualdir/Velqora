@@ -30,6 +30,7 @@ import {
   Code2,
 } from "lucide-react";
 import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
+import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
 import { useThemeAccent } from "@/context/theme-accent-context";
 import { toast } from "sonner";
 
@@ -186,7 +187,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         title: "Kategori Pembelajaran",
         subtitle: "Kelola struktur kategori utama dan subkategori pembelajaran",
         category: "Navigasi",
-        icon: FolderTree,
+        icon: FolderPixelIcon,
         action: () => navigateTo("/dashboard/kategori"),
         keywords: ["kategori", "bahasa", "pemrograman", "rumpun"],
       },

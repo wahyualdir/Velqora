@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, FolderOpen, Trash2, FolderTree, Sparkles, ArrowRight, Search } from "lucide-react";
+import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
 import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
@@ -153,7 +154,12 @@ export default function KategoriPage() {
 
       <PageHeader
         eyebrow="Taksonomi"
-        title="Kategori Pembelajaran"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <FolderPixelIcon size={28} className="shrink-0 drop-shadow-xs" />
+            <span>Kategori Pembelajaran</span>
+          </span>
+        }
         description="Atur kategori modul dan materi berdasarkan topik keahlian dan bahasa pemrograman."
         actions={
           categories.length === 0 ? (
@@ -239,7 +245,7 @@ export default function KategoriPage() {
         <Skeleton className="h-48 rounded-xl" />
       ) : categories.length === 0 ? (
         <EmptyState
-          icon={<FolderOpen className="w-12 h-12 text-text-tertiary" />}
+          icon={<FolderPixelIcon size={48} className="text-text-tertiary" />}
           title="Belum ada kategori"
           description="Buat kategori pertama Anda di atas atau klik 'Auto Presets Kategori'."
           action={
@@ -253,7 +259,7 @@ export default function KategoriPage() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h2 className="text-base font-bold text-text-primary flex items-center gap-2 font-display">
-                <FolderTree className="w-5 h-5 text-brand-500" /> Daftar Kategori & Logo Bahasa
+                <FolderPixelIcon size={20} className="shrink-0" /> Daftar Kategori & Logo Bahasa
               </h2>
 
               <div className="w-full sm:w-72">

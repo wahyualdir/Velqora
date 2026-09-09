@@ -65,7 +65,7 @@ export const iconMap: Record<string, React.ElementType> = {
   Scan,
   Code2,
   FolderTree,
-  FolderOpen,
+  FolderOpen: FolderPixelIcon,
   FolderCode,
   Tags,
   Tag,
