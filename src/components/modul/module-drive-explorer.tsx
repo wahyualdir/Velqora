@@ -19,6 +19,7 @@ import {
   X,
   FileSpreadsheet,
 } from "lucide-react";
+import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
 import {
   ModuleDriveFolder,
   ModuleDriveFile,
@@ -473,8 +474,8 @@ export function ModuleDriveExplorer({
         {/* Top Row: Module Name + Storage Stats + Action Buttons */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-surface-secondary border border-border flex items-center justify-center text-brand-500 shadow-sm shrink-0">
-              <Folder className="w-5 h-5 fill-current opacity-80" />
+            <div className="w-10 h-10 rounded-2xl bg-surface-secondary border border-border flex items-center justify-center shadow-sm shrink-0">
+              <FolderPixelIcon size={24} className="shrink-0 drop-shadow-xs" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -560,13 +561,14 @@ export function ModuleDriveExplorer({
                       <ChevronRight className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
                       <button
                         onClick={() => setCurrentFolderId(crumb.id)}
-                        className={`px-2.5 py-1 rounded-lg text-xs transition-colors truncate max-w-[130px] ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-colors truncate max-w-[150px] ${
                           isLast
                             ? "font-bold text-text-primary bg-surface-secondary border border-border"
                             : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
                         }`}
                       >
-                        {crumb.name}
+                        <FolderPixelIcon size={14} className="shrink-0" />
+                        <span className="truncate">{crumb.name}</span>
                       </button>
                     </>
                   )}
@@ -671,8 +673,8 @@ export function ModuleDriveExplorer({
         {currentSubfolders.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                <Folder className="w-3.5 h-3.5 text-brand-400" />
+              <h4 className="text-xs font-bold text-text-primary flex items-center gap-1.5">
+                <FolderPixelIcon size={16} className="shrink-0" />
                 <span>Folder</span>
               </h4>
               <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/[0.05] text-slate-400 border border-white/[0.08]">
@@ -695,14 +697,13 @@ export function ModuleDriveExplorer({
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className="w-9 h-9 rounded-lg flex items-center justify-center font-bold shrink-0"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center font-bold shrink-0 transition-transform group-hover:scale-105"
                         style={{
                           backgroundColor: `${folderColor}15`,
                           border: `1px solid ${folderColor}30`,
-                          color: folderColor,
                         }}
                       >
-                        <Folder className="w-4 h-4 fill-current opacity-80" />
+                        <FolderPixelIcon size={22} className="shrink-0 drop-shadow-xs" />
                       </div>
                       <div className="min-w-0">
                         <h5 className="text-xs font-semibold text-text-primary truncate group-hover:text-brand-400 transition-colors">
@@ -1014,8 +1015,8 @@ export function ModuleDriveExplorer({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md rounded-3xl bg-[#020409] border border-white/[0.12] p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-base font-bold text-white flex items-center gap-2">
-                <FolderPlus className="w-5 h-5 text-brand-400" />
+              <h4 className="text-base font-bold text-white flex items-center gap-2.5">
+                <FolderPixelIcon size={24} className="shrink-0" />
                 <span>Buat Folder Baru</span>
               </h4>
               <button

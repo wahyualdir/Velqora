@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import { Upload, FolderOpen, File as FileIcon, Trash2, CheckCircle2 } from "lucide-react";
+import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
 import { Button } from "@/components/ui/button";
 import { formatFileSize } from "@/lib/utils";
 import { ModuleDriveFile } from "@/types/module-drive";
@@ -96,7 +97,7 @@ export function AttachedFilesManager({
             disabled={disabled}
             className="text-xs gap-1.5 cursor-pointer"
           >
-            <FolderOpen className="w-3.5 h-3.5" />
+            <FolderPixelIcon size={14} className="shrink-0" />
             <span>Pilih Folder</span>
           </Button>
         </div>

@@ -39,10 +39,13 @@ import {
 } from "lucide-react";
 import { TranslationKey } from "@/lib/i18n/translations";
 import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
+import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
 
 export const iconMap: Record<string, React.ElementType> = {
   Settings: SettingsGearIcon,
   SettingsGear: SettingsGearIcon,
+  FolderPixel: FolderPixelIcon,
+  PixelFolder: FolderPixelIcon,
   LayoutGrid,
   LayoutDashboard,
   BarChart3,
