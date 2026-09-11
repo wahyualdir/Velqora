@@ -36,6 +36,40 @@ const nextConfig: NextConfig = {
       "sonner",
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/kelas",
+        destination: "/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/kelas/:path*",
+        destination: "/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/tugas",
+        destination: "/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/tugas/:path*",
+        destination: "/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/statistik",
+        destination: "/dashboard?tab=statistik",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/statistik/:path*",
+        destination: "/dashboard?tab=statistik",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

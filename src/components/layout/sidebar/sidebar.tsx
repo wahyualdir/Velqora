@@ -4,12 +4,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { SIDEBAR_CATEGORIES } from "@/lib/constants";
+import { SIDEBAR_CATEGORIES, NavItem } from "@/lib/constants";
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  X,
   Crown,
   ShieldCheck,
   MapPin,
@@ -20,7 +18,6 @@ import { isAdminUser, OWNER_EMAIL } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { useSurface } from "@/context/surface-context";
 import { iconMap, categoryTitleMap, linkLabelMap } from "./navigation-config";
-
 
 interface SidebarProps {
   isOpen: boolean;
@@ -41,17 +38,6 @@ export function Sidebar({
   const { isApp } = useSurface();
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    SIDEBAR_CATEGORIES.forEach((category) => {
-      category.links.forEach((link: any) => {
-        if (link.subItems && link.subItems.length > 0) {
-          initial[link.href] = true;
-        }
-      });
-    });
-    return initial;
-  });
 
   // Track window.location.search on client without triggering Next.js SSG build bailouts
   useEffect(() => {
@@ -70,57 +56,27 @@ export function Sidebar({
     return () => window.removeEventListener("popstate", handleLocationChange);
   }, []);
 
-  // Accurate active state helper for sub-items with query params
-  const isSubActiveCheck = (sub: any, link: any) => {
+  // Presisi active state untuk item navigasi flat termasuk query parameters (?mode=project)
+  const isLinkActive = (link: NavItem) => {
     const searchParams = new URLSearchParams(currentQuery);
-    if (sub.href.includes("?")) {
-      const [subPath, subQuery] = sub.href.split("?");
-      if (pathname !== subPath) return false;
-      const [qKey, qVal] = subQuery.split("=");
+    if (link.href.includes("?")) {
+      const [linkPath, linkQuery] = link.href.split("?");
+      if (pathname !== linkPath) return false;
+      const [qKey, qVal] = linkQuery.split("=");
       return searchParams.get(qKey) === qVal;
     }
-    if (pathname !== sub.href) return false;
-    // Check if any sibling sub-item has query parameter matching current URL
-    const hasSiblingMatch = link.subItems?.some((sib: any) => {
-      if (!sib.href.includes("?")) return false;
-      const [sibPath, sibQuery] = sib.href.split("?");
-      if (pathname !== sibPath) return false;
-      const [qKey, qVal] = sibQuery.split("=");
-      return searchParams.get(qKey) === qVal;
-    });
-    return !hasSiblingMatch;
-  };
 
-  // Auto-expand parent menu when current pathname matches any sub-item
-  useEffect(() => {
-    if (!pathname) return;
-    SIDEBAR_CATEGORIES.forEach((category) => {
-      category.links.forEach((link: any) => {
-        if (link.subItems && link.subItems.length > 0) {
-          const isChildActive = link.subItems.some((sub: any) => isSubActiveCheck(sub, link));
-          const isParentActive =
-            link.href === "/dashboard"
-              ? pathname === "/dashboard"
-              : pathname === link.href || pathname.startsWith(link.href + "/");
-
-          if (isChildActive || isParentActive) {
-            setExpandedMenus((prev) => ({ ...prev, [link.href]: true }));
-          }
-        }
-      });
-    });
-  }, [pathname, currentQuery]);
-
-  // Toggle accordion item
-  const toggleMenu = (href: string, e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+    if (pathname !== link.href) {
+      if (link.exact) return false;
+      return pathname.startsWith(link.href + "/");
     }
-    setExpandedMenus((prev) => ({
-      ...prev,
-      [href]: !prev[href],
-    }));
+
+    // Jika base path sama (misal /dashboard/modul), jangan aktif jika ada query param spesifik milik sibling
+    if (link.href === "/dashboard/modul" && searchParams.get("mode") === "project") {
+      return false;
+    }
+
+    return true;
   };
 
   // Close drawer on Escape key press (Mobile)
@@ -199,7 +155,7 @@ export function Sidebar({
           </button>
         </div>
 
-        {/* Mobile Navigation List (Scrollable) */}
+        {/* Mobile Navigation List (Scrollable Flat List) */}
         <nav
           aria-label="Navigasi Utama Mobile"
           className="flex-1 px-2.5 py-3 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-8"
@@ -216,20 +172,9 @@ export function Sidebar({
                 </div>
 
                 <div className="space-y-0.5">
-                  {category.links.map((link: any) => {
+                  {category.links.map((link) => {
                     const Icon = iconMap[link.icon];
-                    const hasSubItems = link.subItems && link.subItems.length > 0;
-                    const isExpanded = !!expandedMenus[link.href];
-
-                    const isParentExact =
-                      link.href === "/dashboard"
-                        ? pathname === "/dashboard"
-                        : pathname === link.href && !hasSubItems;
-                    const isAnyChildActive =
-                      hasSubItems &&
-                      link.subItems.some((sub: any) => isSubActiveCheck(sub, link));
-                    const isActive = isParentExact || isAnyChildActive;
-
+                    const isActive = isLinkActive(link);
                     const linkKey = linkLabelMap[link.label];
                     const translatedLabel =
                       linkKey && t(linkKey) && t(linkKey) !== linkKey
@@ -250,7 +195,7 @@ export function Sidebar({
                           <Link
                             href={link.href}
                             onClick={onClose}
-                            aria-current={isParentExact ? "page" : undefined}
+                            aria-current={isActive ? "page" : undefined}
                             className="flex items-center gap-2.5 px-2.5 h-8 flex-1 min-w-0 focus-visible:outline-none"
                           >
                             {Icon && (
@@ -274,69 +219,7 @@ export function Sidebar({
                               </span>
                             )}
                           </Link>
-
-                          {hasSubItems && (
-                            <button
-                              type="button"
-                              onClick={(e) => toggleMenu(link.href, e)}
-                              aria-expanded={isExpanded}
-                              aria-label={`Buka submenu ${link.label}`}
-                              className={cn(
-                                "p-1.5 mr-1 rounded-xs transition-colors cursor-pointer flex items-center justify-center",
-                                isActive
-                                  ? "text-white/80 hover:text-white hover:bg-white/15"
-                                  : "text-[#7A756D] dark:text-zinc-400 hover:text-[#1A1816] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                              )}
-                            >
-                              <ChevronDown
-                                className={cn(
-                                  "w-3.5 h-3.5 transition-transform duration-200",
-                                  isExpanded && "rotate-180"
-                                )}
-                              />
-                            </button>
-                          )}
                         </div>
-
-                        {/* Accordion Submenu Items */}
-                        {hasSubItems && isExpanded && (
-                          <div className="ml-3.5 pl-2.5 border-l-2 border-[#D9D2C5] dark:border-zinc-800 space-y-0.5 my-1 animate-fade-in">
-                            {link.subItems.map((sub: any) => {
-                              const SubIcon = iconMap[sub.icon];
-                              const isSubActive = isSubActiveCheck(sub, link);
-                              return (
-                                <Link
-                                  key={sub.href}
-                                  href={sub.href}
-                                  onClick={onClose}
-                                  aria-current={isSubActive ? "page" : undefined}
-                                  className={cn(
-                                    "flex items-center gap-2 px-2 py-1.5 rounded-xs font-sans text-[12px] transition-colors",
-                                    "focus-visible:outline-none",
-                                    isSubActive
-                                      ? "bg-[#FFFFFF] dark:bg-zinc-900 text-[#853827] dark:text-brand-400 font-bold border border-[#D4CEBF] dark:border-zinc-800 border-l-2 border-l-[#C2553A] dark:border-l-brand-500 shadow-2xs"
-                                      : "text-[#524B42] dark:text-zinc-400 hover:text-[#1A1816] dark:hover:text-zinc-100 hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 font-medium"
-                                  )}
-                                >
-                                  {SubIcon && (
-                                    <SubIcon
-                                      className={cn(
-                                        "w-3.5 h-3.5 shrink-0 transition-colors",
-                                        isSubActive
-                                          ? "text-[#C2553A] dark:text-brand-400"
-                                          : "text-[#8A8378] dark:text-zinc-500"
-                                      )}
-                                    />
-                                  )}
-                                  <span className="truncate flex-1">{sub.label}</span>
-                                  {isSubActive && (
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#C2553A] dark:bg-brand-500 shrink-0" />
-                                  )}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
                       </div>
                     );
                   })}
@@ -400,217 +283,142 @@ export function Sidebar({
           className={cn(
             "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-[#FAF8F5] dark:bg-[#121214] border-r-2 border-r-[#7A756D] dark:border-r-[#27272A] border-l-2 border-l-[#FFFFFF] dark:border-l-[#1E1E22] select-none",
             "flex-col transition-all duration-200 ease-out shadow-xs",
-            isCollapsed ? "w-[64px]" : "w-[245px]"
+            isCollapsed ? "w-[68px]" : "w-[245px]"
           )}
         >
-        {/* Desktop Header: Brand + Toggle Button */}
-        <div
-          className={cn(
-            "h-11 px-3 border-b-2 border-b-[#7A756D] dark:border-b-[#27272A] flex items-center shrink-0 bg-[#ECE9D8] dark:bg-[#18181B] transition-all duration-200",
-            isCollapsed ? "justify-center" : "justify-between"
-          )}
-        >
-          <Link
-            href="/dashboard"
+          {/* Desktop Header: Brand + Toggle Button */}
+          <div
             className={cn(
-              "flex items-center gap-2 focus-visible:outline-none rounded-none p-0.5 min-w-0 overflow-hidden",
-              isCollapsed && "justify-center"
+              "h-11 px-3 border-b-2 border-b-[#7A756D] dark:border-b-[#27272A] flex items-center shrink-0 bg-[#ECE9D8] dark:bg-[#18181B] transition-all duration-200",
+              isCollapsed ? "justify-center" : "justify-between"
             )}
-            title="Velqora Dashboard"
           >
-            <Logo variant="sidebar" hideText={isCollapsed} />
-          </Link>
-
-          {/* Toggle Button [ ‹ ] / [ › ] */}
-          {onToggleCollapse && (
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              aria-label="Toggle sidebar"
-              aria-expanded={!isCollapsed}
+            <Link
+              href="/dashboard"
               className={cn(
-                "px-1.5 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer",
-                isCollapsed && "hidden"
+                "flex items-center gap-2 focus-visible:outline-none rounded-none p-0.5 min-w-0 overflow-hidden",
+                isCollapsed && "justify-center"
               )}
-              title="Kecilkan Sidebar (Collapse)"
+              title="Velqora Dashboard"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
+              <Logo variant="sidebar" hideText={isCollapsed} />
+            </Link>
 
-        {/* Toggle Expand Bar when Collapsed */}
-        {isCollapsed && onToggleCollapse && (
-          <div className="px-2 pt-2 shrink-0">
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              aria-label="Toggle sidebar"
-              aria-expanded={!isCollapsed}
-              className="w-full flex items-center justify-center h-6 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
-              title="Buka Penuh Sidebar (Expand)"
-            >
-              <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-        )}
-
-        {/* Desktop Navigation List */}
-        <nav
-          aria-label="Navigasi Utama Desktop"
-          className="flex-1 px-2 py-3 space-y-3 overflow-y-auto sidebar-nav-scroll overscroll-contain"
-        >
-          {SIDEBAR_CATEGORIES.map((category) => {
-            const catKey = categoryTitleMap[category.title];
-            const translatedCatTitle =
-              catKey && t(catKey) && t(catKey) !== catKey ? t(catKey) : category.title;
-
-            return (
-              <div key={category.title} className="space-y-0.5">
-                {/* Category Header */}
-                {!isCollapsed && (
-                  <div className="px-2 pt-1 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider">
-                    {translatedCatTitle}
-                  </div>
+            {/* Toggle Button [ ‹ ] / [ › ] */}
+            {onToggleCollapse && (
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label="Toggle sidebar"
+                aria-expanded={!isCollapsed}
+                className={cn(
+                  "px-1.5 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer",
+                  isCollapsed && "hidden"
                 )}
+                title="Kecilkan Sidebar (Collapse)"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
 
-                {/* Menu Items */}
-                <div className="space-y-0.5">
-                  {category.links.map((link: any) => {
-                    const Icon = iconMap[link.icon];
-                    const hasSubItems = link.subItems && link.subItems.length > 0;
-                    const isExpanded = !!expandedMenus[link.href];
+          {/* Toggle Expand Bar when Collapsed */}
+          {isCollapsed && onToggleCollapse && (
+            <div className="px-2 pt-2 shrink-0">
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label="Toggle sidebar"
+                aria-expanded={!isCollapsed}
+                className="w-full flex items-center justify-center h-6 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
+                title="Buka Penuh Sidebar (Expand)"
+              >
+                <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+          )}
 
-                    const isParentExact =
-                      link.href === "/dashboard"
-                        ? pathname === "/dashboard"
-                        : pathname === link.href && !hasSubItems;
-                    const isAnyChildActive =
-                      hasSubItems &&
-                      link.subItems.some((sub: any) => isSubActiveCheck(sub, link));
-                    const isActive = isParentExact || isAnyChildActive;
+          {/* Desktop Navigation List (Flat structured per Category) */}
+          <nav
+            aria-label="Navigasi Utama Desktop"
+            className="flex-1 px-2 py-3 space-y-3 overflow-y-auto sidebar-nav-scroll overscroll-contain"
+          >
+            {SIDEBAR_CATEGORIES.map((category) => {
+              const catKey = categoryTitleMap[category.title];
+              const translatedCatTitle =
+                catKey && t(catKey) && t(catKey) !== catKey ? t(catKey) : category.title;
 
-                    const linkKey = linkLabelMap[link.label];
-                    const translatedLabel =
-                      linkKey && t(linkKey) && t(linkKey) !== linkKey
-                        ? t(linkKey)
-                        : link.label;
-                    const isAiItem = link.isAi;
+              return (
+                <div key={category.title} className="space-y-0.5">
+                  {/* Category Header */}
+                  {!isCollapsed && (
+                    <div className="px-2 pt-1 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider">
+                      {translatedCatTitle}
+                    </div>
+                  )}
 
-                    return (
-                      <div key={link.href} className="relative group space-y-0.5">
-                        <div
-                          className={cn(
-                            "flex items-center rounded-xs transition-all duration-100",
-                            isActive
-                              ? "bg-[#C2553A] dark:bg-brand-600 text-white shadow-xs border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900"
-                              : "text-[#2D2823] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent font-medium"
-                          )}
-                        >
-                          <Link
-                            href={link.href}
-                            aria-current={isParentExact ? "page" : undefined}
+                  {/* Flat Menu Items */}
+                  <div className="space-y-0.5">
+                    {category.links.map((link) => {
+                      const Icon = iconMap[link.icon];
+                      const isActive = isLinkActive(link);
+                      const linkKey = linkLabelMap[link.label];
+                      const translatedLabel =
+                        linkKey && t(linkKey) && t(linkKey) !== linkKey
+                          ? t(linkKey)
+                          : link.label;
+                      const isAiItem = link.isAi;
+
+                      return (
+                        <div key={link.href} className="relative group space-y-0.5">
+                          <div
                             className={cn(
-                              "relative flex items-center transition-all duration-100 flex-1 min-w-0 focus-visible:outline-none",
-                              isCollapsed
-                                ? "justify-center w-8 h-8 mx-auto"
-                                : "gap-2 px-2.5 h-7.5"
+                              "flex items-center rounded-xs transition-all duration-100",
+                              isActive
+                                ? "bg-[#C2553A] dark:bg-brand-600 text-white shadow-xs border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900"
+                                : "text-[#2D2823] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent font-medium"
                             )}
                           >
-                            {Icon && (
-                              <Icon
-                                className={cn(
-                                  "w-3.5 h-3.5 shrink-0 transition-colors",
-                                  isActive
-                                    ? "text-white"
-                                    : isAiItem
-                                    ? "text-[#C2553A] dark:text-brand-400"
-                                    : "text-[#7A756D] dark:text-zinc-400 group-hover:text-[#1A1816] dark:group-hover:text-white"
-                                )}
-                              />
-                            )}
-
-                            {!isCollapsed && (
-                              <span className="truncate flex-1 font-sans text-[13px] font-medium leading-none">
-                                {translatedLabel}
-                              </span>
-                            )}
-
-                            {isAiItem && !isActive && !isCollapsed && (
-                              <span className="px-1 py-0.2 text-[8.5px] font-mono font-bold bg-[#C2553A]/10 dark:bg-brand-400/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-400/30 rounded-2xs">
-                                AI
-                              </span>
-                            )}
-                          </Link>
-
-                          {/* Expand/Collapse Chevron Button (Desktop Expanded) */}
-                          {hasSubItems && !isCollapsed && (
-                            <button
-                              type="button"
-                              onClick={(e) => toggleMenu(link.href, e)}
-                              aria-expanded={isExpanded}
-                              aria-label={`Toggle ${link.label}`}
+                            <Link
+                              href={link.href}
+                              aria-current={isActive ? "page" : undefined}
                               className={cn(
-                                "p-1.5 mr-1 rounded-xs transition-colors cursor-pointer flex items-center justify-center",
-                                isActive
-                                  ? "text-white/80 hover:text-white hover:bg-white/15"
-                                  : "text-[#7A756D] dark:text-zinc-400 hover:text-[#1A1816] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                                "relative flex items-center transition-all duration-100 flex-1 min-w-0 focus-visible:outline-none",
+                                isCollapsed
+                                  ? "justify-center w-8 h-8 mx-auto"
+                                  : "gap-2 px-2.5 h-7.5"
                               )}
                             >
-                              <ChevronDown
-                                className={cn(
-                                  "w-3.5 h-3.5 transition-transform duration-200",
-                                  isExpanded && "rotate-180"
-                                )}
-                              />
-                            </button>
-                          )}
-                        </div>
-
-                        {/* Accordion Sub-items (Desktop Expanded) */}
-                        {hasSubItems && !isCollapsed && isExpanded && (
-                          <div className="ml-3.5 pl-2.5 border-l-2 border-[#D9D2C5] dark:border-zinc-800 space-y-0.5 my-1 animate-fade-in">
-                            {link.subItems.map((sub: any) => {
-                              const SubIcon = iconMap[sub.icon];
-                              const isSubActive = isSubActiveCheck(sub, link);
-
-                              return (
-                                <Link
-                                  key={sub.href}
-                                  href={sub.href}
-                                  aria-current={isSubActive ? "page" : undefined}
+                              {Icon && (
+                                <Icon
                                   className={cn(
-                                    "flex items-center gap-2 px-2 py-1.5 rounded-xs font-sans text-[12px] transition-colors",
-                                    "focus-visible:outline-none",
-                                    isSubActive
-                                      ? "bg-[#FFFFFF] dark:bg-zinc-900 text-[#853827] dark:text-brand-400 font-bold border border-[#D4CEBF] dark:border-zinc-800 border-l-2 border-l-[#C2553A] dark:border-l-brand-500 shadow-2xs"
-                                      : "text-[#524B42] dark:text-zinc-400 hover:text-[#1A1816] dark:hover:text-zinc-100 hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 font-medium"
+                                    "w-3.5 h-3.5 shrink-0 transition-colors",
+                                    isActive
+                                      ? "text-white"
+                                      : isAiItem
+                                      ? "text-[#C2553A] dark:text-brand-400"
+                                      : "text-[#7A756D] dark:text-zinc-400 group-hover:text-[#1A1816] dark:group-hover:text-white"
                                   )}
-                                >
-                                  {SubIcon && (
-                                    <SubIcon
-                                      className={cn(
-                                        "w-3.5 h-3.5 shrink-0 transition-colors",
-                                        isSubActive
-                                          ? "text-[#C2553A] dark:text-brand-400"
-                                          : "text-[#8A8378] dark:text-zinc-500"
-                                      )}
-                                    />
-                                  )}
-                                  <span className="truncate flex-1">{sub.label}</span>
-                                  {isSubActive && (
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#C2553A] dark:bg-brand-500 shrink-0" />
-                                  )}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
+                                />
+                              )}
 
-                        {/* Collapsed Tooltip / Flyout Menu on Hover (Desktop Collapsed) */}
-                        {isCollapsed && (
-                          <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 rounded-none bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] text-xs font-sans font-bold shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 min-w-[170px] space-y-1.5">
-                            <div className="font-bold border-b border-[#7A756D]/30 dark:border-zinc-700/60 pb-1 text-[#1C1917] dark:text-[#F4F4F5] flex items-center justify-between">
+                              {!isCollapsed && (
+                                <span className="truncate flex-1 font-sans text-[13px] font-medium leading-none">
+                                  {translatedLabel}
+                                </span>
+                              )}
+
+                              {isAiItem && !isActive && !isCollapsed && (
+                                <span className="px-1 py-0.2 text-[8.5px] font-mono font-bold bg-[#C2553A]/10 dark:bg-brand-400/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-400/30 rounded-2xs">
+                                  AI
+                                </span>
+                              )}
+                            </Link>
+                          </div>
+
+                          {/* Collapsed Tooltip on Hover (Desktop Collapsed 64px) */}
+                          {isCollapsed && (
+                            <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 rounded-none bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] text-xs font-sans font-bold shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap flex items-center gap-2">
                               <span>{translatedLabel}</span>
                               {isAiItem && (
                                 <span className="px-1 py-0.2 text-[8px] font-mono bg-[#C2553A]/10 dark:bg-brand-400/15 text-[#C2553A] dark:text-brand-400">
@@ -618,113 +426,87 @@ export function Sidebar({
                                 </span>
                               )}
                             </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
 
-                            {hasSubItems && (
-                              <div className="space-y-0.5 pt-0.5">
-                                {link.subItems.map((sub: any) => {
-                                  const SubIcon = iconMap[sub.icon];
-                                  const isSubActive = isSubActiveCheck(sub, link);
+            {/* Desktop Admin Section */}
+            {(isAdmin || isOwner) && (
+              <div className="pt-2 border-t border-[#7A756D]/40 dark:border-zinc-800 space-y-1">
+                {!isCollapsed && (
+                  <div className="px-2 pb-0.5 font-mono text-[9.5px] font-bold text-[#C2553A] dark:text-brand-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
+                    <Crown className="w-3 h-3 text-[#C2553A] dark:text-brand-400" />
+                  </div>
+                )}
 
-                                  return (
-                                    <Link
-                                      key={sub.href}
-                                      href={sub.href}
-                                      className={cn(
-                                        "flex items-center gap-1.5 px-1.5 py-0.5 text-[11px] font-sans transition-colors",
-                                        isSubActive
-                                          ? "bg-[#C2553A]/15 dark:bg-brand-500/20 text-[#853827] dark:text-brand-400 font-bold"
-                                          : "text-[#524B42] dark:text-zinc-400 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800"
-                                      )}
-                                    >
-                                      {SubIcon && <SubIcon className="w-3 h-3 shrink-0" />}
-                                      <span className="truncate">{sub.label}</span>
-                                    </Link>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
+                <div className="space-y-0.5">
+                  {isOwner && (
+                    <div className="relative group">
+                      <Link
+                        href="/dashboard/kelola-role"
+                        aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
+                        className={cn(
+                          "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
+                          "focus-visible:outline-none",
+                          isCollapsed
+                            ? "justify-center w-8 h-8 mx-auto"
+                            : "gap-2 px-2.5 h-7.5",
+                          pathname.startsWith("/dashboard/kelola-role")
+                            ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
+                            : "text-[#3D352E] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
                         )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                        {!isCollapsed && (
+                          <span className="truncate leading-snug">Kelola Hak Akses</span>
+                        )}
+                      </Link>
 
-          {/* Desktop Admin Section */}
-          {(isAdmin || isOwner) && (
-            <div className="pt-2 border-t border-[#7A756D]/40 dark:border-zinc-800 space-y-1">
-              {!isCollapsed && (
-                <div className="px-2 pb-0.5 font-mono text-[9.5px] font-bold text-[#C2553A] dark:text-brand-400 uppercase tracking-wider flex items-center justify-between">
-                  <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
-                  <Crown className="w-3 h-3 text-[#C2553A] dark:text-brand-400" />
-                </div>
-              )}
+                      {isCollapsed && (
+                        <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                          Kelola Hak Akses
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-              <div className="space-y-0.5">
-                {isOwner && (
                   <div className="relative group">
                     <Link
-                      href="/dashboard/kelola-role"
-                      aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
+                      href="/dashboard/peta-pengguna"
+                      aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                       className={cn(
                         "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
                         "focus-visible:outline-none",
                         isCollapsed
                           ? "justify-center w-8 h-8 mx-auto"
                           : "gap-2 px-2.5 h-7.5",
-                        pathname.startsWith("/dashboard/kelola-role")
+                        pathname.startsWith("/dashboard/peta-pengguna")
                           ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
                           : "text-[#3D352E] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
                       )}
                     >
-                      <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
                       {!isCollapsed && (
-                        <span className="truncate leading-snug">Kelola Hak Akses</span>
+                        <span className="truncate leading-snug">Peta Pengguna</span>
                       )}
                     </Link>
 
                     {isCollapsed && (
                       <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                        Kelola Hak Akses
+                        Peta Pengguna
                       </div>
                     )}
                   </div>
-                )}
-
-                <div className="relative group">
-                  <Link
-                    href="/dashboard/peta-pengguna"
-                    aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
-                    className={cn(
-                      "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
-                      "focus-visible:outline-none",
-                      isCollapsed
-                        ? "justify-center w-8 h-8 mx-auto"
-                        : "gap-2 px-2.5 h-7.5",
-                      pathname.startsWith("/dashboard/peta-pengguna")
-                        ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
-                        : "text-[#3D352E] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
-                    )}
-                  >
-                    <MapPin className="w-3.5 h-3.5 shrink-0" />
-                    {!isCollapsed && (
-                      <span className="truncate leading-snug">Peta Pengguna</span>
-                    )}
-                  </Link>
-
-                  {isCollapsed && (
-                    <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                      Peta Pengguna
-                    </div>
-                  )}
                 </div>
               </div>
-            </div>
-          )}
-        </nav>
+            )}
+          </nav>
         </aside>
       )}
     </>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus, ClipboardList, AlertCircle, RefreshCw } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
@@ -21,6 +22,12 @@ import { ClassroomSyncModal } from "@/components/tasks/classroom-sync-modal";
 import { toast } from "sonner";
 
 function TugasContent() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

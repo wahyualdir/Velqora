@@ -49,7 +49,7 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
 
   // ─── Group B: Mobile Bottom Navigation & 5 Destinations Contract ───
   describe("Group B: Mobile Navigation Contract", () => {
-    it("Scenario EXP-6: Mobile bottom nav exposes exactly 5 primary destinations", () => {
+    it("Scenario EXP-6: Mobile bottom nav exposes unified primary destinations and Menu button without Tugas", () => {
       const bottomNavPath = path.join(
         process.cwd(),
         "src/surfaces/app/layout/mobile-bottom-nav.tsx"
@@ -57,15 +57,13 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
       assert.ok(fs.existsSync(bottomNavPath), "mobile-bottom-nav.tsx must exist");
       const content = fs.readFileSync(bottomNavPath, "utf-8");
 
-      // Verify destinations
-      assert.ok(content.includes("Beranda"), "Must have Beranda");
-      assert.ok(content.includes("Materi"), "Must have Materi");
-      assert.ok(content.includes("Tugas"), "Must have Tugas");
-      assert.ok(content.includes("Modul"), "Must have Modul");
-      assert.ok(content.includes("Menu"), "Must have Menu");
+      // Verify unified single source of truth usage
+      assert.ok(content.includes("getMobilePrimaryNavItems"), "Must use getMobilePrimaryNavItems from constants");
+      assert.ok(content.includes("Menu"), "Must have Menu trigger button");
+      assert.ok(!content.includes('"Tugas"'), "Tugas must be removed from bottom nav");
     });
 
-    it("Scenario EXP-7: Mobile menu drawer provides access to secondary features without clutter", () => {
+    it("Scenario EXP-7: Mobile menu drawer dynamically renders from SIDEBAR_CATEGORIES without Kelas", () => {
       const drawerPath = path.join(
         process.cwd(),
         "src/surfaces/app/layout/mobile-menu-drawer.tsx"
@@ -73,11 +71,8 @@ describe("FASE 39: True Web vs App Product Experience Separation Suite", () => {
       assert.ok(fs.existsSync(drawerPath), "mobile-menu-drawer.tsx must exist");
       const content = fs.readFileSync(drawerPath, "utf-8");
 
-      assert.ok(content.includes("/dashboard/ai-tutor"), "Drawer must link to AI Tutor");
-      assert.ok(content.includes("/dashboard/kelas"), "Drawer must link to Kelas");
-      assert.ok(content.includes("/dashboard/file"), "Drawer must link to Berkas");
-      assert.ok(content.includes("/dashboard/playground"), "Drawer must link to Playground");
-      assert.ok(content.includes("/dashboard/pengaturan"), "Drawer must link to Pengaturan");
+      assert.ok(content.includes("SIDEBAR_CATEGORIES"), "Drawer must consume SIDEBAR_CATEGORIES");
+      assert.ok(!content.includes('href: "/dashboard/kelas"'), "Drawer must not link to Kelas");
       assert.ok(content.includes("Pasang Aplikasi"), "Drawer must have install trigger");
     });
   });

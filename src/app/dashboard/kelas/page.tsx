@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { GraduationCap, AlertCircle, RefreshCw, Plus, KeyRound } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,12 @@ import { JoinClassModal } from "@/components/classes/join-class-modal";
 import { toast } from "sonner";
 
 function KelasContent() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [joinedCodes, setJoinedCodes] = useState<string[]>([]);
   const [userEmail, setUserEmail] = useState<string>("");

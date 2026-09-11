@@ -60,7 +60,7 @@ export function CanvasWireframeCube() {
       const projected: { x: number; y: number; z: number }[] = [];
 
       for (let i = 0; i < vertices.length; i++) {
-        let [x, y, z] = vertices[i];
+        const [x, y, z] = vertices[i];
 
         // Rotate around X
         const y1 = y * Math.cos(radX) - z * Math.sin(radX);

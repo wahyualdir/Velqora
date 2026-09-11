@@ -50,93 +50,80 @@ export const ALLOWED_FILE_EXTENSIONS = [
 // Nama bucket Supabase Storage
 export const STORAGE_BUCKET = "studyvault-files";
 
-// Navigasi sidebar terkelompok 4 kategori bersih dengan sub-menu terstruktur
-export const SIDEBAR_CATEGORIES = [
+// Tipe data navigasi terpusat
+export interface NavItem {
+  label: string;
+  href: string;
+  icon: string;
+  isAi?: boolean;
+  exact?: boolean;
+}
+
+export interface NavCategory {
+  title: string;
+  links: NavItem[];
+}
+
+// Navigasi terpusat (Single Source of Truth) untuk desktop sidebar, mobile bottom nav, dan mobile drawer
+export const SIDEBAR_CATEGORIES: readonly NavCategory[] = [
   {
     title: "Utama",
     links: [
-      { label: "Dashboard", href: "/dashboard", icon: "LayoutGrid" },
-      { label: "Statistik Belajar", href: "/dashboard/statistik", icon: "BarChart3" },
+      { label: "Dashboard", href: "/dashboard", icon: "LayoutGrid", exact: true },
     ],
   },
   {
-    title: "Pembelajaran",
+    title: "Modul",
     links: [
-      {
-        label: "Modul & Project",
-        href: "/dashboard/modul",
-        icon: "Layers",
-        subItems: [
-          { label: "Katalog Modul", href: "/dashboard/modul", icon: "Layers" },
-          { label: "Repositori Project", href: "/dashboard/modul?mode=project", icon: "FolderCode" },
-        ],
-      },
-      {
-        label: "Bahan Ajar & Dokumen",
-        href: "/dashboard/materi",
-        icon: "BookOpen",
-        subItems: [
-          { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: "BookOpen" },
-          { label: "Semua Berkas", href: "/dashboard/file", icon: "Files" },
-          { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: "Bookmark" },
-          { label: "Catatan Belajar", href: "/dashboard/catatan", icon: "PenLine" },
-        ],
-      },
-      {
-        label: "Tugas & Jadwal",
-        href: "/dashboard/tugas",
-        icon: "CheckSquare",
-        subItems: [
-          { label: "Daftar Tugas", href: "/dashboard/tugas", icon: "CheckSquare" },
-          { label: "Jadwal Perkuliahan", href: "/dashboard/tugas?tab=jadwal", icon: "Calendar" },
-        ],
-      },
-      { label: "Ruang Kelas", href: "/dashboard/kelas", icon: "Users" },
+      { label: "Katalog Modul", href: "/dashboard/modul", icon: "Layers" },
+      { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: "BookOpen" },
+      { label: "Semua Berkas", href: "/dashboard/file", icon: "Files" },
+      { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: "Bookmark" },
+      { label: "Catatan Belajar", href: "/dashboard/catatan", icon: "PenLine" },
     ],
   },
   {
-    title: "Fitur & Alat",
+    title: "Project",
     links: [
-      {
-        label: "AI Assistant",
-        href: "/dashboard/ai-tutor",
-        icon: "Bot",
-        isAi: true,
-        subItems: [
-          { label: "AI Tutor Cerdas", href: "/dashboard/ai-tutor", icon: "Bot" },
-          { label: "Latihan & Kuis AI", href: "/dashboard/kuis-ai", icon: "BrainCircuit" },
-        ],
-      },
-      {
-        label: "Ruang Praktik & Alat",
-        href: "/dashboard/playground",
-        icon: "Code2",
-        subItems: [
-          { label: "Ruang Praktik Kode", href: "/dashboard/playground", icon: "Code2" },
-          { label: "Konversi & OCR Berkas", href: "/dashboard/konversi", icon: "ScanLine" },
-        ],
-      },
+      { label: "Repositori Project", href: "/dashboard/modul?mode=project", icon: "FolderCode" },
     ],
   },
   {
-    title: "Pengaturan",
+    title: "Alat AI",
     links: [
-      {
-        label: "Pengaturan Workspace",
-        href: "/dashboard/pengaturan",
-        icon: "Settings",
-        subItems: [
-          { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: "Settings" },
-          { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: "FolderPixel" },
-          { label: "Label & Tag", href: "/dashboard/tag", icon: "Tag" },
-          { label: "Cadangan Data", href: "/dashboard/backup", icon: "HardDriveDownload" },
-        ],
-      },
+      { label: "AI Tutor Cerdas", href: "/dashboard/ai-tutor", icon: "Bot", isAi: true },
+      { label: "Latihan & Kuis AI", href: "/dashboard/kuis-ai", icon: "BrainCircuit", isAi: true },
+      { label: "Ruang Praktik Kode", href: "/dashboard/playground", icon: "Code2" },
+      { label: "Konversi & OCR Berkas", href: "/dashboard/konversi", icon: "ScanLine" },
+    ],
+  },
+  {
+    title: "Sistem",
+    links: [
+      { label: "Pengaturan Umum", href: "/dashboard/pengaturan", icon: "Settings" },
+      { label: "Kategori & Subjek", href: "/dashboard/kategori", icon: "FolderPixel" },
+      { label: "Label & Tag", href: "/dashboard/tag", icon: "Tag" },
+      { label: "Cadangan Data", href: "/dashboard/backup", icon: "HardDriveDownload" },
       { label: "Panduan", href: "/dashboard/panduan", icon: "Compass" },
       { label: "Pasang Aplikasi", href: "/download", icon: "Download" },
     ],
   },
 ] as const;
+
+// Href destinasi utama untuk Mobile Bottom Nav (diambil dari SIDEBAR_CATEGORIES)
+export const MOBILE_PRIMARY_NAV_HREFS = [
+  "/dashboard",
+  "/dashboard/modul",
+  "/dashboard/modul?mode=project",
+  "/dashboard/ai-tutor",
+] as const;
+
+export function getMobilePrimaryNavItems(): NavItem[] {
+  const allLinks = SIDEBAR_CATEGORIES.flatMap((cat) => cat.links);
+  return MOBILE_PRIMARY_NAV_HREFS.map((href) =>
+    allLinks.find((link) => link.href === href)
+  ).filter((item): item is NavItem => Boolean(item));
+}
 
 export interface SystemCategoryPreset {
   name: string;
