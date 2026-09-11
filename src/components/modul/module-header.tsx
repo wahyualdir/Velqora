@@ -23,9 +23,9 @@ export function ModuleHeader({
 }: ModuleHeaderProps) {
   return (
     <PageHeader
-      eyebrow="Kurikulum & Repositori"
-      title="Modul & Project"
-      description="Kelola modul pembelajaran berstruktur silabus dan repositori proyek kode Anda secara terorganisir."
+      eyebrow="Kurikulum Kecerdasan Buatan"
+      title="Katalog Modul AI"
+      description="Jelajahi kurikulum terstruktur serta proyek praktikum Kecerdasan Buatan (AI) yang terorganisir per topik."
       actions={
         <>
           {onOpenSorter && (

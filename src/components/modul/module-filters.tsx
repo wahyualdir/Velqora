@@ -2,7 +2,10 @@
 
 import React from "react";
 import { Search, X, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
+// PEMBATASAN SEMENTARA: Scope kategori katalog modul dibatasi hanya untuk materi Kecerdasan Buatan (AI).
+// Kategori lain tetap tersimpan di database dan constants.ts, hanya disaring di layer presentasi.
+export const ACTIVE_CATEGORY_SCOPE = ["Kecerdasan Buatan"] as const;
 
 interface ModuleFiltersProps {
   search: string;
@@ -35,6 +38,20 @@ export function ModuleFilters({
   onResetFilters,
   hasActiveFilters,
 }: ModuleFiltersProps) {
+  // Saring kategori yang ditampilkan di dropdown agar hanya dalam scope AI aktif
+  const scopedCategories = React.useMemo(() => {
+    return categories.filter((cat) => {
+      const name = (cat.name || "").toLowerCase().trim();
+      const parentName = (cat.parent?.name || "").toLowerCase().trim();
+      const isAiParent = ACTIVE_CATEGORY_SCOPE.some(
+        (s) => s.toLowerCase() === name
+      );
+      const isAiChild = ACTIVE_CATEGORY_SCOPE.some(
+        (s) => s.toLowerCase() === parentName
+      );
+      return isAiParent || isAiChild;
+    });
+  }, [categories]);
   return (
     <div className="vt-window rounded-none overflow-hidden shadow-xs mb-4">
       {/* Mini Titlebar */}
@@ -72,15 +89,15 @@ export function ModuleFilters({
         {/* Filter Row */}
         <div className="flex flex-wrap items-center gap-2.5 justify-between pt-0.5">
           <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-            {/* Category Dropdown */}
+            {/* Category Dropdown (Dibatasi ke AI Scope) */}
             <select
               value={selectedCategory}
               onChange={(e) => onCategoryChange(e.target.value)}
               className="px-2.5 py-1.5 min-h-[34px] border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-xs font-mono text-[#1C1917] dark:text-zinc-100 font-medium focus:outline-hidden cursor-pointer"
               aria-label="Filter kategori"
             >
-              <option value="">Semua Kategori</option>
-              {categories.map((cat) => (
+              <option value="">Semua Topik AI</option>
+              {scopedCategories.map((cat) => (
                 <option key={cat.id} value={cat.id} className="dark:bg-[#18181B] dark:text-zinc-100">
                   {cat.name}
                 </option>

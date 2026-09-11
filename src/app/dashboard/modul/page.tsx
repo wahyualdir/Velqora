@@ -13,14 +13,62 @@ import { createClient } from "@/lib/supabase/client";
 import { isAdminUser } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { ModuleHeader } from "@/components/modul/module-header";
-import { ModuleFilters } from "@/components/modul/module-filters";
-import { ModuleListItem } from "@/components/modul/module-list-item";
-import { MobileModuleList } from "@/surfaces/app/modul/mobile-module-list";
-import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
+import { ModuleFilters, ACTIVE_CATEGORY_SCOPE } from "@/components/modul/module-filters";
+import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
+import { AiCategoryCard, AiCategoryItem } from "@/components/modul/ai-category-card";
+import { CategoryModuleGroup } from "@/components/modul/category-module-group";
 import { ModuleDriveFile } from "@/types/module-drive";
 import { toast } from "sonner";
+
+// PEMBATASAN SEMENTARA: Scope katalog modul dibatasi hanya untuk materi Kecerdasan Buatan (AI).
+// Kategori non-AI tetap tersimpan di database dan constants.ts, hanya disaring di layer presentasi.
+const AI_CATEGORY_PRESET = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
+const AI_SUBCATEGORY_NAMES = new Set(
+  AI_CATEGORY_PRESET?.subcategories.map((s) => s.name.toLowerCase()) || []
+);
+
+function isModuleInAiScope(mod: any): boolean {
+  const catName = (mod.category?.name || "").toLowerCase().trim();
+  const parentName = (mod.category?.parent?.name || "").toLowerCase().trim();
+
+  // 1. Kategori induk "Kecerdasan Buatan"
+  if (ACTIVE_CATEGORY_SCOPE.some((scope) => scope.toLowerCase() === catName)) {
+    return true;
+  }
+
+  // 2. Parent kategori "Kecerdasan Buatan"
+  if (ACTIVE_CATEGORY_SCOPE.some((scope) => scope.toLowerCase() === parentName)) {
+    return true;
+  }
+
+  // 3. Subkategori resmi AI (Machine Learning, Deep Learning, NLP, Computer Vision, dll.)
+  if (AI_SUBCATEGORY_NAMES.has(catName)) {
+    return true;
+  }
+
+  // 4. Modul tanpa relasi kategori spesifik: periksa kata kunci AI di judul atau tags
+  const titleOrDesc = `${mod.title || ""} ${mod.description || ""}`.toLowerCase();
+  const hasAiTag = mod.tags?.some((t: any) =>
+    ["ai", "kecerdasan buatan", "machine learning", "deep learning", "nlp", "computer vision", "llm"].includes(
+      (t.name || "").toLowerCase().trim()
+    )
+  );
+
+  if (
+    hasAiTag ||
+    titleOrDesc.includes("machine learning") ||
+    titleOrDesc.includes("deep learning") ||
+    titleOrDesc.includes("kecerdasan buatan") ||
+    titleOrDesc.includes("artificial intelligence") ||
+    titleOrDesc.includes("neural network")
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 function ModulDanProjectContent() {
   const router = useRouter();
@@ -141,9 +189,14 @@ function ModulDanProjectContent() {
     );
   };
 
+  // Scope aktif katalog modul: disaring hanya untuk materi Kecerdasan Buatan (AI)
+  const aiScopedModules = useMemo(() => {
+    return modules.filter(isModuleInAiScope);
+  }, [modules]);
+
   // Filter & Sort Logic
   const filteredModules = useMemo(() => {
-    let list = [...modules];
+    let list = [...aiScopedModules];
 
     // 1. Content Mode Filter
     if (contentMode === "module") {
@@ -203,16 +256,75 @@ function ModulDanProjectContent() {
     });
 
     return list;
-  }, [modules, contentMode, search, selectedCategory, levelFilter, scope, sortBy, currentUserId]);
+  }, [aiScopedModules, contentMode, search, selectedCategory, levelFilter, scope, sortBy, currentUserId]);
 
   const totalModulesCount = useMemo(
-    () => modules.filter((m) => m.kind !== "project").length,
-    [modules]
+    () => aiScopedModules.filter((m) => m.kind !== "project").length,
+    [aiScopedModules]
   );
   const totalProjectsCount = useMemo(
-    () => modules.filter((m) => m.kind === "project").length,
-    [modules]
+    () => aiScopedModules.filter((m) => m.kind === "project").length,
+    [aiScopedModules]
   );
+
+  // ─── 1. Ringkasan Topik AI (Kartu Besar) ───
+  const aiTopicOverview = useMemo<AiCategoryItem[]>(() => {
+    const subcats = AI_CATEGORY_PRESET?.subcategories || [];
+    return subcats.map((sub) => {
+      const dbCat = categories.find(
+        (c) => (c.name || "").toLowerCase().trim() === sub.name.toLowerCase().trim()
+      );
+      const count = aiScopedModules.filter((m) => {
+        const catName = (m.category?.name || "").toLowerCase().trim();
+        return (
+          catName === sub.name.toLowerCase().trim() ||
+          (sub.name === "Artificial Intelligence Fundamentals" &&
+            (!catName || catName === "kecerdasan buatan"))
+        );
+      }).length;
+
+      return {
+        id: dbCat?.id || sub.name,
+        name: sub.name,
+        color: sub.color || "#8B5CF6",
+        icon: sub.icon || "machine_learning",
+        moduleCount: count,
+      };
+    });
+  }, [aiScopedModules, categories]);
+
+  // ─── 2. Pengelompokan Modul yang Difilter per Kategori AI ───
+  const groupedModulesByCategory = useMemo(() => {
+    const map = new Map<string, { category: any; modules: any[] }>();
+
+    for (const mod of filteredModules) {
+      let catName = mod.category?.name?.trim() || "";
+      const catObj = mod.category;
+
+      if (!catName || catName.toLowerCase() === "kecerdasan buatan") {
+        catName = "Artificial Intelligence Fundamentals";
+      }
+
+      const presetSub = AI_CATEGORY_PRESET?.subcategories.find(
+        (s) => s.name.toLowerCase() === catName.toLowerCase()
+      );
+
+      const resolvedCategory = {
+        id: catObj?.id || presetSub?.name || catName,
+        name: presetSub?.name || catName,
+        color: presetSub?.color || catObj?.color || "#8B5CF6",
+        icon: presetSub?.icon || catObj?.icon || "machine_learning",
+      };
+
+      const key = resolvedCategory.name.toLowerCase();
+      if (!map.has(key)) {
+        map.set(key, { category: resolvedCategory, modules: [] });
+      }
+      map.get(key)!.modules.push(mod);
+    }
+
+    return Array.from(map.values());
+  }, [filteredModules]);
 
   const hasActiveFilters = Boolean(
     search || selectedCategory || levelFilter || scope !== "all" || sortBy !== "latest"
@@ -256,7 +368,27 @@ function ModulDanProjectContent() {
         </div>
       )}
 
-      {/* ─── 2. Search, Category, and Scope Filters ─── */}
+      {/* ─── 2. Topik Kurikulum AI (Kartu Besar) ─── */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <div>
+            <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
+              Topik Kurikulum Kecerdasan Buatan
+            </h2>
+            <p className="text-xs text-text-secondary font-mono">
+              Pilih kartu topik untuk meninjau silabus dan materi kode terstruktur
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+          {aiTopicOverview.map((topic) => (
+            <AiCategoryCard key={topic.id || topic.name} category={topic} />
+          ))}
+        </div>
+      </section>
+
+      {/* ─── 3. Search, Category, and Scope Filters ─── */}
       <ModuleFilters
         search={search}
         onSearchChange={setSearch}
@@ -273,11 +405,11 @@ function ModulDanProjectContent() {
         hasActiveFilters={hasActiveFilters}
       />
 
-      {/* ─── 3. Content List Area ─── */}
+      {/* ─── 4. Content List Area (Berkelompok per Kategori) ─── */}
       <section className="space-y-3">
         <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
           <span>
-            Menampilkan {filteredModules.length} dari {modules.length} konten
+            Menampilkan {filteredModules.length} dari {aiScopedModules.length} konten AI ({groupedModulesByCategory.length} topik aktif)
           </span>
         </div>
 
@@ -297,12 +429,12 @@ function ModulDanProjectContent() {
               </div>
             ))}
           </div>
-        ) : modules.length === 0 ? (
-          /* Empty State 1: Zero modules in entire workspace */
+        ) : aiScopedModules.length === 0 ? (
+          /* Empty State 1: Zero AI modules in scope */
           <EmptyState
             icon={<Layers className="w-8 h-8" />}
-            title="Belum ada modul atau project"
-            description="Mulai susun kurikulum belajar Anda dengan menambahkan modul silabus atau proyek repositori pertama."
+            title="Belum ada modul atau project AI"
+            description="Mulai susun kurikulum belajar Anda dengan menambahkan modul atau proyek bertema Kecerdasan Buatan (AI) pertama."
             action={
               <div className="flex items-center gap-2 justify-center flex-wrap pt-2">
                 <Link href="/dashboard/modul/baru">
@@ -338,32 +470,22 @@ function ModulDanProjectContent() {
             }
           />
         ) : (
-          <SurfaceAdaptive
-            web={
-              <div className="space-y-3">
-                {filteredModules.map((mod) => (
-                  <ModuleListItem
-                    key={mod.id}
-                    module={mod}
-                    currentUserId={currentUserId}
-                    isAdmin={isAdmin}
-                    isBookmarked={Boolean(bookmarkMap[mod.id])}
-                    onToggleBookmark={handleToggleBookmark}
-                    onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
-                    onDelete={handleDeleteModule}
-                    onFilePreview={(file) => setPreviewFile(file)}
-                  />
-                ))}
-              </div>
-            }
-            app={
-              <MobileModuleList
-                modules={filteredModules}
+          <div className="space-y-4">
+            {groupedModulesByCategory.map((group) => (
+              <CategoryModuleGroup
+                key={group.category.id || group.category.name}
+                category={group.category}
+                modules={group.modules}
+                currentUserId={currentUserId}
+                isAdmin={isAdmin}
                 bookmarkMap={bookmarkMap}
                 onToggleBookmark={handleToggleBookmark}
+                onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
+                onDelete={handleDeleteModule}
+                onFilePreview={(file) => setPreviewFile(file)}
               />
-            }
-          />
+            ))}
+          </div>
         )}
       </section>
 

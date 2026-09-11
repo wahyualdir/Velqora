@@ -24,12 +24,20 @@ export interface ModuleDriveFolder {
   updatedAt?: string;
 }
 
+export interface ModuleCodeSnippet {
+  id: string;
+  language: string; // "python", "javascript", dst.
+  code: string;
+  caption?: string; // penjelasan singkat khusus untuk snippet ini
+}
+
 export interface ModuleSection {
   id: string;
   title: string;
   orderIndex: number;
   isCompleted: boolean;
   description?: string;
+  codeSnippets?: ModuleCodeSnippet[]; // BARU — opsional, default kosong
 }
 
 export interface ModuleDriveFile {
