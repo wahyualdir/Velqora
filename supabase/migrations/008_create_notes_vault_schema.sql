@@ -141,7 +141,7 @@ CREATE POLICY "Admin users can manage note tags"
 -- 5. Seed Initial Curriculum Notes & Demo Wiki-Links
 -- ============================================================
 
-DO $$
+DO $MIGRATION_VAULT$
 DECLARE
   v_cat_ml UUID;
   v_cat_dl UUID;
@@ -323,7 +323,7 @@ BEGIN
     v_cat_fund,
     'bayes-theorem',
     'Bayes'' Theorem',
-    '# Bayes'' Theorem (Teorema Bayes)\n\nTeorema Bayes adalah hukum fundamental dalam teori probabilitas yang menyatakan cara memperbarui keyakinan probabilitas (*posterior*) berdasarkan bukti baru (*evidence*):\n\n$$P(A|B) = \\frac{P(B|A) \\cdot P(A)}{P(B)}$$\n\n- **$P(A)$**: Probabilitas prior (keyakinan sebelum ada bukti)\n- **$P(B|A)$**: Likelihood (kemungkinan bukti jika hipotesis $A$ benar)\n- **$P(B)$**: Probabilitas marginal dari bukti\n- **$P(A|B)$**: Probabilitas posterior setelah melihat bukti\n\n### Hubungan dengan Machine Learning\nTeorema ini adalah dasar matematika langsung dari algoritma [[Naive Bayes Classifier]], yang mengasumsikan bahwa fitur-fitur independen secara kondisional.\n\n#matematika #probabilitas #ai-fundamentals #teori',
+    '# Bayes'' Theorem (Teorema Bayes)\n\nTeorema Bayes adalah hukum fundamental dalam teori probabilitas yang menyatakan cara memperbarui keyakinan probabilitas (*posterior*) berdasarkan bukti baru (*evidence*):\n\n\\[P(A|B) = \\frac{P(B|A) \\cdot P(A)}{P(B)}\\]\n\n- **$P(A)$**: Probabilitas prior (keyakinan sebelum ada bukti)\n- **$P(B|A)$**: Likelihood (kemungkinan bukti jika hipotesis $A$ benar)\n- **$P(B)$**: Probabilitas marginal dari bukti\n- **$P(A|B)$**: Probabilitas posterior setelah melihat bukti\n\n### Hubungan dengan Machine Learning\nTeorema ini adalah dasar matematika langsung dari algoritma [[Naive Bayes Classifier]], yang mengasumsikan bahwa fitur-fitur independen secara kondisional.\n\n#matematika #probabilitas #ai-fundamentals #teori',
     3,
     'BookOpen'
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
@@ -433,4 +433,4 @@ BEGIN
     (v_id_klas_teks, 'nlp'), (v_id_klas_teks, 'klasifikasi'), (v_id_klas_teks, 'text-processing')
   ON CONFLICT DO NOTHING;
 
-END $$;
+END $MIGRATION_VAULT$;
