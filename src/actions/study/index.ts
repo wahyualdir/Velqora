@@ -7,3 +7,4 @@ export * from "./categories";
 export * from "./tags";
 export * from "./files";
 export * from "./backup";
+export * from "./notes";

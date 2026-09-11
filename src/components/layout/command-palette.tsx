@@ -33,12 +33,13 @@ import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
 import { useThemeAccent } from "@/context/theme-accent-context";
 import { toast } from "sonner";
+import { searchNotes } from "@/actions/study/notes";
 
 interface CommandItem {
   id: string;
   title: string;
   subtitle?: string;
-  category: "Navigasi" | "Aksi Cepat" | "Tema & Aksen" | "Modul Populer";
+  category: "Navigasi" | "Aksi Cepat" | "Tema & Aksen" | "Modul Populer" | "Catatan Vault";
   icon: any;
   action: () => void;
   keywords?: string[];
@@ -57,7 +58,25 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
+  const [vaultNotes, setVaultNotes] = useState<
+    Array<{ id: string; title: string; slug: string; excerpt: string; category?: string }>
+  >([]);
+
   const { setAccent } = useThemeAccent();
+
+  // Search vault notes when query or modal state changes
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    searchNotes(query, 8)
+      .then((res) => {
+        if (active) setVaultNotes(res);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [query, isOpen]);
 
   // Focus input on open
   useEffect(() => {
@@ -383,19 +402,32 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   // Filter items based on query
   const filteredItems = useMemo(() => {
+    const noteItems: CommandItem[] = vaultNotes.map((n) => ({
+      id: `vault-note-${n.id}`,
+      title: n.title,
+      subtitle: n.excerpt ? `"${n.excerpt}"` : `Catatan Kurikulum ${n.category || "Velqora"}`,
+      category: "Catatan Vault",
+      icon: FileText,
+      action: () => navigateTo(`/dashboard/catatan/${n.slug}`),
+      badge: n.category || "Vault",
+      keywords: [n.slug, n.title, n.category || "", "catatan", "vault", "materi"],
+    }));
+
+    const all = [...noteItems, ...commandItems];
+
     if (!query.trim()) {
-      return commandItems;
+      return all;
     }
 
     const q = query.toLowerCase().trim();
-    return commandItems.filter((item) => {
+    return all.filter((item) => {
       const matchTitle = item.title.toLowerCase().includes(q);
       const matchSubtitle = item.subtitle?.toLowerCase().includes(q);
       const matchCategory = item.category.toLowerCase().includes(q);
       const matchKeywords = item.keywords?.some((k) => k.toLowerCase().includes(q));
       return matchTitle || matchSubtitle || matchCategory || matchKeywords;
     });
-  }, [query, commandItems]);
+  }, [query, commandItems, vaultNotes, navigateTo]);
 
   // Reset selected index when query changes
   useEffect(() => {

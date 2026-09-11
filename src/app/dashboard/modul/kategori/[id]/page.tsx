@@ -11,25 +11,24 @@ import {
   X,
   AlertCircle,
   RefreshCw,
-  ChevronDown,
-  ChevronUp,
   BookOpen,
+  ArrowRight,
+  Network,
 } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { CodeBlock } from "@/components/ui/code-block";
 import { getCategoryDetails, getModules, deleteModule } from "@/actions/study-actions";
+import { getNotesByCategory, type NoteEntity } from "@/actions/study/notes";
 import { createClient } from "@/lib/supabase/client";
-import { isAdminUser } from "@/lib/utils";
+import { isAdminUser, slugify } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { ModuleListItem } from "@/components/modul/module-list-item";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import {
   ModuleDriveFile,
   ModuleSection,
-  extractModuleDriveFromNotes,
 } from "@/types/module-drive";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
@@ -406,19 +405,8 @@ export default function DedicatedCategoryModulesPage({
   const [contentMode, setContentMode] = useState<"all" | "module" | "project">("all");
   const [previewFile, setPreviewFile] = useState<ModuleDriveFile | null>(null);
   const [bookmarkMap, setBookmarkMap] = useState<{ [id: string]: boolean }>({});
+  const [vaultNotes, setVaultNotes] = useState<NoteEntity[]>([]);
 
-  // Accordion state untuk topik silabus
-  const [expandedTopics, setExpandedTopics] = useState<{ [id: string]: boolean }>({
-    "ml-sec-1": true,
-    "dl-sec-1": true,
-    "nlp-sec-1": true,
-    "cv-sec-1": true,
-    "fund-sec-1": true,
-  });
-
-  const toggleTopicExpand = (id: string) => {
-    setExpandedTopics((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
 
   // Auth Check
   useEffect(() => {
@@ -512,6 +500,14 @@ export default function DedicatedCategoryModulesPage({
         });
         setBookmarkMap(bmState);
       }
+
+      // Fetch vault notes for this category
+      try {
+        const notes = await getNotesByCategory(resolvedCat.id || decodedId);
+        setVaultNotes(notes || []);
+      } catch (err) {
+        console.warn("Could not fetch category notes:", err);
+      }
     } catch (err) {
       console.error("Failed to load category modules:", err);
       setError("Data kategori dan modul belum dapat dimuat.");
@@ -551,27 +547,28 @@ export default function DedicatedCategoryModulesPage({
     );
   };
 
-  // Kumpulan Topik Materi (ModuleSection)
-  const allTopicSections = useMemo(() => {
+  // Kumpulan Topik Materi (Notes Kurikulum Obsidian)
+  const allTopicNotes = useMemo(() => {
+    if (vaultNotes && vaultNotes.length > 0) {
+      return vaultNotes.map((n) => ({
+        id: n.id,
+        slug: n.slug,
+        title: n.title,
+        description: n.content_markdown
+          ? n.content_markdown.replace(/^[#*>-]+\s*/, "").slice(0, 150)
+          : "",
+      }));
+    }
+
     const catName = category?.name || decodeURIComponent(categoryId);
     const defaults = getDefaultAiSections(catName);
-
-    // Kumpulkan section tambahan dari modul yang tersimpan di DB
-    const dbSections: ModuleSection[] = [];
-    modules.forEach((mod) => {
-      const drive = extractModuleDriveFromNotes(mod.notes || "");
-      if (drive?.sections && drive.sections.length > 0) {
-        drive.sections.forEach((sec) => {
-          dbSections.push({
-            ...sec,
-            title: `${sec.title} (${mod.title})`,
-          });
-        });
-      }
-    });
-
-    return [...defaults, ...dbSections];
-  }, [category, categoryId, modules]);
+    return defaults.map((sec) => ({
+      id: sec.id,
+      slug: slugify(sec.title),
+      title: sec.title,
+      description: sec.description || "",
+    }));
+  }, [vaultNotes, category, categoryId]);
 
   // Filtered module list
   const filteredModules = useMemo(() => {
@@ -647,7 +644,7 @@ export default function DedicatedCategoryModulesPage({
                     color: themeColor,
                   }}
                 >
-                  {allTopicSections.length} Topik Silabus
+                  {allTopicNotes.length} Topik Silabus
                 </span>
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-secondary text-text-secondary border border-border">
                   {modules.length} Modul Terkait
@@ -695,93 +692,64 @@ export default function DedicatedCategoryModulesPage({
         </div>
       )}
 
-      {/* ─── 3. Daftar Topik Materi (Expandable Accordion) ─── */}
+      {/* ─── 3. Daftar Topik Silabus Materi (Catatan Vault) ─── */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between px-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
           <div>
             <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-              <span>Daftar Topik Silabus Materi ({allTopicSections.length})</span>
+              <span>Daftar Topik Silabus Materi ({allTopicNotes.length})</span>
             </h2>
             <p className="text-xs text-text-secondary font-mono">
-              Klik topik untuk mempelajari penjelasan konsep dan melihat contoh implementasi kode
+              Dokumen kurikulum ala Obsidian — klik topik untuk membuka catatan lengkap & kode praktikum
             </p>
           </div>
+
+          <Link href="/dashboard/catatan">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono w-fit cursor-pointer">
+              <Network className="w-3.5 h-3.5 text-brand-500" />
+              <span>Buka Seluruh Vault</span>
+            </Button>
+          </Link>
         </div>
 
-        <div className="space-y-3">
-          {allTopicSections.map((section, idx) => {
-            const isExpanded = Boolean(expandedTopics[section.id]);
-
-            return (
-              <div
-                key={section.id || idx}
-                className="vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border overflow-hidden transition-all shadow-xs"
-              >
-                {/* Accordion Titlebar */}
-                <button
-                  type="button"
-                  onClick={() => toggleTopicExpand(section.id)}
-                  className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-secondary/40 transition-colors cursor-pointer"
-                  aria-expanded={isExpanded}
+        <div className="grid grid-cols-1 gap-2.5">
+          {allTopicNotes.map((note, idx) => (
+            <Link
+              key={note.id || idx}
+              href={`/dashboard/catatan/${note.slug}`}
+              className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border hover:border-brand-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs group cursor-pointer"
+            >
+              <div className="flex items-start gap-3 min-w-0 pr-2">
+                <span
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border mt-0.5"
+                  style={{
+                    backgroundColor: `${themeColor}15`,
+                    borderColor: `${themeColor}35`,
+                    color: themeColor,
+                  }}
                 >
-                  <div className="flex items-center gap-3 min-w-0 pr-3">
-                    <span
-                      className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border"
-                      style={{
-                        backgroundColor: `${themeColor}15`,
-                        borderColor: `${themeColor}35`,
-                        color: themeColor,
-                      }}
-                    >
-                      {idx + 1}
-                    </span>
-                    <h3 className="font-bold text-sm sm:text-base text-text-primary truncate">
-                      {section.title}
-                    </h3>
-                  </div>
+                  {idx + 1}
+                </span>
 
-                  <div className="flex items-center gap-2 shrink-0 text-text-tertiary">
-                    <span className="text-xs font-mono hidden sm:inline">
-                      {isExpanded ? "Tutup" : "Buka Materi"}
-                    </span>
-                    {isExpanded ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </div>
-                </button>
-
-                {/* Expanded Content: Deskripsi & Blok Kode */}
-                {isExpanded && (
-                  <div className="p-4 sm:p-5 pt-0 space-y-4 border-t border-border/50 bg-[#FAF8F5] dark:bg-[#141416]">
-                    {section.description && (
-                      <div className="pt-3">
-                        <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
-                          {section.description}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Blok Kode Praktikum dengan Komponen CodeBlock Reusable */}
-                    {section.codeSnippets && section.codeSnippets.length > 0 && (
-                      <div className="space-y-3 pt-1">
-                        {section.codeSnippets.map((snippet) => (
-                          <CodeBlock
-                            key={snippet.id}
-                            code={snippet.code}
-                            language={snippet.language}
-                            title={snippet.caption}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="space-y-1 min-w-0">
+                  <h3 className="font-bold text-sm sm:text-base text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
+                    {note.title}
+                  </h3>
+                  {note.description && (
+                    <p className="text-xs text-text-secondary line-clamp-1">
+                      {note.description}
+                    </p>
+                  )}
+                </div>
               </div>
-            );
-          })}
+
+              <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center text-xs font-mono text-brand-600 dark:text-brand-400 font-semibold group-hover:underline">
+                <span>Buka Catatan</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
