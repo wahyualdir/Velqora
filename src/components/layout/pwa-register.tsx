@@ -23,53 +23,20 @@ export function PwaRegister() {
     pathname === "/reset-password";
 
   useEffect(() => {
-    // 1. Register Service Worker and listen for background updates
+    // 1. Proactively unregister Service Worker and purge caches so web always loads fresh
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .then((reg) => {
-            // Check update immediately after registration
-            reg.update().catch(() => {});
-
-            // Check for updates periodically when user switches to tab / app
-            const checkForUpdate = () => {
-              if (document.visibilityState === "visible") {
-                reg.update().catch(() => {});
-              }
-            };
-            document.addEventListener("visibilitychange", checkForUpdate);
-
-            // If a worker is already waiting, activate it immediately
-            if (reg.waiting) {
-              reg.waiting.postMessage({ type: "SKIP_WAITING" });
-            }
-
-            reg.addEventListener("updatefound", () => {
-              const newWorker = reg.installing;
-              if (newWorker) {
-                newWorker.addEventListener("statechange", () => {
-                  if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-                    // Activate immediately without requiring manual button click
-                    newWorker.postMessage({ type: "SKIP_WAITING" });
-                  }
-                });
-              }
-            });
-          })
-          .catch(() => {
-            // Ignore SW register errors in dev
-          });
-      });
-
-      // Reload page once new service worker takes control
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const reg of registrations) {
+          reg.unregister().catch(() => {});
         }
       });
+      if ("caches" in window) {
+        caches.keys().then((cacheNames) => {
+          for (const name of cacheNames) {
+            caches.delete(name).catch(() => {});
+          }
+        });
+      }
     }
 
     // 2. Persistent dismissal check
