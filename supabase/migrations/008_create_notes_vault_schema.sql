@@ -3,6 +3,39 @@
 -- Velqora Academic Knowledge Base
 -- ============================================================
 
+-- 0. Ensure user_roles table exists (for system owner & admin role verification)
+CREATE TABLE IF NOT EXISTS user_roles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT UNIQUE NOT NULL,
+  role TEXT NOT NULL DEFAULT 'user',
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'user_roles' AND policyname = 'Users can view own role'
+  ) THEN
+    CREATE POLICY "Users can view own role" ON user_roles FOR SELECT
+      USING (LOWER(email) = LOWER(auth.jwt()->>'email'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'user_roles' AND policyname = 'Owner can manage all roles'
+  ) THEN
+    CREATE POLICY "Owner can manage all roles" ON user_roles FOR ALL
+      USING (LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app'));
+  END IF;
+END $$;
+
+-- Seed System Owner into user_roles if not already present
+INSERT INTO user_roles (email, role)
+VALUES ('wahyualdiriyanto80@gmail.com', 'owner')
+ON CONFLICT (email) DO UPDATE SET role = 'owner';
+
 -- 1. Table: notes
 CREATE TABLE IF NOT EXISTS notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -86,6 +119,7 @@ CREATE POLICY "Admin users can insert notes"
   ON notes FOR INSERT
   WITH CHECK (
     LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app')
+    OR (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
     OR EXISTS (
       SELECT 1 FROM user_roles 
       WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 
@@ -97,6 +131,7 @@ CREATE POLICY "Admin users can update notes"
   ON notes FOR UPDATE
   USING (
     LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app')
+    OR (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
     OR EXISTS (
       SELECT 1 FROM user_roles 
       WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 
@@ -108,6 +143,7 @@ CREATE POLICY "Admin users can delete notes"
   ON notes FOR DELETE
   USING (
     LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app')
+    OR (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
     OR EXISTS (
       SELECT 1 FROM user_roles 
       WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 
@@ -119,6 +155,7 @@ CREATE POLICY "Admin users can manage note links"
   ON note_links FOR ALL
   USING (
     LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app')
+    OR (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
     OR EXISTS (
       SELECT 1 FROM user_roles 
       WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 
@@ -130,6 +167,7 @@ CREATE POLICY "Admin users can manage note tags"
   ON note_tags FOR ALL
   USING (
     LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app')
+    OR (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
     OR EXISTS (
       SELECT 1 FROM user_roles 
       WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 

@@ -111,15 +111,19 @@ async function assertAdminAccess() {
     return { user, isAdmin: true };
   }
 
-  // Check user_roles table
-  const { data: roleRow } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("email", user.email?.toLowerCase())
-    .maybeSingle();
+  // Check user_roles table defensively
+  try {
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("email", user.email?.toLowerCase())
+      .maybeSingle();
 
-  if (roleRow && (roleRow.role === "admin" || roleRow.role === "owner")) {
-    return { user, isAdmin: true };
+    if (roleRow && (roleRow.role === "admin" || roleRow.role === "owner")) {
+      return { user, isAdmin: true };
+    }
+  } catch {
+    // If user_roles table does not exist or error occurs, ignore
   }
 
   throw new Error("Akses ditolak: Hanya Admin/Owner yang dapat memodifikasi kurikulum catatan.");
