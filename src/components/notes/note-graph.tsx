@@ -59,6 +59,7 @@ export function NoteGraph({
 
   // References for simulation & zoom state
   const simulationRef = useRef<Simulation<D3SimulationNode, D3SimulationLink> | null>(null);
+  const zoomBehaviorRef = useRef<any>(null);
   const transformRef = useRef(zoomIdentity);
 
   // Initialize and run D3 force graph on canvas
@@ -217,6 +218,8 @@ export function NoteGraph({
         draw();
       });
 
+    zoomBehaviorRef.current = zoomBehavior;
+
     const selection = select(canvas);
     selection.call(zoomBehavior);
 
@@ -314,22 +317,16 @@ export function NoteGraph({
   // Zoom controls helper
   const handleZoom = (scaleDelta: number) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !zoomBehaviorRef.current) return;
     const selection = select(canvas);
-    selection.transition().duration(250).call(
-      d3Zoom<HTMLCanvasElement, unknown>().scaleBy as any,
-      scaleDelta
-    );
+    zoomBehaviorRef.current.scaleBy(selection as any, scaleDelta);
   };
 
   const handleReset = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !zoomBehaviorRef.current) return;
     const selection = select(canvas);
-    selection.transition().duration(300).call(
-      d3Zoom<HTMLCanvasElement, unknown>().transform as any,
-      zoomIdentity
-    );
+    zoomBehaviorRef.current.transform(selection as any, zoomIdentity);
   };
 
   return (
