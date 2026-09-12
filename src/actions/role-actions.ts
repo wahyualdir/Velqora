@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { OWNER_EMAIL } from "@/lib/utils";
+import { OWNER_EMAIL, OWNER_EMAILS, isOwnerUser } from "@/lib/utils";
 
 export interface UserRoleRecord {
   email: string;
@@ -16,7 +16,7 @@ export interface UserRoleRecord {
  */
 export async function getUserRoleAction(email: string): Promise<"owner" | "admin" | "user"> {
   const normalized = (email || "").trim().toLowerCase();
-  if (normalized === OWNER_EMAIL.toLowerCase()) return "owner";
+  if (isOwnerUser(normalized)) return "owner";
 
   try {
     const supabase = await createClient();
@@ -43,7 +43,7 @@ export async function getAllUserRolesAction(): Promise<UserRoleRecord[]> {
 
     // Verify current user is Owner
     const currentUserEmail = user?.email?.toLowerCase() || "";
-    if (currentUserEmail !== OWNER_EMAIL.toLowerCase()) {
+    if (!isOwnerUser(currentUserEmail)) {
       throw new Error("Unauthorized: Hanya System Owner yang dapat melihat wewenang peran.");
     }
 
@@ -62,17 +62,19 @@ export async function getAllUserRolesAction(): Promise<UserRoleRecord[]> {
     const rolesMap = new Map<string, UserRoleRecord>();
 
     // Always seed System Owner
-    rolesMap.set(OWNER_EMAIL.toLowerCase(), {
-      email: OWNER_EMAIL,
-      role: "owner",
-      created_at: new Date().toISOString(),
+    OWNER_EMAILS.forEach((mail) => {
+      rolesMap.set(mail.toLowerCase(), {
+        email: mail,
+        role: "owner",
+        created_at: new Date().toISOString(),
+      });
     });
 
     if (roleData) {
       roleData.forEach((r) => {
         rolesMap.set(r.email.toLowerCase(), {
           email: r.email,
-          role: r.email.toLowerCase() === OWNER_EMAIL.toLowerCase() ? "owner" : (r.role as any),
+          role: isOwnerUser(r.email) ? "owner" : (r.role as any),
           created_at: r.created_at,
           updated_at: r.updated_at,
         });
@@ -114,14 +116,14 @@ export async function updateUserRoleAction(targetEmail: string, newRole: "admin"
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentUserEmail = user?.email?.toLowerCase() || "";
-  if (currentUserEmail !== OWNER_EMAIL.toLowerCase()) {
+  if (!isOwnerUser(currentUserEmail)) {
     throw new Error("Unauthorized: Hanya System Owner yang berhak merubah peran pengguna.");
   }
 
   const normalizedTarget = (targetEmail || "").trim().toLowerCase();
   if (!normalizedTarget) throw new Error("Email tidak valid");
 
-  if (normalizedTarget === OWNER_EMAIL.toLowerCase()) {
+  if (isOwnerUser(normalizedTarget)) {
     throw new Error("Peran System Owner tidak dapat diubah!");
   }
 

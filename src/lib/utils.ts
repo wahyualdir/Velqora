@@ -109,8 +109,18 @@ export function isPreviewable(mimeType: string): boolean {
 /**
  * Owner & Admin Credentials Helper (Configurable via Environment Variables)
  */
+export const OWNER_EMAILS = Array.from(
+  new Set(
+    [
+      (process.env.NEXT_PUBLIC_OWNER_EMAIL || "").trim().toLowerCase(),
+      "wahyualdiriyanto80@gmail.com",
+      "admin@velqora.app",
+    ].filter(Boolean)
+  )
+);
+
 export const OWNER_EMAIL = (
-  process.env.NEXT_PUBLIC_OWNER_EMAIL || "admin@velqora.app"
+  process.env.NEXT_PUBLIC_OWNER_EMAIL || "wahyualdiriyanto80@gmail.com"
 ).trim().toLowerCase();
 
 export const ADMIN_EMAIL = (
@@ -119,13 +129,14 @@ export const ADMIN_EMAIL = (
 
 export function isOwnerUser(email?: string | null): boolean {
   if (!email) return false;
-  return email.trim().toLowerCase() === OWNER_EMAIL;
+  const normalized = email.trim().toLowerCase();
+  return OWNER_EMAILS.includes(normalized) || normalized === OWNER_EMAIL;
 }
 
 export function isAdminUser(email?: string | null): boolean {
   if (!email) return false;
   const normalized = email.trim().toLowerCase();
-  return normalized === ADMIN_EMAIL || normalized === OWNER_EMAIL;
+  return isOwnerUser(normalized) || normalized === ADMIN_EMAIL;
 }
 
 export function isOwnerOrAdminRole(role?: string | null, email?: string | null): boolean {

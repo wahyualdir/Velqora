@@ -21,7 +21,7 @@ import {
 import { PageContainer, PageSection } from "@/components/ui/section";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
-import { OWNER_EMAIL } from "@/lib/utils";
+import { OWNER_EMAIL, isOwnerUser } from "@/lib/utils";
 import { getAllUserRolesAction, updateUserRoleAction, UserRoleRecord } from "@/actions/role-actions";
 import { getAllSubscriptionsAction, updateUserTierAction } from "@/actions/subscription-actions";
 import type { SubscriptionTier, UserSubscription } from "@/actions/subscription-actions";
@@ -47,7 +47,7 @@ export default function KelolaRolePage() {
       const userEmail = (data?.user?.email || "").trim().toLowerCase();
       const localRole = typeof window !== "undefined" ? localStorage.getItem("user_role") : null;
 
-      if (userEmail === OWNER_EMAIL.toLowerCase() || localRole === "owner") {
+      if (isOwnerUser(userEmail) || localRole === "owner") {
         setIsOwner(true);
         setAuthChecked(true);
       } else {

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
-import { isAdminUser, OWNER_EMAIL } from "@/lib/utils";
+import { isAdminUser, isOwnerUser, OWNER_EMAIL } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { useSurface } from "@/context/surface-context";
 import { iconMap, categoryTitleMap, linkLabelMap } from "./navigation-config";
@@ -101,7 +101,7 @@ export function Sidebar({
       if (u) {
         const email = (u.email || "").trim().toLowerCase();
 
-        if (email === OWNER_EMAIL.toLowerCase() || localRole === "owner") {
+        if (isOwnerUser(email) || localRole === "owner") {
           setIsOwner(true);
           setIsAdmin(true);
           return;
