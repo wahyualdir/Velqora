@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useCallback, ReactNode } from "react";
+import React, { useEffect, useState, useCallback, ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 
@@ -28,6 +29,12 @@ export function Modal({
   className,
   showCloseButton = true,
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Handle ESC key press
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -49,7 +56,7 @@ export function Modal({
     };
   }, [isOpen, handleKeyDown]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const sizes = {
     sm: "sm:max-w-sm",
@@ -59,7 +66,7 @@ export function Modal({
     full: "sm:max-w-6xl",
   };
 
-  return (
+  const modalNode = (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       role="dialog"
@@ -124,6 +131,8 @@ export function Modal({
       </div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalNode, document.body) : null;
 }
 
 // ========== Confirm Dialog Component ==========
