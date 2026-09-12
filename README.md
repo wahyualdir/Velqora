@@ -114,6 +114,42 @@ npm test
 
 ---
 
+## 📦 Fitur Import Massal Catatan Vault (Admin/Owner)
+
+Velqora menyediakan fungsionalitas impor massal berkas Markdown (`.md`) langsung ke dalam sistem Knowledge Vault ala Obsidian tanpa perlu input manual satu per satu.
+
+### 1. Lokasi & Akses
+- Halaman: `/dashboard/catatan` (Knowledge Vault).
+- Tombol: **Import Modul** (terletak di header sejajar dengan *Catatan Baru*, hanya muncul untuk user berhak akses **Admin / Owner**).
+
+### 2. Format Berkas Markdown (.md)
+Setiap berkas harus menyertakan frontmatter YAML sederhana di awal dokumen:
+
+```markdown
+---
+kategori: "Artificial Intelligence Fundamentals"
+title: "Rational Agents & Lingkungan PEAS"
+tags: [ai-fundamentals, agent, peas]
+---
+
+# Rational Agents & Lingkungan PEAS
+
+Isi materi catatan kurikulum lengkap...
+Boleh menyertakan [[Nama Catatan Lain]] untuk wikilink otomatis.
+```
+
+- `kategori` *(Wajib)*: Nama subkategori yang sudah ada di database (pencocokan bersifat *case-insensitive*).
+- `title` *(Opsional)*: Jika tidak disertakan, sistem otomatis mengekstrak judul dari heading `# Heading` pertama atau nama berkas.
+- `tags` *(Opsional)*: Tag kurikulum yang otomatis disinkronkan ke tabel `note_tags`.
+
+### 3. Keamanan & Integritas Data
+- **Validasi Kategori Ketat**: Jika nama kategori tidak ditemukan di database, berkas akan ditandai *Dilewati (Skip)* dengan alasan transparan. Kategori baru tidak dibuat secara diam-diam.
+- **Pencegahan Overwrite**: Judul atau slug yang sudah ada di database tidak akan ditimpa diam-diam.
+- **Tahap Pratinjau Eksplisit**: Modal menyediakan validasi instan (Total Berkas, Siap Diimpor, Dilewati) sebelum konfirmasi impor dijalankan.
+- **Contoh Berkas Uji**: Tersedia di folder `fixtures/notes-import-sample/`.
+
+---
+
 ## 📚 Dokumentasi Arsitektur & Keamanan
 
 - [Protected Core Specification](docs/architecture/PROTECTED_CORE.md)
