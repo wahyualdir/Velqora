@@ -903,7 +903,7 @@ print("Dimensi Token Visual Siap Masuk ke LLM Backbone:", tuple(llm_visual_token
   ON CONFLICT DO NOTHING;
 
   -- Inter-Note Links (Wiki-Links)
-  INSERT INTO note_links (source_note_id, target_note_id, raw_link_text) VALUES
+  INSERT INTO note_links (source_note_id, target_note_id, target_title_raw) VALUES
     (v_id_mdp, v_id_agent_fund, 'Prinsip Dasar Kecerdasan Buatan & Agen Cerdas'),
     (v_id_ppo, v_id_mlp, 'Multilayer Perceptron (MLP) & Backpropagation'),
     (v_id_audio_clf, v_id_cnn, 'Convolutional Neural Network (CNN)'),
