@@ -6,32 +6,20 @@ import { useRouter } from "next/navigation";
 import {
   ChevronRight,
   Plus,
-  Layers,
-  Search,
-  X,
+  Network,
   AlertCircle,
   RefreshCw,
-  BookOpen,
-  ArrowRight,
-  Network,
-  Info,
-  AlertTriangle,
 } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState } from "@/components/ui/empty-state";
 import { getCategoryDetails, getModules, deleteModule } from "@/actions/study-actions";
 import { getNotesByCategory, type NoteEntity } from "@/actions/study/notes";
 import { createClient } from "@/lib/supabase/client";
 import { isAdminUser, slugify } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
-import { ModuleListItem } from "@/components/modul/module-list-item";
+import { NotebookOutline } from "@/components/modul/notebook-outline";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
-import {
-  ModuleDriveFile,
-  ModuleSection,
-} from "@/types/module-drive";
+import { ModuleDriveFile } from "@/types/module-drive";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
 import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
@@ -58,11 +46,11 @@ export default function DedicatedCategoryModulesPage({
   // Filter internal modul
   const [search, setSearch] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
-  const [contentMode, setContentMode] = useState<"all" | "module" | "project">("all");
+  const [contentMode, setContentMode] = useState<"all" | "theory" | "module" | "project">("all");
+  const [filterTag, setFilterTag] = useState<string>("all");
   const [previewFile, setPreviewFile] = useState<ModuleDriveFile | null>(null);
   const [bookmarkMap, setBookmarkMap] = useState<{ [id: string]: boolean }>({});
   const [vaultNotes, setVaultNotes] = useState<NoteEntity[]>([]);
-
 
   // Auth Check
   useEffect(() => {
@@ -203,6 +191,27 @@ export default function DedicatedCategoryModulesPage({
     );
   };
 
+  // Handle Filter Tag synchronization
+  const handleFilterTagChange = (tag: string) => {
+    setFilterTag(tag);
+    if (tag === "all") {
+      setContentMode("all");
+      setLevelFilter("");
+    } else if (tag === "theory") {
+      setContentMode("theory");
+      setLevelFilter("");
+    } else if (tag === "module") {
+      setContentMode("module");
+      setLevelFilter("");
+    } else if (tag === "project") {
+      setContentMode("project");
+      setLevelFilter("");
+    } else if (["pemula", "menengah", "lanjutan"].includes(tag)) {
+      setContentMode("all");
+      setLevelFilter(tag);
+    }
+  };
+
   // Kumpulan Topik Materi (Notes Kurikulum Obsidian)
   const allTopicNotes = useMemo(() => {
     if (vaultNotes && vaultNotes.length > 0) {
@@ -211,9 +220,10 @@ export default function DedicatedCategoryModulesPage({
         slug: n.slug,
         title: n.title,
         description: n.content_markdown
-          ? n.content_markdown.replace(/^[#*>-]+\s*/, "").slice(0, 150)
+          ? n.content_markdown.replace(/^[#*>-]+\s*/, "").slice(0, 160)
           : "",
         isPlaceholder: false,
+        content_markdown: n.content_markdown,
       }));
     }
 
@@ -225,11 +235,34 @@ export default function DedicatedCategoryModulesPage({
       title: sec.title,
       description: sec.description || "",
       isPlaceholder: true,
+      content_markdown: null,
     }));
   }, [vaultNotes, category, categoryId]);
 
+  // Filtered topics based on search & contentMode
+  const filteredTopicNotes = useMemo(() => {
+    if (contentMode === "module" || contentMode === "project" || levelFilter) {
+      return [];
+    }
+
+    let list = [...allTopicNotes];
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (t) =>
+          t.title.toLowerCase().includes(q) ||
+          t.description.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [allTopicNotes, contentMode, levelFilter, search]);
+
   // Filtered module list
   const filteredModules = useMemo(() => {
+    if (contentMode === "theory") {
+      return [];
+    }
+
     let list = [...modules];
 
     if (contentMode === "module") {
@@ -274,37 +307,33 @@ export default function DedicatedCategoryModulesPage({
         </span>
       </nav>
 
-      {/* ─── 2. Header Kategori & Deskripsi ─── */}
-      <header className="p-5 sm:p-6 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="flex items-start gap-3.5">
+      {/* ─── 2. Header Kategori Ringkas ─── */}
+      <header className="p-4 sm:p-5 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div className="flex items-start gap-3.5 min-w-0">
             <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border mt-0.5"
+              className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0 border mt-0.5"
               style={{
                 backgroundColor: `${themeColor}15`,
                 borderColor: `${themeColor}35`,
                 color: themeColor,
               }}
             >
-              <CategoryIcon className="w-6 h-6" />
+              <CategoryIcon className="w-5 h-5" />
             </div>
 
-            <div className="space-y-1.5 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono text-text-tertiary">
+            <div className="space-y-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap text-xs font-mono text-text-tertiary">
                 <span className="uppercase tracking-wider font-semibold text-text-secondary">
                   Kurikulum AI
                 </span>
                 <span>•</span>
-                <span className="uppercase tracking-wider">
-                  {allTopicNotes.length} Topik Silabus
-                </span>
+                <span>{allTopicNotes.length} Topik Silabus</span>
                 <span>•</span>
-                <span className="uppercase tracking-wider">
-                  {modules.length} Modul Terkait
-                </span>
+                <span>{modules.length} Modul Terkait</span>
               </div>
 
-              <h1 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight font-display">
+              <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
                 {category?.name || decodeURIComponent(categoryId)}
               </h1>
 
@@ -315,13 +344,31 @@ export default function DedicatedCategoryModulesPage({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 self-start">
-            <Link href={`/dashboard/modul/baru?category=${encodeURIComponent(category?.id || categoryId)}`}>
-              <Button size="sm" className="gap-1.5 text-xs font-semibold cursor-pointer">
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Modul</span>
-              </Button>
+          {/* Action buttons as subtle icon buttons with tooltips */}
+          <div className="flex items-center gap-1.5 shrink-0 self-start">
+            <Link href="/dashboard/catatan/graph">
+              <button
+                type="button"
+                className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
+                title="Peta Graph Pengetahuan"
+                aria-label="Peta Graph Pengetahuan"
+              >
+                <Network className="w-4 h-4" />
+              </button>
             </Link>
+
+            {isAdmin && (
+              <Link href={`/dashboard/modul/baru?category=${encodeURIComponent(category?.id || categoryId)}`}>
+                <button
+                  type="button"
+                  className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
+                  title="Tambah Modul Baru (Khusus Admin)"
+                  aria-label="Tambah Modul Baru"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -345,234 +392,27 @@ export default function DedicatedCategoryModulesPage({
         </div>
       )}
 
-      {/* ─── 3. Daftar Topik Silabus Materi (Catatan Vault) ─── */}
-      <section className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
-          <div>
-            <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-              <span>Daftar Topik Silabus Materi ({allTopicNotes.length})</span>
-            </h2>
-            <p className="text-xs text-text-secondary font-mono">
-              Dokumen kurikulum ala Obsidian — klik topik untuk membuka catatan lengkap & kode praktikum
-            </p>
-          </div>
+      {/* ─── 3. Unified Notebook Outline ─── */}
+      <NotebookOutline
+        topics={filteredTopicNotes}
+        modules={filteredModules}
+        categoryId={categoryId}
+        categoryName={category?.name || decodeURIComponent(categoryId)}
+        isAdmin={isAdmin}
+        currentUserId={currentUserId}
+        bookmarkMap={bookmarkMap}
+        onToggleBookmark={handleToggleBookmark}
+        onEditModule={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
+        onDeleteModule={handleDeleteModule}
+        onFilePreview={(file) => setPreviewFile(file)}
+        search={search}
+        onSearchChange={setSearch}
+        filterTag={filterTag}
+        onFilterTagChange={handleFilterTagChange}
+        loading={loading}
+      />
 
-          <Link href="/dashboard/catatan/graph">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono w-fit cursor-pointer" title="Buka visualisasi graph interaktif materi">
-              <Network className="w-3.5 h-3.5 text-brand-500" />
-              <span>Peta Graph Pengetahuan</span>
-            </Button>
-          </Link>
-        </div>
-
-        {vaultNotes.length === 0 && (
-          <div className="p-3 bg-amber-500/10 border-l-2 border-amber-500 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2 font-mono">
-            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-            <span>
-              Kategori ini belum punya catatan kurikulum yang tersimpan di database. Daftar di bawah
-              merupakan contoh silabus bawaan — tambahkan catatan materi baru untuk melengkapi kurikulum.
-            </span>
-          </div>
-        )}
-
-        <div className="border border-border divide-y divide-border bg-[#FFFFFF] dark:bg-[#18181B] overflow-hidden shadow-2xs">
-          {allTopicNotes.map((note, idx) => {
-            if (note.isPlaceholder) {
-              return (
-                <div
-                  key={note.id || idx}
-                  className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none bg-surface/50"
-                >
-                  <div className="flex items-start gap-3 min-w-0 pr-2">
-                    <span
-                      className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5 opacity-80"
-                      style={{
-                        backgroundColor: `${themeColor}15`,
-                        color: themeColor,
-                      }}
-                    >
-                      {idx + 1}
-                    </span>
-
-                    <div className="space-y-0.5 min-w-0">
-                      <h3 className="font-bold text-sm sm:text-base text-text-primary truncate">
-                        {note.title}
-                      </h3>
-                      {note.description && (
-                        <p className="text-xs text-text-secondary line-clamp-1">
-                          {note.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                    <span className="text-xs font-mono text-text-tertiary italic flex items-center gap-1.5">
-                      <Info className="w-3.5 h-3.5" />
-                      <span>Contoh silabus — catatan belum tersedia</span>
-                    </span>
-                  </div>
-                </div>
-              );
-            }
-
-            return (
-              <Link
-                key={note.id || idx}
-                href={`/dashboard/catatan/${note.slug}?fromCategory=${encodeURIComponent(categoryId)}`}
-                className="p-3.5 sm:p-4 hover:bg-surface-secondary/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 group cursor-pointer"
-              >
-                <div className="flex items-start gap-3 min-w-0 pr-2">
-                  <span
-                    className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5"
-                    style={{
-                      backgroundColor: `${themeColor}15`,
-                      color: themeColor,
-                    }}
-                  >
-                    {idx + 1}
-                  </span>
-
-                  <div className="space-y-0.5 min-w-0">
-                    <h3 className="font-bold text-sm sm:text-base text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
-                      {note.title}
-                    </h3>
-                    {note.description && (
-                      <p className="text-xs text-text-secondary line-clamp-1">
-                        {note.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center text-xs font-mono text-brand-600 dark:text-brand-400 font-semibold group-hover:underline">
-                  <span>Buka Catatan</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ─── 4. Modul & Proyek Terkait di Kategori Ini ─── */}
-      <section className="space-y-3 pt-6 border-t border-border">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
-          <div>
-            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-2">
-              <Layers className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-              <span>Modul & Proyek Belajar Terdaftar ({filteredModules.length})</span>
-            </h3>
-            <p className="text-xs text-text-secondary font-mono">
-              Koleksi repositori modul silabus dan kode praktikum di kategori ini
-            </p>
-          </div>
-
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-surface-secondary border border-border text-xs w-fit">
-            {[
-              { id: "all", label: "Semua" },
-              { id: "module", label: "Modul" },
-              { id: "project", label: "Proyek" },
-            ].map((m) => (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => setContentMode(m.id as any)}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
-                  contentMode === m.id
-                    ? "bg-brand-600 text-white font-bold shadow-xs"
-                    : "text-text-secondary hover:text-text-primary"
-                }`}
-              >
-                {m.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Filter Input Search & Level */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative flex-1 min-w-[200px] flex items-center border border-border bg-surface">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari modul atau project dalam topik ini..."
-              className="w-full pl-9 pr-9 py-2 min-h-[36px] bg-transparent text-xs text-text-primary placeholder:text-text-tertiary focus:outline-hidden"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => setSearch("")}
-                className="absolute right-2.5 p-1 text-text-tertiary hover:text-text-primary cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          <select
-            value={levelFilter}
-            onChange={(e) => setLevelFilter(e.target.value)}
-            className="px-3 py-2 min-h-[36px] border border-border bg-surface text-xs font-mono text-text-primary cursor-pointer focus:outline-hidden"
-            aria-label="Filter tingkat"
-          >
-            <option value="">Semua Tingkat</option>
-            <option value="pemula">Pemula</option>
-            <option value="menengah">Menengah</option>
-            <option value="lanjutan">Lanjutan</option>
-          </select>
-        </div>
-
-        {/* Modules List */}
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="p-4 sm:p-5 rounded-xl border border-border bg-surface space-y-2"
-              >
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-6 w-1/2" />
-              </div>
-            ))}
-          </div>
-        ) : filteredModules.length === 0 ? (
-          <EmptyState
-            icon={<Layers className="w-8 h-8" />}
-            title="Belum ada modul spesifik di topik ini"
-            description="Tambahkan materi atau proyek belajar pertama untuk topik ini guna melengkapi kurikulum Anda."
-            action={
-              <Link href={`/dashboard/modul/baru?category=${encodeURIComponent(category?.id || categoryId)}`}>
-                <Button size="sm" className="gap-1.5 text-xs font-semibold cursor-pointer">
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Tambah Modul</span>
-                </Button>
-              </Link>
-            }
-          />
-        ) : (
-          <div className="space-y-3">
-            {filteredModules.map((mod) => (
-              <ModuleListItem
-                key={mod.id}
-                module={mod}
-                currentUserId={currentUserId}
-                isAdmin={isAdmin}
-                isBookmarked={Boolean(bookmarkMap[mod.id])}
-                onToggleBookmark={handleToggleBookmark}
-                onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
-                onDelete={handleDeleteModule}
-                onFilePreview={(file) => setPreviewFile(file)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* File Previewer Modal */}
+      {/* ─── 4. File Previewer Modal ─── */}
       {previewFile && (
         <ModuleFilePreviewerModal
           isOpen={Boolean(previewFile)}
