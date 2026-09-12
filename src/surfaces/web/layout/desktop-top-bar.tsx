@@ -43,7 +43,7 @@ export function DesktopTopBar({
     async function checkAdminStatus() {
       if (
         typeof window !== "undefined" &&
-        localStorage.getItem("user_role") === "admin"
+        ["admin", "owner"].includes(localStorage.getItem("user_role") || "")
       ) {
         setIsAdmin(true);
         return;

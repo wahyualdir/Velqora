@@ -107,7 +107,7 @@ export function Sidebar({
           return;
         }
 
-        if (localRole === "admin" || (email && isAdminUser(email))) {
+        if (localRole === "admin" || localRole === "owner" || (email && isAdminUser(email))) {
           setIsAdmin(true);
         }
       }

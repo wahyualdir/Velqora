@@ -113,7 +113,7 @@ function ModulDanProjectContent() {
         if (user) {
           setCurrentUserId(user.id);
           const email = (user.email || "").toLowerCase().trim();
-          if (localRole === "admin" || isAdminUser(email)) {
+          if (localRole === "admin" || localRole === "owner" || isAdminUser(email)) {
             setIsAdmin(true);
           }
         }

@@ -62,7 +62,7 @@ function KelasContent() {
 
       const isUserAdmin =
         (typeof window !== "undefined" &&
-          localStorage.getItem("user_role") === "admin") ||
+          ["admin", "owner"].includes(localStorage.getItem("user_role") || "")) ||
         (!!email && isAdminUser(email));
       setIsAdmin(isUserAdmin);
 

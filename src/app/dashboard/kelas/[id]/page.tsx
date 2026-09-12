@@ -62,7 +62,7 @@ function DetailRuangKelasContent({ classId }: { classId: string }) {
 
       const isUserAdmin =
         (typeof window !== "undefined" &&
-          localStorage.getItem("user_role") === "admin") ||
+          ["admin", "owner"].includes(localStorage.getItem("user_role") || "")) ||
         (!!email && isAdminUser(email));
       setIsAdmin(isUserAdmin);
 

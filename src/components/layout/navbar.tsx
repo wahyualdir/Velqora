@@ -33,7 +33,10 @@ export function Navbar({
 
   useEffect(() => {
     async function checkAdminStatus() {
-      if (typeof window !== "undefined" && localStorage.getItem("user_role") === "admin") {
+      if (
+        typeof window !== "undefined" &&
+        ["admin", "owner"].includes(localStorage.getItem("user_role") || "")
+      ) {
         setIsAdmin(true);
         return;
       }

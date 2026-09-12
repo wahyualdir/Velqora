@@ -54,7 +54,10 @@ export default function PetaPenggunaPage() {
   // Auth check — redirect non-admin
   useEffect(() => {
     async function check() {
-      if (typeof window !== "undefined" && localStorage.getItem("user_role") === "admin") {
+      if (
+        typeof window !== "undefined" &&
+        ["admin", "owner"].includes(localStorage.getItem("user_role") || "")
+      ) {
         setIsAdmin(true);
         setAuthChecked(true);
         return;

@@ -322,10 +322,36 @@ export async function getNoteBySlug(slug: string) {
   }
 
   // 3. Backlinks (notes that link to this note)
-  const { data: rawBacklinks } = await supabase
-    .from("note_links")
-    .select("id, source_note_id, target_note_id, target_title_raw, created_at, source:notes!source_note_id(id, slug, title, content_markdown)")
-    .or(`target_note_id.eq.${note.id},target_title_raw.ilike.${note.title}`);
+  const backlinksSelect =
+    "id, source_note_id, target_note_id, target_title_raw, created_at, source:notes!source_note_id(id, slug, title, content_markdown)";
+
+  const [{ data: resolvedBacklinks }, { data: danglingBacklinks }] =
+    await Promise.all([
+      supabase
+        .from("note_links")
+        .select(backlinksSelect)
+        .eq("target_note_id", note.id),
+      supabase
+        .from("note_links")
+        .select(backlinksSelect)
+        .is("target_note_id", null),
+    ]);
+
+  const rawBacklinksMap = new Map<string, any>();
+  if (resolvedBacklinks) {
+    for (const b of resolvedBacklinks) {
+      rawBacklinksMap.set(b.id, b);
+    }
+  }
+  if (danglingBacklinks) {
+    const noteTitleLower = note.title.toLowerCase().trim();
+    for (const b of danglingBacklinks) {
+      if ((b.target_title_raw || "").toLowerCase().trim() === noteTitleLower) {
+        rawBacklinksMap.set(b.id, b);
+      }
+    }
+  }
+  const rawBacklinks = Array.from(rawBacklinksMap.values());
 
   const backlinks: NoteBacklinkItem[] = [];
   if (rawBacklinks) {
@@ -369,34 +395,29 @@ export async function getNotesByCategory(categoryIdOrName: string): Promise<Note
   // Try direct UUID lookup
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryIdOrName);
 
-  let query = supabase
-    .from("notes")
-    .select("*, category:categories(id, name, color, icon)")
-    .eq("is_folder", false)
-    .order("order_index", { ascending: true });
-
   if (isUuid) {
-    query = query.eq("category_id", categoryIdOrName);
-  } else {
-    // Search by category name or title content
-    const cleanName = decodeURIComponent(categoryIdOrName).toLowerCase().trim();
-    query = query.ilike("title", `%${cleanName}%`);
-  }
-
-  const { data, error } = await query;
-  if (error || !data || data.length === 0) {
-    // Fallback: search by category name join
-    const { data: fallbackData } = await supabase
+    const { data, error } = await supabase
       .from("notes")
-      .select("*, category:categories!inner(id, name, color, icon)")
-      .ilike("category.name", `%${decodeURIComponent(categoryIdOrName)}%`)
+      .select("*, category:categories(id, name, color, icon)")
+      .eq("category_id", categoryIdOrName)
       .eq("is_folder", false)
       .order("order_index", { ascending: true });
 
-    return (fallbackData as NoteEntity[]) || [];
+    if (!error && data && data.length > 0) {
+      return data as NoteEntity[];
+    }
   }
 
-  return data as NoteEntity[];
+  // Non-UUID (atau UUID tapi tidak ada hasil): cocokkan lewat JOIN nama kategori
+  const cleanName = decodeURIComponent(categoryIdOrName).toLowerCase().trim();
+  const { data: fallbackData } = await supabase
+    .from("notes")
+    .select("*, category:categories!inner(id, name, color, icon)")
+    .ilike("category.name", `%${cleanName}%`)
+    .eq("is_folder", false)
+    .order("order_index", { ascending: true });
+
+  return (fallbackData as NoteEntity[]) || [];
 }
 
 /**
@@ -424,14 +445,36 @@ export async function searchNotes(query: string, limit = 15): Promise<Array<{ id
   const supabase = await createClient();
   const cleanQ = `%${query.trim()}%`;
 
-  const { data, error } = await supabase
-    .from("notes")
-    .select("id, title, slug, content_markdown, category:categories(name)")
-    .eq("is_folder", false)
-    .or(`title.ilike.${cleanQ},content_markdown.ilike.${cleanQ}`)
-    .limit(limit);
+  const [titleRes, contentRes] = await Promise.all([
+    supabase
+      .from("notes")
+      .select("id, title, slug, content_markdown, category:categories(name)")
+      .eq("is_folder", false)
+      .ilike("title", cleanQ)
+      .limit(limit),
+    supabase
+      .from("notes")
+      .select("id, title, slug, content_markdown, category:categories(name)")
+      .eq("is_folder", false)
+      .ilike("content_markdown", cleanQ)
+      .limit(limit),
+  ]);
 
-  if (error || !data) return [];
+  const map = new Map<string, any>();
+  if (titleRes.data) {
+    for (const item of titleRes.data) {
+      map.set(item.id, item);
+    }
+  }
+  if (contentRes.data) {
+    for (const item of contentRes.data) {
+      if (!map.has(item.id)) {
+        map.set(item.id, item);
+      }
+    }
+  }
+
+  const data = Array.from(map.values()).slice(0, limit);
 
   return data.map((n: any) => ({
     id: n.id,
@@ -461,18 +504,14 @@ export async function parseAndSyncLinks(noteId: string, content: string) {
     return;
   }
 
-  // Query existing notes matching these titles (case-insensitive) or slugs
-  const titleClauses = rawTargetTitles.map((t) => `title.ilike.${t}`).join(",");
-  const slugClauses = rawTargetTitles.map((t) => `slug.eq.${slugify(t)}`).join(",");
-
-  const { data: matchedNotes } = await supabase
+  // Query existing notes and match in JS to avoid fragile .or(...) with special chars
+  const { data: allNotes } = await supabase
     .from("notes")
-    .select("id, title, slug")
-    .or(`${titleClauses},${slugClauses}`);
+    .select("id, title, slug");
 
   const matchedMap = new Map<string, string>(); // lower title -> noteId
-  if (matchedNotes) {
-    for (const n of matchedNotes) {
+  if (allNotes) {
+    for (const n of allNotes) {
       matchedMap.set(n.title.toLowerCase().trim(), n.id);
       matchedMap.set(slugify(n.title), n.id);
       matchedMap.set(n.slug, n.id);

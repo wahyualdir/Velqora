@@ -82,7 +82,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
         if (isOwnerUser(email) || localRole === "owner") {
           setIsOwner(true);
           setIsAdmin(true);
-        } else if (localRole === "admin" || isAdminUser(email)) {
+        } else if (localRole === "admin" || localRole === "owner" || isAdminUser(email)) {
           setIsAdmin(true);
         }
       }

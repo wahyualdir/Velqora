@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Network,
@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { NoteSidebar } from "@/components/notes/note-sidebar";
 import { NoteGraph } from "@/components/notes/note-graph";
 import { NewNoteModal } from "@/components/notes/new-note-modal";
+import { createClient } from "@/lib/supabase/client";
+import { isAdminUser } from "@/lib/utils";
 import type { NoteTreeResult, NoteGraphData } from "@/actions/study/notes";
 
 interface CatatanVaultLandingProps {
@@ -27,6 +29,24 @@ interface CatatanVaultLandingProps {
 export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newModalOpen, setNewModalOpen] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
+
+  useEffect(() => {
+    async function checkAuth() {
+      const localRole =
+        typeof window !== "undefined" ? localStorage.getItem("user_role") : null;
+      if (localRole === "admin" || localRole === "owner") {
+        setCanEdit(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data?.user?.email && isAdminUser(data.user.email)) {
+        setCanEdit(true);
+      }
+    }
+    checkAuth();
+  }, []);
 
   // Pick top connected notes for quick exploration
   const featuredNotes = [...graphData.nodes]
@@ -40,7 +60,7 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
       <div className="hidden lg:block w-72 h-full shrink-0">
         <NoteSidebar
           tree={tree}
-          onNewNote={() => setNewModalOpen(true)}
+          onNewNote={canEdit ? () => setNewModalOpen(true) : undefined}
           className="h-full"
         />
       </div>
@@ -69,10 +89,14 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
             </div>
             <NoteSidebar
               tree={tree}
-              onNewNote={() => {
-                setSidebarOpen(false);
-                setNewModalOpen(true);
-              }}
+              onNewNote={
+                canEdit
+                  ? () => {
+                      setSidebarOpen(false);
+                      setNewModalOpen(true);
+                    }
+                  : undefined
+              }
               className="h-[calc(100%-49px)]"
             />
           </div>
@@ -124,13 +148,15 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <Button
-                  onClick={() => setNewModalOpen(true)}
-                  className="gap-1.5 text-xs font-mono font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Catatan Baru</span>
-                </Button>
+                {canEdit && (
+                  <Button
+                    onClick={() => setNewModalOpen(true)}
+                    className="gap-1.5 text-xs font-mono font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Catatan Baru</span>
+                  </Button>
+                )}
                 <Link href="/dashboard/catatan/graph">
                   <Button variant="outline" className="gap-1.5 text-xs font-mono cursor-pointer">
                     <Network className="w-4 h-4" />

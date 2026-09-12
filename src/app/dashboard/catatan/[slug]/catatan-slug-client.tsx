@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -20,7 +20,8 @@ import { NoteBacklinksPanel } from "@/components/notes/note-backlinks-panel";
 import { NoteGraph } from "@/components/notes/note-graph";
 import { NewNoteModal } from "@/components/notes/new-note-modal";
 import { updateNote } from "@/actions/study/notes";
-import { formatDate } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
+import { formatDate, isAdminUser } from "@/lib/utils";
 import type {
   NoteEntity,
   NoteTreeResult,
@@ -52,6 +53,24 @@ export function CatatanSlugClient({
   // Modal for new note / dangling link creation
   const [newModalOpen, setNewModalOpen] = useState(false);
   const [danglingTarget, setDanglingTarget] = useState("");
+  const [canEdit, setCanEdit] = useState(false);
+
+  useEffect(() => {
+    async function checkAuth() {
+      const localRole =
+        typeof window !== "undefined" ? localStorage.getItem("user_role") : null;
+      if (localRole === "admin" || localRole === "owner") {
+        setCanEdit(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data?.user?.email && isAdminUser(data.user.email)) {
+        setCanEdit(true);
+      }
+    }
+    checkAuth();
+  }, []);
 
   const handleSave = async (data: { title: string; content: string }) => {
     try {
@@ -67,6 +86,12 @@ export function CatatanSlugClient({
   };
 
   const handleDanglingClick = (targetTitle: string) => {
+    if (!canEdit) {
+      toast.info(
+        `Catatan "${targetTitle}" belum tersedia. Silakan hubungi Admin/Owner untuk membuat catatan baru.`
+      );
+      return;
+    }
     setDanglingTarget(targetTitle);
     setNewModalOpen(true);
   };
@@ -79,10 +104,14 @@ export function CatatanSlugClient({
         <NoteSidebar
           tree={tree}
           activeSlug={note.slug}
-          onNewNote={() => {
-            setDanglingTarget("");
-            setNewModalOpen(true);
-          }}
+          onNewNote={
+            canEdit
+              ? () => {
+                  setDanglingTarget("");
+                  setNewModalOpen(true);
+                }
+              : undefined
+          }
           className="h-full"
         />
       </div>
@@ -112,11 +141,15 @@ export function CatatanSlugClient({
             <NoteSidebar
               tree={tree}
               activeSlug={note.slug}
-              onNewNote={() => {
-                setSidebarOpen(false);
-                setDanglingTarget("");
-                setNewModalOpen(true);
-              }}
+              onNewNote={
+                canEdit
+                  ? () => {
+                      setSidebarOpen(false);
+                      setDanglingTarget("");
+                      setNewModalOpen(true);
+                    }
+                  : undefined
+              }
               className="h-[calc(100%-49px)]"
             />
           </div>
@@ -226,6 +259,7 @@ export function CatatanSlugClient({
             outgoingLinks={outgoingLinks}
             onSave={handleSave}
             onDanglingClick={handleDanglingClick}
+            canEdit={canEdit}
           />
         </div>
       </main>
