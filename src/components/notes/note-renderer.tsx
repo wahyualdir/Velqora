@@ -26,9 +26,15 @@ function preprocessObsidianMarkdown(
 ): string {
   if (!raw) return "";
 
+  // Resilience: normalize literal '\n' into actual newlines if string lacks actual line breaks (e.g. unescaped SQL seed)
+  const normalizedRaw =
+    !raw.includes("\n") && raw.includes("\\n")
+      ? raw.replace(/\\n/g, "\n")
+      : raw;
+
   // Split content by code fences (``` ... ```)
   const codeBlockRegex = /(```[\s\S]*?```|`[^`\n]+`)/g;
-  const parts = raw.split(codeBlockRegex);
+  const parts = normalizedRaw.split(codeBlockRegex);
 
   return parts
     .map((part, index) => {
