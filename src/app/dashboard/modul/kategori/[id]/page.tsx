@@ -325,7 +325,413 @@ print("Intersection over Union (IoU):", round(hitung_iou(b1, b2), 4))`,
     ];
   }
 
-  // Default AI Fundamentals
+  // Reinforcement Learning
+  if (norm.includes("reinforcement")) {
+    return [
+      {
+        id: "rl-sec-1",
+        title: "Konsep Dasar: Reward, State, Action, Policy (MDP)",
+        orderIndex: 1,
+        isCompleted: false,
+        description:
+          "Kerangka matematis Markov Decision Process (MDP) yang memodelkan interaksi Agen dengan Lingkungan melalui State (S), Action (A), Reward (R), Transition Probability (P), dan Discount Factor (gamma).",
+        codeSnippets: [
+          {
+            id: "rl-snip-1",
+            language: "python",
+            caption: "mdp_environment.py",
+            code: `class EnvironmentGrid:
+    def __init__(self):
+        self.states = [0, 1, 2, 3]  # Posisi 1D
+        self.goal = 3
+    def step(self, state, action):
+        next_state = min(self.goal, max(0, state + action))
+        reward = 10 if next_state == self.goal else -1
+        return next_state, reward
+
+env = EnvironmentGrid()
+s1, r1 = env.step(state=1, action=1)
+print(f"State baru: {s1}, Reward: {r1}")`,
+          },
+        ],
+      },
+      {
+        id: "rl-sec-2",
+        title: "Q-Learning — Tabel Q & Update Rule",
+        orderIndex: 2,
+        isCompleted: false,
+        description:
+          "Metode Model-Free Reinforcement Learning berbasis Bellman Equation untuk memperbarui nilai Q(s, a) melalui Temporal Difference update.",
+        codeSnippets: [
+          {
+            id: "rl-snip-2",
+            language: "python",
+            caption: "q_learning.py",
+            code: `import numpy as np
+
+# Inisialisasi Q-Table: 4 state, 2 aksi (0: Kiri, 1: Kanan)
+Q = np.zeros((4, 2))
+lr, gamma = 0.1, 0.95
+state, action, reward, next_state = 1, 1, 0.0, 2
+best_next = np.max(Q[next_state])
+Q[state, action] += lr * (reward + gamma * best_next - Q[state, action])
+print("Q-Table setelah update:\\n", Q)`,
+          },
+        ],
+      },
+      {
+        id: "rl-sec-3",
+        title: "Policy Gradient & Proximal Policy Optimization (PPO)",
+        orderIndex: 3,
+        isCompleted: false,
+        description:
+          "Optimasi kebijakan stokastik secara langsung menggunakan gradient ascent dengan clipped surrogate objective untuk mencegah perubahan kebijakan yang destruktif.",
+        codeSnippets: [
+          {
+            id: "rl-snip-3",
+            language: "python",
+            caption: "ppo_clip.py",
+            code: `import numpy as np
+
+def ppo_clip_loss(ratio, adv, epsilon=0.2):
+    surr1 = ratio * adv
+    surr2 = np.clip(ratio, 1.0 - epsilon, 1.0 + epsilon) * adv
+    return -np.minimum(surr1, surr2).mean()
+
+ratios = np.array([0.9, 1.1, 1.3])
+advantages = np.array([0.5, 0.2, -0.4])
+print("PPO Clipped Loss:", round(ppo_clip_loss(ratios, advantages), 4))`,
+          },
+        ],
+      },
+    ];
+  }
+
+  // Speech & Audio AI
+  if (norm.includes("speech") || norm.includes("audio")) {
+    return [
+      {
+        id: "speech-sec-1",
+        title: "Speech Recognition Dasar — Audio ke Teks (MFCC)",
+        orderIndex: 1,
+        isCompleted: false,
+        description:
+          "Ekstraksi representasi fitur frekuensi suara Mel-Frequency Cepstral Coefficients (MFCC) dari sinyal audio kontinu untuk pemodelan akustik.",
+        codeSnippets: [
+          {
+            id: "speech-snip-1",
+            language: "python",
+            caption: "audio_signal.py",
+            code: `import numpy as np
+
+sr = 16000
+t = np.linspace(0, 1, sr, endpoint=False)
+signal = 0.5 * np.sin(2 * np.pi * 440 * t)  # Nada 440 Hz
+print(f"Bentuk Sinyal Audio: {signal.shape}, Durasi: {len(signal)/sr} detik")`,
+          },
+        ],
+      },
+      {
+        id: "speech-sec-2",
+        title: "Text-to-Speech (TTS) — Sintesis Suara",
+        orderIndex: 2,
+        isCompleted: false,
+        description:
+          "Konversi teks tulisan menjadi gelombang suara manusia melalui pipeline Acoustic Model dan Neural Vocoder.",
+        codeSnippets: [
+          {
+            id: "speech-snip-2",
+            language: "python",
+            caption: "tts_concept.py",
+            code: `def text_to_phonemes(text):
+    mapping = {"halo": "H-AH-L-OW", "ai": "EY-AY"}
+    return [mapping.get(w.lower(), w) for w in text.split()]
+
+print("Sintesis Fonem:", text_to_phonemes("Halo AI"))`,
+          },
+        ],
+      },
+      {
+        id: "speech-sec-3",
+        title: "Audio Classification — Deteksi Suara & Emosi",
+        orderIndex: 3,
+        isCompleted: false,
+        description:
+          "Klasifikasi jenis audio dan ekspresi emosi berdasarkan spectrogram visual yang diproses menggunakan Convolutional Neural Network.",
+        codeSnippets: [
+          {
+            id: "speech-snip-3",
+            language: "python",
+            caption: "audio_classification.py",
+            code: `classes = ["suara_manusia", "musik", "noise_lingkungan"]
+dummy_probs = [0.88, 0.08, 0.04]
+predicted = classes[dummy_probs.index(max(dummy_probs))]
+print(f"Klasifikasi Audio: {predicted} (Confidence: {max(dummy_probs)*100:.1f}%)")`,
+          },
+        ],
+      },
+    ];
+  }
+
+  // Recommendation System
+  if (norm.includes("recommendation") || norm.includes("rekomendasi")) {
+    return [
+      {
+        id: "rec-sec-1",
+        title: "Collaborative Filtering — User-Based & Item-Based",
+        orderIndex: 1,
+        isCompleted: false,
+        description:
+          "Penyaringan kolaboratif untuk memprediksi ketertarikan item berdasarkan matriks kesamaan perilaku pengguna atau karakteristik konsumsi item.",
+        codeSnippets: [
+          {
+            id: "rec-snip-1",
+            language: "python",
+            caption: "collaborative_filtering.py",
+            code: `import numpy as np
+
+# Matrix Rating: 3 User x 3 Item
+R = np.array([[5, 3, 0], [4, 0, 0], [1, 1, 5]])
+u0, u1 = R[0, :2], R[1, :2]
+sim = np.dot(u0, u1) / (np.linalg.norm(u0) * np.linalg.norm(u1))
+print(f"Cosine Similarity User 0 & User 1: {sim:.4f}")`,
+          },
+        ],
+      },
+      {
+        id: "rec-sec-2",
+        title: "Content-Based Filtering & Cosine Similarity",
+        orderIndex: 2,
+        isCompleted: false,
+        description:
+          "Rekomendasi item berdasarkan kedekatan vektor atribut deskriptif item terhadap profil kesukaan historis pengguna.",
+        codeSnippets: [
+          {
+            id: "rec-snip-2",
+            language: "python",
+            caption: "content_based.py",
+            code: `from sklearn.metrics.pairwise import cosine_similarity
+
+# Vektor Fitur Item: [Action, SciFi, Drama]
+item_features = [[1, 1, 0], [1, 0, 0], [0, 0, 1]]
+user_profile = [[1, 0.8, 0]]
+skor = cosine_similarity(user_profile, item_features)
+print("Skor Kesesuaian Item:", skor[0])`,
+          },
+        ],
+      },
+      {
+        id: "rec-sec-3",
+        title: "Hybrid Recommendation System",
+        orderIndex: 3,
+        isCompleted: false,
+        description:
+          "Penggabungan strategi Collaborative Filtering dan Content-Based Filtering untuk mengatasi Cold-Start Problem pada pengguna dan item baru.",
+        codeSnippets: [
+          {
+            id: "rec-snip-3",
+            language: "python",
+            caption: "hybrid_recsys.py",
+            code: `def hybrid_score(collab_score, content_score, alpha=0.6):
+    return alpha * collab_score + (1 - alpha) * content_score
+
+print("Skor Rekomendasi Hybrid:", round(hybrid_score(0.85, 0.70), 4))`,
+          },
+        ],
+      },
+    ];
+  }
+
+  // Expert System
+  if (norm.includes("expert system") || norm.includes("sistem pakar")) {
+    return [
+      {
+        id: "exp-sec-1",
+        title: "Expert System & Inference Engine (Symbolic AI)",
+        orderIndex: 1,
+        isCompleted: false,
+        description:
+          "Sistem kecerdasan berbasis aturan eksplisit yang memisahkan basis pengetahuan pakar (Knowledge Base) dengan mesin penalaran (Inference Engine).",
+        codeSnippets: [
+          {
+            id: "exp-snip-1",
+            language: "python",
+            caption: "inference_engine.py",
+            code: `facts = {"demam": True, "batuk": True}
+
+def diagnosa(f):
+    if f.get("demam") and f.get("batuk"):
+        return "Kemungkinan: Infeksi Saluran Pernapasan / Flu"
+    return "Kondisi stabil"
+
+print("Hasil Inferensi Pakar:", diagnosa(facts))`,
+          },
+        ],
+      },
+      {
+        id: "exp-sec-2",
+        title: "Rule-Based Reasoning — Forward vs Backward Chaining",
+        orderIndex: 2,
+        isCompleted: false,
+        description:
+          "Metode penalaran berbasis data fakta menuju hipotesis akhir (Forward Chaining) atau pembuktian dari target kesimpulan mundur mencari premis pendukung (Backward Chaining).",
+        codeSnippets: [
+          {
+            id: "exp-snip-2",
+            language: "python",
+            caption: "forward_chaining.py",
+            code: `rules = [
+    (["gejala_A", "gejala_B"], "kondisi_X"),
+    (["kondisi_X"], "rekomendasi_istirahat")
+]
+fakta = set(["gejala_A", "gejala_B"])
+for syarat, akibat in rules:
+    if all(s in fakta for s in syarat):
+        fakta.add(akibat)
+print("Fakta yang berhasil disimpulkan:", fakta)`,
+          },
+        ],
+      },
+      {
+        id: "exp-sec-3",
+        title: "Constraint Satisfaction Problem (CSP)",
+        orderIndex: 3,
+        isCompleted: false,
+        description:
+          "Formulasi pemecahan masalah dengan mendefinisikan himpunan variabel, domain nilai, dan aturan batasan yang harus dipenuhi secara simultan.",
+        codeSnippets: [
+          {
+            id: "exp-snip-3",
+            language: "python",
+            caption: "csp_solver.py",
+            code: `# Pewarnaan graf sederhana (wilayah berdampingan tidak boleh sewarna)
+domain = ["merah", "biru"]
+solusi = [(w1, w2) for w1 in domain for w2 in domain if w1 != w2]
+print("Konfigurasi CSP Valid:", solusi)`,
+          },
+        ],
+      },
+    ];
+  }
+
+  // Knowledge Representation
+  if (norm.includes("knowledge") || norm.includes("pengetahuan")) {
+    return [
+      {
+        id: "kr-sec-1",
+        title: "Knowledge Graph — Node, Edge & RDF Triples",
+        orderIndex: 1,
+        isCompleted: false,
+        description:
+          "Representasi terstruktur hubungan semantik dunia nyata dalam bentuk graf berarah dengan format pernyataan triple (Subjek, Predikat, Objek).",
+        codeSnippets: [
+          {
+            id: "kr-snip-1",
+            language: "python",
+            caption: "rdf_triples.py",
+            code: `triples = [
+    ("Alan_Turing", "profesi", "Ilmuwan_Komputer"),
+    ("Alan_Turing", "merancang", "Turing_Machine")
+]
+for s, p, o in triples:
+    print(f"[{s}] ---({p})---> [{o}]")`,
+          },
+        ],
+      },
+      {
+        id: "kr-sec-2",
+        title: "Logika Proposisional & Predikat Representasi Pengetahuan",
+        orderIndex: 2,
+        isCompleted: false,
+        description:
+          "Formalisasi pernyataan deduktif berbasis logika simbolik dan kalkulus predikat orde pertama untuk penalaran mesin tanpa ambiguitas.",
+        codeSnippets: [
+          {
+            id: "kr-snip-2",
+            language: "python",
+            caption: "predicate_logic.py",
+            code: `def implikasi(p, q):
+    return (not p) or q
+
+# P: Hujan, Q: Jalan Basah
+print("Implikasi P => Q (P=True, Q=False):", implikasi(True, False))`,
+          },
+        ],
+      },
+      {
+        id: "kr-sec-3",
+        title: "Ontologi & Semantic Web (OWL / RDF)",
+        orderIndex: 3,
+        isCompleted: false,
+        description:
+          "Spesifikasi eksplisit konseptualisasi domain pengetahuan menggunakan Web Ontology Language (OWL) dan Resource Description Framework (RDF).",
+        codeSnippets: [
+          {
+            id: "kr-snip-3",
+            language: "python",
+            caption: "ontology_concept.py",
+            code: `class Entitas:
+    pass
+class Peneliti(Entitas):
+    def __init__(self, nama):
+        self.nama = nama
+
+peneliti = Peneliti("Geoffrey Hinton")
+print(f"Kelas Ontologi: {type(peneliti).__name__}, Nama: {peneliti.nama}")`,
+          },
+        ],
+      },
+    ];
+  }
+
+  // Multimodal AI
+  if (norm.includes("multimodal")) {
+    return [
+      {
+        id: "multi-sec-1",
+        title: "Multimodal AI & Arsitektur CLIP (Teks-Gambar)",
+        orderIndex: 1,
+        isCompleted: false,
+        description:
+          "Integrasi modalitas visual dan tekstual ke dalam ruang embedding bersama menggunakan pembelajaran kontrasif (Contrastive Language-Image Pretraining).",
+        codeSnippets: [
+          {
+            id: "multi-snip-1",
+            language: "python",
+            caption: "clip_embedding.py",
+            code: `import numpy as np
+
+# Simulasi representasi embedding bersama berdimensi 4
+img_emb = np.array([0.5, 0.8, -0.2, 0.1])
+txt_emb = np.array([0.48, 0.82, -0.18, 0.12])
+sim = np.dot(img_emb, txt_emb) / (np.linalg.norm(img_emb) * np.linalg.norm(txt_emb))
+print(f"Cosine Similarity CLIP Gambar vs Teks: {sim:.4f}")`,
+          },
+        ],
+      },
+      {
+        id: "multi-sec-2",
+        title: "Image Captioning — Pengenalan Gambar ke Narasi Teks",
+        orderIndex: 2,
+        isCompleted: false,
+        description:
+          "Arsitektur encoder-decoder multimodal yang mengekstrak fitur visual citra dan membangkitkan kalimat deskriptif natural secara autoregresif.",
+        codeSnippets: [
+          {
+            id: "multi-snip-2",
+            language: "python",
+            caption: "captioning_concept.py",
+            code: `vocab = {0: "<start>", 1: "seekor", 2: "kucing", 3: "tidur", 4: "<end>"}
+tokens = [0, 1, 2, 3, 4]
+caption = " ".join([vocab[t] for t in tokens if t not in (0, 4)])
+print("Narasi Caption Gambar:", caption)`,
+          },
+        ],
+      },
+    ];
+  }
+
+  // Default AI Fundamentals Fallback
   return [
     {
       id: "fund-sec-1",
@@ -772,7 +1178,7 @@ export default function DedicatedCategoryModulesPage({
             return (
               <Link
                 key={note.id || idx}
-                href={`/dashboard/catatan/${note.slug}`}
+                href={`/dashboard/catatan/${note.slug}?fromCategory=${encodeURIComponent(categoryId)}`}
                 className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border hover:border-brand-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs group cursor-pointer"
               >
                 <div className="flex items-start gap-3 min-w-0 pr-2">

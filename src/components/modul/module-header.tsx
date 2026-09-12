@@ -6,19 +6,27 @@ import { Plus, BookOpen, Code2, Layers, FolderCode, Sparkles } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 
+export type ModuleViewTab = "categories" | "all-content";
+
 interface ModuleHeaderProps {
+  viewTab?: ModuleViewTab;
+  onViewTabChange?: (tab: ModuleViewTab) => void;
   contentMode: "all" | "module" | "project";
   onModeChange: (mode: "all" | "module" | "project") => void;
   totalModules: number;
   totalProjects: number;
+  totalCategories?: number;
   onOpenSorter?: () => void;
 }
 
 export function ModuleHeader({
+  viewTab = "categories",
+  onViewTabChange,
   contentMode,
   onModeChange,
   totalModules,
   totalProjects,
+  totalCategories = 14,
   onOpenSorter,
 }: ModuleHeaderProps) {
   return (
@@ -57,46 +65,76 @@ export function ModuleHeader({
         </>
       }
     >
-      {/* Mode Switcher Tabs */}
-      <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border w-fit max-w-full overflow-x-auto scrollbar-none">
-        <button
-          type="button"
-          onClick={() => onModeChange("all")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
-            contentMode === "all"
-              ? "bg-brand-600 text-white font-bold shadow-xs"
-              : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Semua ({totalModules + totalProjects})</span>
-        </button>
+      {/* Primary View Switcher: Topik Kurikulum vs Semua Modul & Proyek */}
+      <div className="flex flex-wrap items-center gap-3 pt-1">
+        <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border w-fit max-w-full overflow-x-auto scrollbar-none">
+          <button
+            type="button"
+            onClick={() => onViewTabChange?.("categories")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+              viewTab === "categories"
+                ? "bg-brand-600 text-white font-bold shadow-xs"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Topik Kurikulum ({totalCategories})</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => onModeChange("module")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
-            contentMode === "module"
-              ? "bg-brand-600 text-white font-bold shadow-xs"
-              : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-          }`}
-        >
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>Modul Belajar ({totalModules})</span>
-        </button>
+          <button
+            type="button"
+            onClick={() => onViewTabChange?.("all-content")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+              viewTab === "all-content"
+                ? "bg-brand-600 text-white font-bold shadow-xs"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+            }`}
+          >
+            <FolderCode className="w-3.5 h-3.5" />
+            <span>Semua Modul & Proyek ({totalModules + totalProjects})</span>
+          </button>
+        </div>
 
-        <button
-          type="button"
-          onClick={() => onModeChange("project")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
-            contentMode === "project"
-              ? "bg-brand-600 text-white font-bold shadow-xs"
-              : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-          }`}
-        >
-          <Code2 className="w-3.5 h-3.5" />
-          <span>Proyek Kode ({totalProjects})</span>
-        </button>
+        {/* Content Mode Sub-tabs (when viewTab is 'all-content') */}
+        {viewTab === "all-content" && (
+          <div className="flex items-center gap-1 p-1 bg-surface-secondary/70 rounded-xl border border-border/80 w-fit max-w-full overflow-x-auto scrollbar-none">
+            <button
+              type="button"
+              onClick={() => onModeChange("all")}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+                contentMode === "all"
+                  ? "bg-surface text-brand-600 dark:text-brand-400 font-bold border border-border shadow-2xs"
+                  : "text-text-tertiary hover:text-text-primary"
+              }`}
+            >
+              Semua
+            </button>
+            <button
+              type="button"
+              onClick={() => onModeChange("module")}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+                contentMode === "module"
+                  ? "bg-surface text-brand-600 dark:text-brand-400 font-bold border border-border shadow-2xs"
+                  : "text-text-tertiary hover:text-text-primary"
+              }`}
+            >
+              <BookOpen className="w-3 h-3" />
+              <span>Modul ({totalModules})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onModeChange("project")}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+                contentMode === "project"
+                  ? "bg-surface text-brand-600 dark:text-brand-400 font-bold border border-border shadow-2xs"
+                  : "text-text-tertiary hover:text-text-primary"
+              }`}
+            >
+              <Code2 className="w-3 h-3" />
+              <span>Proyek ({totalProjects})</span>
+            </button>
+          </div>
+        )}
       </div>
     </PageHeader>
   );

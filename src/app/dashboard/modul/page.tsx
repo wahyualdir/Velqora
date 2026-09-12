@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus, Code2, Layers, RefreshCw, AlertCircle } from "lucide-react";
+import { Plus, Code2, Layers, RefreshCw, AlertCircle, ArrowRight } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +12,7 @@ import { getModules, getCategories, deleteModule } from "@/actions/study-actions
 import { createClient } from "@/lib/supabase/client";
 import { isAdminUser } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
-import { ModuleHeader } from "@/components/modul/module-header";
+import { ModuleHeader, ModuleViewTab } from "@/components/modul/module-header";
 import { ModuleFilters } from "@/components/modul/module-filters";
 import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
@@ -64,6 +64,20 @@ function ModulDanProjectContent() {
   const [contentMode, setContentMode] = useState<"all" | "module" | "project">(
     modeParam === "project" ? "project" : modeParam === "module" ? "module" : "all"
   );
+
+  // View Tab: "categories" (default clean grid) | "all-content" (search, filter, & listing)
+  const [viewTab, setViewTab] = useState<ModuleViewTab>(
+    modeParam === "project" || searchParams.get("q") || searchParams.get("category")
+      ? "all-content"
+      : "categories"
+  );
+
+  useEffect(() => {
+    if (modeParam === "project") {
+      setContentMode("project");
+      setViewTab("all-content");
+    }
+  }, [modeParam]);
 
   // Core Data
   const [modules, setModules] = useState<any[]>([]);
@@ -327,10 +341,13 @@ function ModulDanProjectContent() {
     <PageContainer className="space-y-6 pb-14">
       {/* ─── 1. Header & Quick Actions ─── */}
       <ModuleHeader
+        viewTab={viewTab}
+        onViewTabChange={setViewTab}
         contentMode={contentMode}
         onModeChange={setContentMode}
         totalModules={totalModulesCount}
         totalProjects={totalProjectsCount}
+        totalCategories={aiTopicOverview.length}
         onOpenSorter={() => setShowSorterModal(true)}
       />
 
@@ -353,126 +370,141 @@ function ModulDanProjectContent() {
         </div>
       )}
 
-      {/* ─── 2. Topik Kurikulum AI (Kartu Besar) ─── */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <div>
-            <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
-              Topik Kurikulum Kecerdasan Buatan
-            </h2>
-            <p className="text-xs text-text-secondary font-mono">
-              Pilih kartu topik untuk meninjau silabus dan materi kode terstruktur
-            </p>
+      {/* ─── TAB 1: Topik Kurikulum AI (Hanya Grid 14 Kartu Tanpa Clutter) ─── */}
+      {viewTab === "categories" && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <div>
+              <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
+                Topik Kurikulum Kecerdasan Buatan ({aiTopicOverview.length})
+              </h2>
+              <p className="text-xs text-text-secondary font-mono">
+                Pilih kartu topik untuk meninjau silabus dan materi kode terstruktur
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setViewTab("all-content")}
+              className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <span>Eksplorasi Modul ({totalModulesCount + totalProjectsCount})</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-          {aiTopicOverview.map((topic) => (
-            <AiCategoryCard key={topic.id || topic.name} category={topic} />
-          ))}
-        </div>
-      </section>
-
-      {/* ─── 3. Search, Category, and Scope Filters ─── */}
-      <ModuleFilters
-        search={search}
-        onSearchChange={setSearch}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        categories={categories}
-        levelFilter={levelFilter}
-        onLevelChange={setLevelFilter}
-        scope={scope}
-        onScopeChange={setScope}
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-        onResetFilters={handleResetFilters}
-        hasActiveFilters={hasActiveFilters}
-      />
-
-      {/* ─── 4. Content List Area (Berkelompok per Kategori) ─── */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
-          <span>
-            Menampilkan {filteredModules.length} dari {aiScopedModules.length} konten AI ({groupedModulesByCategory.length} topik aktif)
-          </span>
-        </div>
-
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="p-4 sm:p-5 rounded-xl border border-border bg-surface space-y-3"
-              >
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-4 w-20 rounded" />
-                  <Skeleton className="h-4 w-24 rounded" />
-                </div>
-                <Skeleton className="h-6 w-3/4 rounded" />
-                <Skeleton className="h-4 w-1/2 rounded" />
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+            {aiTopicOverview.map((topic) => (
+              <AiCategoryCard key={topic.id || topic.name} category={topic} />
             ))}
           </div>
-        ) : aiScopedModules.length === 0 ? (
-          /* Empty State 1: Zero AI modules in scope */
-          <EmptyState
-            icon={<Layers className="w-8 h-8" />}
-            title="Belum ada modul atau project AI"
-            description="Mulai susun kurikulum belajar Anda dengan menambahkan modul atau proyek bertema Kecerdasan Buatan (AI) pertama."
-            action={
-              <div className="flex items-center gap-2 justify-center flex-wrap pt-2">
-                <Link href="/dashboard/modul/baru">
-                  <Button size="sm" className="gap-1.5 text-xs font-semibold">
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Buat Modul Baru</span>
-                  </Button>
-                </Link>
-                <Link href="/dashboard/modul/baru?mode=project">
-                  <Button size="sm" variant="secondary" className="gap-1.5 text-xs font-medium">
-                    <Code2 className="w-3.5 h-3.5" />
-                    <span>Tambah Proyek Kode</span>
-                  </Button>
-                </Link>
+        </section>
+      )}
+
+      {/* ─── TAB 2: Eksplorasi Semua Modul & Proyek (Search, Filter, & Listing) ─── */}
+      {viewTab === "all-content" && (
+        <>
+          {/* 3. Search, Category, and Scope Filters */}
+          <ModuleFilters
+            search={search}
+            onSearchChange={setSearch}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            categories={categories}
+            levelFilter={levelFilter}
+            onLevelChange={setLevelFilter}
+            scope={scope}
+            onScopeChange={setScope}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            onResetFilters={handleResetFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
+
+          {/* 4. Content List Area (Berkelompok per Kategori) */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
+              <span>
+                Menampilkan {filteredModules.length} dari {aiScopedModules.length} konten AI ({groupedModulesByCategory.length} topik aktif)
+              </span>
+            </div>
+
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="p-4 sm:p-5 rounded-xl border border-border bg-surface space-y-3"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-20 rounded" />
+                      <Skeleton className="h-4 w-24 rounded" />
+                    </div>
+                    <Skeleton className="h-6 w-3/4 rounded" />
+                    <Skeleton className="h-4 w-1/2 rounded" />
+                  </div>
+                ))}
               </div>
-            }
-          />
-        ) : filteredModules.length === 0 ? (
-          /* Empty State 2: Zero results for current filter/search */
-          <EmptyState
-            icon={<Layers className="w-8 h-8" />}
-            title="Tidak ada konten yang sesuai"
-            description="Tidak ditemukan modul atau proyek yang cocok dengan kata kunci atau filter yang Anda pilih."
-            action={
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleResetFilters}
-                className="text-xs"
-              >
-                Reset Semua Filter
-              </Button>
-            }
-          />
-        ) : (
-          <div className="space-y-4">
-            {groupedModulesByCategory.map((group) => (
-              <CategoryModuleGroup
-                key={group.category.id || group.category.name}
-                category={group.category}
-                modules={group.modules}
-                currentUserId={currentUserId}
-                isAdmin={isAdmin}
-                bookmarkMap={bookmarkMap}
-                onToggleBookmark={handleToggleBookmark}
-                onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
-                onDelete={handleDeleteModule}
-                onFilePreview={(file) => setPreviewFile(file)}
+            ) : aiScopedModules.length === 0 ? (
+              /* Empty State 1: Zero AI modules in scope */
+              <EmptyState
+                icon={<Layers className="w-8 h-8" />}
+                title="Belum ada modul atau project AI"
+                description="Mulai susun kurikulum belajar Anda dengan menambahkan modul atau proyek bertema Kecerdasan Buatan (AI) pertama."
+                action={
+                  <div className="flex items-center gap-2 justify-center flex-wrap pt-2">
+                    <Link href="/dashboard/modul/baru">
+                      <Button size="sm" className="gap-1.5 text-xs font-semibold">
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Buat Modul Baru</span>
+                      </Button>
+                    </Link>
+                    <Link href="/dashboard/modul/baru?mode=project">
+                      <Button size="sm" variant="secondary" className="gap-1.5 text-xs font-medium">
+                        <Code2 className="w-3.5 h-3.5" />
+                        <span>Tambah Proyek Kode</span>
+                      </Button>
+                    </Link>
+                  </div>
+                }
               />
-            ))}
-          </div>
-        )}
-      </section>
+            ) : filteredModules.length === 0 ? (
+              /* Empty State 2: Zero results for current filter/search */
+              <EmptyState
+                icon={<Layers className="w-8 h-8" />}
+                title="Tidak ada konten yang sesuai"
+                description="Tidak ditemukan modul atau proyek yang cocok dengan kata kunci atau filter yang Anda pilih."
+                action={
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleResetFilters}
+                    className="text-xs"
+                  >
+                    Reset Semua Filter
+                  </Button>
+                }
+              />
+            ) : (
+              <div className="space-y-4">
+                {groupedModulesByCategory.map((group) => (
+                  <CategoryModuleGroup
+                    key={group.category.id || group.category.name}
+                    category={group.category}
+                    modules={group.modules}
+                    currentUserId={currentUserId}
+                    isAdmin={isAdmin}
+                    bookmarkMap={bookmarkMap}
+                    onToggleBookmark={handleToggleBookmark}
+                    onEdit={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
+                    onDelete={handleDeleteModule}
+                    onFilePreview={(file) => setPreviewFile(file)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
 
       {/* ─── Smart Module Sorter Modal ─── */}
       {showSorterModal && (

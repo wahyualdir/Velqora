@@ -12,6 +12,7 @@ import {
   PanelRightOpen,
   X,
   ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { NoteSidebar } from "@/components/notes/note-sidebar";
@@ -37,6 +38,10 @@ interface CatatanSlugClientProps {
   backlinks: NoteBacklinkItem[];
   tags: string[];
   localGraph: NoteGraphData;
+  fromCategory?: string;
+  categoryName?: string;
+  prevNote?: NoteEntity | null;
+  nextNote?: NoteEntity | null;
 }
 
 export function CatatanSlugClient({
@@ -46,6 +51,10 @@ export function CatatanSlugClient({
   backlinks,
   tags,
   localGraph,
+  fromCategory,
+  categoryName,
+  prevNote,
+  nextNote,
 }: CatatanSlugClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
@@ -95,6 +104,78 @@ export function CatatanSlugClient({
     setDanglingTarget(targetTitle);
     setNewModalOpen(true);
   };
+
+  // Resolve back navigation target
+  const effectiveCategory =
+    fromCategory ||
+    note.category_id ||
+    (note.category ? note.category.id || note.category.name : null);
+  const effectiveCategoryName =
+    categoryName || note.category?.name || fromCategory || "";
+  const backUrl = effectiveCategory
+    ? `/dashboard/modul/kategori/${encodeURIComponent(effectiveCategory)}`
+    : "/dashboard/catatan";
+  const backLabel = effectiveCategoryName
+    ? `Silabus: ${effectiveCategoryName}`
+    : "Vault";
+
+  const targetCategoryParam =
+    fromCategory ||
+    (note.category_id
+      ? note.category_id
+      : note.category?.name
+      ? encodeURIComponent(note.category.name)
+      : "");
+
+  const bottomNav =
+    prevNote || nextNote ? (
+      <nav
+        aria-label="Navigasi Topik Belajar"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 border-t border-border font-mono"
+      >
+        {prevNote ? (
+          <Link
+            href={`/dashboard/catatan/${prevNote.slug}${
+              targetCategoryParam
+                ? `?fromCategory=${encodeURIComponent(targetCategoryParam)}`
+                : ""
+            }`}
+            className="p-3.5 vt-window bg-surface hover:bg-surface-secondary border border-border hover:border-brand-500/60 transition-all flex flex-col gap-1 text-left group cursor-pointer shadow-2xs"
+          >
+            <span className="text-[11px] text-text-tertiary flex items-center gap-1 group-hover:text-brand-600 dark:group-hover:text-brand-400">
+              <ArrowLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Topik Sebelumnya</span>
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-text-primary group-hover:underline truncate">
+              {prevNote.title}
+            </span>
+          </Link>
+        ) : (
+          <div className="hidden sm:block" />
+        )}
+
+        {nextNote ? (
+          <Link
+            href={`/dashboard/catatan/${nextNote.slug}${
+              targetCategoryParam
+                ? `?fromCategory=${encodeURIComponent(targetCategoryParam)}`
+                : ""
+            }`}
+            className="p-3.5 vt-window bg-surface hover:bg-surface-secondary border border-border hover:border-brand-500/60 transition-all flex flex-col gap-1 text-right group cursor-pointer sm:col-start-2 shadow-2xs"
+          >
+            <span className="text-[11px] text-text-tertiary flex items-center justify-end gap-1 group-hover:text-brand-600 dark:group-hover:text-brand-400">
+              <span>Topik Berikutnya</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-text-primary group-hover:underline truncate">
+              {nextNote.title}
+            </span>
+          </Link>
+        ) : (
+          <div className="hidden sm:block" />
+        )}
+      </nav>
+    ) : null;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] bg-[#FAF8F5] dark:bg-[#141416] overflow-hidden">
@@ -174,22 +255,15 @@ export function CatatanSlugClient({
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-1.5 text-xs font-mono text-text-tertiary truncate">
               <Link
-                href="/dashboard/catatan"
-                className="hover:text-text-primary transition-colors flex items-center gap-1 shrink-0"
+                href={backUrl}
+                className="hover:text-text-primary transition-colors flex items-center gap-1.5 shrink-0 text-brand-600 dark:text-brand-400 font-semibold"
+                title={`Kembali ke ${backLabel}`}
               >
-                <ArrowLeft className="w-3 h-3" />
-                <span className="hidden sm:inline">Vault</span>
+                <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Kembali ke {backLabel}</span>
               </Link>
-              <ChevronRight className="w-3 h-3 shrink-0" />
-              {note.category && (
-                <>
-                  <span className="text-text-secondary truncate hidden md:inline">
-                    {note.category.name}
-                  </span>
-                  <ChevronRight className="w-3 h-3 shrink-0 hidden md:inline" />
-                </>
-              )}
-              <span className="text-text-primary font-bold truncate">
+              <ChevronRight className="w-3 h-3 shrink-0 hidden md:inline text-text-tertiary" />
+              <span className="text-text-primary font-bold truncate hidden md:inline">
                 {note.title}
               </span>
             </nav>
@@ -260,6 +334,7 @@ export function CatatanSlugClient({
             onSave={handleSave}
             onDanglingClick={handleDanglingClick}
             canEdit={canEdit}
+            bottomNav={bottomNav}
           />
         </div>
       </main>

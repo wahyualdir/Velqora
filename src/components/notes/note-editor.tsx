@@ -24,6 +24,7 @@ interface NoteEditorProps {
   onSave: (data: { title: string; content: string }) => Promise<void>;
   onDanglingClick?: (rawTitle: string) => void;
   canEdit?: boolean;
+  bottomNav?: React.ReactNode;
 }
 
 export function NoteEditor({
@@ -33,6 +34,7 @@ export function NoteEditor({
   onSave,
   onDanglingClick,
   canEdit = true,
+  bottomNav,
 }: NoteEditorProps) {
   const [mode, setMode] = useState<"preview" | "edit">("preview");
   const [title, setTitle] = useState(initialTitle);
@@ -252,12 +254,13 @@ export function NoteEditor({
             />
           </div>
         ) : (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto space-y-8">
             <NoteRenderer
               content={content}
               outgoingLinks={outgoingLinks}
               onDanglingClick={onDanglingClick}
             />
+            {bottomNav}
           </div>
         )}
       </div>

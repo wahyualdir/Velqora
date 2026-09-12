@@ -4,6 +4,9 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import { CodeBlock } from "@/components/ui/code-block";
 import { slugify } from "@/lib/utils";
 import type { NoteLinkItem } from "@/actions/study/notes";
@@ -102,7 +105,8 @@ export function NoteRenderer({
   return (
     <div className={`prose-academic text-text-primary ${className}`}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
         components={{
           // Custom Code Block rendering using existing CodeBlock component
           code({ className: codeClass, children, ...props }) {
