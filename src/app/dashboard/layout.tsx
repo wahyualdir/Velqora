@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
-import { DesktopTopBar } from "@/surfaces/web/layout/desktop-top-bar";
 import { MobileTopBar } from "@/surfaces/app/layout/mobile-top-bar";
 import { MobileBottomNav } from "@/surfaces/app/layout/mobile-bottom-nav";
 import { TechBackground } from "@/components/ui/tech-background";
@@ -22,7 +21,6 @@ export default function DashboardLayout({
   const { isApp } = useSurface();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
   // Exact check: ONLY "/dashboard" gets full rich footer; every other route gets MinimalCopyright
@@ -82,6 +80,7 @@ export default function DashboardLayout({
         onClose={() => setSidebarOpen(false)}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleCollapse}
+        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
       />
 
       {/* Main Content Area: Desktop Workspace on >=1024px, Mobile App Shell on <1024px */}
@@ -91,39 +90,27 @@ export default function DashboardLayout({
           !isApp && (sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]")
         )}
       >
-        {/* Responsive Header: Desktop Top Bar on Desktop Web, Mobile Top Bar on Mobile & App */}
+        {/* Responsive Header: Mobile Top Bar ONLY on Mobile & App (<1024px or isApp). Desktop has NO top header! */}
         {isApp ? (
           <MobileTopBar
             onOpenSearch={() => setCommandPaletteOpen(true)}
             onOpenMenu={() => setSidebarOpen(true)}
           />
         ) : (
-          <>
-            <div className="hidden lg:block">
-              <DesktopTopBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-                onToggleSidebar={handleToggleCollapse}
-                isSidebarCollapsed={sidebarCollapsed}
-              />
-            </div>
-
-            <div className="block lg:hidden">
-              <MobileTopBar
-                onOpenSearch={() => setCommandPaletteOpen(true)}
-                onOpenMenu={() => setSidebarOpen(true)}
-              />
-            </div>
-          </>
+          <div className="block lg:hidden">
+            <MobileTopBar
+              onOpenSearch={() => setCommandPaletteOpen(true)}
+              onOpenMenu={() => setSidebarOpen(true)}
+            />
+          </div>
         )}
 
         <main
           className={cn(
-            "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-[calc(100vh-3.5rem)]",
+            "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-screen",
             isApp
               ? "max-w-2xl px-3 sm:px-5 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]"
-              : "max-w-[1560px] px-3 sm:px-5 lg:px-7 xl:px-8 py-3.5 sm:py-5 lg:py-6 pb-6"
+              : "max-w-[1560px] px-3 sm:px-5 lg:px-8 xl:px-10 py-3.5 sm:py-5 lg:py-7 pb-8"
           )}
         >
           <div className="flex-1 min-w-0">{children}</div>

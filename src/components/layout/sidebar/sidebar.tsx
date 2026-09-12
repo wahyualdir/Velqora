@@ -11,9 +11,16 @@ import {
   Crown,
   ShieldCheck,
   MapPin,
+  Search,
+  Command,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
+import { UserProfileMenu } from "@/components/layout/user-profile-menu";
+import { NotificationCenter } from "@/components/layout/notification-center";
 import { isAdminUser, isOwnerUser, OWNER_EMAIL } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { useSurface } from "@/context/surface-context";
@@ -24,6 +31,7 @@ interface SidebarProps {
   onClose: () => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
 export function Sidebar({
@@ -31,6 +39,7 @@ export function Sidebar({
   onClose,
   isCollapsed = false,
   onToggleCollapse,
+  onOpenCommandPalette,
 }: SidebarProps) {
   const pathname = usePathname();
   const [currentQuery, setCurrentQuery] = useState("");
@@ -38,6 +47,16 @@ export function Sidebar({
   const { isApp } = useSurface();
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
 
   // Track window.location.search on client without triggering Next.js SSG build bailouts
   useEffect(() => {
@@ -145,20 +164,62 @@ export function Sidebar({
             <Logo variant="sidebar" />
           </Link>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup menu navigasi"
-            className="px-2 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
-          >
-            ×
-          </button>
+          <div className="flex items-center gap-1.5">
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="p-1 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
+                title={resolvedTheme === "dark" ? "Mode Terang (Light)" : "Mode Gelap (Dark)"}
+                aria-label="Ganti Tema"
+              >
+                {resolvedTheme === "dark" ? (
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                ) : (
+                  <Moon className="w-3.5 h-3.5 text-[#853827]" />
+                )}
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup menu navigasi"
+              className="px-2 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
+            >
+              ×
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Search Button */}
+        {onOpenCommandPalette && (
+          <div className="px-2.5 pt-2 pb-1 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenCommandPalette();
+              }}
+              className="w-full flex items-center justify-between gap-2 px-2.5 h-8 bg-[#FAF8F5] dark:bg-[#121214] border-t border-l border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-zinc-800 dark:border-r-zinc-800 text-[#7A756D] dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-zinc-200 transition-colors text-xs font-mono text-left cursor-pointer"
+              title="Pencarian Cepat (Ctrl + K)"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Search className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Cari materi, modul...</span>
+              </div>
+              <div className="flex items-center gap-0.5 px-1 py-0.2 border border-[#B8B1A5] dark:border-zinc-700 bg-[#ECE9D8] dark:bg-zinc-800 text-[9.5px] font-mono shrink-0">
+                <Command className="w-2.5 h-2.5" />
+                <span>K</span>
+              </div>
+            </button>
+          </div>
+        )}
 
         {/* Mobile Navigation List (Scrollable Flat List) */}
         <nav
           aria-label="Navigasi Utama Mobile"
-          className="flex-1 px-2.5 py-3 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-8"
+          className="flex-1 px-2.5 py-2.5 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-4"
         >
           {SIDEBAR_CATEGORIES.map((category) => {
             const catKey = categoryTitleMap[category.title];
@@ -274,6 +335,27 @@ export function Sidebar({
             </div>
           )}
         </nav>
+
+        {/* Mobile Footer: Notification + User Profile */}
+        <div className="p-2.5 border-t-2 border-t-[#7A756D] dark:border-t-[#27272A] bg-[#ECE9D8] dark:bg-[#18181B] shrink-0 space-y-2">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-1.5">
+              <NotificationCenter
+                dropdownPosition="top"
+                align="left"
+                buttonClassName="p-1 rounded-none bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B]"
+              />
+              <span className="font-mono text-[10px] text-[#7A756D] dark:text-zinc-400">
+                Notifikasi
+              </span>
+            </div>
+            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-[#FAF8F5] dark:bg-[#121214] border border-[#B8B1A5] dark:border-zinc-700 text-[9px] font-mono text-emerald-700 dark:text-emerald-400 uppercase font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Online
+            </div>
+          </div>
+          <UserProfileMenu variant="sidebar" onCloseParent={onClose} />
+        </div>
       </aside>
 
       {/* ─── 3. DESKTOP FIXED SIDEBAR (EXPANDED ↔ COLLAPSED) ─── */}
@@ -286,7 +368,7 @@ export function Sidebar({
             isCollapsed ? "w-[68px]" : "w-[245px]"
           )}
         >
-          {/* Desktop Header: Brand + Toggle Button */}
+          {/* Desktop Header: Brand + Quick Actions */}
           <div
             className={cn(
               "h-11 px-3 border-b-2 border-b-[#7A756D] dark:border-b-[#27272A] flex items-center shrink-0 bg-[#ECE9D8] dark:bg-[#18181B] transition-all duration-200",
@@ -304,21 +386,38 @@ export function Sidebar({
               <Logo variant="sidebar" hideText={isCollapsed} />
             </Link>
 
-            {/* Toggle Button [ ‹ ] / [ › ] */}
-            {onToggleCollapse && (
-              <button
-                type="button"
-                onClick={onToggleCollapse}
-                aria-label="Toggle sidebar"
-                aria-expanded={!isCollapsed}
-                className={cn(
-                  "px-1.5 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer",
-                  isCollapsed && "hidden"
+            {/* Actions when Expanded: Theme Toggle + Collapse Button */}
+            {!isCollapsed && (
+              <div className="flex items-center gap-1 shrink-0">
+                {mounted && (
+                  <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className="p-1 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer"
+                    title={resolvedTheme === "dark" ? "Mode Terang (Light)" : "Mode Gelap (Dark)"}
+                    aria-label="Ganti Tema"
+                  >
+                    {resolvedTheme === "dark" ? (
+                      <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    ) : (
+                      <Moon className="w-3.5 h-3.5 text-[#853827]" />
+                    )}
+                  </button>
                 )}
-                title="Kecilkan Sidebar (Collapse)"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
+
+                {onToggleCollapse && (
+                  <button
+                    type="button"
+                    onClick={onToggleCollapse}
+                    aria-label="Toggle sidebar"
+                    aria-expanded={!isCollapsed}
+                    className="px-1.5 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer"
+                    title="Kecilkan Sidebar (Collapse)"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
@@ -335,6 +434,38 @@ export function Sidebar({
               >
                 <ChevronRight className="w-3 h-3" />
               </button>
+            </div>
+          )}
+
+          {/* Desktop Search Trigger */}
+          {onOpenCommandPalette && (
+            <div className={cn("shrink-0", isCollapsed ? "px-2 pt-2" : "px-2.5 pt-2 pb-1")}>
+              {!isCollapsed ? (
+                <button
+                  type="button"
+                  onClick={onOpenCommandPalette}
+                  className="w-full flex items-center justify-between gap-2 px-2.5 h-8 bg-[#FAF8F5] dark:bg-[#121214] border-t border-l border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-zinc-800 dark:border-r-zinc-800 text-[#7A756D] dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-zinc-200 transition-colors text-xs font-mono text-left cursor-pointer group"
+                  title="Pencarian Cepat (Ctrl + K)"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Search className="w-3.5 h-3.5 shrink-0 text-[#7A756D] dark:text-zinc-400 group-hover:text-[#C2553A] dark:group-hover:text-brand-400 transition-colors" />
+                    <span className="truncate">Cari...</span>
+                  </div>
+                  <div className="flex items-center gap-0.5 px-1 py-0.2 border border-[#B8B1A5] dark:border-zinc-700 bg-[#ECE9D8] dark:bg-zinc-800 text-[9.5px] font-mono text-[#524B42] dark:text-zinc-300 shrink-0">
+                    <Command className="w-2.5 h-2.5" />
+                    <span>K</span>
+                  </div>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onOpenCommandPalette}
+                  className="w-8 h-8 mx-auto flex items-center justify-center bg-[#FAF8F5] dark:bg-[#121214] border-t border-l border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-zinc-800 dark:border-r-zinc-800 text-[#7A756D] dark:text-zinc-400 hover:text-[#C2553A] dark:hover:text-brand-400 transition-colors cursor-pointer"
+                  title="Pencarian Cepat (Ctrl + K)"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           )}
 
@@ -507,6 +638,62 @@ export function Sidebar({
               </div>
             )}
           </nav>
+
+          {/* Desktop Footer: Notifications + Theme (when collapsed) + UserProfileMenu */}
+          <div
+            className={cn(
+              "border-t-2 border-t-[#7A756D] dark:border-t-[#27272A] bg-[#ECE9D8] dark:bg-[#18181B] shrink-0 transition-all duration-200",
+              isCollapsed ? "p-2 space-y-2 flex flex-col items-center" : "p-2.5 space-y-2"
+            )}
+          >
+            {!isCollapsed ? (
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-1.5">
+                  <NotificationCenter
+                    dropdownPosition="top"
+                    align="left"
+                    buttonClassName="p-1 rounded-none bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46]"
+                  />
+                  <span className="font-mono text-[10px] text-[#7A756D] dark:text-zinc-400">
+                    Notifikasi
+                  </span>
+                </div>
+
+                <div
+                  className="flex items-center gap-1 px-1.5 py-0.5 bg-[#FAF8F5] dark:bg-[#121214] border border-[#B8B1A5] dark:border-zinc-700 text-[9px] font-mono text-emerald-700 dark:text-emerald-400 uppercase font-bold"
+                  title="Sistem Terhubung"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Online
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-1.5 w-full">
+                <NotificationCenter
+                  dropdownPosition="top"
+                  align="left"
+                  buttonClassName="p-1.5 rounded-none bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46]"
+                />
+                {mounted && (
+                  <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className="p-1.5 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] cursor-pointer"
+                    title={resolvedTheme === "dark" ? "Mode Terang" : "Mode Gelap"}
+                    aria-label="Ganti Tema"
+                  >
+                    {resolvedTheme === "dark" ? (
+                      <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    ) : (
+                      <Moon className="w-3.5 h-3.5 text-[#853827]" />
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
+
+            <UserProfileMenu variant="sidebar" isCollapsed={isCollapsed} />
+          </div>
         </aside>
       )}
     </>

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Bell, Check, Trash2, Sparkles, GraduationCap, Crown } from "lucide-react";
 import Link from "next/link";
 import { getUrgentClassroomAlerts } from "@/lib/classroom-sync";
+import { cn } from "@/lib/utils";
 
 export interface NotificationItem {
   id: string;
@@ -45,7 +46,19 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
 ];
 
-export function NotificationCenter() {
+export interface NotificationCenterProps {
+  dropdownPosition?: "bottom" | "top";
+  align?: "left" | "right";
+  className?: string;
+  buttonClassName?: string;
+}
+
+export function NotificationCenter({
+  dropdownPosition = "bottom",
+  align = "right",
+  className,
+  buttonClassName,
+}: NotificationCenterProps = {}) {
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -90,12 +103,15 @@ export function NotificationCenter() {
   };
 
   return (
-    <div className="relative" ref={popoverRef}>
+    <div className={cn("relative", className)} ref={popoverRef}>
       {/* Bell Button with Badge */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         title="Lonceng Notifikasi"
-        className="relative p-2 rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-border transition-all duration-150"
+        className={cn(
+          "relative p-2 rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-secondary border border-border transition-all duration-150 cursor-pointer",
+          buttonClassName
+        )}
       >
         <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
@@ -107,7 +123,13 @@ export function NotificationCenter() {
 
       {/* Popover Card */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl border border-border bg-surface shadow-xl z-50 overflow-hidden animate-fade-in">
+        <div
+          className={cn(
+            "absolute w-80 sm:w-96 rounded-2xl border border-border bg-surface shadow-xl z-50 overflow-hidden animate-fade-in",
+            dropdownPosition === "top" ? "bottom-full mb-3" : "top-full mt-3",
+            align === "left" ? "left-0" : "right-0"
+          )}
+        >
           {/* Popover Header */}
           <div className="p-4 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
