@@ -125,25 +125,31 @@ export function ModuleListItem({
             </div>
 
             <div className="space-y-1.5 min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-[#ECE9D8] border border-[#7A756D]/40 text-[#1C1917]">
+              <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono text-text-tertiary">
+                <span className="uppercase tracking-wider font-semibold text-text-secondary">
                   {module.category?.name || "Umum"}
                 </span>
 
                 {module.level && (
-                  <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-[#FAF8F5] border border-[#7A756D]/40 text-[#524B42]">
-                    {module.level === "pemula"
-                      ? "Pemula"
-                      : module.level === "menengah"
-                      ? "Menengah"
-                      : "Lanjutan"}
-                  </span>
+                  <>
+                    <span>•</span>
+                    <span className="uppercase tracking-wider">
+                      {module.level === "pemula"
+                        ? "Pemula"
+                        : module.level === "menengah"
+                        ? "Menengah"
+                        : "Lanjutan"}
+                    </span>
+                  </>
                 )}
 
                 {totalChapters > 0 && (
-                  <span className="text-[11px] font-mono text-[#524B42]">
-                    {completedChapters}/{totalChapters} Bab Selesai
-                  </span>
+                  <>
+                    <span>•</span>
+                    <span>
+                      {completedChapters}/{totalChapters} Bab Selesai
+                    </span>
+                  </>
                 )}
               </div>
 

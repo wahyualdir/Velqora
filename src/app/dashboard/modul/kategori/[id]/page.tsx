@@ -290,21 +290,16 @@ export default function DedicatedCategoryModulesPage({
             </div>
 
             <div className="space-y-1.5 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-secondary text-text-secondary uppercase border border-border">
+              <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono text-text-tertiary">
+                <span className="uppercase tracking-wider font-semibold text-text-secondary">
                   Kurikulum AI
                 </span>
-                <span
-                  className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border"
-                  style={{
-                    backgroundColor: `${themeColor}10`,
-                    borderColor: `${themeColor}30`,
-                    color: themeColor,
-                  }}
-                >
+                <span>•</span>
+                <span className="uppercase tracking-wider">
                   {allTopicNotes.length} Topik Silabus
                 </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-secondary text-text-secondary border border-border">
+                <span>•</span>
+                <span className="uppercase tracking-wider">
                   {modules.length} Modul Terkait
                 </span>
               </div>
@@ -372,36 +367,35 @@ export default function DedicatedCategoryModulesPage({
         </div>
 
         {vaultNotes.length === 0 && (
-          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-md flex items-start gap-2 text-xs text-amber-700 dark:text-amber-400">
-            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="p-3 bg-amber-500/10 border-l-2 border-amber-500 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2 font-mono">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
             <span>
               Kategori ini belum punya catatan kurikulum yang tersimpan di database. Daftar di bawah
-              cuma contoh silabus bawaan — hubungi Admin/Owner untuk menambahkan catatan materi baru.
+              merupakan contoh silabus bawaan — tambahkan catatan materi baru untuk melengkapi kurikulum.
             </span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-2.5">
+        <div className="border border-border divide-y divide-border bg-[#FFFFFF] dark:bg-[#18181B] overflow-hidden shadow-2xs">
           {allTopicNotes.map((note, idx) => {
             if (note.isPlaceholder) {
               return (
                 <div
                   key={note.id || idx}
-                  className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs select-none"
+                  className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none bg-surface/50"
                 >
                   <div className="flex items-start gap-3 min-w-0 pr-2">
                     <span
-                      className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border mt-0.5 opacity-80"
+                      className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5 opacity-80"
                       style={{
                         backgroundColor: `${themeColor}15`,
-                        borderColor: `${themeColor}35`,
                         color: themeColor,
                       }}
                     >
                       {idx + 1}
                     </span>
 
-                    <div className="space-y-1 min-w-0">
+                    <div className="space-y-0.5 min-w-0">
                       <h3 className="font-bold text-sm sm:text-base text-text-primary truncate">
                         {note.title}
                       </h3>
@@ -427,21 +421,20 @@ export default function DedicatedCategoryModulesPage({
               <Link
                 key={note.id || idx}
                 href={`/dashboard/catatan/${note.slug}?fromCategory=${encodeURIComponent(categoryId)}`}
-                className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border hover:border-brand-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs group cursor-pointer"
+                className="p-3.5 sm:p-4 hover:bg-surface-secondary/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 group cursor-pointer"
               >
                 <div className="flex items-start gap-3 min-w-0 pr-2">
                   <span
-                    className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border mt-0.5"
+                    className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5"
                     style={{
                       backgroundColor: `${themeColor}15`,
-                      borderColor: `${themeColor}35`,
                       color: themeColor,
                     }}
                   >
                     {idx + 1}
                   </span>
 
-                  <div className="space-y-1 min-w-0">
+                  <div className="space-y-0.5 min-w-0">
                     <h3 className="font-bold text-sm sm:text-base text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
                       {note.title}
                     </h3>
