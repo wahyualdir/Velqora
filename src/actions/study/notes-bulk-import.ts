@@ -40,7 +40,7 @@ export interface BulkImportPreviewResult {
 /**
  * Verifikasi otorisasi admin/owner sebelum operasi import massal
  */
-async function assertAdminAccess() {
+export async function assertAdminAccess() {
   const supabase = await createClient();
   const {
     data: { user },

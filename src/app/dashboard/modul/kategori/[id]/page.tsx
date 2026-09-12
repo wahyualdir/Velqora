@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   ChevronRight,
   Plus,
+  Upload,
   Network,
   AlertCircle,
   RefreshCw,
@@ -19,6 +20,7 @@ import { isAdminUser, slugify } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { NotebookOutline } from "@/components/modul/notebook-outline";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
+import { BulkImportModal } from "@/components/notes/bulk-import-modal";
 import { ModuleDriveFile } from "@/types/module-drive";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
@@ -49,6 +51,7 @@ export default function DedicatedCategoryModulesPage({
   const [contentMode, setContentMode] = useState<"all" | "theory" | "module" | "project">("all");
   const [filterTag, setFilterTag] = useState<string>("all");
   const [previewFile, setPreviewFile] = useState<ModuleDriveFile | null>(null);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [bookmarkMap, setBookmarkMap] = useState<{ [id: string]: boolean }>({});
   const [vaultNotes, setVaultNotes] = useState<NoteEntity[]>([]);
 
@@ -358,16 +361,27 @@ export default function DedicatedCategoryModulesPage({
             </Link>
 
             {isAdmin && (
-              <Link href={`/dashboard/modul/baru?category=${encodeURIComponent(category?.id || categoryId)}`}>
+              <>
                 <button
                   type="button"
+                  onClick={() => setShowImportModal(true)}
                   className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
-                  title="Tambah Modul Baru (Khusus Admin)"
-                  aria-label="Tambah Modul Baru"
+                  title="Import Massal Catatan (Admin)"
+                  aria-label="Import Massal Catatan"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Upload className="w-4 h-4" />
                 </button>
-              </Link>
+                <Link href={`/dashboard/modul/baru?category=${encodeURIComponent(category?.id || categoryId)}`}>
+                  <button
+                    type="button"
+                    className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
+                    title="Tambah Modul Baru (Khusus Admin)"
+                    aria-label="Tambah Modul Baru"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </Link>
+              </>
             )}
           </div>
         </div>
@@ -420,6 +434,13 @@ export default function DedicatedCategoryModulesPage({
           file={previewFile}
         />
       )}
+
+      {/* ─── 5. Bulk Import Modal ─── */}
+      <BulkImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onSuccess={() => loadData()}
+      />
     </PageContainer>
   );
 }

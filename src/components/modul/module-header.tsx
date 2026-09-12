@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Plus, BookOpen, Code2, Layers, FolderCode, Sparkles } from "lucide-react";
+import { Plus, BookOpen, Code2, Layers, FolderCode, Sparkles, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 
@@ -17,6 +17,7 @@ interface ModuleHeaderProps {
   totalProjects: number;
   totalCategories?: number;
   onOpenSorter?: () => void;
+  onOpenImport?: () => void;
 }
 
 export function ModuleHeader({
@@ -28,6 +29,7 @@ export function ModuleHeader({
   totalProjects,
   totalCategories = 14,
   onOpenSorter,
+  onOpenImport,
 }: ModuleHeaderProps) {
   return (
     <PageHeader
@@ -36,6 +38,19 @@ export function ModuleHeader({
       description="Jelajahi kurikulum terstruktur serta proyek praktikum Kecerdasan Buatan (AI) yang terorganisir per topik."
       actions={
         <>
+          {onOpenImport && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onOpenImport}
+              className="gap-1.5 text-xs font-semibold cursor-pointer border-brand-500/30 hover:bg-brand-500/10 hover:border-brand-500/50 text-brand-600 dark:text-brand-400"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>Import Catatan</span>
+            </Button>
+          )}
+
           {onOpenSorter && (
             <Button
               type="button"
