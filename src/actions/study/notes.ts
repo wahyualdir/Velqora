@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { slugify, isAdminUser } from "@/lib/utils";
-import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
+import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 
 export interface NoteEntity {
   id: string;
@@ -214,14 +214,20 @@ export async function getNoteTree(): Promise<NoteTreeResult> {
   // Use DB categories or SYSTEM_PRIMARY_CATEGORIES fallback
   const allCatList = dbCategories && dbCategories.length > 0
     ? dbCategories
-    : SYSTEM_PRIMARY_CATEGORIES.map((c) => ({
-        id: c.name,
-        name: c.name,
-        color: c.color,
-        icon: c.icon,
-      }));
+    : SYSTEM_PRIMARY_CATEGORIES.flatMap((c) => [
+        { id: c.name, name: c.name, color: c.color, icon: c.icon },
+        ...c.subcategories.map((s) => ({
+          id: s.name,
+          name: s.name,
+          color: s.color || c.color,
+          icon: s.icon || c.icon,
+        })),
+      ]);
 
-  for (const cat of allCatList) {
+  // Saring hanya kategori dalam active AI scope (layer presentasi)
+  const scopedCatList = allCatList.filter((cat) => isCategoryInActiveScope(cat.name));
+
+  for (const cat of scopedCatList) {
     const catNotes: NoteTreeNode[] = [];
 
     for (const n of notes) {

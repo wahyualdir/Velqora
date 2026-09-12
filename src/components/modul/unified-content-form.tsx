@@ -32,7 +32,7 @@ import {
   validateContentFile,
 } from "@/types/module-drive";
 import { createClient } from "@/lib/supabase/client";
-import { STORAGE_BUCKET, SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
+import { STORAGE_BUCKET, SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 import { validateAcademicText } from "@/lib/academic-content-filter";
 import { toast } from "sonner";
 
@@ -135,6 +135,7 @@ export function UnifiedContentForm({
         }
 
         SYSTEM_PRIMARY_CATEGORIES.forEach((primary, pIdx) => {
+          if (!isCategoryInActiveScope(primary.name)) return;
           const dbParent = dbCatMap.get(primary.name.toLowerCase().trim());
           const parentId = dbParent?.id || `preset_parent_${pIdx}`;
 
@@ -147,6 +148,7 @@ export function UnifiedContentForm({
           });
 
           primary.subcategories.forEach((sub, sIdx) => {
+            if (!isCategoryInActiveScope(sub.name, primary.name)) return;
             const dbSub = dbCatMap.get(sub.name.toLowerCase().trim());
             mergedCategories.push({
               id: dbSub?.id || `preset_sub_${pIdx}_${sIdx}`,
@@ -158,9 +160,12 @@ export function UnifiedContentForm({
           });
         });
 
-        // Add any custom categories
+        // Add any custom categories that fall into active scope
         list?.forEach((dbCat: any) => {
-          if (!mergedCategories.some((c) => c.name.toLowerCase().trim() === dbCat.name.toLowerCase().trim())) {
+          if (
+            isCategoryInActiveScope(dbCat.name, dbCat.parent?.name) &&
+            !mergedCategories.some((c) => c.name.toLowerCase().trim() === dbCat.name.toLowerCase().trim())
+          ) {
             mergedCategories.push(dbCat);
           }
         });

@@ -3,9 +3,8 @@
 import React from "react";
 import { Search, X, RotateCcw } from "lucide-react";
 
-// PEMBATASAN SEMENTARA: Scope kategori katalog modul dibatasi hanya untuk materi Kecerdasan Buatan (AI).
-// Kategori lain tetap tersimpan di database dan constants.ts, hanya disaring di layer presentasi.
-export const ACTIVE_CATEGORY_SCOPE = ["Kecerdasan Buatan"] as const;
+import { ACTIVE_CATEGORY_SCOPE, isCategoryInActiveScope } from "@/lib/constants";
+export { ACTIVE_CATEGORY_SCOPE, isCategoryInActiveScope };
 
 interface ModuleFiltersProps {
   search: string;
@@ -40,17 +39,9 @@ export function ModuleFilters({
 }: ModuleFiltersProps) {
   // Saring kategori yang ditampilkan di dropdown agar hanya dalam scope AI aktif
   const scopedCategories = React.useMemo(() => {
-    return categories.filter((cat) => {
-      const name = (cat.name || "").toLowerCase().trim();
-      const parentName = (cat.parent?.name || "").toLowerCase().trim();
-      const isAiParent = ACTIVE_CATEGORY_SCOPE.some(
-        (s) => s.toLowerCase() === name
-      );
-      const isAiChild = ACTIVE_CATEGORY_SCOPE.some(
-        (s) => s.toLowerCase() === parentName
-      );
-      return isAiParent || isAiChild;
-    });
+    return categories.filter((cat) =>
+      isCategoryInActiveScope(cat.name, cat.parent?.name)
+    );
   }, [categories]);
   return (
     <div className="vt-window rounded-none overflow-hidden shadow-xs mb-4">

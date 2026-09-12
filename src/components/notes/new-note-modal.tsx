@@ -9,6 +9,7 @@ import { Input, Textarea } from "@/components/ui/input";
 import { toast } from "sonner";
 import { createNote } from "@/actions/study/notes";
 import type { CategoryTreeFolder } from "@/actions/study/notes";
+import { isCategoryInActiveScope } from "@/lib/constants";
 
 interface NewNoteModalProps {
   isOpen: boolean;
@@ -97,11 +98,13 @@ export function NewNoteModal({
               className="w-full px-3 py-2 rounded-md bg-surface border border-border text-xs font-mono text-text-primary focus:outline-hidden focus:border-brand-500 cursor-pointer"
             >
               <option value="">Tanpa Kategori (Catatan Lepas)</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
+              {categories
+                .filter((c) => isCategoryInActiveScope(c.name))
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
             </select>
           </div>
         )}

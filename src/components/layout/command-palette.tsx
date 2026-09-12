@@ -17,7 +17,6 @@ import {
   Files,
   BarChart3,
   Bookmark,
-  PenLine,
   Compass,
   HardDriveDownload,
   Plus,
@@ -191,15 +190,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         icon: Bookmark,
         action: () => navigateTo("/dashboard/bookmark"),
         keywords: ["bookmark", "simpan", "favorit", "saved", "tersimpan"],
-      },
-      {
-        id: "nav-catatan",
-        title: "Catatan Belajar",
-        subtitle: "Ringkasan konsep, kode, dan catatan materi pembelajaran Anda",
-        category: "Navigasi",
-        icon: PenLine,
-        action: () => navigateTo("/dashboard/catatan"),
-        keywords: ["catatan", "notes", "memo", "jurnal"],
       },
       {
         id: "nav-kategori",

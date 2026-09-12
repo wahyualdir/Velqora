@@ -709,10 +709,10 @@ export default function DedicatedCategoryModulesPage({
             </p>
           </div>
 
-          <Link href="/dashboard/catatan">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono w-fit cursor-pointer">
+          <Link href="/dashboard/catatan/graph">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono w-fit cursor-pointer" title="Buka visualisasi graph interaktif materi">
               <Network className="w-3.5 h-3.5 text-brand-500" />
-              <span>Buka Seluruh Vault</span>
+              <span>Peta Graph Pengetahuan</span>
             </Button>
           </Link>
         </div>
@@ -722,8 +722,7 @@ export default function DedicatedCategoryModulesPage({
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>
               Kategori ini belum punya catatan kurikulum yang tersimpan di database. Daftar di bawah
-              cuma contoh silabus bawaan — hubungi Admin/Owner untuk menambahkan catatan lewat menu
-              &quot;Catatan Belajar&quot; → &quot;Catatan Baru&quot;.
+              cuma contoh silabus bawaan — hubungi Admin/Owner untuk menambahkan catatan materi baru.
             </span>
           </div>
         )}

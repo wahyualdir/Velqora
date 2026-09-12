@@ -79,7 +79,6 @@ export const SIDEBAR_CATEGORIES: readonly NavCategory[] = [
       { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: "BookOpen" },
       { label: "Semua Berkas", href: "/dashboard/file", icon: "Files" },
       { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: "Bookmark" },
-      { label: "Catatan Belajar", href: "/dashboard/catatan", icon: "PenLine" },
     ],
   },
   {
@@ -412,6 +411,32 @@ export const SYSTEM_PRIMARY_CATEGORIES: SystemCategoryPreset[] = [
     ],
   },
 ];
+
+// PEMBATASAN SEMENTARA: scope aplikasi dibatasi hanya untuk kategori Kecerdasan Buatan (AI).
+// Kategori lain tetap ada di SYSTEM_PRIMARY_CATEGORIES & database, cuma disaring di layer presentasi.
+// Untuk mengaktifkan kembali kategori lain, cukup tambahkan namanya ke array ini atau kosongkan array
+// ini untuk menampilkan semua kategori tanpa filter.
+export const ACTIVE_CATEGORY_SCOPE = ["Kecerdasan Buatan"] as const;
+
+export const ACTIVE_AI_SUBCATEGORY_NAMES = new Set(
+  (SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan")?.subcategories.map((s) =>
+    s.name.toLowerCase()
+  ) || [])
+);
+
+export function isCategoryInActiveScope(
+  categoryName?: string | null,
+  parentName?: string | null
+): boolean {
+  const name = (categoryName || "").toLowerCase().trim();
+  const parent = (parentName || "").toLowerCase().trim();
+  const scopeLower = ACTIVE_CATEGORY_SCOPE.map((s) => s.toLowerCase());
+  return (
+    scopeLower.includes(name) ||
+    scopeLower.includes(parent) ||
+    ACTIVE_AI_SUBCATEGORY_NAMES.has(name)
+  );
+}
 
 export const SIDEBAR_LINKS = [
   { label: "Dashboard", href: "/dashboard", icon: "LayoutDashboard" },

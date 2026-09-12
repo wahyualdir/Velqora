@@ -103,7 +103,6 @@ export const linkLabelMap: Record<string, TranslationKey> = {
   "Materi Pembelajaran": "navMateri",
   "Semua Berkas": "navFile",
   "Materi Tersimpan": "navBookmark",
-  "Catatan Belajar": "navCatatan",
   "Repositori Project": "navProject",
   "AI Tutor Cerdas": "navAiTutor",
   "Latihan & Kuis AI": "navKuisAi",

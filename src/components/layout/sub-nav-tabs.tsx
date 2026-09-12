@@ -8,7 +8,6 @@ import {
   BookOpen,
   Files,
   Bookmark,
-  PenLine,
   Bot,
   BrainCircuit,
   Code2,
@@ -35,7 +34,6 @@ const DOCUMENT_TABS: SubNavTabItem[] = [
   { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: BookOpen },
   { label: "Semua Berkas", href: "/dashboard/file", icon: Files },
   { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: Bookmark },
-  { label: "Catatan Belajar", href: "/dashboard/catatan", icon: PenLine },
 ];
 
 const AI_TABS: SubNavTabItem[] = [

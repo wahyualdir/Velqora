@@ -15,7 +15,7 @@ import { ContentContainer } from "@/components/ui/section";
 import { createMaterial, getCategories } from "@/actions/study-actions";
 import { MATERIAL_TYPE_LABELS } from "@/types";
 import { createClient } from "@/lib/supabase/client";
-import { STORAGE_BUCKET, MAX_FILE_SIZE } from "@/lib/constants";
+import { STORAGE_BUCKET, MAX_FILE_SIZE, isCategoryInActiveScope } from "@/lib/constants";
 import { formatFileSize } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -39,7 +39,7 @@ export default function TambahMateriPage() {
     async function loadCats() {
       try {
         const list = await getCategories();
-        setCategories(list || []);
+        setCategories((list || []).filter((c: any) => isCategoryInActiveScope(c.name, c.parent?.name)));
       } catch (err) {
         console.error("Failed to load categories:", err);
       }

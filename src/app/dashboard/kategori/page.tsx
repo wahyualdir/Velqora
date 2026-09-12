@@ -12,7 +12,7 @@ import { PageContainer, PageSection } from "@/components/ui/section";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getCategories, createCategory, deleteCategory } from "@/actions/study-actions";
 import { TechIcon, TechIconPicker, TECH_ICONS, TechIconKey } from "@/components/ui/tech-icon";
-import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
+import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 import { toast } from "sonner";
 
 export default function KategoriPage() {
@@ -288,7 +288,14 @@ export default function KategoriPage() {
                           <TechIcon name={parent.icon || parent.name} size={16} />
                         </div>
                         <div>
-                          <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">{parent.name}</h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">{parent.name}</h3>
+                            {!isCategoryInActiveScope(parent.name) && (
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20">
+                                Disembunyikan dari Katalog
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[11px] text-text-tertiary">
                             Kategori Utama • {children.length} Sub-Kategori
                           </span>
@@ -315,11 +322,16 @@ export default function KategoriPage() {
                             className="flex flex-col justify-between p-3 rounded-xl border border-border bg-surface-secondary/60 hover:border-brand-500/40 hover:bg-surface-secondary transition-all shadow-2xs group"
                           >
                             <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2 min-w-0">
+                              <div className="flex items-center gap-1.5 min-w-0">
                                 <TechIcon name={sub.icon || sub.name} size={18} />
                                 <span className="text-xs font-bold text-text-primary truncate">
                                   {sub.name}
                                 </span>
+                                {!isCategoryInActiveScope(sub.name, parent.name) && (
+                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20 shrink-0">
+                                    Non-aktif
+                                  </span>
+                                )}
                               </div>
 
                               <button
@@ -361,9 +373,14 @@ export default function KategoriPage() {
                           className="flex flex-col justify-between p-3 rounded-xl border border-border bg-surface hover:border-brand-500/40 transition-all shadow-2xs group"
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2 min-w-0">
+                            <div className="flex items-center gap-1.5 min-w-0">
                               <TechIcon name={cat.icon || cat.name} size={18} />
                               <span className="text-xs font-bold text-text-primary truncate">{cat.name}</span>
+                              {!isCategoryInActiveScope(cat.name) && (
+                                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20 shrink-0">
+                                  Non-aktif
+                                </span>
+                              )}
                             </div>
                             <button
                               type="button"

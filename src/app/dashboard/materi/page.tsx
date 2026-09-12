@@ -15,6 +15,7 @@ import { MaterialListItem } from "@/components/materi/material-list-item";
 import { MobileMaterialList } from "@/surfaces/app/materi/mobile-material-list";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
+import { isCategoryInActiveScope } from "@/lib/constants";
 import { toast } from "sonner";
 
 function MateriContent() {
@@ -49,7 +50,7 @@ function MateriContent() {
       }
 
       if (catData) {
-        setCategories(catData);
+        setCategories(catData.filter((c: any) => isCategoryInActiveScope(c.name, c.parent?.name)));
       }
     } catch (err) {
       console.error("Failed to load materials:", err);

@@ -13,8 +13,8 @@ import { createClient } from "@/lib/supabase/client";
 import { isAdminUser } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { ModuleHeader } from "@/components/modul/module-header";
-import { ModuleFilters, ACTIVE_CATEGORY_SCOPE } from "@/components/modul/module-filters";
-import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
+import { ModuleFilters } from "@/components/modul/module-filters";
+import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import { AiCategoryCard, AiCategoryItem } from "@/components/modul/ai-category-card";
@@ -22,29 +22,14 @@ import { CategoryModuleGroup } from "@/components/modul/category-module-group";
 import { ModuleDriveFile } from "@/types/module-drive";
 import { toast } from "sonner";
 
-// PEMBATASAN SEMENTARA: Scope katalog modul dibatasi hanya untuk materi Kecerdasan Buatan (AI).
-// Kategori non-AI tetap tersimpan di database dan constants.ts, hanya disaring di layer presentasi.
 const AI_CATEGORY_PRESET = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
-const AI_SUBCATEGORY_NAMES = new Set(
-  AI_CATEGORY_PRESET?.subcategories.map((s) => s.name.toLowerCase()) || []
-);
 
 function isModuleInAiScope(mod: any): boolean {
-  const catName = (mod.category?.name || "").toLowerCase().trim();
-  const parentName = (mod.category?.parent?.name || "").toLowerCase().trim();
+  const catName = mod.category?.name;
+  const parentName = mod.category?.parent?.name;
 
-  // 1. Kategori induk "Kecerdasan Buatan"
-  if (ACTIVE_CATEGORY_SCOPE.some((scope) => scope.toLowerCase() === catName)) {
-    return true;
-  }
-
-  // 2. Parent kategori "Kecerdasan Buatan"
-  if (ACTIVE_CATEGORY_SCOPE.some((scope) => scope.toLowerCase() === parentName)) {
-    return true;
-  }
-
-  // 3. Subkategori resmi AI (Machine Learning, Deep Learning, NLP, Computer Vision, dll.)
-  if (AI_SUBCATEGORY_NAMES.has(catName)) {
+  // 1. Kategori induk atau subkategori dalam scope AI aktif
+  if (isCategoryInActiveScope(catName, parentName)) {
     return true;
   }
 
