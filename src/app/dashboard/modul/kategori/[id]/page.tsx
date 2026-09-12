@@ -14,6 +14,8 @@ import {
   BookOpen,
   ArrowRight,
   Network,
+  Info,
+  AlertTriangle,
 } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -557,6 +559,7 @@ export default function DedicatedCategoryModulesPage({
         description: n.content_markdown
           ? n.content_markdown.replace(/^[#*>-]+\s*/, "").slice(0, 150)
           : "",
+        isPlaceholder: false,
       }));
     }
 
@@ -567,6 +570,7 @@ export default function DedicatedCategoryModulesPage({
       slug: slugify(sec.title),
       title: sec.title,
       description: sec.description || "",
+      isPlaceholder: true,
     }));
   }, [vaultNotes, category, categoryId]);
 
@@ -713,43 +717,96 @@ export default function DedicatedCategoryModulesPage({
           </Link>
         </div>
 
+        {vaultNotes.length === 0 && (
+          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-md flex items-start gap-2 text-xs text-amber-700 dark:text-amber-400">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>
+              Kategori ini belum punya catatan kurikulum yang tersimpan di database. Daftar di bawah
+              cuma contoh silabus bawaan — hubungi Admin/Owner untuk menambahkan catatan lewat menu
+              &quot;Catatan Belajar&quot; → &quot;Catatan Baru&quot;.
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-2.5">
-          {allTopicNotes.map((note, idx) => (
-            <Link
-              key={note.id || idx}
-              href={`/dashboard/catatan/${note.slug}`}
-              className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border hover:border-brand-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs group cursor-pointer"
-            >
-              <div className="flex items-start gap-3 min-w-0 pr-2">
-                <span
-                  className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border mt-0.5"
-                  style={{
-                    backgroundColor: `${themeColor}15`,
-                    borderColor: `${themeColor}35`,
-                    color: themeColor,
-                  }}
+          {allTopicNotes.map((note, idx) => {
+            if (note.isPlaceholder) {
+              return (
+                <div
+                  key={note.id || idx}
+                  className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs select-none"
                 >
-                  {idx + 1}
-                </span>
+                  <div className="flex items-start gap-3 min-w-0 pr-2">
+                    <span
+                      className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border mt-0.5 opacity-80"
+                      style={{
+                        backgroundColor: `${themeColor}15`,
+                        borderColor: `${themeColor}35`,
+                        color: themeColor,
+                      }}
+                    >
+                      {idx + 1}
+                    </span>
 
-                <div className="space-y-1 min-w-0">
-                  <h3 className="font-bold text-sm sm:text-base text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
-                    {note.title}
-                  </h3>
-                  {note.description && (
-                    <p className="text-xs text-text-secondary line-clamp-1">
-                      {note.description}
-                    </p>
-                  )}
+                    <div className="space-y-1 min-w-0">
+                      <h3 className="font-bold text-sm sm:text-base text-text-primary truncate">
+                        {note.title}
+                      </h3>
+                      {note.description && (
+                        <p className="text-xs text-text-secondary line-clamp-1">
+                          {note.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                    <span className="text-xs font-mono text-text-tertiary italic flex items-center gap-1.5">
+                      <Info className="w-3.5 h-3.5" />
+                      <span>Contoh silabus — catatan belum tersedia</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
+              );
+            }
 
-              <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center text-xs font-mono text-brand-600 dark:text-brand-400 font-semibold group-hover:underline">
-                <span>Buka Catatan</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-          ))}
+            return (
+              <Link
+                key={note.id || idx}
+                href={`/dashboard/catatan/${note.slug}`}
+                className="p-4 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border hover:border-brand-500/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs group cursor-pointer"
+              >
+                <div className="flex items-start gap-3 min-w-0 pr-2">
+                  <span
+                    className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-mono font-bold shrink-0 border mt-0.5"
+                    style={{
+                      backgroundColor: `${themeColor}15`,
+                      borderColor: `${themeColor}35`,
+                      color: themeColor,
+                    }}
+                  >
+                    {idx + 1}
+                  </span>
+
+                  <div className="space-y-1 min-w-0">
+                    <h3 className="font-bold text-sm sm:text-base text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
+                      {note.title}
+                    </h3>
+                    {note.description && (
+                      <p className="text-xs text-text-secondary line-clamp-1">
+                        {note.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center text-xs font-mono text-brand-600 dark:text-brand-400 font-semibold group-hover:underline">
+                  <span>Buka Catatan</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
