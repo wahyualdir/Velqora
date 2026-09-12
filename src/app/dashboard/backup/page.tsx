@@ -85,7 +85,7 @@ export default function BackupPage() {
       <PageHeader
         eyebrow="Pemulihan Data"
         title="Cadangan & Pemulihan Data"
-        description="Ekspor materi, tugas, modul, dan riwayat belajar Anda ke berkas JSON atau pulihkan data kapan saja."
+        description="Ekspor materi, tugas, modul, catatan kurikulum, dan riwayat belajar Anda ke berkas JSON atau pulihkan data kapan saja."
       />
 
       {/* 3. Main Backup & Restore Grid */}
@@ -102,7 +102,7 @@ export default function BackupPage() {
                   Cadangkan Data (Ekspor JSON)
                 </h3>
                 <p className="text-xs text-text-secondary leading-relaxed">
-                  Unduh seluruh modul, dokumen materi, daftar tugas, catatan studi, dan relasi kategori ke dalam satu berkas format JSON terenkripsi.
+                  Unduh seluruh modul, dokumen materi, daftar tugas, catatan kurikulum (Vault), dan relasi kategori ke dalam satu berkas format JSON.
                 </p>
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function BackupPage() {
                   Pulihkan Data (Impor JSON)
                 </h3>
                 <p className="text-xs text-text-secondary leading-relaxed">
-                  Unggah berkas cadangan JSON yang pernah Anda unduh sebelumnya untuk memulihkan seluruh struktur modul dan catatan studi.
+                  Unggah berkas cadangan JSON yang pernah Anda unduh sebelumnya untuk memulihkan seluruh struktur modul, catatan studi, dan relasi Vault.
                 </p>
               </div>
             </div>
@@ -183,6 +183,11 @@ export default function BackupPage() {
               </p>
               <p className="text-text-secondary">
                 Data cadangan telah berhasil diintegrasikan ke workspace Anda.
+                {importResult.importedNotes !== undefined && importResult.importedNotes > 0 && (
+                  <span className="block mt-1 font-medium text-emerald-700 dark:text-emerald-300">
+                    Termasuk {importResult.importedNotes} Catatan Vault, {importResult.importedNoteLinks || 0} Relasi Tautan, dan {importResult.importedNoteTags || 0} Tag Catatan.
+                  </span>
+                )}
               </p>
             </div>
           </div>

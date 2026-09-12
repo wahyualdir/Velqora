@@ -8,16 +8,36 @@ export async function exportUserData() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const [materi, tugas, modul, kategori, tags] = await Promise.all([
+  const [materi, tugas, modul, kategori, tags, notes] = await Promise.all([
     supabase.from("materials").select("*").eq("user_id", user.id),
     supabase.from("tasks").select("*").eq("user_id", user.id),
     supabase.from("modules").select("*, chapters:module_chapters(*)").eq("user_id", user.id),
     supabase.from("categories").select("*").eq("user_id", user.id),
     supabase.from("tags").select("*").eq("user_id", user.id),
+    supabase
+      .from("notes")
+      .select("*")
+      .or(`created_by.eq.${user.id},created_by.is.null`)
+      .order("order_index", { ascending: true }),
   ]);
 
+  const notesData = notes.data || [];
+  const noteIds = notesData.map((n) => n.id);
+
+  let noteLinksData: any[] = [];
+  let noteTagsData: any[] = [];
+
+  if (noteIds.length > 0) {
+    const [linksRes, tagsRes] = await Promise.all([
+      supabase.from("note_links").select("*").in("source_note_id", noteIds),
+      supabase.from("note_tags").select("*").in("note_id", noteIds),
+    ]);
+    noteLinksData = linksRes.data || [];
+    noteTagsData = tagsRes.data || [];
+  }
+
   return {
-    version: "1.0",
+    version: "1.1",
     exported_at: new Date().toISOString(),
     user_id: user.id,
     categories: kategori.data || [],
@@ -25,6 +45,9 @@ export async function exportUserData() {
     materials: materi.data || [],
     tasks: tugas.data || [],
     modules: modul.data || [],
+    notes: notesData,
+    noteLinks: noteLinksData,
+    noteTags: noteTagsData,
   };
 }
 
@@ -34,6 +57,9 @@ export async function importUserData(payload: {
   materials?: any[];
   tasks?: any[];
   modules?: any[];
+  notes?: any[];
+  noteLinks?: any[];
+  noteTags?: any[];
 }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -44,6 +70,9 @@ export async function importUserData(payload: {
   let importedMaterials = 0;
   let importedTasks = 0;
   let importedModules = 0;
+  let importedNotes = 0;
+  let importedNoteLinks = 0;
+  let importedNoteTags = 0;
 
   // 1. Import Categories
   if (payload.categories && Array.isArray(payload.categories)) {
@@ -144,10 +173,111 @@ export async function importUserData(payload: {
     }
   }
 
+  // 6. Import Notes (Vault)
+  if (payload.notes && Array.isArray(payload.notes)) {
+    for (const n of payload.notes) {
+      if (!n.slug || !n.title) continue;
+      try {
+        const { data: insertedNote, error: noteErr } = await supabase
+          .from("notes")
+          .upsert(
+            {
+              id: n.id,
+              slug: n.slug,
+              title: n.title,
+              content_markdown: n.content_markdown || "",
+              category_id: n.category_id || null,
+              parent_note_id: n.parent_note_id || null,
+              icon: n.icon || null,
+              order_index: n.order_index ?? 0,
+              is_folder: Boolean(n.is_folder),
+              created_by: n.created_by || user.id,
+            },
+            { onConflict: "slug" }
+          )
+          .select("id")
+          .single();
+
+        if (!noteErr && insertedNote) {
+          importedNotes++;
+        } else if (noteErr) {
+          // Fallback if category_id or parent_note_id causes FK constraint error
+          const { data: retryNote, error: retryErr } = await supabase
+            .from("notes")
+            .upsert(
+              {
+                id: n.id,
+                slug: n.slug,
+                title: n.title,
+                content_markdown: n.content_markdown || "",
+                category_id: null,
+                parent_note_id: null,
+                icon: n.icon || null,
+                order_index: n.order_index ?? 0,
+                is_folder: Boolean(n.is_folder),
+                created_by: n.created_by || user.id,
+              },
+              { onConflict: "slug" }
+            )
+            .select("id")
+            .single();
+
+          if (!retryErr && retryNote) {
+            importedNotes++;
+          }
+        }
+      } catch {
+        // Ignore single item error and continue
+      }
+    }
+  }
+
+  // 7. Import Note Links
+  if (payload.noteLinks && Array.isArray(payload.noteLinks)) {
+    for (const link of payload.noteLinks) {
+      if (!link.source_note_id || !link.target_title_raw) continue;
+      try {
+        const { error } = await supabase.from("note_links").upsert(
+          {
+            id: link.id,
+            source_note_id: link.source_note_id,
+            target_note_id: link.target_note_id || null,
+            target_title_raw: link.target_title_raw,
+          },
+          { onConflict: "source_note_id, target_title_raw", ignoreDuplicates: true }
+        );
+        if (!error) importedNoteLinks++;
+      } catch {
+        // Ignore single item error and continue
+      }
+    }
+  }
+
+  // 8. Import Note Tags
+  if (payload.noteTags && Array.isArray(payload.noteTags)) {
+    for (const t of payload.noteTags) {
+      if (!t.note_id || !t.tag) continue;
+      try {
+        const { error } = await supabase.from("note_tags").upsert(
+          {
+            note_id: t.note_id,
+            tag: t.tag,
+          },
+          { onConflict: "note_id, tag", ignoreDuplicates: true }
+        );
+        if (!error) importedNoteTags++;
+      } catch {
+        // Ignore single item error and continue
+      }
+    }
+  }
+
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/modul");
   revalidatePath("/dashboard/materi");
   revalidatePath("/dashboard/tugas");
+  revalidatePath("/dashboard/catatan");
+  revalidatePath("/dashboard/catatan/graph");
 
   return {
     importedCategories,
@@ -155,5 +285,8 @@ export async function importUserData(payload: {
     importedTasks,
     importedModules,
     importedMaterials,
+    importedNotes,
+    importedNoteLinks,
+    importedNoteTags,
   };
 }

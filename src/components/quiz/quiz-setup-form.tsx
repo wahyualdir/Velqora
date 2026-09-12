@@ -46,6 +46,7 @@ interface QuizSetupFormProps {
   attachedFile: { name: string; size: string } | null;
   onClearFile: () => void;
   onSelectFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onOpenNotePicker?: () => void;
   loading: boolean;
   onSubmit: (overrideTopic?: string) => void;
 }
@@ -62,6 +63,7 @@ export function QuizSetupForm({
   attachedFile,
   onClearFile,
   onSelectFile,
+  onOpenNotePicker,
   loading,
   onSubmit,
 }: QuizSetupFormProps) {
@@ -121,12 +123,12 @@ export function QuizSetupForm({
           />
         </div>
 
-        {/* File Attachment Area */}
+        {/* File / Vault Note Attachment Area */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary flex items-center justify-between">
-            <span>Lampiran Berkas Materi (Opsional)</span>
+            <span>Sumber Materi Kuis (Opsional)</span>
             <span className="text-[10px] font-normal text-text-tertiary font-sans">
-              Mendukung berkas teks, kode, atau catatan (.txt, .py, .ts, .md, maks 10MB)
+              Mendukung upload berkas (.md, .py, .txt) atau pilih langsung dari Catatan Vault
             </span>
           </label>
 
@@ -140,31 +142,49 @@ export function QuizSetupForm({
 
           {attachedFile ? (
             <div className="flex items-center justify-between p-3 rounded-xl border border-brand-500/30 bg-brand-500/5 text-xs font-mono">
-              <div className="flex items-center gap-2 min-w-0">
-                <FileCode className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+              <div className="flex items-center gap-2.5 min-w-0">
+                {attachedFile.size === "Catatan Vault" ? (
+                  <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+                ) : (
+                  <FileCode className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+                )}
                 <span className="font-semibold text-text-primary truncate">{attachedFile.name}</span>
-                <span className="text-text-tertiary">({attachedFile.size})</span>
+                <span className="text-brand-600 dark:text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded text-[10px] font-sans shrink-0">
+                  {attachedFile.size}
+                </span>
               </div>
               <button
                 type="button"
                 onClick={onClearFile}
                 className="p-1 text-text-tertiary hover:text-rose-500 transition-colors cursor-pointer"
-                title="Hapus berkas"
+                title="Hapus lampiran"
                 aria-label="Hapus lampiran"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl border border-dashed border-border bg-surface-secondary/50 text-xs text-text-secondary hover:text-text-primary hover:border-brand-500/50 hover:bg-surface-secondary transition-colors cursor-pointer"
-            >
-              <Upload className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-              <span>Unggah Berkas Materi Kuis</span>
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={loading}
+                className="flex items-center justify-center gap-2 p-3.5 rounded-xl border border-dashed border-border bg-surface-secondary/50 text-xs text-text-secondary hover:text-text-primary hover:border-brand-500/50 hover:bg-surface-secondary transition-colors cursor-pointer"
+              >
+                <Upload className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                <span>Unggah Berkas Materi</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onOpenNotePicker}
+                disabled={loading}
+                className="flex items-center justify-center gap-2 p-3.5 rounded-xl border border-dashed border-border bg-surface-secondary/50 text-xs text-text-secondary hover:text-text-primary hover:border-brand-500/50 hover:bg-surface-secondary transition-colors cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                <span>Pilih dari Catatan Vault</span>
+              </button>
+            </div>
           )}
         </div>
 

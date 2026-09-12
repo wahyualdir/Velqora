@@ -11,6 +11,8 @@ import { QuizHeader } from "@/components/quiz/quiz-header";
 import { QuizSetupForm } from "@/components/quiz/quiz-setup-form";
 import { QuizSession } from "@/components/quiz/quiz-session";
 import { QuizResultView } from "@/components/quiz/quiz-result-view";
+import { NotePickerModal, SelectedNotePayload } from "@/components/quiz/note-picker-modal";
+import { getNoteBySlug } from "@/actions/study/notes";
 
 function AIQuizContent() {
   const searchParams = useSearchParams();
@@ -23,6 +25,7 @@ function AIQuizContent() {
   const [customContext, setCustomContext] = useState("");
   const [loading, setLoading] = useState(false);
   const [attachedFile, setAttachedFile] = useState<{ name: string; size: string; content: string } | null>(null);
+  const [showNotePicker, setShowNotePicker] = useState(false);
 
   useEffect(() => {
     const urlTopic = searchParams.get("topic");
@@ -30,6 +33,34 @@ function AIQuizContent() {
       setTopic(urlTopic);
     }
   }, [searchParams]);
+
+  // Note Selection from Vault Handler
+  const handleSelectNoteFromVault = async (selected: SelectedNotePayload) => {
+    try {
+      setLoading(true);
+      const noteData = await getNoteBySlug(selected.slug);
+      if (!noteData?.note) {
+        toast.error("Gagal memuat isi catatan dari Vault.");
+        return;
+      }
+
+      setAttachedFile({
+        name: noteData.note.title,
+        size: "Catatan Vault",
+        content: noteData.note.content_markdown || "",
+      });
+
+      if (!topic.trim()) {
+        setTopic(`Evaluasi Catatan: ${noteData.note.title}`);
+      }
+
+      toast.success(`Catatan "${noteData.note.title}" berhasil dipilih sebagai acuan kuis!`);
+    } catch (err: any) {
+      toast.error("Gagal memuat catatan: " + (err?.message || "Kesalahan tidak diketahui"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Quiz Execution State
   const [quizState, setQuizState] = useState<"setup" | "playing" | "finished">("setup");
@@ -185,6 +216,7 @@ function AIQuizContent() {
             attachedFile={attachedFile}
             onClearFile={() => setAttachedFile(null)}
             onSelectFile={handleFileSelect}
+            onOpenNotePicker={() => setShowNotePicker(true)}
             loading={loading}
             onSubmit={handleGenerateQuiz}
           />
@@ -213,6 +245,13 @@ function AIQuizContent() {
             onNewQuiz={handleResetToSetup}
           />
         )}
+
+        {/* Note Picker Modal from Vault */}
+        <NotePickerModal
+          isOpen={showNotePicker}
+          onClose={() => setShowNotePicker(false)}
+          onSelectNote={handleSelectNoteFromVault}
+        />
       </div>
     </PageContainer>
   );
