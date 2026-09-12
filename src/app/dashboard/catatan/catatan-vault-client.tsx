@@ -12,11 +12,13 @@ import {
   Folder,
   Menu,
   X,
+  Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NoteSidebar } from "@/components/notes/note-sidebar";
 import { NoteGraph } from "@/components/notes/note-graph";
 import { NewNoteModal } from "@/components/notes/new-note-modal";
+import { BulkImportModal } from "@/components/notes/bulk-import-modal";
 import { createClient } from "@/lib/supabase/client";
 import { isAdminUser } from "@/lib/utils";
 import type { NoteTreeResult, NoteGraphData } from "@/actions/study/notes";
@@ -29,6 +31,7 @@ interface CatatanVaultLandingProps {
 export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newModalOpen, setNewModalOpen] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
@@ -149,13 +152,23 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
 
               <div className="flex items-center gap-2 shrink-0">
                 {canEdit && (
-                  <Button
-                    onClick={() => setNewModalOpen(true)}
-                    className="gap-1.5 text-xs font-mono font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Catatan Baru</span>
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => setImportModalOpen(true)}
+                      className="gap-1.5 text-xs font-mono font-bold cursor-pointer hover:border-brand-500/50 hover:bg-brand-500/5"
+                    >
+                      <Upload className="w-4 h-4 text-brand-600" />
+                      <span>Import Modul</span>
+                    </Button>
+                    <Button
+                      onClick={() => setNewModalOpen(true)}
+                      className="gap-1.5 text-xs font-mono font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Catatan Baru</span>
+                    </Button>
+                  </>
                 )}
                 <Link href="/dashboard/catatan/graph">
                   <Button variant="outline" className="gap-1.5 text-xs font-mono cursor-pointer">
@@ -275,6 +288,12 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
         isOpen={newModalOpen}
         onClose={() => setNewModalOpen(false)}
         categories={tree.categories}
+      />
+
+      {/* Bulk Import Modal */}
+      <BulkImportModal
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
       />
     </div>
   );
