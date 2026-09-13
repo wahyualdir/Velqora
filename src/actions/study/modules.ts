@@ -14,7 +14,7 @@ export async function getModules(
   categoryId?: string,
   level?: string,
   scope: "all" | "mine" = "all",
-  kind: "all" | "module" | "project" = "all",
+  kind: "all" | "module" | "project" = "module",
   tech?: string
 ) {
   const supabase = await createClient();
@@ -109,8 +109,10 @@ export async function getModules(
   });
 
   // Filter by content kind
-  if (kind !== "all") {
-    enriched = enriched.filter((m: any) => m.kind === kind);
+  if (kind === "module") {
+    enriched = enriched.filter((m: any) => m.kind !== "project" && m.content_type !== "project");
+  } else if (kind === "project") {
+    enriched = enriched.filter((m: any) => m.kind === "project" || m.content_type === "project");
   }
 
   // Filter by tech stack / programming language

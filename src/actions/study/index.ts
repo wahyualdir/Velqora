@@ -8,3 +8,4 @@ export * from "./tags";
 export * from "./files";
 export * from "./backup";
 export * from "./notes";
+export * from "./projects";

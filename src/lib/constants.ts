@@ -84,7 +84,7 @@ export const SIDEBAR_CATEGORIES: readonly NavCategory[] = [
   {
     title: "Project",
     links: [
-      { label: "Repositori Project", href: "/dashboard/modul?mode=project", icon: "FolderCode" },
+      { label: "Repositori Project", href: "/dashboard/project", icon: "FolderCode" },
     ],
   },
   {
@@ -113,7 +113,7 @@ export const SIDEBAR_CATEGORIES: readonly NavCategory[] = [
 export const MOBILE_PRIMARY_NAV_HREFS = [
   "/dashboard",
   "/dashboard/modul",
-  "/dashboard/modul?mode=project",
+  "/dashboard/project",
   "/dashboard/ai-tutor",
 ] as const;
 

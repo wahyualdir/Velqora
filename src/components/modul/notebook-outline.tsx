@@ -289,7 +289,6 @@ export function NotebookOutline({
               <option value="all">#semua</option>
               <option value="theory">#teori</option>
               <option value="module">#modul</option>
-              <option value="project">#proyek</option>
               <option value="pemula">#pemula</option>
               <option value="menengah">#menengah</option>
               <option value="lanjutan">#lanjutan</option>

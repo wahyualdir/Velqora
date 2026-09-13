@@ -48,7 +48,7 @@ export default function DedicatedCategoryModulesPage({
   // Filter internal modul
   const [search, setSearch] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
-  const [contentMode, setContentMode] = useState<"all" | "theory" | "module" | "project">("all");
+  const [contentMode, setContentMode] = useState<"all" | "theory" | "module">("all");
   const [filterTag, setFilterTag] = useState<string>("all");
   const [previewFile, setPreviewFile] = useState<ModuleDriveFile | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -213,9 +213,6 @@ export default function DedicatedCategoryModulesPage({
     } else if (tag === "module") {
       setContentMode("module");
       setLevelFilter("");
-    } else if (tag === "project") {
-      setContentMode("project");
-      setLevelFilter("");
     } else if (["pemula", "menengah", "lanjutan"].includes(tag)) {
       setContentMode("all");
       setLevelFilter(tag);
@@ -249,7 +246,7 @@ export default function DedicatedCategoryModulesPage({
 
   // Filtered topics based on search & contentMode
   const filteredTopicNotes = useMemo(() => {
-    if (contentMode === "module" || contentMode === "project" || levelFilter) {
+    if (contentMode === "module" || levelFilter) {
       return [];
     }
 
@@ -275,8 +272,6 @@ export default function DedicatedCategoryModulesPage({
 
     if (contentMode === "module") {
       list = list.filter((m) => m.kind !== "project");
-    } else if (contentMode === "project") {
-      list = list.filter((m) => m.kind === "project");
     }
 
     if (search.trim()) {

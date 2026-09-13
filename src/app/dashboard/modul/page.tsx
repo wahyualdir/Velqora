@@ -75,10 +75,9 @@ function ModulDanProjectContent() {
 
   useEffect(() => {
     if (modeParam === "project") {
-      setContentMode("project");
-      setViewTab("all-content");
+      router.replace("/dashboard/project");
     }
-  }, [modeParam]);
+  }, [modeParam, router]);
 
   // Core Data
   const [modules, setModules] = useState<any[]>([]);

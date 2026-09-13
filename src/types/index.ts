@@ -158,6 +158,24 @@ export interface ModuleChapter {
   created_at: string;
 }
 
+export interface Project {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  category_id: string | null;
+  level: ModuleLevel;
+  repository_url: string | null;
+  demo_url: string | null;
+  tech_stack: string[];
+  author_name: string | null;
+  cover_url?: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  category?: Category | null;
+}
+
 export interface FileRecord {
   id: string;
   user_id: string;
