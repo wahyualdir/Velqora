@@ -10,6 +10,8 @@ import {
   Network,
   AlertCircle,
   RefreshCw,
+  BookOpen,
+  LayoutGrid,
 } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isAdminUser, slugify, cleanMarkdownExcerpt } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { NotebookOutline } from "@/components/modul/notebook-outline";
+import { DocReaderLayout, DocSectionItem } from "@/components/modul/doc-reader-layout";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
 import { BulkImportModal } from "@/components/notes/bulk-import-modal";
 import { ModuleDriveFile } from "@/types/module-drive";
@@ -54,6 +57,10 @@ export default function DedicatedCategoryModulesPage({
   const [showImportModal, setShowImportModal] = useState(false);
   const [bookmarkMap, setBookmarkMap] = useState<{ [id: string]: boolean }>({});
   const [vaultNotes, setVaultNotes] = useState<NoteEntity[]>([]);
+
+  // Tampilan: "doc" (Default ala Scikit-Learn Documentation Reader) vs "grid"
+  const [viewLayout, setViewLayout] = useState<"doc" | "grid">("doc");
+  const [activeSectionId, setActiveSectionId] = useState<string>("");
 
   // Auth Check
   useEffect(() => {
@@ -244,6 +251,39 @@ export default function DedicatedCategoryModulesPage({
     }));
   }, [vaultNotes, category, categoryId]);
 
+  // Daftar Seksi untuk Documentation Reader View ala Scikit-Learn
+  const docSections = useMemo<DocSectionItem[]>(() => {
+    const catName = category?.name || decodeURIComponent(categoryId);
+    const defaults = getDefaultAiSections(catName);
+
+    if (vaultNotes && vaultNotes.length > 0) {
+      return vaultNotes.map((n, idx) => {
+        const defMatch = defaults.find(
+          (d) => slugify(d.title) === n.slug || d.orderIndex === n.order_index
+        );
+        return {
+          id: n.id,
+          slug: n.slug,
+          title: n.title,
+          orderIndex: n.order_index || idx + 1,
+          description: cleanMarkdownExcerpt(n.content_markdown, n.title, 160),
+          content_markdown: n.content_markdown,
+          codeSnippets: defMatch?.codeSnippets || [],
+        };
+      });
+    }
+
+    return defaults.map((sec, idx) => ({
+      id: sec.id,
+      slug: slugify(sec.title),
+      title: sec.title,
+      orderIndex: sec.orderIndex || idx + 1,
+      description: sec.description || "",
+      content_markdown: null,
+      codeSnippets: sec.codeSnippets || [],
+    }));
+  }, [vaultNotes, category, categoryId]);
+
   // Filtered topics based on search & contentMode
   const filteredTopicNotes = useMemo(() => {
     if (contentMode === "module" || levelFilter) {
@@ -347,12 +387,43 @@ export default function DedicatedCategoryModulesPage({
             </div>
           </div>
 
-          {/* Action buttons as subtle icon buttons with tooltips */}
-          <div className="flex items-center gap-1.5 shrink-0 self-start">
+          {/* Action buttons with view mode switcher */}
+          <div className="flex items-center gap-2 shrink-0 self-start flex-wrap">
+            {/* View Mode Switcher: Doc Reader (Scikit-Learn style) vs Grid */}
+            <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border">
+              <button
+                type="button"
+                onClick={() => setViewLayout("doc")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
+                  viewLayout === "doc"
+                    ? "bg-brand-600 text-white shadow-2xs font-bold"
+                    : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+                }`}
+                title="Tampilan Pembaca Dokumentasi ala Scikit-Learn"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Dokumentasi</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewLayout("grid")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
+                  viewLayout === "grid"
+                    ? "bg-brand-600 text-white shadow-2xs font-bold"
+                    : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+                }`}
+                title="Tampilan Ringkasan Grid Kartu"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Grid Kartu</span>
+              </button>
+            </div>
+
             <Link href="/dashboard/catatan/graph">
               <button
                 type="button"
-                className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
+                className="p-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
                 title="Peta Graph Pengetahuan"
                 aria-label="Peta Graph Pengetahuan"
               >
@@ -365,7 +436,7 @@ export default function DedicatedCategoryModulesPage({
                 <button
                   type="button"
                   onClick={() => setShowImportModal(true)}
-                  className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
+                  className="p-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
                   title="Import Massal Catatan (Admin)"
                   aria-label="Import Massal Catatan"
                 >
@@ -374,7 +445,7 @@ export default function DedicatedCategoryModulesPage({
                 <Link href={`/dashboard/modul/baru?category=${encodeURIComponent(category?.id || categoryId)}`}>
                   <button
                     type="button"
-                    className="p-2 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
+                    className="p-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
                     title="Tambah Modul Baru (Khusus Admin)"
                     aria-label="Tambah Modul Baru"
                   >
@@ -406,25 +477,39 @@ export default function DedicatedCategoryModulesPage({
         </div>
       )}
 
-      {/* ─── 3. Unified Notebook Outline ─── */}
-      <NotebookOutline
-        topics={filteredTopicNotes}
-        modules={filteredModules}
-        categoryId={categoryId}
-        categoryName={category?.name || decodeURIComponent(categoryId)}
-        isAdmin={isAdmin}
-        currentUserId={currentUserId}
-        bookmarkMap={bookmarkMap}
-        onToggleBookmark={handleToggleBookmark}
-        onEditModule={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
-        onDeleteModule={handleDeleteModule}
-        onFilePreview={(file) => setPreviewFile(file)}
-        search={search}
-        onSearchChange={setSearch}
-        filterTag={filterTag}
-        onFilterTagChange={handleFilterTagChange}
-        loading={loading}
-      />
+      {/* ─── 3. Main Content View: Documentation Reader vs Notebook Outline ─── */}
+      {viewLayout === "doc" ? (
+        <DocReaderLayout
+          categoryName={category?.name || decodeURIComponent(categoryId)}
+          categoryId={categoryId}
+          themeColor={themeColor}
+          categoryIcon={category?.icon || "machine_learning"}
+          sections={docSections}
+          activeSectionId={activeSectionId}
+          onSelectSection={(id) => setActiveSectionId(id)}
+          onToggleViewMode={() => setViewLayout("grid")}
+          viewMode="doc"
+        />
+      ) : (
+        <NotebookOutline
+          topics={filteredTopicNotes}
+          modules={filteredModules}
+          categoryId={categoryId}
+          categoryName={category?.name || decodeURIComponent(categoryId)}
+          isAdmin={isAdmin}
+          currentUserId={currentUserId}
+          bookmarkMap={bookmarkMap}
+          onToggleBookmark={handleToggleBookmark}
+          onEditModule={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
+          onDeleteModule={handleDeleteModule}
+          onFilePreview={(file) => setPreviewFile(file)}
+          search={search}
+          onSearchChange={setSearch}
+          filterTag={filterTag}
+          onFilterTagChange={handleFilterTagChange}
+          loading={loading}
+        />
+      )}
 
       {/* ─── 4. File Previewer Modal ─── */}
       {previewFile && (
