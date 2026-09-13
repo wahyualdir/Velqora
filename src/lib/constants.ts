@@ -204,6 +204,10 @@ export const SYSTEM_PRIMARY_CATEGORIES: SystemCategoryPreset[] = [
       { name: "Expert System", icon: "expert_systems", color: "#14B8A6" },
       { name: "Knowledge Representation", icon: "knowledge_rep", color: "#06B6D4" },
       { name: "Multimodal AI", icon: "generative_ai", color: "#F59E0B" },
+      { name: "AutoML & Neural Architecture Search", icon: "automl", color: "#EC4899" },
+      { name: "Computational Intelligence (Fuzzy Logic, Genetic Algorithm, Swarm Intelligence)", icon: "computational_intelligence", color: "#10B981" },
+      { name: "Data Analyst", icon: "data_analyst", color: "#06B6D4" },
+      { name: "Data Engineering & Big Data untuk AI", icon: "data_engineering", color: "#F59E0B" },
     ],
   },
   {

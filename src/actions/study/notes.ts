@@ -11,6 +11,13 @@ import {
   getAiSecuritySections,
   getAiFundamentalsSections,
 } from "@/lib/curriculum-batch1-defaults";
+import {
+  getAutoMlSections,
+  getComputationalIntelligenceSections,
+  getComputerVisionSections,
+  getDataAnalystSections,
+  getDataEngineeringAiSections,
+} from "@/lib/curriculum-batch2-defaults";
 
 export interface NoteEntity {
   id: string;
@@ -300,6 +307,11 @@ export async function getNoteBySlug(slug: string) {
       { name: "AI Governance & Regulasi", color: "#06B6D4", icon: "governance", sections: getAiGovernanceSections() },
       { name: "AI Security & Adversarial Machine Learning", color: "#EF4444", icon: "security", sections: getAiSecuritySections() },
       { name: "Artificial Intelligence Fundamentals", color: "#8B5CF6", icon: "machine_learning", sections: getAiFundamentalsSections() },
+      { name: "AutoML & Neural Architecture Search", color: "#EC4899", icon: "automl", sections: getAutoMlSections() },
+      { name: "Computational Intelligence (Fuzzy Logic, Genetic Algorithm, Swarm Intelligence)", color: "#10B981", icon: "computational_intelligence", sections: getComputationalIntelligenceSections() },
+      { name: "Computer Vision", color: "#3B82F6", icon: "computer_vision", sections: getComputerVisionSections() },
+      { name: "Data Analyst", color: "#06B6D4", icon: "data_analyst", sections: getDataAnalystSections() },
+      { name: "Data Engineering & Big Data untuk AI", color: "#F59E0B", icon: "data_engineering", sections: getDataEngineeringAiSections() },
     ];
 
     for (const preset of allPresets) {

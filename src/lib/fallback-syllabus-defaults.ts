@@ -6,6 +6,13 @@ import {
   getAiSecuritySections,
   getAiFundamentalsSections,
 } from "./curriculum-batch1-defaults";
+import {
+  getAutoMlSections,
+  getComputationalIntelligenceSections,
+  getComputerVisionSections,
+  getDataAnalystSections,
+  getDataEngineeringAiSections,
+} from "./curriculum-batch2-defaults";
 
 /**
  * Fallback Preset Silabus Materi AI (Kurikulum Standar untuk Kategori AI berbasis ModuleSection)
@@ -723,6 +730,37 @@ print("Narasi Caption Gambar:", caption)`,
   // AI Security & Adversarial Machine Learning (12 Bab)
   if (norm.includes("security") || norm.includes("keamanan") || norm.includes("adversarial")) {
     return getAiSecuritySections();
+  }
+
+  // AutoML & Neural Architecture Search (10 Bab)
+  if (norm.includes("automl") || norm.includes("neural architecture search") || norm.includes("nas")) {
+    return getAutoMlSections();
+  }
+
+  // Computational Intelligence (10 Bab)
+  if (
+    norm.includes("computational intelligence") ||
+    norm.includes("fuzzy") ||
+    norm.includes("genetic") ||
+    norm.includes("genetika") ||
+    norm.includes("swarm")
+  ) {
+    return getComputationalIntelligenceSections();
+  }
+
+  // Computer Vision (14 Bab)
+  if (norm.includes("computer vision") || norm.includes("vision") || norm.includes("citra")) {
+    return getComputerVisionSections();
+  }
+
+  // Data Analyst (14 Bab)
+  if (norm.includes("data analyst") || norm.includes("analyst") || norm.includes("analisis data")) {
+    return getDataAnalystSections();
+  }
+
+  // Data Engineering & Big Data untuk AI (12 Bab)
+  if (norm.includes("data engineering") || norm.includes("big data") || norm.includes("lakehouse")) {
+    return getDataEngineeringAiSections();
   }
 
   // Default AI Fundamentals Fallback (12 Bab)

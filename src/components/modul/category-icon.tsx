@@ -1,5 +1,4 @@
 import {
-
   BrainCircuit,
   Layers,
   MessageSquareCode,
@@ -14,6 +13,9 @@ import {
   Landmark,
   ShieldAlert,
   Brain,
+  BarChart2,
+  Database,
+  Network,
   LucideIcon,
 } from "lucide-react";
 
@@ -50,6 +52,16 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "security":
     case "ai_security":
       return ShieldAlert;
+    case "automl":
+      return Network;
+    case "computational_intelligence":
+      return BrainCircuit;
+    case "data_analyst":
+    case "data_analytics":
+      return BarChart2;
+    case "data_engineering":
+    case "database":
+      return Database;
     default:
       return Brain;
   }
