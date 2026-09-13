@@ -62,6 +62,9 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "data_engineering":
     case "database":
       return Database;
+    case "edge_ai":
+    case "tinyml":
+      return Cpu;
     default:
       return Brain;
   }

@@ -208,6 +208,8 @@ export const SYSTEM_PRIMARY_CATEGORIES: SystemCategoryPreset[] = [
       { name: "Computational Intelligence (Fuzzy Logic, Genetic Algorithm, Swarm Intelligence)", icon: "computational_intelligence", color: "#10B981" },
       { name: "Data Analyst", icon: "data_analyst", color: "#06B6D4" },
       { name: "Data Engineering & Big Data untuk AI", icon: "data_engineering", color: "#F59E0B" },
+      { name: "Data Science", icon: "data_science", color: "#06B6D4" },
+      { name: "Edge AI & TinyML", icon: "edge_ai", color: "#10B981" },
     ],
   },
   {

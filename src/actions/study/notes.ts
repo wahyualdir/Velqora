@@ -18,6 +18,13 @@ import {
   getDataAnalystSections,
   getDataEngineeringAiSections,
 } from "@/lib/curriculum-batch2-defaults";
+import {
+  getDataScienceSections,
+  getDeepLearningSections,
+  getEdgeAiSections,
+  getExpertSystemSections,
+  getGenerativeAiSections,
+} from "@/lib/curriculum-batch3-defaults";
 
 export interface NoteEntity {
   id: string;
@@ -312,6 +319,11 @@ export async function getNoteBySlug(slug: string) {
       { name: "Computer Vision", color: "#3B82F6", icon: "computer_vision", sections: getComputerVisionSections() },
       { name: "Data Analyst", color: "#06B6D4", icon: "data_analyst", sections: getDataAnalystSections() },
       { name: "Data Engineering & Big Data untuk AI", color: "#F59E0B", icon: "data_engineering", sections: getDataEngineeringAiSections() },
+      { name: "Data Science", color: "#06B6D4", icon: "data_science", sections: getDataScienceSections() },
+      { name: "Deep Learning", color: "#EC4899", icon: "deep_learning", sections: getDeepLearningSections() },
+      { name: "Edge AI & TinyML", color: "#10B981", icon: "edge_ai", sections: getEdgeAiSections() },
+      { name: "Expert System", color: "#14B8A6", icon: "expert_systems", sections: getExpertSystemSections() },
+      { name: "Generative AI", color: "#F59E0B", icon: "generative_ai", sections: getGenerativeAiSections() },
     ];
 
     for (const preset of allPresets) {

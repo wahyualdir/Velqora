@@ -13,6 +13,13 @@ import {
   getDataAnalystSections,
   getDataEngineeringAiSections,
 } from "./curriculum-batch2-defaults";
+import {
+  getDataScienceSections,
+  getDeepLearningSections,
+  getEdgeAiSections,
+  getExpertSystemSections,
+  getGenerativeAiSections,
+} from "./curriculum-batch3-defaults";
 
 /**
  * Fallback Preset Silabus Materi AI (Kurikulum Standar untuk Kategori AI berbasis ModuleSection)
@@ -761,6 +768,31 @@ print("Narasi Caption Gambar:", caption)`,
   // Data Engineering & Big Data untuk AI (12 Bab)
   if (norm.includes("data engineering") || norm.includes("big data") || norm.includes("lakehouse")) {
     return getDataEngineeringAiSections();
+  }
+
+  // Data Science (16 Bab)
+  if (norm.includes("data science") || norm.includes("sains data")) {
+    return getDataScienceSections();
+  }
+
+  // Deep Learning (15 Bab)
+  if (norm.includes("deep learning") || norm.includes("pembelajaran mendalam")) {
+    return getDeepLearningSections();
+  }
+
+  // Edge AI & TinyML (12 Bab)
+  if (norm.includes("edge ai") || norm.includes("tinyml") || norm.includes("edge")) {
+    return getEdgeAiSections();
+  }
+
+  // Expert System (9 Bab)
+  if (norm.includes("expert system") || norm.includes("sistem pakar") || norm.includes("expert")) {
+    return getExpertSystemSections();
+  }
+
+  // Generative AI (14 Bab)
+  if (norm.includes("generative ai") || norm.includes("genai") || norm.includes("generatif")) {
+    return getGenerativeAiSections();
   }
 
   // Default AI Fundamentals Fallback (12 Bab)
