@@ -20,6 +20,13 @@ import {
   getExpertSystemSections,
   getGenerativeAiSections,
 } from "./curriculum-batch3-defaults";
+import {
+  getGraphNeuralNetworkSections,
+  getKnowledgeRepresentationSections,
+  getLargeLanguageModelSections,
+  getMachineLearningSections,
+  getMlopsSections,
+} from "./curriculum-batch4-defaults";
 
 /**
  * Fallback Preset Silabus Materi AI (Kurikulum Standar untuk Kategori AI berbasis ModuleSection)
@@ -28,93 +35,8 @@ import {
 export function getDefaultAiSections(categoryName: string): ModuleSection[] {
   const norm = categoryName.toLowerCase().trim();
 
-  if (norm.includes("machine learning")) {
-    return [
-      {
-        id: "ml-sec-1",
-        title: "Regresi Linear & Prediksi Kontinu",
-        orderIndex: 1,
-        isCompleted: false,
-        description:
-          "Dasar Supervised Learning untuk memodelkan hubungan linear antara variabel independen (fitur) dan target kontinu. Menggunakan Ordinary Least Squares (OLS) dan fungsi loss Mean Squared Error (MSE).",
-        codeSnippets: [
-          {
-            id: "ml-snip-1",
-            language: "python",
-            caption: "linear_regression.py",
-            code: `import numpy as np
-from sklearn.linear_model import LinearRegression
-
-# Data fitur (jam belajar) vs target (skor ujian)
-X = np.array([[1], [2], [3], [4], [5], [6]])
-y = np.array([55, 63, 72, 80, 89, 95])
-
-model = LinearRegression()
-model.fit(X, y)
-
-prediksi = model.predict([[7]])
-print(f"Prediksi skor untuk 7 jam belajar: {prediksi[0]:.2f}")
-print(f"Koefisien (Bobot): {model.coef_[0]:.2f}, Intersep: {model.intercept_:.2f}")`,
-          },
-        ],
-      },
-      {
-        id: "ml-sec-2",
-        title: "K-Means Clustering & Pengelompokan Data",
-        orderIndex: 2,
-        isCompleted: false,
-        description:
-          "Algoritma Unsupervised Learning untuk mempartisi n observasi ke dalam k klaster berdasarkan jarak centroid terdekat (Euclidean Distance). Cocok untuk segmentasi data dan customer profiling.",
-        codeSnippets: [
-          {
-            id: "ml-snip-2",
-            language: "python",
-            caption: "kmeans_clustering.py",
-            code: `import numpy as np
-from sklearn.cluster import KMeans
-
-# Titik data 2 dimensi tanpa label
-X = np.array([
-    [1.0, 2.0], [1.5, 1.8], [1.2, 2.2],
-    [8.0, 8.0], [8.5, 8.2], [9.0, 7.8]
-])
-
-kmeans = KMeans(n_clusters=2, random_state=42, n_init="auto")
-kmeans.fit(X)
-
-print("Label Klaster Tiap Data:", kmeans.labels_)
-print("Titik Koordinat Centroid:\\n", kmeans.cluster_centers_)`,
-          },
-        ],
-      },
-      {
-        id: "ml-sec-3",
-        title: "Decision Tree & Random Forest Classifier",
-        orderIndex: 3,
-        isCompleted: false,
-        description:
-          "Model pembelajaran berbasis pohon keputusan dengan kriteria splitting Gini Impurity atau Information Gain (Entropy). Ensemble Random Forest menggabungkan banyak pohon untuk mencegah overfitting.",
-        codeSnippets: [
-          {
-            id: "ml-snip-3",
-            language: "python",
-            caption: "decision_tree.py",
-            code: `from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-
-# Fitur: [Umur, Pendapatan_K], Label: [0: Tidak Beli, 1: Beli]
-X_train = [[22, 25], [28, 45], [45, 85], [52, 90], [35, 60]]
-y_train = [0, 0, 1, 1, 1]
-
-clf = DecisionTreeClassifier(max_depth=3, random_state=42)
-clf.fit(X_train, y_train)
-
-uji = [[30, 50], [50, 75]]
-print("Hasil Klasifikasi Data Uji:", clf.predict(uji))`,
-          },
-        ],
-      },
-    ];
+  if (norm.includes("machine learning") || norm.includes("pembelajaran mesin")) {
+    return getMachineLearningSections();
   }
 
   if (norm.includes("deep learning")) {
@@ -793,6 +715,34 @@ print("Narasi Caption Gambar:", caption)`,
   // Generative AI (14 Bab)
   if (norm.includes("generative ai") || norm.includes("genai") || norm.includes("generatif")) {
     return getGenerativeAiSections();
+  }
+
+  // Graph Neural Network (GNN) (11 Bab)
+  if (norm.includes("graph neural network") || norm.includes("gnn")) {
+    return getGraphNeuralNetworkSections();
+  }
+
+  // Knowledge Representation (10 Bab)
+  if (
+    norm.includes("knowledge representation") ||
+    norm.includes("representasi pengetahuan") ||
+    norm.includes("knowledge rep")
+  ) {
+    return getKnowledgeRepresentationSections();
+  }
+
+  // Large Language Model (15 Bab)
+  if (norm.includes("large language model") || norm.includes("llm")) {
+    return getLargeLanguageModelSections();
+  }
+
+  // MLOps & AI Deployment (14 Bab)
+  if (
+    norm.includes("mlops") ||
+    norm.includes("ai deployment") ||
+    norm.includes("deployment")
+  ) {
+    return getMlopsSections();
   }
 
   // Default AI Fundamentals Fallback (12 Bab)

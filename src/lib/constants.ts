@@ -210,6 +210,8 @@ export const SYSTEM_PRIMARY_CATEGORIES: SystemCategoryPreset[] = [
       { name: "Data Engineering & Big Data untuk AI", icon: "data_engineering", color: "#F59E0B" },
       { name: "Data Science", icon: "data_science", color: "#06B6D4" },
       { name: "Edge AI & TinyML", icon: "edge_ai", color: "#10B981" },
+      { name: "Graph Neural Network (GNN)", icon: "gnn", color: "#8B5CF6" },
+      { name: "MLOps & AI Deployment", icon: "mlops", color: "#0284C7" },
     ],
   },
   {

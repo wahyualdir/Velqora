@@ -16,6 +16,7 @@ import {
   BarChart2,
   Database,
   Network,
+  Server,
   LucideIcon,
 } from "lucide-react";
 
@@ -65,6 +66,12 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "edge_ai":
     case "tinyml":
       return Cpu;
+    case "gnn":
+    case "graph_neural_network":
+      return Network;
+    case "mlops":
+    case "mlops_deployment":
+      return Server;
     default:
       return Brain;
   }

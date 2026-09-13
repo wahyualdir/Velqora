@@ -25,6 +25,13 @@ import {
   getExpertSystemSections,
   getGenerativeAiSections,
 } from "@/lib/curriculum-batch3-defaults";
+import {
+  getGraphNeuralNetworkSections,
+  getKnowledgeRepresentationSections,
+  getLargeLanguageModelSections,
+  getMachineLearningSections,
+  getMlopsSections,
+} from "@/lib/curriculum-batch4-defaults";
 
 export interface NoteEntity {
   id: string;
@@ -324,6 +331,11 @@ export async function getNoteBySlug(slug: string) {
       { name: "Edge AI & TinyML", color: "#10B981", icon: "edge_ai", sections: getEdgeAiSections() },
       { name: "Expert System", color: "#14B8A6", icon: "expert_systems", sections: getExpertSystemSections() },
       { name: "Generative AI", color: "#F59E0B", icon: "generative_ai", sections: getGenerativeAiSections() },
+      { name: "Graph Neural Network (GNN)", color: "#8B5CF6", icon: "gnn", sections: getGraphNeuralNetworkSections() },
+      { name: "Knowledge Representation", color: "#06B6D4", icon: "knowledge_rep", sections: getKnowledgeRepresentationSections() },
+      { name: "Large Language Model", color: "#F59E0B", icon: "generative_ai", sections: getLargeLanguageModelSections() },
+      { name: "Machine Learning", color: "#8B5CF6", icon: "machine_learning", sections: getMachineLearningSections() },
+      { name: "MLOps & AI Deployment", color: "#0284C7", icon: "mlops", sections: getMlopsSections() },
     ];
 
     for (const preset of allPresets) {
