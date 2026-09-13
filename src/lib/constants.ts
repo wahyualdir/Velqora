@@ -212,6 +212,7 @@ export const SYSTEM_PRIMARY_CATEGORIES: SystemCategoryPreset[] = [
       { name: "Edge AI & TinyML", icon: "edge_ai", color: "#10B981" },
       { name: "Graph Neural Network (GNN)", icon: "gnn", color: "#8B5CF6" },
       { name: "MLOps & AI Deployment", icon: "mlops", color: "#0284C7" },
+      { name: "Robotics & Embodied AI", icon: "robotics", color: "#EF4444" },
     ],
   },
   {

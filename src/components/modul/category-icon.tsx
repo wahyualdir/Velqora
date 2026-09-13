@@ -37,6 +37,9 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "agent":
       return Bot;
     case "reinforcement":
+    case "reinforcement_learning":
+    case "recommendation":
+    case "recommendation_system":
       return Compass;
     case "speech":
       return Mic;

@@ -32,6 +32,13 @@ import {
   getMachineLearningSections,
   getMlopsSections,
 } from "@/lib/curriculum-batch4-defaults";
+import {
+  getMultimodalAiSections,
+  getRecommendationSystemSections,
+  getNaturalLanguageProcessingSections,
+  getReinforcementLearningSections,
+  getRoboticsEmbodiedAiSections,
+} from "@/lib/curriculum-batch5-defaults";
 
 export interface NoteEntity {
   id: string;
@@ -336,6 +343,11 @@ export async function getNoteBySlug(slug: string) {
       { name: "Large Language Model", color: "#F59E0B", icon: "generative_ai", sections: getLargeLanguageModelSections() },
       { name: "Machine Learning", color: "#8B5CF6", icon: "machine_learning", sections: getMachineLearningSections() },
       { name: "MLOps & AI Deployment", color: "#0284C7", icon: "mlops", sections: getMlopsSections() },
+      { name: "Multimodal AI", color: "#F59E0B", icon: "generative_ai", sections: getMultimodalAiSections() },
+      { name: "Recommendation System", color: "#8B5CF6", icon: "machine_learning", sections: getRecommendationSystemSections() },
+      { name: "Natural Language Processing", color: "#10B981", icon: "nlp", sections: getNaturalLanguageProcessingSections() },
+      { name: "Reinforcement Learning", color: "#8B5CF6", icon: "reinforcement", sections: getReinforcementLearningSections() },
+      { name: "Robotics & Embodied AI", color: "#EF4444", icon: "robotics", sections: getRoboticsEmbodiedAiSections() },
     ];
 
     for (const preset of allPresets) {
