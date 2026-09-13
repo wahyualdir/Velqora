@@ -10,16 +10,32 @@ DECLARE
   v_user_id UUID;
   v_parent_id UUID;
   v_cat_id UUID;
+  v_has_user_id BOOLEAN;
   v_has_icon BOOLEAN;
   v_has_parent BOOLEAN;
 BEGIN
-  -- Dapatkan User ID pertama sebagai pemilik default catatan kurikulum
-  SELECT id INTO v_user_id FROM auth.users ORDER BY created_at ASC LIMIT 1;
+  -- Dapatkan ID Kategori Induk 'Kecerdasan Buatan' dan User ID-nya
+  SELECT id, user_id INTO v_parent_id, v_user_id FROM public.categories WHERE name = 'Kecerdasan Buatan' LIMIT 1;
+
+  IF v_user_id IS NULL THEN
+    SELECT id INTO v_user_id FROM auth.users ORDER BY created_at ASC LIMIT 1;
+  END IF;
   IF v_user_id IS NULL THEN
     SELECT id INTO v_user_id FROM public.users ORDER BY created_at ASC LIMIT 1;
   END IF;
+  IF v_user_id IS NULL THEN
+    SELECT user_id INTO v_user_id FROM public.categories WHERE user_id IS NOT NULL LIMIT 1;
+  END IF;
+  IF v_user_id IS NULL THEN
+    SELECT created_by INTO v_user_id FROM public.notes WHERE created_by IS NOT NULL LIMIT 1;
+  END IF;
 
   -- Periksa kolom pada tabel categories untuk kompatibilitas skema dinamis
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'categories' AND column_name = 'user_id'
+  ) INTO v_has_user_id;
+
   SELECT EXISTS (
     SELECT 1 FROM information_schema.columns 
     WHERE table_schema = 'public' AND table_name = 'categories' AND column_name = 'icon'
@@ -29,25 +45,34 @@ BEGIN
     SELECT 1 FROM information_schema.columns 
     WHERE table_schema = 'public' AND table_name = 'categories' AND column_name = 'parent_id'
   ) INTO v_has_parent;
-
-  -- Dapatkan ID Kategori Induk 'Kecerdasan Buatan'
-  SELECT id INTO v_parent_id FROM public.categories WHERE name = 'Kecerdasan Buatan' LIMIT 1;
-
   ------------------------------------------------------------
   -- BAGIAN 1: SPEECH & AUDIO AI (12 Bab)
   ------------------------------------------------------------
   SELECT id INTO v_cat_id FROM public.categories WHERE name = 'Speech & Audio AI' LIMIT 1;
   IF v_cat_id IS NULL THEN
     v_cat_id := gen_random_uuid();
-    IF v_has_icon AND v_has_parent THEN
-      EXECUTE 'INSERT INTO public.categories (id, name, icon, parent_id) VALUES ($1, $2, $3, $4)'
-      USING v_cat_id, 'Speech & Audio AI', 'speech', v_parent_id;
-    ELSIF v_has_icon THEN
-      EXECUTE 'INSERT INTO public.categories (id, name, icon) VALUES ($1, $2, $3)'
-      USING v_cat_id, 'Speech & Audio AI', 'speech';
+    IF v_has_user_id THEN
+      IF v_has_icon AND v_has_parent THEN
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name, icon, parent_id) VALUES ($1, $2, $3, $4, $5)'
+        USING v_cat_id, v_user_id, 'Speech & Audio AI', 'speech', v_parent_id;
+      ELSIF v_has_icon THEN
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name, icon) VALUES ($1, $2, $3, $4)'
+        USING v_cat_id, v_user_id, 'Speech & Audio AI', 'speech';
+      ELSE
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name) VALUES ($1, $2, $3)'
+        USING v_cat_id, v_user_id, 'Speech & Audio AI';
+      END IF;
     ELSE
-      EXECUTE 'INSERT INTO public.categories (id, name) VALUES ($1, $2)'
-      USING v_cat_id, 'Speech & Audio AI';
+      IF v_has_icon AND v_has_parent THEN
+        EXECUTE 'INSERT INTO public.categories (id, name, icon, parent_id) VALUES ($1, $2, $3, $4)'
+        USING v_cat_id, 'Speech & Audio AI', 'speech', v_parent_id;
+      ELSIF v_has_icon THEN
+        EXECUTE 'INSERT INTO public.categories (id, name, icon) VALUES ($1, $2, $3)'
+        USING v_cat_id, 'Speech & Audio AI', 'speech';
+      ELSE
+        EXECUTE 'INSERT INTO public.categories (id, name) VALUES ($1, $2)'
+        USING v_cat_id, 'Speech & Audio AI';
+      END IF;
     END IF;
   END IF;
 
@@ -729,15 +754,28 @@ print("Aksi Otomatis Sistem :", router.route_transcription(req))
   SELECT id INTO v_cat_id FROM public.categories WHERE name = 'Time Series Forecasting & Anomaly Detection' LIMIT 1;
   IF v_cat_id IS NULL THEN
     v_cat_id := gen_random_uuid();
-    IF v_has_icon AND v_has_parent THEN
-      EXECUTE 'INSERT INTO public.categories (id, name, icon, parent_id) VALUES ($1, $2, $3, $4)'
-      USING v_cat_id, 'Time Series Forecasting & Anomaly Detection', 'time_series', v_parent_id;
-    ELSIF v_has_icon THEN
-      EXECUTE 'INSERT INTO public.categories (id, name, icon) VALUES ($1, $2, $3)'
-      USING v_cat_id, 'Time Series Forecasting & Anomaly Detection', 'time_series';
+    IF v_has_user_id THEN
+      IF v_has_icon AND v_has_parent THEN
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name, icon, parent_id) VALUES ($1, $2, $3, $4, $5)'
+        USING v_cat_id, v_user_id, 'Time Series Forecasting & Anomaly Detection', 'time_series', v_parent_id;
+      ELSIF v_has_icon THEN
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name, icon) VALUES ($1, $2, $3, $4)'
+        USING v_cat_id, v_user_id, 'Time Series Forecasting & Anomaly Detection', 'time_series';
+      ELSE
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name) VALUES ($1, $2, $3)'
+        USING v_cat_id, v_user_id, 'Time Series Forecasting & Anomaly Detection';
+      END IF;
     ELSE
-      EXECUTE 'INSERT INTO public.categories (id, name) VALUES ($1, $2)'
-      USING v_cat_id, 'Time Series Forecasting & Anomaly Detection';
+      IF v_has_icon AND v_has_parent THEN
+        EXECUTE 'INSERT INTO public.categories (id, name, icon, parent_id) VALUES ($1, $2, $3, $4)'
+        USING v_cat_id, 'Time Series Forecasting & Anomaly Detection', 'time_series', v_parent_id;
+      ELSIF v_has_icon THEN
+        EXECUTE 'INSERT INTO public.categories (id, name, icon) VALUES ($1, $2, $3)'
+        USING v_cat_id, 'Time Series Forecasting & Anomaly Detection', 'time_series';
+      ELSE
+        EXECUTE 'INSERT INTO public.categories (id, name) VALUES ($1, $2)'
+        USING v_cat_id, 'Time Series Forecasting & Anomaly Detection';
+      END IF;
     END IF;
   END IF;
 
@@ -1342,15 +1380,28 @@ for key, val in decision.items():
   SELECT id INTO v_cat_id FROM public.categories WHERE name = 'Vector Database & Retrieval System' LIMIT 1;
   IF v_cat_id IS NULL THEN
     v_cat_id := gen_random_uuid();
-    IF v_has_icon AND v_has_parent THEN
-      EXECUTE 'INSERT INTO public.categories (id, name, icon, parent_id) VALUES ($1, $2, $3, $4)'
-      USING v_cat_id, 'Vector Database & Retrieval System', 'vector_db', v_parent_id;
-    ELSIF v_has_icon THEN
-      EXECUTE 'INSERT INTO public.categories (id, name, icon) VALUES ($1, $2, $3)'
-      USING v_cat_id, 'Vector Database & Retrieval System', 'vector_db';
+    IF v_has_user_id THEN
+      IF v_has_icon AND v_has_parent THEN
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name, icon, parent_id) VALUES ($1, $2, $3, $4, $5)'
+        USING v_cat_id, v_user_id, 'Vector Database & Retrieval System', 'vector_db', v_parent_id;
+      ELSIF v_has_icon THEN
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name, icon) VALUES ($1, $2, $3, $4)'
+        USING v_cat_id, v_user_id, 'Vector Database & Retrieval System', 'vector_db';
+      ELSE
+        EXECUTE 'INSERT INTO public.categories (id, user_id, name) VALUES ($1, $2, $3)'
+        USING v_cat_id, v_user_id, 'Vector Database & Retrieval System';
+      END IF;
     ELSE
-      EXECUTE 'INSERT INTO public.categories (id, name) VALUES ($1, $2)'
-      USING v_cat_id, 'Vector Database & Retrieval System';
+      IF v_has_icon AND v_has_parent THEN
+        EXECUTE 'INSERT INTO public.categories (id, name, icon, parent_id) VALUES ($1, $2, $3, $4)'
+        USING v_cat_id, 'Vector Database & Retrieval System', 'vector_db', v_parent_id;
+      ELSIF v_has_icon THEN
+        EXECUTE 'INSERT INTO public.categories (id, name, icon) VALUES ($1, $2, $3)'
+        USING v_cat_id, 'Vector Database & Retrieval System', 'vector_db';
+      ELSE
+        EXECUTE 'INSERT INTO public.categories (id, name) VALUES ($1, $2)'
+        USING v_cat_id, 'Vector Database & Retrieval System';
+      END IF;
     END IF;
   END IF;
 
