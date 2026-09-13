@@ -17,116 +17,121 @@ export async function getModules(
   kind: "all" | "module" | "project" = "module",
   tech?: string
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  let query = supabase
-    .from("modules")
-    .select("*, category:categories!category_id(*, parent:categories!parent_id(*)), chapters:module_chapters(*)")
-    .order("created_at", { ascending: false });
-
-  if (scope === "mine" && user) {
-    query = query.eq("user_id", user.id);
-  }
-
-  if (categoryId) {
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId);
-    if (isUuid) {
-      // If user selected a parent category, include the parent ID and all its subcategories
-      const { data: subcats } = await supabase
-        .from("categories")
-        .select("id")
-        .eq("parent_id", categoryId);
-
-      if (subcats && subcats.length > 0) {
-        const allCatIds = [categoryId, ...subcats.map((s) => s.id)];
-        query = query.in("category_id", allCatIds);
-      } else {
-        query = query.eq("category_id", categoryId);
-      }
-    } else {
-      const cleanName = decodeURIComponent(categoryId).trim().replace(/-/g, " ");
-      const { data: matchedCats } = await supabase
-        .from("categories")
-        .select("id, parent_id")
-        .or(`name.ilike.%${cleanName}%,name.ilike.%${categoryId}%`);
-
-      if (matchedCats && matchedCats.length > 0) {
-        const catIds = matchedCats.map((c) => c.id);
-        query = query.in("category_id", catIds);
-      }
-    }
-  }
-
-  if (level) query = query.eq("level", level);
-  if (search) {
-    query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,notes.ilike.%${search}%`);
-  }
-
-  const { data: initialData, error } = await query;
-  let finalData = initialData;
-
-  if (error) {
-    // Fallback query if parent_id column does not exist on categories table yet
-    let fallbackQuery = supabase
+    let query = supabase
       .from("modules")
-      .select("*, category:categories!category_id(*), chapters:module_chapters(*)")
+      .select("*, category:categories!category_id(*, parent:categories!parent_id(*)), chapters:module_chapters(*)")
       .order("created_at", { ascending: false });
 
     if (scope === "mine" && user) {
-      fallbackQuery = fallbackQuery.eq("user_id", user.id);
+      query = query.eq("user_id", user.id);
     }
 
-    if (categoryId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId)) {
-      fallbackQuery = fallbackQuery.eq("category_id", categoryId);
+    if (categoryId) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId);
+      if (isUuid) {
+        // If user selected a parent category, include the parent ID and all its subcategories
+        const { data: subcats } = await supabase
+          .from("categories")
+          .select("id")
+          .eq("parent_id", categoryId);
+
+        if (subcats && subcats.length > 0) {
+          const allCatIds = [categoryId, ...subcats.map((s) => s.id)];
+          query = query.in("category_id", allCatIds);
+        } else {
+          query = query.eq("category_id", categoryId);
+        }
+      } else {
+        const cleanName = decodeURIComponent(categoryId).trim().replace(/-/g, " ");
+        const { data: matchedCats } = await supabase
+          .from("categories")
+          .select("id, parent_id")
+          .or(`name.ilike.%${cleanName}%,name.ilike.%${categoryId}%`);
+
+        if (matchedCats && matchedCats.length > 0) {
+          const catIds = matchedCats.map((c) => c.id);
+          query = query.in("category_id", catIds);
+        }
+      }
     }
-    if (level) fallbackQuery = fallbackQuery.eq("level", level);
+
+    if (level) query = query.eq("level", level);
     if (search) {
-      fallbackQuery = fallbackQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%,notes.ilike.%${search}%`);
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,notes.ilike.%${search}%`);
     }
 
-    const fallbackRes = await fallbackQuery;
-    finalData = fallbackRes.data;
+    const { data: initialData, error } = await query;
+    let finalData = initialData;
+
+    if (error) {
+      // Fallback query if parent_id column does not exist on categories table yet
+      let fallbackQuery = supabase
+        .from("modules")
+        .select("*, category:categories!category_id(*), chapters:module_chapters(*)")
+        .order("created_at", { ascending: false });
+
+      if (scope === "mine" && user) {
+        fallbackQuery = fallbackQuery.eq("user_id", user.id);
+      }
+
+      if (categoryId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId)) {
+        fallbackQuery = fallbackQuery.eq("category_id", categoryId);
+      }
+      if (level) fallbackQuery = fallbackQuery.eq("level", level);
+      if (search) {
+        fallbackQuery = fallbackQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%,notes.ilike.%${search}%`);
+      }
+
+      const fallbackRes = await fallbackQuery;
+      finalData = fallbackRes.data;
+    }
+
+    let enriched = (finalData || []).map((m: any) => {
+      const drive = extractModuleDriveFromNotes(m.notes);
+      const inferredKind = drive.kind || (m.title?.toLowerCase().startsWith("project") ? "project" : "module");
+      return {
+        ...m,
+        kind: inferredKind,
+        tech_stack: drive.techStack && drive.techStack.length > 0 ? drive.techStack : (inferredKind === "project" ? ["Source Code", "Programming"] : []),
+        author_name: drive.authorName || m.author_name || user?.user_metadata?.full_name || (user?.email ? user.email.split("@")[0] : "Pengguna"),
+        repository_url: drive.repositoryUrl || null,
+        demo_url: drive.demoUrl || null,
+        driveFilesCount: drive.files?.length || 0,
+        driveFoldersCount: drive.folders?.length || 0,
+        driveFiles: drive.files || [],
+        driveFolders: drive.folders || [],
+        commentsCount: drive.comments?.length || 0,
+        reactionsCount: drive.reactions?.filter((r) => r.type === "like").length || 0,
+      };
+    });
+
+    // Filter by content kind
+    if (kind === "module") {
+      enriched = enriched.filter((m: any) => m.kind !== "project" && m.content_type !== "project");
+    } else if (kind === "project") {
+      enriched = enriched.filter((m: any) => m.kind === "project" || m.content_type === "project");
+    }
+
+    // Filter by tech stack / programming language
+    if (tech && tech.trim()) {
+      const lowerTech = tech.toLowerCase().trim();
+      enriched = enriched.filter((m: any) =>
+        m.tech_stack?.some((t: string) => t.toLowerCase().includes(lowerTech)) ||
+        m.title?.toLowerCase().includes(lowerTech) ||
+        m.description?.toLowerCase().includes(lowerTech) ||
+        m.category?.name?.toLowerCase().includes(lowerTech)
+      );
+    }
+
+    return enriched;
+  } catch (err) {
+    console.error("Error in getModules:", err);
+    return [];
   }
-
-  let enriched = (finalData || []).map((m: any) => {
-    const drive = extractModuleDriveFromNotes(m.notes);
-    const inferredKind = drive.kind || (m.title?.toLowerCase().startsWith("project") ? "project" : "module");
-    return {
-      ...m,
-      kind: inferredKind,
-      tech_stack: drive.techStack && drive.techStack.length > 0 ? drive.techStack : (inferredKind === "project" ? ["Source Code", "Programming"] : []),
-      author_name: drive.authorName || m.author_name || user?.user_metadata?.full_name || (user?.email ? user.email.split("@")[0] : "Pengguna"),
-      repository_url: drive.repositoryUrl || null,
-      demo_url: drive.demoUrl || null,
-      driveFilesCount: drive.files?.length || 0,
-      driveFoldersCount: drive.folders?.length || 0,
-      driveFiles: drive.files || [],
-      driveFolders: drive.folders || [],
-      commentsCount: drive.comments?.length || 0,
-      reactionsCount: drive.reactions?.filter((r) => r.type === "like").length || 0,
-    };
-  });
-
-  // Filter by content kind
-  if (kind === "module") {
-    enriched = enriched.filter((m: any) => m.kind !== "project" && m.content_type !== "project");
-  } else if (kind === "project") {
-    enriched = enriched.filter((m: any) => m.kind === "project" || m.content_type === "project");
-  }
-
-  // Filter by tech stack / programming language
-  if (tech && tech.trim()) {
-    const lowerTech = tech.toLowerCase().trim();
-    enriched = enriched.filter((m: any) =>
-      m.tech_stack?.some((t: string) => t.toLowerCase().includes(lowerTech)) ||
-      m.title?.toLowerCase().includes(lowerTech) ||
-      m.description?.toLowerCase().includes(lowerTech) ||
-      m.category?.name?.toLowerCase().includes(lowerTech)
-    );
-  }
-
-  return enriched;
 }
 
 

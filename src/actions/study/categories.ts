@@ -225,43 +225,103 @@ export async function sanitizeAndMigrateCategories() {
 }
 
 export async function getCategories() {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  // 1. Fetch existing categories from Supabase
-  let dbCategories: any[] = [];
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*, parent:categories!parent_id(*)")
-    .order("name");
-
-  if (!error && data) {
-    dbCategories = data;
-  } else {
-    const { data: fallbackData } = await supabase
+    // 1. Fetch existing categories from Supabase
+    let dbCategories: any[] = [];
+    const { data, error } = await supabase
       .from("categories")
-      .select("*")
+      .select("*, parent:categories!parent_id(*)")
       .order("name");
-    dbCategories = fallbackData || [];
-  }
 
-  // 2. Build map and array of categories
-  const allCategories: any[] = [...dbCategories];
-  const dbParentMap = new Map<string, any>();
-  const dbSubMap = new Map<string, any>();
-
-  for (const cat of dbCategories) {
-    if (!cat.parent_id) {
-      dbParentMap.set(cat.name.toLowerCase().trim(), cat);
+    if (!error && data) {
+      dbCategories = data;
     } else {
-      dbSubMap.set(`${cat.name.toLowerCase().trim()}__${cat.parent_id}`, cat);
+      const { data: fallbackData } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+      dbCategories = fallbackData || [];
     }
-  }
 
-  // 3. Merge preset subcategories from SYSTEM_PRIMARY_CATEGORIES
-  for (const primary of SYSTEM_PRIMARY_CATEGORIES) {
-    let parentObj = dbParentMap.get(primary.name.toLowerCase().trim());
-    if (!parentObj) {
-      parentObj = {
+    // 2. Build map and array of categories
+    const allCategories: any[] = [...dbCategories];
+    const dbParentMap = new Map<string, any>();
+    const dbSubMap = new Map<string, any>();
+
+    for (const cat of dbCategories) {
+      const cName = (cat.name || "").toLowerCase().trim();
+      if (!cName) continue;
+      if (!cat.parent_id) {
+        dbParentMap.set(cName, cat);
+      } else {
+        dbSubMap.set(`${cName}__${cat.parent_id}`, cat);
+      }
+    }
+
+    // 3. Merge preset subcategories from SYSTEM_PRIMARY_CATEGORIES
+    for (const primary of SYSTEM_PRIMARY_CATEGORIES) {
+      const pName = (primary.name || "").toLowerCase().trim();
+      let parentObj = dbParentMap.get(pName);
+      if (!parentObj) {
+        parentObj = {
+          id: primary.name,
+          name: primary.name,
+          color: primary.color,
+          icon: primary.icon,
+          parent_id: null,
+          parent: null,
+          is_system: true,
+        };
+        allCategories.push(parentObj);
+      }
+
+      if (primary.subcategories) {
+        for (const sub of primary.subcategories) {
+          const sName = (sub.name || "").toLowerCase().trim();
+          const subKey = `${sName}__${parentObj.id}`;
+          const subExists =
+            dbSubMap.has(subKey) ||
+            allCategories.some(
+              (c) =>
+                c.parent_id === parentObj.id &&
+                (c.name || "").toLowerCase().trim() === sName
+            );
+
+          if (!subExists) {
+            allCategories.push({
+              id: sub.name,
+              name: sub.name,
+              color: sub.color || primary.color,
+              icon: sub.icon || primary.icon,
+              parent_id: parentObj.id,
+              parent: parentObj,
+              is_system: true,
+            });
+          }
+        }
+      }
+    }
+
+    // Deduplicate and sort alphabetically
+    const seen = new Set<string>();
+    const unique = allCategories.filter((c: any) => {
+      const key = `${(c.name || "").toLowerCase().trim()}__${c.parent_id || "root"}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    return unique.sort((a: any, b: any) =>
+      (a.name || "").localeCompare(b.name || "", "id", { sensitivity: "base" })
+    );
+  } catch (err) {
+    console.error("Error in getCategories:", err);
+    // Fallback to offline presets
+    const fallbackList: any[] = [];
+    for (const primary of SYSTEM_PRIMARY_CATEGORIES) {
+      fallbackList.push({
         id: primary.name,
         name: primary.name,
         color: primary.color,
@@ -269,48 +329,23 @@ export async function getCategories() {
         parent_id: null,
         parent: null,
         is_system: true,
-      };
-      allCategories.push(parentObj);
-    }
-
-    if (primary.subcategories) {
-      for (const sub of primary.subcategories) {
-        const subKey = `${sub.name.toLowerCase().trim()}__${parentObj.id}`;
-        const subExists =
-          dbSubMap.has(subKey) ||
-          allCategories.some(
-            (c) =>
-              c.parent_id === parentObj.id &&
-              c.name.toLowerCase().trim() === sub.name.toLowerCase().trim()
-          );
-
-        if (!subExists) {
-          allCategories.push({
+      });
+      if (primary.subcategories) {
+        for (const sub of primary.subcategories) {
+          fallbackList.push({
             id: sub.name,
             name: sub.name,
             color: sub.color || primary.color,
             icon: sub.icon || primary.icon,
-            parent_id: parentObj.id,
-            parent: parentObj,
+            parent_id: primary.name,
+            parent: { id: primary.name, name: primary.name },
             is_system: true,
           });
         }
       }
     }
+    return fallbackList;
   }
-
-  // Deduplicate and sort alphabetically
-  const seen = new Set<string>();
-  const unique = allCategories.filter((c: any) => {
-    const key = `${c.name.toLowerCase().trim()}__${c.parent_id || "root"}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-
-  return unique.sort((a: any, b: any) =>
-    (a.name || "").localeCompare(b.name || "", "id", { sensitivity: "base" })
-  );
 }
 
 export async function createCategory(data: CategoryFormData) {

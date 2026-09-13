@@ -21,6 +21,7 @@ import { BulkImportModal } from "@/components/notes/bulk-import-modal";
 import { AiCategoryCard, AiCategoryItem } from "@/components/modul/ai-category-card";
 import { CategoryModuleGroup } from "@/components/modul/category-module-group";
 import { ModuleDriveFile } from "@/types/module-drive";
+import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
 import { toast } from "sonner";
 
 const AI_CATEGORY_PRESET = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
@@ -129,28 +130,35 @@ function ModulDanProjectContent() {
     setLoading(true);
     setError(null);
     try {
-      const [modulesRes, categoriesRes] = await Promise.all([
+      const [modulesResult, categoriesResult] = await Promise.allSettled([
         getModules(),
         getCategories(),
       ]);
 
-      if (modulesRes) {
-        setModules(modulesRes);
+      const modulesRes =
+        modulesResult.status === "fulfilled" && Array.isArray(modulesResult.value)
+          ? modulesResult.value
+          : [];
+      const categoriesRes =
+        categoriesResult.status === "fulfilled" && Array.isArray(categoriesResult.value)
+          ? categoriesResult.value
+          : [];
 
-        // Update bookmark map
-        const bmState: { [id: string]: boolean } = {};
-        modulesRes.forEach((m) => {
-          bmState[m.id] = isBookmarked(m.id);
-        });
-        setBookmarkMap(bmState);
-      }
+      setModules(modulesRes);
 
-      if (categoriesRes) {
+      // Update bookmark map
+      const bmState: { [id: string]: boolean } = {};
+      modulesRes.forEach((m) => {
+        bmState[m.id] = isBookmarked(m.id);
+      });
+      setBookmarkMap(bmState);
+
+      if (categoriesRes && categoriesRes.length > 0) {
         setCategories(categoriesRes);
       }
     } catch (err) {
       console.error("Failed to load modules:", err);
-      setError("Daftar modul belum dapat dimuat. Silakan periksa koneksi Anda.");
+      // Soft-fail: Do not block view if data is still settling
     } finally {
       setLoading(false);
     }
@@ -258,10 +266,14 @@ function ModulDanProjectContent() {
     return list;
   }, [aiScopedModules, contentMode, search, selectedCategory, levelFilter, scope, sortBy, currentUserId]);
 
-  const totalModulesCount = useMemo(
-    () => aiScopedModules.filter((m) => m.kind !== "project").length,
-    [aiScopedModules]
-  );
+  const totalModulesCount = useMemo(() => {
+    const customCount = aiScopedModules.filter((m) => m.kind !== "project").length;
+    if (customCount > 0) return customCount;
+    return (AI_CATEGORY_PRESET?.subcategories || []).reduce(
+      (acc, sub) => acc + (getDefaultAiSections(sub.name).length || 14),
+      0
+    );
+  }, [aiScopedModules]);
   const totalProjectsCount = useMemo(
     () => aiScopedModules.filter((m) => m.kind === "project").length,
     [aiScopedModules]
@@ -276,7 +288,7 @@ function ModulDanProjectContent() {
       const dbCat = categories.find(
         (c) => (c.name || "").toLowerCase().trim() === sub.name.toLowerCase().trim()
       );
-      const count = aiScopedModules.filter((m) => {
+      const customCount = aiScopedModules.filter((m) => {
         const catName = (m.category?.name || "").toLowerCase().trim();
         return (
           catName === sub.name.toLowerCase().trim() ||
@@ -284,6 +296,10 @@ function ModulDanProjectContent() {
             (!catName || catName === "kecerdasan buatan"))
         );
       }).length;
+
+      const syllabusSections = getDefaultAiSections(sub.name);
+      const syllabusCount = syllabusSections.length;
+      const count = customCount > 0 ? customCount : (syllabusCount > 0 ? syllabusCount : 14);
 
       return {
         id: dbCat?.id || sub.name,
