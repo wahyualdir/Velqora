@@ -36,7 +36,7 @@ import { toast } from "sonner";
 
 const AI_CATEGORY_PRESET = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
 
-export default function DedicatedProjectsPage() {
+function ProjectsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -528,3 +528,23 @@ export default function DedicatedProjectsPage() {
     </PageContainer>
   );
 }
+
+export default function DedicatedProjectsPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <PageContainer className="space-y-6 pb-16">
+          <div className="h-28 w-full bg-surface rounded-xl border border-border animate-pulse" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="h-32 w-full bg-surface rounded-xl border border-border animate-pulse" />
+            ))}
+          </div>
+        </PageContainer>
+      }
+    >
+      <ProjectsPageContent />
+    </React.Suspense>
+  );
+}
+

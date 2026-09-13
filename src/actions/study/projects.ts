@@ -19,6 +19,197 @@ export interface ProjectFormData {
 }
 
 /**
+ * 0. CURATED STARTER AI PROJECTS
+ * Memberikan contoh proyek nyata terintegrasi kurikulum AI saat database masih kosong.
+ */
+export const CURATED_AI_PROJECTS: Project[] = [
+  {
+    id: "proj_weather_ml",
+    user_id: "system",
+    title: "Sistem Prediksi Cuaca Real-Time (Random Forest & Scikit-Learn)",
+    description: "Pipeline machine learning terapan untuk analisis atmosfer dan prediksi curah hujan harian berbasis Random Forest Classifier dengan data atmosfer dan REST API inferensi.",
+    category_id: "Machine Learning",
+    level: "pemula",
+    repository_url: "https://github.com/velqora-team/weather-prediction-ml",
+    demo_url: "https://weather-ml-demo.velqora.app",
+    tech_stack: ["Python", "Scikit-Learn", "Pandas", "Streamlit", "Machine Learning"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 🌦️ Sistem Prediksi Cuaca (Machine Learning)\n\nRepositori proyek pembelajaran mesin terapan untuk analisis atmosfer dan prediksi curah hujan harian.\n\n## 🚀 Fitur Utama\n- Eksplorasi dataset cuaca atmosferik\n- Preprocessing dan Feature Engineering otomatis\n- Model Random Forest Classifier dengan akurasi 94%\n- Dashboard interaktif berbasis Streamlit",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Machine Learning",
+      name: "Machine Learning",
+      color: "#8B5CF6",
+      icon: "machine_learning",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_yolo_cv",
+    user_id: "system",
+    title: "Deteksi Objek & Segmentasi Citra Real-Time (YOLOv8 & PyTorch)",
+    description: "Implementasi deteksi multi-objek berkecepatan tinggi dengan arsitektur YOLOv8 pada video CCTV dan webcam secara real-time dengan bounding box akurat.",
+    category_id: "Computer Vision",
+    level: "menengah",
+    repository_url: "https://github.com/velqora-team/yolov8-vision-detection",
+    demo_url: "https://vision-yolo-demo.velqora.app",
+    tech_stack: ["Python", "PyTorch", "YOLOv8", "OpenCV", "Computer Vision"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 👁️ Deteksi Objek Real-Time dengan YOLOv8\n\nRepositori implementasi computer vision modern untuk deteksi multi-objek berkecepatan tinggi.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Computer Vision",
+      name: "Computer Vision",
+      color: "#3B82F6",
+      icon: "computer_vision",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_rag_llm",
+    user_id: "system",
+    title: "Enterprise RAG (Retrieval-Augmented Generation) dengan LangChain & FAISS",
+    description: "Sistem tanya-jawab dokumen berbasis semantic search, dense vector retrieval, dan grounded LLM response dengan referensi kutipan data.",
+    category_id: "Large Language Model",
+    level: "lanjutan",
+    repository_url: "https://github.com/velqora-team/enterprise-rag-langchain",
+    demo_url: "https://rag-assistant-demo.velqora.app",
+    tech_stack: ["Python", "LangChain", "OpenAI", "FAISS", "Large Language Model", "Vector DB"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 🤖 Enterprise RAG System\n\nImplementasi retrieval augmented generation untuk data internal perusahaan dengan latency rendah.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Large Language Model",
+      name: "Large Language Model",
+      color: "#F59E0B",
+      icon: "generative_ai",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_crew_agent",
+    user_id: "system",
+    title: "Autonomous Multi-Agent Workflow Engine (CrewAI & LangGraph)",
+    description: "Sistem orkestrasi multi-agen otonom untuk otomatisasi riset pasar, web scraping cerdas, dan penulisan laporan terstruktur.",
+    category_id: "AI Agent",
+    level: "lanjutan",
+    repository_url: "https://github.com/velqora-team/multi-agent-crew-engine",
+    demo_url: "https://agent-crew-demo.velqora.app",
+    tech_stack: ["Python", "CrewAI", "LangGraph", "FastAPI", "AI Agent"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 🤖 Autonomous Multi-Agent Engine\n\nPlatform kolaboratif antar agen AI cerdas untuk otomasi alur kerja analitis.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "AI Agent",
+      name: "AI Agent",
+      color: "#EF4444",
+      icon: "robotics",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_resnet_dl",
+    user_id: "system",
+    title: "Klasifikasi Citra Medis X-Ray Paru-Paru (ResNet50 & PyTorch)",
+    description: "Model transfer learning berbasis arsitektur deep residual network untuk screening pneumonia dan deteksi anomali radiologi secara otomatis.",
+    category_id: "Deep Learning",
+    level: "menengah",
+    repository_url: "https://github.com/velqora-team/pneumonia-resnet-pytorch",
+    demo_url: "https://xray-ai-demo.velqora.app",
+    tech_stack: ["Python", "PyTorch", "TorchVision", "Deep Learning", "CNN"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 🩻 Deteksi Pneumonia dengan ResNet50\n\nModel deep learning berbasis Residual Network untuk mendeteksi pneumonia dari citra rontgen dada.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Deep Learning",
+      name: "Deep Learning",
+      color: "#EC4899",
+      icon: "deep_learning",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_indobert_nlp",
+    user_id: "system",
+    title: "Analisis Sentimen & Klasifikasi Teks Bahasa Indonesia (IndoBERT)",
+    description: "Fine-tuning pretrained IndoBERT model untuk sentiment analysis ulasan produk e-commerce dan deteksi emosi pada teks sosial media.",
+    category_id: "Natural Language Processing",
+    level: "menengah",
+    repository_url: "https://github.com/velqora-team/indobert-sentiment-nlp",
+    demo_url: "https://sentiment-id-demo.velqora.app",
+    tech_stack: ["Python", "Transformers", "IndoBERT", "HuggingFace", "Natural Language Processing"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 📝 NLP Bahasa Indonesia dengan IndoBERT\n\nPipeline klasifikasi teks dan sentiment mining menggunakan transformer IndoBERT.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Natural Language Processing",
+      name: "Natural Language Processing",
+      color: "#10B981",
+      icon: "nlp",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_prophet_ts",
+    user_id: "system",
+    title: "Prediksi Saham & Deteksi Anomali Metrik Finansial (Prophet & LSTM)",
+    description: "Pemodelan deret waktu musiman untuk forecasting harga komoditas dan deteksi outlier anomali transaksi keuangan.",
+    category_id: "Time Series Forecasting & Anomaly Detection",
+    level: "menengah",
+    repository_url: "https://github.com/velqora-team/timeseries-anomaly-prophet",
+    demo_url: "https://timeseries-demo.velqora.app",
+    tech_stack: ["Python", "Prophet", "TensorFlow", "Time Series", "Pandas"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 📈 Time Series Forecasting & Anomaly Detection\n\nAnalisis tren musiman dan deteksi fluktuasi anomali finansial.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Time Series Forecasting & Anomaly Detection",
+      name: "Time Series Forecasting & Anomaly Detection",
+      color: "#06B6D4",
+      icon: "time_series",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: "proj_qdrant_vdb",
+    user_id: "system",
+    title: "Sistem Pencarian Semantik Produk Berbasis Qdrant & Sentence-Transformers",
+    description: "Search engine multimodal untuk pencarian katalog e-commerce berdasarkan kemiripan vektor semantik dan hybrid text match.",
+    category_id: "Vector Database & Retrieval System",
+    level: "lanjutan",
+    repository_url: "https://github.com/velqora-team/qdrant-semantic-search",
+    demo_url: "https://semantic-search-demo.velqora.app",
+    tech_stack: ["Python", "Qdrant", "Sentence-Transformers", "Vector DB", "FastAPI"],
+    author_name: "Tim Kurikulum AI Velqora",
+    notes: "# 🔍 Vector Search dengan Qdrant\n\nMesin pencari vektor semantik berkinerja tinggi dengan indexing HNSW.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: {
+      id: "Vector Database & Retrieval System",
+      name: "Vector Database & Retrieval System",
+      color: "#8B5CF6",
+      icon: "vector_db",
+      user_id: "system",
+      created_at: new Date().toISOString(),
+    },
+  },
+];
+
+/**
  * 1. GET ALL PROJECTS (Independen dari Modules)
  */
 export async function getProjects(
@@ -32,6 +223,8 @@ export async function getProjects(
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  let dbProjects: Project[] = [];
 
   // Primary Query: Coba query tabel projects mandiri
   try {
@@ -82,79 +275,94 @@ export async function getProjects(
     const { data, error } = await query;
 
     if (!error && data) {
-      let filtered = data as Project[];
-      if (tech) {
-        const targetTech = tech.toLowerCase().trim();
-        filtered = filtered.filter((p) =>
-          (p.tech_stack || []).some((t) => t.toLowerCase().includes(targetTech))
-        );
-      }
-      return filtered;
+      dbProjects = data as Project[];
     }
   } catch (err) {
     console.warn("Primary projects table query error, attempting fallback:", err);
   }
 
   // Graceful Fallback: Jika tabel projects belum dimigrasi di Supabase, baca dari modules WHERE content_type = 'project'
-  try {
-    let fallbackQuery = supabase
-      .from("modules")
-      .select("*, category:categories!category_id(*)")
-      .eq("content_type", "project")
-      .order("created_at", { ascending: false });
+  if (dbProjects.length === 0 && scope !== "mine") {
+    try {
+      let fallbackQuery = supabase
+        .from("modules")
+        .select("*, category:categories!category_id(*)")
+        .eq("content_type", "project")
+        .order("created_at", { ascending: false });
 
-    if (scope === "mine" && user) {
-      fallbackQuery = fallbackQuery.eq("user_id", user.id);
-    }
-    if (categoryId) {
-      fallbackQuery = fallbackQuery.eq("category_id", categoryId);
-    }
-    if (level) {
-      fallbackQuery = fallbackQuery.eq("level", level);
-    }
-    if (search) {
-      fallbackQuery = fallbackQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
-    }
-
-    const { data: fbData } = await fallbackQuery;
-    if (fbData) {
-      let mapped = fbData.map((m: any) => ({
-        id: m.id,
-        user_id: m.user_id,
-        title: m.title,
-        description: m.description,
-        category_id: m.category_id,
-        level: m.level || "pemula",
-        repository_url: m.repository_url,
-        demo_url: m.demo_url,
-        tech_stack: m.tech_stack || [],
-        author_name: m.author_name,
-        cover_url: m.cover_url,
-        notes: m.notes,
-        created_at: m.created_at,
-        updated_at: m.updated_at,
-        category: m.category,
-      })) as Project[];
-
-      if (tech) {
-        const targetTech = tech.toLowerCase().trim();
-        mapped = mapped.filter((p) =>
-          (p.tech_stack || []).some((t) => t.toLowerCase().includes(targetTech))
-        );
+      if (categoryId) {
+        fallbackQuery = fallbackQuery.eq("category_id", categoryId);
       }
-      return mapped;
-    }
-  } catch (fbErr) {
-    console.error("Fallback projects query error:", fbErr);
+      if (level) {
+        fallbackQuery = fallbackQuery.eq("level", level);
+      }
+      if (search) {
+        fallbackQuery = fallbackQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+      }
+
+      const { data: fbData } = await fallbackQuery;
+      if (fbData && fbData.length > 0) {
+        dbProjects = fbData.map((m: any) => ({
+          id: m.id,
+          user_id: m.user_id,
+          title: m.title,
+          description: m.description,
+          category_id: m.category_id,
+          level: m.level || "pemula",
+          repository_url: m.repository_url,
+          demo_url: m.demo_url,
+          tech_stack: m.tech_stack || [],
+          author_name: m.author_name,
+          cover_url: m.cover_url,
+          notes: m.notes,
+          created_at: m.created_at,
+          updated_at: m.updated_at,
+          category: m.category,
+        })) as Project[];
+      }
+    } catch {}
   }
 
-  return [];
+  // Jika di database belum ada proyek sama sekali, sediakan proyek kurikulum AI terkurasi
+  let combined = [...dbProjects];
+  if (scope !== "mine") {
+    // Sisipkan proyek terkurasi yang belum ada di database
+    const existingTitles = new Set(dbProjects.map((p) => p.title.toLowerCase().trim()));
+    const missingCurated = CURATED_AI_PROJECTS.filter(
+      (cp) => !existingTitles.has(cp.title.toLowerCase().trim())
+    );
+    combined = [...dbProjects, ...missingCurated];
+  }
+
+  // Filter tech stack jika dispesifikasikan
+  if (tech) {
+    const targetTech = tech.toLowerCase().trim();
+    combined = combined.filter((p) =>
+      (p.tech_stack || []).some((t) => t.toLowerCase().includes(targetTech))
+    );
+  }
+
+  // Filter category name / id jika search atau filter aktif
+  if (categoryId) {
+    const targetCat = categoryId.toLowerCase().trim();
+    combined = combined.filter(
+      (p) =>
+        (p.category?.name || "").toLowerCase().trim() === targetCat ||
+        (p.category_id || "").toLowerCase().trim() === targetCat
+    );
+  }
+
+  return combined;
 }
 
 /**
  * 2. GET PROJECT BY ID
  */
 export async function getProjectById(id: string): Promise<Project | null> {
+  // Cek proyek terkurasi dulu
+  const curated = CURATED_AI_PROJECTS.find((p) => p.id === id);
+  if (curated) return curated;
+
   const supabase = await createClient();
 
   try {
