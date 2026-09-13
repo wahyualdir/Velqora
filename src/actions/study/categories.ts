@@ -299,14 +299,18 @@ export async function getCategories() {
     }
   }
 
-  // Deduplicate
+  // Deduplicate and sort alphabetically
   const seen = new Set<string>();
-  return allCategories.filter((c: any) => {
+  const unique = allCategories.filter((c: any) => {
     const key = `${c.name.toLowerCase().trim()}__${c.parent_id || "root"}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
+
+  return unique.sort((a: any, b: any) =>
+    (a.name || "").localeCompare(b.name || "", "id", { sensitivity: "base" })
+  );
 }
 
 export async function createCategory(data: CategoryFormData) {

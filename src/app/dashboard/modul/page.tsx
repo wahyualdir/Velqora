@@ -270,7 +270,9 @@ function ModulDanProjectContent() {
 
   // ─── 1. Ringkasan Topik AI (Kartu Besar) ───
   const aiTopicOverview = useMemo<AiCategoryItem[]>(() => {
-    const subcats = AI_CATEGORY_PRESET?.subcategories || [];
+    const subcats = [...(AI_CATEGORY_PRESET?.subcategories || [])].sort((a, b) =>
+      a.name.localeCompare(b.name, "id", { sensitivity: "base" })
+    );
     return subcats.map((sub) => {
       const dbCat = categories.find(
         (c) => (c.name || "").toLowerCase().trim() === sub.name.toLowerCase().trim()
@@ -324,7 +326,9 @@ function ModulDanProjectContent() {
       map.get(key)!.modules.push(mod);
     }
 
-    return Array.from(map.values());
+    return Array.from(map.values()).sort((a, b) =>
+      a.category.name.localeCompare(b.category.name, "id", { sensitivity: "base" })
+    );
   }, [filteredModules]);
 
   const hasActiveFilters = Boolean(
