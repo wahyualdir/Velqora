@@ -223,6 +223,8 @@ export function NotebookCell({
                 title={codeSnippet.title || `input.${codeSnippet.language || "py"}`}
                 className="my-1"
                 showLineNumbers={false}
+                collapsible={true}
+                defaultExpanded={false}
               />
             </div>
           )}

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { slugify, isAdminUser } from "@/lib/utils";
+import { slugify, isAdminUser, cleanMarkdownExcerpt } from "@/lib/utils";
 import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 import {
   getAiAgentSections,
@@ -578,7 +578,7 @@ export async function searchNotes(query: string, limit = 15): Promise<Array<{ id
       id: n.id,
       title: n.title,
       slug: n.slug,
-      excerpt: n.content_markdown?.slice(0, 100).replace(/^[#*>-]+\s*/, "") || "",
+      excerpt: cleanMarkdownExcerpt(n.content_markdown, n.title, 120),
       category: n.category?.name,
     }));
   }
@@ -621,7 +621,7 @@ export async function searchNotes(query: string, limit = 15): Promise<Array<{ id
     id: n.id,
     title: n.title,
     slug: n.slug,
-    excerpt: n.content_markdown?.slice(0, 120).replace(/^[#*>-]+\s*/, "") || "",
+    excerpt: cleanMarkdownExcerpt(n.content_markdown, n.title, 120),
     category: n.category?.name,
   }));
 }

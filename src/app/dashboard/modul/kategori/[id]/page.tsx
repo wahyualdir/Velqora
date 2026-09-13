@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { getCategoryDetails, getModules, deleteModule } from "@/actions/study-actions";
 import { getNotesByCategory, type NoteEntity } from "@/actions/study/notes";
 import { createClient } from "@/lib/supabase/client";
-import { isAdminUser, slugify } from "@/lib/utils";
+import { isAdminUser, slugify, cleanMarkdownExcerpt } from "@/lib/utils";
 import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { NotebookOutline } from "@/components/modul/notebook-outline";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
@@ -229,9 +229,7 @@ export default function DedicatedCategoryModulesPage({
         id: n.id,
         slug: n.slug,
         title: n.title,
-        description: n.content_markdown
-          ? n.content_markdown.replace(/^[#*>-]+\s*/, "").slice(0, 160)
-          : "",
+        description: cleanMarkdownExcerpt(n.content_markdown, n.title, 160),
         isPlaceholder: false,
         content_markdown: n.content_markdown,
       }));

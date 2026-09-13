@@ -144,3 +144,54 @@ export function isOwnerOrAdminRole(role?: string | null, email?: string | null):
   if (!role) return false;
   return role === "owner" || role === "admin";
 }
+
+/**
+ * Membersihkan konten markdown untuk dijadikan cuplikan/excerpt deskripsi yang rapi:
+ * - Menghilangkan blok kode ``` ... ```
+ * - Menghilangkan header baris `# Judul` agar tidak menduplikasi judul
+ * - Menghilangkan tag [[WikiLinks|Teks]] atau [[WikiLinks]]
+ * - Menghilangkan link [Teks](url)
+ * - Menghilangkan simbol format markdown (*, **, _, `, ~, >, #)
+ * - Menghilangkan pengulangan nama judul jika teks diawali dengan nama judul
+ * - Memotong teks dengan batas karakter yang bersih
+ */
+export function cleanMarkdownExcerpt(
+  rawMarkdown?: string | null,
+  titleToStrip?: string | null,
+  maxLength: number = 160
+): string {
+  if (!rawMarkdown) return "";
+
+  // 1. Hapus frontmatter jika ada (--- ... ---)
+  let text = rawMarkdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+
+  // 2. Hapus code blocks
+  text = text.replace(/```[\s\S]*?```/g, " ");
+
+  // 3. Hapus baris header (# Heading)
+  text = text.replace(/^#+\s+[^\r\n]*/gm, " ");
+
+  // 4. Ubah wikilinks [[Target|Label]] -> Label, [[Target]] -> Target
+  text = text.replace(/\[\[(?:[^\]|]+\|)?([^\]]+)\]\]/g, "$1");
+
+  // 5. Ubah standard links [Label](url) -> Label
+  text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+
+  // 6. Hapus format symbols markdown: *, _, `, ~, >, #
+  text = text.replace(/[*_`~>#]/g, "");
+
+  // 7. Normalisasi spasi dan baris baru menjadi single space
+  text = text.replace(/\s+/g, " ").trim();
+
+  // 8. Hapus pengulangan judul di awal teks jika ada
+  if (titleToStrip) {
+    const cleanTitle = titleToStrip.trim().toLowerCase();
+    if (cleanTitle && text.toLowerCase().startsWith(cleanTitle)) {
+      text = text.slice(titleToStrip.length).replace(/^[:\s—–-]+/, "").trim();
+    }
+  }
+
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trim() + "...";
+}
+
