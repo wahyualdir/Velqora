@@ -30,17 +30,31 @@ export async function getModules(
   }
 
   if (categoryId) {
-    // If user selected a parent category, include the parent ID and all its subcategories
-    const { data: subcats } = await supabase
-      .from("categories")
-      .select("id")
-      .eq("parent_id", categoryId);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId);
+    if (isUuid) {
+      // If user selected a parent category, include the parent ID and all its subcategories
+      const { data: subcats } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("parent_id", categoryId);
 
-    if (subcats && subcats.length > 0) {
-      const allCatIds = [categoryId, ...subcats.map((s) => s.id)];
-      query = query.in("category_id", allCatIds);
+      if (subcats && subcats.length > 0) {
+        const allCatIds = [categoryId, ...subcats.map((s) => s.id)];
+        query = query.in("category_id", allCatIds);
+      } else {
+        query = query.eq("category_id", categoryId);
+      }
     } else {
-      query = query.eq("category_id", categoryId);
+      const cleanName = decodeURIComponent(categoryId).trim().replace(/-/g, " ");
+      const { data: matchedCats } = await supabase
+        .from("categories")
+        .select("id, parent_id")
+        .or(`name.ilike.%${cleanName}%,name.ilike.%${categoryId}%`);
+
+      if (matchedCats && matchedCats.length > 0) {
+        const catIds = matchedCats.map((c) => c.id);
+        query = query.in("category_id", catIds);
+      }
     }
   }
 
@@ -63,7 +77,9 @@ export async function getModules(
       fallbackQuery = fallbackQuery.eq("user_id", user.id);
     }
 
-    if (categoryId) fallbackQuery = fallbackQuery.eq("category_id", categoryId);
+    if (categoryId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId)) {
+      fallbackQuery = fallbackQuery.eq("category_id", categoryId);
+    }
     if (level) fallbackQuery = fallbackQuery.eq("level", level);
     if (search) {
       fallbackQuery = fallbackQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%,notes.ilike.%${search}%`);

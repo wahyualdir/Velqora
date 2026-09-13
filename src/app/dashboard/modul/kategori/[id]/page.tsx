@@ -79,7 +79,7 @@ export default function DedicatedCategoryModulesPage({
     checkAuth();
   }, []);
 
-  // Fetch Category & its Modules
+  // Fetch Category & its Modules & its Notes concurrently
   const loadData = useCallback(async () => {
     if (!categoryId) return;
     setLoading(true);
@@ -87,12 +87,14 @@ export default function DedicatedCategoryModulesPage({
     try {
       const decodedId = decodeURIComponent(categoryId).trim();
 
-      const [catData, allModules] = await Promise.all([
+      // Parallelize: category details, scoped modules, and notes
+      const [catDataRes, allModulesRes, notesRes] = await Promise.allSettled([
         getCategoryDetails(decodedId),
-        getModules(),
+        getModules(undefined, decodedId),
+        getNotesByCategory(decodedId),
       ]);
 
-      // Resolve category info
+      const catData = catDataRes.status === "fulfilled" ? catDataRes.value : null;
       let resolvedCat = catData?.category || catData;
 
       if (!resolvedCat) {
@@ -125,6 +127,7 @@ export default function DedicatedCategoryModulesPage({
 
       setCategory(resolvedCat);
 
+      const allModules = allModulesRes.status === "fulfilled" && Array.isArray(allModulesRes.value) ? allModulesRes.value : [];
       if (allModules) {
         const catNameLower = (resolvedCat.name || decodedId).toLowerCase().trim();
         const catIdLower = (resolvedCat.id || decodedId).toLowerCase().trim();
@@ -148,13 +151,17 @@ export default function DedicatedCategoryModulesPage({
         setBookmarkMap(bmState);
       }
 
-      // Fetch vault notes for this category
-      try {
-        const notes = await getNotesByCategory(resolvedCat.id || decodedId);
-        setVaultNotes(notes || []);
-      } catch (err) {
-        console.warn("Could not fetch category notes:", err);
+      // Handle Notes
+      let initialNotes = notesRes.status === "fulfilled" && Array.isArray(notesRes.value) ? notesRes.value : [];
+      if (initialNotes.length === 0 && resolvedCat?.id && resolvedCat.id !== decodedId) {
+        try {
+          const secondaryNotes = await getNotesByCategory(resolvedCat.id);
+          if (secondaryNotes && secondaryNotes.length > 0) {
+            initialNotes = secondaryNotes;
+          }
+        } catch {}
       }
+      setVaultNotes(initialNotes);
     } catch (err) {
       console.error("Failed to load category modules:", err);
       setError("Data kategori dan modul belum dapat dimuat.");

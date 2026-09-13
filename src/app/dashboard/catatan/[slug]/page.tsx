@@ -68,40 +68,43 @@ export default async function NoteDetailPage({ params, searchParams }: PageProps
     );
   }
 
-  // Fetch 1-degree local graph
-  const localGraph = await getGraphData({ noteId: noteData.note.id });
-
-  // Sibling notes navigation (within the same category context)
+  // Sibling notes navigation & 1-degree local graph (fetched concurrently)
   const categoryContext =
     fromCategory ||
     noteData.note.category_id ||
     (noteData.note.category
       ? noteData.note.category.id || noteData.note.category.name
       : "");
+
+  const [localGraphRes, siblingNotesRes] = await Promise.allSettled([
+    getGraphData({ noteId: noteData.note.id }),
+    categoryContext ? getNotesByCategory(categoryContext) : Promise.resolve([]),
+  ]);
+
+  const localGraph =
+    localGraphRes.status === "fulfilled"
+      ? localGraphRes.value
+      : { nodes: [], edges: [] };
+  const siblingNotes =
+    siblingNotesRes.status === "fulfilled" ? siblingNotesRes.value : [];
+
   let prevNote: NoteEntity | null = null;
   let nextNote: NoteEntity | null = null;
   let categoryName = noteData.note.category?.name || "";
 
-  if (categoryContext) {
-    try {
-      const siblingNotes = await getNotesByCategory(categoryContext);
-      if (siblingNotes.length > 0) {
-        if (!categoryName && siblingNotes[0].category?.name) {
-          categoryName = siblingNotes[0].category.name;
-        }
-        const currentIndex = siblingNotes.findIndex(
-          (n) => n.id === noteData.note.id || n.slug === decodedSlug
-        );
-        if (currentIndex !== -1) {
-          prevNote = currentIndex > 0 ? siblingNotes[currentIndex - 1] : null;
-          nextNote =
-            currentIndex < siblingNotes.length - 1
-              ? siblingNotes[currentIndex + 1]
-              : null;
-        }
-      }
-    } catch {
-      // Non-critical fallback
+  if (siblingNotes.length > 0) {
+    if (!categoryName && siblingNotes[0].category?.name) {
+      categoryName = siblingNotes[0].category.name;
+    }
+    const currentIndex = siblingNotes.findIndex(
+      (n) => n.id === noteData.note.id || n.slug === decodedSlug
+    );
+    if (currentIndex !== -1) {
+      prevNote = currentIndex > 0 ? siblingNotes[currentIndex - 1] : null;
+      nextNote =
+        currentIndex < siblingNotes.length - 1
+          ? siblingNotes[currentIndex + 1]
+          : null;
     }
   }
 

@@ -476,14 +476,33 @@ export async function getNotesByCategory(categoryIdOrName: string): Promise<Note
 
   // Non-UUID (atau UUID tapi tidak ada hasil): cocokkan lewat JOIN nama kategori
   const cleanName = decodeURIComponent(categoryIdOrName).toLowerCase().trim();
-  const { data: fallbackData } = await supabase
+  const normalizedSpaceName = cleanName.replace(/-/g, " ");
+
+  const { data: directCatData } = await supabase
     .from("notes")
     .select("*, category:categories!inner(id, name, color, icon)")
-    .ilike("category.name", `%${cleanName}%`)
+    .ilike("category.name", `%${normalizedSpaceName}%`)
     .eq("is_folder", false)
     .order("order_index", { ascending: true });
 
-  return (fallbackData as NoteEntity[]) || [];
+  if (directCatData && directCatData.length > 0) {
+    return directCatData as NoteEntity[];
+  }
+
+  if (cleanName !== normalizedSpaceName) {
+    const { data: hyphenData } = await supabase
+      .from("notes")
+      .select("*, category:categories!inner(id, name, color, icon)")
+      .ilike("category.name", `%${cleanName}%`)
+      .eq("is_folder", false)
+      .order("order_index", { ascending: true });
+
+    if (hyphenData && hyphenData.length > 0) {
+      return hyphenData as NoteEntity[];
+    }
+  }
+
+  return [];
 }
 
 /**

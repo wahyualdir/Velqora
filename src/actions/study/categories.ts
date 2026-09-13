@@ -368,22 +368,25 @@ export async function getCategoryDetails(idOrSlug: string) {
 
   // 2. Direct database query fallback
   const supabase = await createClient();
-  const { data: catById } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("id", decoded)
-    .maybeSingle();
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded);
+  if (isUuid) {
+    const { data: catById } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("id", decoded)
+      .maybeSingle();
 
-  if (catById) {
-    if (catById.parent_id) {
-      const { data: parentCat } = await supabase
-        .from("categories")
-        .select("*")
-        .eq("id", catById.parent_id)
-        .maybeSingle();
-      catById.parent = parentCat || null;
+    if (catById) {
+      if (catById.parent_id) {
+        const { data: parentCat } = await supabase
+          .from("categories")
+          .select("*")
+          .eq("id", catById.parent_id)
+          .maybeSingle();
+        catById.parent = parentCat || null;
+      }
+      return catById;
     }
-    return catById;
   }
 
   const { data: catByName } = await supabase
