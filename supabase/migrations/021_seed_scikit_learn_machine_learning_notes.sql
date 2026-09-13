@@ -4,7 +4,7 @@
 -- Velqora Knowledge Base — 14 BAB Lengkap Machine Learning
 -- ============================================================
 
-DO $$
+DO $SEED_SCIKIT_LEARN_ML_NOTES$
 DECLARE
   v_user_id UUID;
   v_parent_ai_id UUID;
@@ -52,7 +52,7 @@ BEGIN
   VALUES (
     'BAB 1: Pengantar Scikit-Learn & Estimator API',
     'bab-1-pengantar-scikit-learn-estimator-api',
-    $NOTE_CONTENT$# BAB 1: Pengantar Scikit-Learn & Estimator API
+    $NOTE_BAB_1$# BAB 1: Pengantar Scikit-Learn & Estimator API
 
 ## 1.1 Filosofi Desain Scikit-Learn
 Scikit-learn dibangun dengan prinsip desain konsisten yang menjadi standar baku industri *machine learning*:
@@ -119,7 +119,7 @@ y_pred = clf.predict(X_test)
 acc = accuracy_score(y_test, y_pred)
 print(f"Akurasi K-NN pada Test Set: {acc * 100:.2f}%")
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_1$,
     'BookOpen', 1, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -128,7 +128,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 2: Supervised Learning - Linear Models & Regularization',
     'bab-2-supervised-learning-linear-models-regularization',
-    $NOTE_CONTENT$# BAB 2: Supervised Learning - Linear Models & Regularization
+    $NOTE_BAB_2$# BAB 2: Supervised Learning - Linear Models & Regularization
 
 ## 2.1 Ordinary Least Squares (OLS)
 Model regresi linear memprediksi target $\hat{y}$ sebagai kombinasi linear dari fitur input:
@@ -194,7 +194,7 @@ Untuk klasifikasi biner dan multikelas, fungsi logistik sigmoid digunakan untuk 
 $$P(y=1|x) = \frac{1}{1 + e^{-(w^T x + b)}}$$
 
 Dioptimalkan dengan regularisasi parameterized oleh $C = \frac{1}{\lambda}$ (nilai $C$ yang lebih kecil memberikan regularisasi yang lebih kuat).
-$NOTE_CONTENT$,
+$NOTE_BAB_2$,
     'BookOpen', 2, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -203,7 +203,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 3: Supervised Learning - Support Vector Machines',
     'bab-3-supervised-learning-support-vector-machines',
-    $NOTE_CONTENT$# BAB 3: Supervised Learning - Support Vector Machines (SVM)
+    $NOTE_BAB_3$# BAB 3: Supervised Learning - Support Vector Machines (SVM)
 
 ## 3.1 Konsep Maximum Margin Separator
 Support Vector Machine (SVM) bekerja dengan mencari hiperbidang pemisah (*hyperplane*) yang memaksimalkan jarak (*margin*) antara batas keputusan dengan titik-titik data terdekat dari setiap kelas. Titik data terdekat inilah yang disebut sebagai **Support Vectors**.
@@ -245,7 +245,7 @@ svm_rbf = make_pipeline(
 svm_rbf.fit(X, y)
 print(f"Jumlah Support Vectors: {svm_rbf.named_steps['svc'].n_support_}")
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_3$,
     'BookOpen', 3, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -254,7 +254,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 4: Supervised Learning - Decision Trees & Tree Pruning',
     'bab-4-supervised-learning-decision-trees-pruning',
-    $NOTE_CONTENT$# BAB 4: Supervised Learning - Decision Trees & Tree Pruning
+    $NOTE_BAB_4$# BAB 4: Supervised Learning - Decision Trees & Tree Pruning
 
 ## 4.1 Algoritma CART (Classification and Regression Trees)
 Pohon keputusan mempartisi ruang fitur secara rekursif menjadi wilayah-wilayah hiper-rektangular ortogonal.
@@ -294,7 +294,7 @@ clf.fit(data.data, data.target)
 tree_rules = export_text(clf, feature_names=list(data.feature_names), max_depth=3)
 print(tree_rules[:500])
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_4$,
     'BookOpen', 4, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -303,7 +303,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 5: Ensemble Methods - Bagging & Random Forest',
     'bab-5-ensemble-methods-bagging-random-forest',
-    $NOTE_CONTENT$# BAB 5: Ensemble Methods - Bagging & Random Forest
+    $NOTE_BAB_5$# BAB 5: Ensemble Methods - Bagging & Random Forest
 
 ## 5.1 Bootstrap Aggregating (Bagging)
 Metode Bagging membangun banyak estimator secara paralel di atas sampel bootstrap acak (sampel dengan pengembalian / *sampling with replacement*). Prediksi akhir diagregasikan melalui rata-rata (regresi) atau mayoritas suara / voting (klasifikasi).
@@ -336,7 +336,7 @@ rf.fit(X, y)
 print(f"Out-of-Bag (OOB) Accuracy Score: {rf.oob_score_ * 100:.2f}%")
 print(f"Top 3 Feature Importances: {rf.feature_importances_[:3]}")
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_5$,
     'BookOpen', 5, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -345,7 +345,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 6: Ensemble Methods - Boosting & Stacking',
     'bab-6-ensemble-methods-boosting-stacking',
-    $NOTE_CONTENT$# BAB 6: Ensemble Methods - Boosting & Stacking
+    $NOTE_BAB_6$# BAB 6: Ensemble Methods - Boosting & Stacking
 
 ## 6.1 Prinsip Dasar Boosting
 Berbeda dengan bagging yang melatih model secara paralel, **Boosting** membangun estimator secara sekuensial. Setiap estimator baru dilatih khusus untuk memperbaiki kesalahan atau residual dari estimator sebelumnya.
@@ -381,7 +381,7 @@ print("HistGradientBoosting berhasil dilatih dengan native missing values!")
 
 ## 6.3 Stacking Classifier
 Stacking menggabungkan beberapa model heterogen (misalnya SVM, Random Forest, dan KNN) dengan melatih model meta-learner (seperti Logistic Regression) di atas prediksi out-of-fold model dasar.
-$NOTE_CONTENT$,
+$NOTE_BAB_6$,
     'BookOpen', 6, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -390,7 +390,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 7: Unsupervised Learning - Clustering',
     'bab-7-unsupervised-learning-clustering',
-    $NOTE_CONTENT$# BAB 7: Unsupervised Learning - Clustering
+    $NOTE_BAB_7$# BAB 7: Unsupervised Learning - Clustering
 
 ## 7.1 K-Means & K-Means++
 K-Means mempartisi $n$ observasi ke dalam $k$ kluster dengan meminimalkan inersia (*within-cluster sum-of-squares*):
@@ -425,7 +425,7 @@ n_noise = list(labels).count(-1)
 print(f"Jumlah Kluster Terdeteksi: {n_clusters}")
 print(f"Jumlah Titik Noise/Outlier: {n_noise}")
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_7$,
     'BookOpen', 7, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -434,7 +434,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 8: Unsupervised Learning - Reduksi Dimensi & Dekomposisi',
     'bab-8-unsupervised-learning-reduksi-dimensi',
-    $NOTE_CONTENT$# BAB 8: Unsupervised Learning - Reduksi Dimensi & Dekomposisi
+    $NOTE_BAB_8$# BAB 8: Unsupervised Learning - Reduksi Dimensi & Dekomposisi
 
 ## 8.1 Principal Component Analysis (PCA)
 PCA memproyeksikan data ke arah ortogonal baru (*principal components*) yang memaksimalkan varians data secara berurutan. Di Scikit-learn, PCA dihitung secara numerik menggunakan *Singular Value Decomposition* (SVD) dari matriks data terpusat:
@@ -461,7 +461,7 @@ print(f"Dimensi Terkompresi: {X_pca.shape[1]} komponen utama")
 ## 8.2 TruncatedSVD & Manifold Learning
 - **TruncatedSVD**: Bekerja langsung pada matriks jarang (*sparse matrices*) tanpa memusatkan data, sangat ideal untuk dekomposisi data teks (TF-IDF) dalam *Latent Semantic Analysis* (LSA).
 - **t-SNE (`TSNE`)**: Algoritma non-linear manifold learning yang sangat efektif untuk visualisasi sebaran kluster data berdimensi tinggi ke bidang 2D atau 3D.
-$NOTE_CONTENT$,
+$NOTE_BAB_8$,
     'BookOpen', 8, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -470,7 +470,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 9: Data Preprocessing & Feature Engineering',
     'bab-9-data-preprocessing-feature-engineering',
-    $NOTE_CONTENT$# BAB 9: Data Preprocessing & Feature Engineering
+    $NOTE_BAB_9$# BAB 9: Data Preprocessing & Feature Engineering
 
 ## 9.1 Penskalaan Fitur (Feature Scaling)
 Banyak estimator (SVM, Regresi Ter-regularisasi, K-Means, Neural Networks) mengasumsikan semua fitur berpusat di sekitar nol dan memiliki varians dalam skala yang sama.
@@ -492,7 +492,7 @@ Banyak estimator (SVM, Regresi Ter-regularisasi, K-Means, Neural Networks) menga
 ## 9.3 Encoding Data Kategorikal
 - `OneHotEncoder`: Mengubah kategori menjadi biner dummy. Gunakan `handle_unknown='ignore'` untuk menangani kategori baru di fase testing/produksi.
 - `OrdinalEncoder`: Memetakan kategori ke bilangan bulat terurut.
-$NOTE_CONTENT$,
+$NOTE_BAB_9$,
     'BookOpen', 9, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -501,7 +501,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 10: Composing Estimators - Pipelines & ColumnTransformer',
     'bab-10-composing-estimators-pipelines-columntransformer',
-    $NOTE_CONTENT$# BAB 10: Composing Estimators - Pipelines & ColumnTransformer
+    $NOTE_BAB_10$# BAB 10: Composing Estimators - Pipelines & ColumnTransformer
 
 ## 10.1 Mengapa Pipeline adalah Keharusan Mutlak?
 Kesalahan umum yang paling berbahaya dalam machine learning adalah **Data Leakage** — ketika statistik dari set uji bocor ke dalam data pelatihan saat penskalaan atau imputasi.
@@ -546,7 +546,7 @@ full_pipeline = Pipeline([
     ('classifier', RandomForestClassifier(random_state=42))
 ])
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_10$,
     'BookOpen', 10, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -555,7 +555,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 11: Model Selection & Cross-Validation',
     'bab-11-model-selection-cross-validation',
-    $NOTE_CONTENT$# BAB 11: Model Selection & Cross-Validation
+    $NOTE_BAB_11$# BAB 11: Model Selection & Cross-Validation
 
 ## 11.1 Strategi Cross-Validation (Validasi Silang)
 Mengevaluasi model pada set pengujian tunggal rentan terhadap fluktuasi statistik acak. K-Fold Cross-Validation membagi data menjadi $K$ bagian sama besar, di mana setiap bagian bergantian menjadi set uji dan sisanya menjadi set latih.
@@ -578,7 +578,7 @@ clf = LogisticRegression(max_iter=1000)
 scores = cross_val_score(clf, X, y, cv=cv, scoring='roc_auc')
 print(f"ROC-AUC CV Rata-rata: {scores.mean():.4f} (±{scores.std():.4f})")
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_11$,
     'BookOpen', 11, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -587,7 +587,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 12: Hyperparameter Tuning & Validation Curves',
     'bab-12-hyperparameter-tuning-validation-curves',
-    $NOTE_CONTENT$# BAB 12: Hyperparameter Tuning & Validation Curves
+    $NOTE_BAB_12$# BAB 12: Hyperparameter Tuning & Validation Curves
 
 ## 12.1 GridSearchCV vs RandomizedSearchCV
 
@@ -623,7 +623,7 @@ search.fit(X, y)
 print(f"Skor Terbaik: {search.best_score_:.4f}")
 print("Parameter Terbaik:", search.best_params_)
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_12$,
     'BookOpen', 12, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -632,7 +632,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 13: Evaluasi Model & Visualisasi Prediksi',
     'bab-13-evaluasi-model-visualisasi-prediksi',
-    $NOTE_CONTENT$# BAB 13: Evaluasi Model & Visualisasi Prediksi
+    $NOTE_BAB_13$# BAB 13: Evaluasi Model & Visualisasi Prediksi
 
 ## 13.1 Metrik Klasifikasi Komprehensif
 - **Accuracy**: $\frac{TP + TN}{TP + TN + FP + FN}$ (Hanya informatif jika kelas seimbang).
@@ -669,7 +669,7 @@ plt.tight_layout()
 RocCurveDisplay.from_estimator(clf, X_test, y_test)
 plt.title("Kurva Karakteristik Operasi Penerima (ROC)")
 ```
-$NOTE_CONTENT$,
+$NOTE_BAB_13$,
     'BookOpen', 13, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
@@ -678,7 +678,7 @@ $NOTE_CONTENT$,
   VALUES (
     'BAB 14: Model Inspection, Pitfalls & Deployment',
     'bab-14-model-inspection-pitfalls-deployment',
-    $NOTE_CONTENT$# BAB 14: Model Inspection, Pitfalls & Deployment
+    $NOTE_BAB_14$# BAB 14: Model Inspection, Pitfalls & Deployment
 
 ## 14.1 Permutation Feature Importance
 Berbeda dengan feature importance bawaan pohon (MDI) yang bias terhadap fitur berkardinalitas tinggi, **Permutation Importance** mengukur penurunan performa model ketika nilai suatu fitur diacak secara acak pada set validasi:
@@ -717,8 +717,8 @@ prediksi = model_deploy.predict(data_baru)
 2. **Target Leakage**: Memasukkan fitur input yang baru tersedia setelah peristiwa target terjadi.
 3. **Improper Metric Selection**: Menggunakan Akurasi pada kasus penipuan (*fraud*) atau penyakit langka (99% data bernilai negatif).
 4. **Data Drift**: Mengabaikan perubahan distribusi data statistik dunia nyata seiring berjalannya waktu.
-$NOTE_CONTENT$,
+$NOTE_BAB_14$,
     'BookOpen', 14, v_cat_ml, false, v_user_id
   ) ON CONFLICT (slug) DO UPDATE SET content_markdown = EXCLUDED.content_markdown;
 
-END $$;
+END $SEED_SCIKIT_LEARN_ML_NOTES$;
