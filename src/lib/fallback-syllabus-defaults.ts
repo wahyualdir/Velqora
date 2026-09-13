@@ -34,6 +34,11 @@ import {
   getReinforcementLearningSections,
   getRoboticsEmbodiedAiSections,
 } from "./curriculum-batch5-defaults";
+import {
+  getSpeechAudioAiSections,
+  getTimeSeriesForecastingSections,
+  getVectorDatabaseRetrievalSections,
+} from "./curriculum-batch6-defaults";
 
 /**
  * Fallback Preset Silabus Materi AI (Kurikulum Standar untuk Kategori AI berbasis ModuleSection)
@@ -71,70 +76,19 @@ export function getDefaultAiSections(categoryName: string): ModuleSection[] {
     return getRoboticsEmbodiedAiSections();
   }
 
-  // Speech & Audio AI (3 Bab Fallback)
-  if (norm.includes("speech") || norm.includes("audio")) {
-    return [
-      {
-        id: "speech-sec-1",
-        title: "Speech Recognition Dasar — Audio ke Teks (MFCC)",
-        orderIndex: 1,
-        isCompleted: false,
-        description:
-          "Ekstraksi representasi fitur frekuensi suara Mel-Frequency Cepstral Coefficients (MFCC) dari sinyal audio kontinu untuk pemodelan akustik.",
-        codeSnippets: [
-          {
-            id: "speech-snip-1",
-            language: "python",
-            caption: "audio_signal.py",
-            code: `import numpy as np
+  // Speech & Audio AI (12 Bab)
+  if (norm.includes("speech") || norm.includes("audio") || norm.includes("suara")) {
+    return getSpeechAudioAiSections();
+  }
 
-sr = 16000
-t = np.linspace(0, 1, sr, endpoint=False)
-signal = 0.5 * np.sin(2 * np.pi * 440 * t)  # Nada 440 Hz
-print(f"Bentuk Sinyal Audio: {signal.shape}, Durasi: {len(signal)/sr} detik")`,
-          },
-        ],
-      },
-      {
-        id: "speech-sec-2",
-        title: "Text-to-Speech (TTS) — Sintesis Suara",
-        orderIndex: 2,
-        isCompleted: false,
-        description:
-          "Konversi teks tulisan menjadi gelombang suara manusia melalui pipeline Acoustic Model dan Neural Vocoder.",
-        codeSnippets: [
-          {
-            id: "speech-snip-2",
-            language: "python",
-            caption: "tts_concept.py",
-            code: `def text_to_phonemes(text):
-    mapping = {"halo": "H-AH-L-OW", "ai": "EY-AY"}
-    return [mapping.get(w.lower(), w) for w in text.split()]
+  // Time Series Forecasting & Anomaly Detection (12 Bab)
+  if (norm.includes("time series") || norm.includes("forecasting") || norm.includes("deret waktu") || norm.includes("anomaly")) {
+    return getTimeSeriesForecastingSections();
+  }
 
-print("Sintesis Fonem:", text_to_phonemes("Halo AI"))`,
-          },
-        ],
-      },
-      {
-        id: "speech-sec-3",
-        title: "Audio Classification — Deteksi Suara & Emosi",
-        orderIndex: 3,
-        isCompleted: false,
-        description:
-          "Klasifikasi jenis audio dan ekspresi emosi berdasarkan spectrogram visual yang diproses menggunakan Convolutional Neural Network.",
-        codeSnippets: [
-          {
-            id: "speech-snip-3",
-            language: "python",
-            caption: "audio_classification.py",
-            code: `classes = ["suara_manusia", "musik", "noise_lingkungan"]
-dummy_probs = [0.88, 0.08, 0.04]
-predicted = classes[dummy_probs.index(max(dummy_probs))]
-print(f"Klasifikasi Audio: {predicted} (Confidence: {max(dummy_probs)*100:.1f}%)")`,
-          },
-        ],
-      },
-    ];
+  // Vector Database & Retrieval System (11 Bab)
+  if (norm.includes("vector") || norm.includes("retrieval") || norm.includes("vektor")) {
+    return getVectorDatabaseRetrievalSections();
   }
 
   // AI Agent (14 Bab)

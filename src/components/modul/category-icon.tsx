@@ -17,6 +17,7 @@ import {
   Database,
   Network,
   Server,
+  TrendingUp,
   LucideIcon,
 } from "lucide-react";
 
@@ -75,6 +76,12 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "mlops":
     case "mlops_deployment":
       return Server;
+    case "time_series":
+    case "forecasting":
+      return TrendingUp;
+    case "vector_db":
+    case "vector_database":
+      return Database;
     default:
       return Brain;
   }

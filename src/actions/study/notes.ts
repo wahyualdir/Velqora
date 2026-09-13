@@ -39,6 +39,11 @@ import {
   getReinforcementLearningSections,
   getRoboticsEmbodiedAiSections,
 } from "@/lib/curriculum-batch5-defaults";
+import {
+  getSpeechAudioAiSections,
+  getTimeSeriesForecastingSections,
+  getVectorDatabaseRetrievalSections,
+} from "@/lib/curriculum-batch6-defaults";
 
 export interface NoteEntity {
   id: string;
@@ -348,16 +353,19 @@ export async function getNoteBySlug(slug: string) {
       { name: "Natural Language Processing", color: "#10B981", icon: "nlp", sections: getNaturalLanguageProcessingSections() },
       { name: "Reinforcement Learning", color: "#8B5CF6", icon: "reinforcement", sections: getReinforcementLearningSections() },
       { name: "Robotics & Embodied AI", color: "#EF4444", icon: "robotics", sections: getRoboticsEmbodiedAiSections() },
+      { name: "Speech & Audio AI", color: "#6366F1", icon: "speech", sections: getSpeechAudioAiSections() },
+      { name: "Time Series Forecasting & Anomaly Detection", color: "#06B6D4", icon: "time_series", sections: getTimeSeriesForecastingSections() },
+      { name: "Vector Database & Retrieval System", color: "#8B5CF6", icon: "vector_db", sections: getVectorDatabaseRetrievalSections() },
     ];
 
     for (const preset of allPresets) {
       const foundSec = preset.sections.find(
-        (s) => slugify(s.title) === slug || s.id.toLowerCase() === slug.toLowerCase()
+        (s: any) => slugify(s.title) === slug || s.id.toLowerCase() === slug.toLowerCase()
       );
       if (foundSec) {
         const codeBlocksMarkdown = (foundSec.codeSnippets || [])
           .map(
-            (c) =>
+            (c: any) =>
               `\n\n### Implementasi Praktikum: \`${c.caption || "example.py"}\`\n\`\`\`${c.language || "python"}\n${c.code}\n\`\`\``
           )
           .join("");
