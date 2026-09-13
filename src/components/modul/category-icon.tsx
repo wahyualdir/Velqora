@@ -10,6 +10,9 @@ import {
   Mic,
   Cpu,
   Share2,
+  Scale,
+  Landmark,
+  ShieldAlert,
   Brain,
   LucideIcon,
 } from "lucide-react";
@@ -27,6 +30,8 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "generative_ai":
       return Sparkles;
     case "robotics":
+    case "bot":
+    case "agent":
       return Bot;
     case "reinforcement":
       return Compass;
@@ -36,6 +41,15 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
       return Cpu;
     case "knowledge_rep":
       return Share2;
+    case "ethics":
+    case "ai_ethics":
+      return Scale;
+    case "governance":
+    case "ai_governance":
+      return Landmark;
+    case "security":
+    case "ai_security":
+      return ShieldAlert;
     default:
       return Brain;
   }

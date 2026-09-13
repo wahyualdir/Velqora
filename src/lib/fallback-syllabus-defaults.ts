@@ -1,4 +1,11 @@
 import { ModuleSection } from "@/types/module-drive";
+import {
+  getAiAgentSections,
+  getAiEthicsSections,
+  getAiGovernanceSections,
+  getAiSecuritySections,
+  getAiFundamentalsSections,
+} from "./curriculum-batch1-defaults";
 
 /**
  * Fallback Preset Silabus Materi AI (Kurikulum Standar untuk Kategori AI berbasis ModuleSection)
@@ -698,60 +705,26 @@ print("Narasi Caption Gambar:", caption)`,
     ];
   }
 
-  // Default AI Fundamentals Fallback
-  return [
-    {
-      id: "fund-sec-1",
-      title: "Prinsip Dasar Kecerdasan Buatan & Agen Cerdas",
-      orderIndex: 1,
-      isCompleted: false,
-      description:
-        "Memahami paradigma AI: Rational Agents, lingkungan PEAS (Performance measure, Environment, Actuators, Sensors), serta perbedaan Machine Learning vs Deep Learning.",
-      codeSnippets: [
-        {
-          id: "fund-snip-1",
-          language: "python",
-          caption: "reflex_agent.py",
-          code: `class SimpleReflexAgent:
-    def __init__(self):
-        self.rules = {
-            "kotor": "membersihkan",
-            "bersih": "berpindah_ruangan"
-        }
+  // AI Agent (14 Bab)
+  if (norm.includes("agent")) {
+    return getAiAgentSections();
+  }
 
-    def act(self, percept):
-        return self.rules.get(percept, "diam")
+  // AI Ethics & Responsible AI (12 Bab)
+  if (norm.includes("ethics") || norm.includes("etika") || norm.includes("responsible")) {
+    return getAiEthicsSections();
+  }
 
-agent = SimpleReflexAgent()
-print("Aksi saat ruangan kotor:", agent.act("kotor"))
-print("Aksi saat ruangan bersih:", agent.act("bersih"))`,
-        },
-      ],
-    },
-    {
-      id: "fund-sec-2",
-      title: "Evaluasi Model & Metrik Performa AI",
-      orderIndex: 2,
-      isCompleted: false,
-      description:
-        "Pengukuran kualitas prediksi model klasifikasi menggunakan Confusion Matrix, Precision, Recall, F1-Score, serta Trade-off Bias vs Variance.",
-      codeSnippets: [
-        {
-          id: "fund-snip-2",
-          language: "python",
-          caption: "metrics_calculator.py",
-          code: `def evaluasi_model(tp, fp, fn, tn):
-    accuracy = (tp + tn) / (tp + fp + fn + tn)
-    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
-    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
-    return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
+  // AI Governance & Regulasi (12 Bab)
+  if (norm.includes("governance") || norm.includes("regulasi") || norm.includes("tata kelola")) {
+    return getAiGovernanceSections();
+  }
 
-hasil = evaluasi_model(tp=85, fp=15, fn=10, tn=90)
-for k, v in hasil.items():
-    print(f"{k.capitalize()}: {v:.4f}")`,
-        },
-      ],
-    },
-  ];
+  // AI Security & Adversarial Machine Learning (12 Bab)
+  if (norm.includes("security") || norm.includes("keamanan") || norm.includes("adversarial")) {
+    return getAiSecuritySections();
+  }
+
+  // Default AI Fundamentals Fallback (12 Bab)
+  return getAiFundamentalsSections();
 }

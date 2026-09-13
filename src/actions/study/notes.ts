@@ -4,6 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { slugify, isAdminUser } from "@/lib/utils";
 import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
+import {
+  getAiAgentSections,
+  getAiEthicsSections,
+  getAiGovernanceSections,
+  getAiSecuritySections,
+  getAiFundamentalsSections,
+} from "@/lib/curriculum-batch1-defaults";
 
 export interface NoteEntity {
   id: string;
@@ -286,6 +293,59 @@ export async function getNoteBySlug(slug: string) {
     .single();
 
   if (error || !note) {
+    // Fallback: cari di default syllabus presets jika note belum di-seed ke database
+    const allPresets = [
+      { name: "AI Agent", color: "#EF4444", icon: "robotics", sections: getAiAgentSections() },
+      { name: "AI Ethics & Responsible AI", color: "#10B981", icon: "ethics", sections: getAiEthicsSections() },
+      { name: "AI Governance & Regulasi", color: "#06B6D4", icon: "governance", sections: getAiGovernanceSections() },
+      { name: "AI Security & Adversarial Machine Learning", color: "#EF4444", icon: "security", sections: getAiSecuritySections() },
+      { name: "Artificial Intelligence Fundamentals", color: "#8B5CF6", icon: "machine_learning", sections: getAiFundamentalsSections() },
+    ];
+
+    for (const preset of allPresets) {
+      const foundSec = preset.sections.find(
+        (s) => slugify(s.title) === slug || s.id.toLowerCase() === slug.toLowerCase()
+      );
+      if (foundSec) {
+        const codeBlocksMarkdown = (foundSec.codeSnippets || [])
+          .map(
+            (c) =>
+              `\n\n### Implementasi Praktikum: \`${c.caption || "example.py"}\`\n\`\`\`${c.language || "python"}\n${c.code}\n\`\`\``
+          )
+          .join("");
+
+        const virtualContent = `# ${foundSec.title}\n\n${foundSec.description}${codeBlocksMarkdown}\n\n---\n*Topik ini bersumber dari silabus standar kurikulum ${preset.name}.*`;
+
+        const virtualNote: NoteEntity = {
+          id: foundSec.id,
+          category_id: preset.name,
+          parent_note_id: null,
+          slug,
+          title: foundSec.title,
+          content_markdown: virtualContent,
+          icon: "BookOpen",
+          order_index: foundSec.orderIndex,
+          is_folder: false,
+          created_by: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          category: {
+            id: preset.name,
+            name: preset.name,
+            color: preset.color,
+            icon: preset.icon,
+          },
+        };
+
+        return {
+          note: virtualNote,
+          outgoingLinks: [],
+          backlinks: [],
+          tags: [slugify(preset.name)],
+        };
+      }
+    }
+
     return null;
   }
 
