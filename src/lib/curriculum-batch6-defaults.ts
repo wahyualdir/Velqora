@@ -220,17 +220,17 @@ export function getTimeSeriesForecastingSections(): ModuleSection[] {
     },
     {
       id: "ts-sec-2",
-      title: "BAB 2: Preprocessing Time Series",
+      title: "BAB 2: Preprocessing & Uji Stasioneritas Time Series",
       orderIndex: 2,
       isCompleted: false,
       description:
-        "Penanganan data deret waktu mentah: Strategi imputasi missing values tanpa lookahead bias (Forward Fill, Backward Fill, Linear/Spline Interpolation), uji stasioneritas formal (Augmented Dickey-Fuller / ADF test, KPSS test), teknik differencing orde-1 dan seasonal differencing, serta normalisasi adaptif (Rolling Min-Max, Z-score scaling berbasis window historis).",
+        "Penanganan data deret waktu mentah dan dekomposisi komponen: Dekomposisi Seasonal Decomposition (memisahkan Trend jangka panjang, Seasonality periodik mingguan/tahunan, dan Residual noise menggunakan statsmodels), uji stasioneritas formal Augmented Dickey-Fuller (ADF test) dan KPSS test, teknik Differencing orde-1 untuk menstabilkan mean pada data non-stasioner, serta strategi imputasi missing values tanpa lookahead bias.",
       codeSnippets: [
         {
-          id: "ts-sec-2-snip",
+          id: "ts-sec-2-1",
           language: "python",
-          caption: "stationarity_differencing.py",
-          code: "import numpy as np\n\ndef compute_differencing(series, lag=1):\n    # Menghitung selisih (differencing) untuk menghilangkan tren (stasionerisasi)\n    return np.array([series[i] - series[i - lag] for i in range(lag, len(series))])\n\nraw_data = np.array([100, 103, 107, 112, 118, 125, 133, 142])  # Tren naik kuadratik\ndiff_1 = compute_differencing(raw_data, lag=1)\ndiff_2 = compute_differencing(diff_1, lag=1)\n\nprint(\"Data Mentah (Non-Stasioner):\", raw_data)\nprint(\"Differencing Orde-1         :\", diff_1)\nprint(\"Differencing Orde-2 (Stabil):\", diff_2)",
+          caption: "seasonal_decompose_and_adf_test.py",
+          code: "# 1. Seasonal Decomposition: Memisahkan Trend, Seasonality, dan Residual\n# from statsmodels.tsa.seasonal import seasonal_decompose\n# decomp = seasonal_decompose(df['revenue'], model='additive', period=7)\n# decomp.plot()\n\n# 2. Uji Stasioneritas Augmented Dickey-Fuller (ADF)\nfrom statsmodels.tsa.stattools import adfuller\nimport numpy as np\n\nrevenue_trend = np.linspace(100, 200, 100) + np.random.normal(0, 5, 100)\nhasil_adf = adfuller(revenue_trend)\nprint(f'ADF Statistic: {hasil_adf[0]:.3f}, p-value: {hasil_adf[1]:.4f}')\n\nif hasil_adf[1] < 0.05:\n    print('Data stasioner (p < 0.05) -> siap dimodelkan langsung.')\nelse:\n    print('Data TIDAK stasioner -> lakukan differencing untuk menghilangkan tren!')\n    diff_data = np.diff(revenue_trend)\n    print(f'Differencing Orde-1 Selesai: {len(diff_data)} baris.')",
         },
       ],
     },
@@ -348,17 +348,17 @@ export function getTimeSeriesForecastingSections(): ModuleSection[] {
     },
     {
       id: "ts-sec-10",
-      title: "BAB 10: Evaluasi Model Time Series",
+      title: "BAB 10: Evaluasi Model & Walk-Forward Validation",
       orderIndex: 10,
       isCompleted: false,
       description:
-        "Strategi validasi dan metrik performa time series: Larangan penggunaan K-Fold silang acak standar untuk menghindari kebocoran masa depan (lookahead bias), teknik Time Series Split (Expanding Window vs Sliding Window Cross-Validation / Purged Backtesting), dan metrik evaluasi komprehensif (MAE, RMSE, MAPE, Symmetric MAPE / SMAPE, dan MASE / Mean Absolute Scaled Error).",
+        "Strategi validasi jujur dan metrik performa time series: Larangan keras penggunaan train_test_split acak standar (karena mengacak urutan temporal dan menimbulkan kebocoran masa depan / data leakage), penerapan Walk-Forward Validation (melatih model hanya pada data historis masa lalu dan menggeser jendela observasi ke depan), serta metrik evaluasi komprehensif (MAE, RMSE, MAPE, SMAPE, dan MASE).",
       codeSnippets: [
         {
-          id: "ts-sec-10-snip",
+          id: "ts-sec-10-1",
           language: "python",
-          caption: "timeseries_backtesting_metrics.py",
-          code: "import numpy as np\n\ndef evaluate_forecast(y_true, y_pred):\n    mae = np.mean(np.abs(y_true - y_pred))\n    rmse = np.sqrt(np.mean((y_true - y_pred) ** 2))\n    mape = np.mean(np.abs((y_true - y_pred) / (y_true + 1e-6))) * 100\n    smape = np.mean(2 * np.abs(y_pred - y_true) / (np.abs(y_true) + np.abs(y_pred) + 1e-6)) * 100\n    return {\"MAE\": mae, \"RMSE\": rmse, \"MAPE\": mape, \"SMAPE\": smape}\n\nactuals = np.array([100.0, 110.0, 125.0, 130.0])\nforecasts = np.array([102.0, 108.0, 120.0, 135.0])\n\nmetrics = evaluate_forecast(actuals, forecasts)\nfor k, v in metrics.items():\n    print(f\"Metrik {k:5s}: {v:.2f}\")",
+          caption: "walk_forward_validation.py",
+          code: "from sklearn.metrics import mean_absolute_error\nimport numpy as np\n\n# Walk-Forward Validation: Mensimulasikan kondisi deployment nyata\n# Model hanya boleh melihat data masa lalu sebelum titik t yang diprediksi\nnp.random.seed(42)\npenjualan_aktual = 100 + np.cumsum(np.random.randn(100) * 2)\nukuran_awal = int(len(penjualan_aktual) * 0.8)\n\nprediksi_list, aktual_list = [], []\nfor i in range(ukuran_awal, len(penjualan_aktual)):\n    data_history = penjualan_aktual[:i]\n    target = penjualan_aktual[i]\n    # Model baseline rolling average 7 hari\n    pred = np.mean(data_history[-7:])\n    prediksi_list.append(pred)\n    aktual_list.append(target)\n\nmae = mean_absolute_error(aktual_list, prediksi_list)\nprint(f'Ukuran Jendela Uji: {len(aktual_list)} hari')\nprint(f'MAE Walk-Forward Validation: {mae:.2f}')\nprint('Evaluasi ini valid tanpa data leakage masa depan!')",
         },
       ],
     },

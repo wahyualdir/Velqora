@@ -338,16 +338,24 @@ export function getNaturalLanguageProcessingSections(): ModuleSection[] {
     },
     {
       id: "nlp-sec-3",
-      title: "BAB 3: Representasi Teks",
+      title: "BAB 3: Representasi Teks & Topic Modeling",
       orderIndex: 3,
       isCompleted: false,
-      description: "Vektorisasi teks: Bag of Words (BoW) & TF-IDF, Static Word Embeddings (Word2Vec CBOW/Skip-gram, GloVe, FastText), dan Contextual Embedding dinamis (ELMo).",
-      codeSnippets: [{
-        id: "nlp-snip-3",
-        language: "python",
-        caption: "tfidf_custom_vectorizer.py",
-        code: "import numpy as np\n\ndocs = [\"data science menyenangkan\", \"machine learning dan data science\"]\nterms = [\"data\", \"learning\", \"machine\", \"menyenangkan\", \"science\"]\n\n# Perhitungan manual matriks Term Frequency (TF)\ntf_matrix = np.array([\n    [1/3, 0, 0, 1/3, 1/3],\n    [1/5, 1/5, 1/5, 0, 1/5]\n])\n# Inverse Document Frequency (IDF)\nidf = np.log((1 + 2) / (1 + np.array([2, 1, 1, 1, 2]))) + 1\ntfidf = tf_matrix * idf\n\nprint(\"Matriks TF-IDF Dokumen:\\n\", np.round(tfidf, 3))",
-      }],
+      description: "Vektorisasi teks: Bag of Words (CountVectorizer) dan TF-IDF (TfidfVectorizer) dengan filtering min_df/max_df untuk kata representatif, Static Word Embeddings berdimensi kontinu (Word2Vec CBOW/Skip-gram dengan Gensim, FastText tahan OOV berkat character n-gram untuk Bahasa Indonesia berimbuhan), serta Unsupervised Topic Modeling menggunakan Latent Dirichlet Allocation (LDA) untuk mengekstraksi kluster topik keluhan/isu dari data teks tanpa label.",
+      codeSnippets: [
+        {
+          id: "nlp-snip-3-1",
+          language: "python",
+          caption: "tfidf_and_representative_words.py",
+          code: "from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer\nimport pandas as pd\n\nkorpus_tweet = [\n    'pelayanan sangat baik dan memuaskan',\n    'pelayanan buruk sekali mengecewakan',\n    'produk baik tapi pengiriman lambat',\n    'aplikasi sering error dan lambat sekali'\n]\n\n# 1. TF-IDF Vectorizer (Otomatis filter kata terlalu langka/umum via min_df)\ntfidf = TfidfVectorizer(min_df=1)\ntfidf_matrix = tfidf.fit_transform(korpus_tweet)\ndf_tfidf = pd.DataFrame(tfidf_matrix.toarray(), columns=tfidf.get_feature_names_out())\nprint('Matriks TF-IDF:\\n', df_tfidf.round(3))\n\n# 2. Kata paling representatif (skor rata-rata tertinggi)\nskor_rata2 = tfidf_matrix.mean(axis=0).A1\nkata_teratas = pd.Series(skor_rata2, index=tfidf.get_feature_names_out()).sort_values(ascending=False)\nprint('\\nTop 5 Kata Paling Representatif:\\n', kata_teratas.head(5))",
+        },
+        {
+          id: "nlp-snip-3-2",
+          language: "python",
+          caption: "word2vec_and_lda_topic_modeling.py",
+          code: "# 1. Word2Vec & FastText (Gensim) - Mengelompokkan kata bermakna mirip\n# from gensim.models import Word2Vec\n# model_w2v = Word2Vec(sentences=[t.split() for t in korpus_tweet], vector_size=100, window=5, min_count=1)\n# print('Kata mirip \"baik\":', model_w2v.wv.most_similar('baik', topn=3))\n\n# 2. Topic Modeling LDA (Latent Dirichlet Allocation) pada Teks Keluhan/Ulasan\nfrom sklearn.decomposition import LatentDirichletAllocation\nfrom sklearn.feature_extraction.text import CountVectorizer\n\ncv = CountVectorizer(max_features=1000, min_df=1)\nmatrix_bow = cv.fit_transform(korpus_tweet)\n\nlda = LatentDirichletAllocation(n_components=2, random_state=42)\nlda.fit(matrix_bow)\n\nfeature_names = cv.get_feature_names_out()\nprint('Topik yang Ditemukan LDA:')\nfor idx, topic in enumerate(lda.components_):\n    top_words = [feature_names[i] for i in topic.argsort()[-4:][::-1]]\n    print(f'Topik #{idx+1}: {\", \".join(top_words)}')",
+        },
+      ],
     },
     {
       id: "nlp-sec-4",
@@ -403,16 +411,24 @@ export function getNaturalLanguageProcessingSections(): ModuleSection[] {
     },
     {
       id: "nlp-sec-8",
-      title: "BAB 8: Pemahaman & Generasi Bahasa",
+      title: "BAB 8: Analisis Sentimen & Emotion Detection",
       orderIndex: 8,
       isCompleted: false,
-      description: "Tugas-tugas inti NLP praktis: Neural Machine Translation (NMT), Text Summarization (abstraktif vs ekstraktif), Question Answering (QA), serta Sentiment Analysis & Emotion Detection.",
-      codeSnippets: [{
-        id: "nlp-snip-8",
-        language: "python",
-        caption: "text_summarization_metrics.py",
-        code: "def mock_extractive_summary(text_paragraphs, top_n=2):\n    sentences = text_paragraphs.split(\". \")\n    # Ranking kalimat sederhana berdasarkan panjang dan posisi awal\n    scored = sorted(sentences, key=lambda s: len(s), reverse=True)\n    return \". \".join(scored[:top_n]) + \".\"\n\ncorpus = \"Velqora adalah platform belajar kecerdasan buatan terpadu. Materi mencakup puluhan topik mutakhir dari dasar hingga tingkat lanjut. Setiap topik dilengkapi kode praktikum Python.\"\nprint(\"[Ringkasan Ekstraktif]:\\n\" + mock_extractive_summary(corpus, top_n=2))",
-      }],
+      description: "Implementasi analisis sentimen media sosial berskala masif (studi kasus 453.390 tweet Indonesia & Melayu): Preprocessing teks informal, kamus normalisasi kata gaul/slang, lexicon-based scoring dengan penanganan kata negasi ('tidak baik' -> negatif, 'tidak buruk' -> sedikit positif), deteksi 8 emosi dasar berdasarkan Plutchik's Wheel (Kebahagiaan, Kesedihan, Kemarahan, Ketakutan, Cinta, Semangat, Harapan, Kelelahan), visualisasi dashboard sentimen 9-panel, serta pengujian statistik non-parametrik (Kruskal-Wallis dan Mann-Whitney U) untuk menguji signifikansi panjang karakter tweet per sentimen.",
+      codeSnippets: [
+        {
+          id: "nlp-snip-8-1",
+          language: "python",
+          caption: "indonesian_sentiment_pipeline.py",
+          code: "import re\n\n# 1. Normalisasi Slang Indonesia & Melayu\nSLANG_DICT = {\n    r'\\bgak\\b': 'tidak', r'\\bnggak\\b': 'tidak', r'\\btak\\b': 'tidak',\n    r'\\budah\\b': 'sudah', r'\\bdah\\b': 'sudah', r'\\bbanget\\b': 'sekali',\n    r'\\bkyk\\b': 'seperti', r'\\byg\\b': 'yang', r'\\bdgn\\b': 'dengan'\n}\n\ndef normalize_text(text):\n    text = text.lower()\n    text = re.sub(r'http\\S+|@\\w+|#\\w+|\\d+', '', text)\n    text = re.sub(r'[^\\w\\s]', ' ', text)\n    for pat, rep in SLANG_DICT.items():\n        text = re.sub(pat, rep, text)\n    return re.sub(r'\\s+', ' ', text).strip()\n\n# 2. Lexicon Scoring dengan Penanganan Negasi\nKATA_POSITIF = {'senang', 'bagus', 'hebat', 'terima kasih', 'mantap', 'puas'}\nKATA_NEGATIF = {'kecewa', 'buruk', 'rusak', 'lambat', 'marah', 'susah'}\nKATA_NEGASI = {'tidak', 'tak', 'bukan', 'jangan', 'belum'}\n\ndef score_sentiment(text):\n    words = text.split()\n    score = 0; negasi = False\n    for w in words:\n        if w in KATA_NEGASI: negasi = True; continue\n        if w in KATA_POSITIF:\n            score += -1 if negasi else 1; negasi = False\n        elif w in KATA_NEGATIF:\n            score += 0.5 if negasi else -1; negasi = False\n    return 'Positif' if score > 0 else ('Negatif' if score < 0 else 'Netral')\n\ncontoh = 'pelayanan customer service tidak buruk dan sangat ramah'\nprint('Input     :', contoh)\nprint('Hasil NLP :', score_sentiment(normalize_text(contoh)))",
+        },
+        {
+          id: "nlp-snip-8-2",
+          language: "python",
+          caption: "emotion_detection_plutchik.py",
+          code: "EMOSI_DICT = {\n    'Kebahagiaan': ['bahagia', 'senang', 'gembira', 'alhamdulillah', 'syukur'],\n    'Kesedihan'  : ['sedih', 'menangis', 'duka', 'kecewa', 'galau'],\n    'Kemarahan'  : ['marah', 'kesal', 'benci', 'jengkel', 'murka'],\n    'Harapan'    : ['semoga', 'harapan', 'doa', 'mimpi', 'optimis']\n}\n\ndef detect_emotion(text):\n    words = set(text.lower().split())\n    for emosi, keywords in EMOSI_DICT.items():\n        if words.intersection(set(keywords)):\n            return emosi\n    return 'Netral / Informatif'\n\nprint('Emosi Teks: ', detect_emotion('alhamdulillah pesanan sudah sampai dengan cepat'))",
+        },
+      ],
     },
     {
       id: "nlp-sec-9",

@@ -568,16 +568,18 @@ export function getMachineLearningSections(): ModuleSection[] {
     },
     {
       id: "ml-sec-6",
-      title: "BAB 6: Supervised Learning - Klasifikasi",
+      title: "BAB 6: Supervised Learning - Klasifikasi & Churn Prediction",
       orderIndex: 6,
       isCompleted: false,
-      description: "Algoritma klasifikasi komprehensif: Logistic Regression, K-Nearest Neighbors (KNN), Decision Tree, Random Forest, Support Vector Machine (SVM), serta Gradient Boosted Trees (XGBoost, LightGBM, CatBoost).",
-      codeSnippets: [{
-        id: "ml-snip-6",
-        language: "python",
-        caption: "gradient_boosting_demo.py",
-        code: "from sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\nX = np.array([[1.5, 2.0], [2.0, 1.8], [0.5, 0.4], [0.2, 0.8]])\ny = np.array([1, 1, 0, 0])\n\nclf = GradientBoostingClassifier(n_estimators=10, random_state=42)\nclf.fit(X, y)\npred = clf.predict([[1.8, 1.9]])\nprob = clf.predict_proba([[1.8, 1.9]])[0]\n\nprint(f\"Prediksi Kelas: {pred[0]} dengan Keyakinan: {prob[pred[0]] * 100:.1f}%\")",
-      }],
+      description: "Algoritma klasifikasi komprehensif: Logistic Regression (probabilitas logistik, class_weight='balanced'), Random Forest Classifier (ensemble pohon keputusan), Gradient Boosted Trees (XGBoost, LightGBM). Metrik evaluasi klasifikasi dunia nyata: ROC-AUC Curve, Confusion Matrix, Precision, Recall, F1-Score (mengatasi paradox akurasi pada data imbalanced), serta analisis Feature Importance untuk menemukan pendorong utama prediksi bisnis (misalnya faktor penyebab churn pelanggan telekomunikasi).",
+      codeSnippets: [
+        {
+          id: "ml-snip-6-1",
+          language: "python",
+          caption: "churn_classification_pipeline.py",
+          code: "from sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report, roc_auc_score\nimport numpy as np\n\n# Simulasi Fitur & Target Klasifikasi (Churn)\nnp.random.seed(42)\nX = np.random.randn(500, 5)\ny = np.random.choice([0, 1], 500, p=[0.75, 0.25]) # 25% churn (imbalanced)\n\n# Split seimbang dengan stratify=y\nX_tr, X_ts, y_tr, y_ts = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n\n# 1. Logistic Regression dengan bobot kelas seimbang\nlr = LogisticRegression(class_weight='balanced')\nlr.fit(X_tr, y_tr)\ny_prob_lr = lr.predict_proba(X_ts)[:, 1]\n\n# 2. Random Forest Classifier\nrf = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42)\nrf.fit(X_tr, y_tr)\ny_pred_rf = rf.predict(X_ts)\ny_prob_rf = rf.predict_proba(X_ts)[:, 1]\n\nprint(f'Logistic Regression ROC-AUC : {roc_auc_score(y_ts, y_prob_lr):.4f}')\nprint(f'Random Forest ROC-AUC       : {roc_auc_score(y_ts, y_prob_rf):.4f}')\nprint('\\nClassification Report:\\n', classification_report(y_ts, y_pred_rf, target_names=['Tetap', 'Churn']))",
+        },
+      ],
     },
     {
       id: "ml-sec-7",
