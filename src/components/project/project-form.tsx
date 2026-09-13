@@ -20,6 +20,7 @@ import { ContentContainer } from "@/components/ui/section";
 import { getCategories } from "@/actions/study-actions";
 import { createProject, updateProject, ProjectFormData } from "@/actions/study/projects";
 import { Project } from "@/types";
+import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { toast } from "sonner";
 
 interface ProjectFormProps {
@@ -53,6 +54,14 @@ export function ProjectForm({ initialData, isEditing = false }: ProjectFormProps
   // Categories
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const aiPreset = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
+  const aiSubcategories = React.useMemo(() => {
+    if (!aiPreset) return [];
+    return [...aiPreset.subcategories].sort((a, b) =>
+      a.name.localeCompare(b.name, "id", { sensitivity: "base" })
+    );
+  }, [aiPreset]);
 
   useEffect(() => {
     async function loadCategories() {
@@ -185,12 +194,42 @@ export function ProjectForm({ initialData, isEditing = false }: ProjectFormProps
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
               >
-                <option value="">-- Pilih Kategori --</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
+                <option value="">-- Pilih Kategori / Topik AI --</option>
+                <optgroup label="Topik Kurikulum Kecerdasan Buatan (28 Topik)">
+                  {aiSubcategories.map((sub) => {
+                    const dbMatch = categories.find(
+                      (c) => c.name.toLowerCase().trim() === sub.name.toLowerCase().trim()
+                    );
+                    const val = dbMatch?.id || sub.name;
+                    return (
+                      <option key={sub.name} value={val}>
+                        {sub.name}
+                      </option>
+                    );
+                  })}
+                </optgroup>
+                {categories.filter(
+                  (c) =>
+                    !aiSubcategories.some(
+                      (sub) => sub.name.toLowerCase().trim() === c.name.toLowerCase().trim()
+                    )
+                ).length > 0 && (
+                  <optgroup label="Kategori Lainnya">
+                    {categories
+                      .filter(
+                        (c) =>
+                          !aiSubcategories.some(
+                            (sub) =>
+                              sub.name.toLowerCase().trim() === c.name.toLowerCase().trim()
+                          )
+                      )
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                )}
               </Select>
             </div>
 
