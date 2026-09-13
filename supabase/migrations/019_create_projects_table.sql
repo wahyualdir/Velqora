@@ -53,9 +53,11 @@ CREATE POLICY "Projects updatable by author or admin"
   ON public.projects FOR UPDATE
   USING (
     auth.uid() = user_id OR
+    LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app') OR
+    (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin') OR
     EXISTS (
       SELECT 1 FROM public.user_roles ur
-      WHERE ur.user_id = auth.uid() AND ur.role IN ('admin', 'owner')
+      WHERE LOWER(ur.email) = LOWER(auth.jwt()->>'email') AND ur.role IN ('admin', 'owner')
     )
   );
 
@@ -64,9 +66,11 @@ CREATE POLICY "Projects deletable by author or admin"
   ON public.projects FOR DELETE
   USING (
     auth.uid() = user_id OR
+    LOWER(auth.jwt()->>'email') IN ('wahyualdiriyanto80@gmail.com', 'admin@velqora.app') OR
+    (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin') OR
     EXISTS (
       SELECT 1 FROM public.user_roles ur
-      WHERE ur.user_id = auth.uid() AND ur.role IN ('admin', 'owner')
+      WHERE LOWER(ur.email) = LOWER(auth.jwt()->>'email') AND ur.role IN ('admin', 'owner')
     )
   );
 
