@@ -1,27 +1,20 @@
 import { DocSectionItem } from "@/components/modul/doc-reader-layout";
-import { SUPERVISED_LEARNING_CHAPTER } from "./scikit-learn/supervised";
-import { UNSUPERVISED_LEARNING_CHAPTER } from "./scikit-learn/unsupervised";
-import { MODEL_SELECTION_CHAPTER } from "./scikit-learn/model-selection";
-import {
-  DATA_TRANSFORMS_CHAPTER,
-  INSPECTION_CHAPTER,
-  DATASETS_CHAPTER,
-  COMPUTING_CHAPTER,
-} from "./scikit-learn/transforms-and-utilities";
+import { ML_CHAPTERS_1_TO_6 } from "./ml-curriculum/chapters-1-to-6";
+import { ML_CHAPTERS_7_TO_11 } from "./ml-curriculum/chapters-7-to-11";
+import { ML_CHAPTERS_12_TO_17 } from "./ml-curriculum/chapters-12-to-17";
+import { ML_CHAPTERS_18_TO_22 } from "./ml-curriculum/chapters-18-to-22";
 
 /**
- * Kurikulum dan Materi Komprehensif Resmi Scikit-Learn 1.9 User Guide
- * Berisi seluruh Bab Utama dan Subbab (Hierarkis) lengkap dengan formulasi matematis,
- * penjelasan konseptual mendalam, dan implementasi kode Python Scikit-Learn.
+ * Kurikulum dan Materi Komprehensif Machine Learning Velqora
+ * Terdiri dari 22 BAB kurikulum asli dengan subbab terstruktur hierarkis,
+ * diintegrasikan dengan materi mendalam, formulasi matematis (LaTeX),
+ * dan kode Python Scikit-Learn 1.9 resmi.
  */
 export const SCIKIT_LEARN_USER_GUIDE_SECTIONS: DocSectionItem[] = [
-  SUPERVISED_LEARNING_CHAPTER,
-  UNSUPERVISED_LEARNING_CHAPTER,
-  MODEL_SELECTION_CHAPTER,
-  DATA_TRANSFORMS_CHAPTER,
-  INSPECTION_CHAPTER,
-  DATASETS_CHAPTER,
-  COMPUTING_CHAPTER,
+  ...ML_CHAPTERS_1_TO_6,
+  ...ML_CHAPTERS_7_TO_11,
+  ...ML_CHAPTERS_12_TO_17,
+  ...ML_CHAPTERS_18_TO_22,
 ];
 
 /**
