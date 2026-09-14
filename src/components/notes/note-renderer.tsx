@@ -72,6 +72,26 @@ function preprocessObsidianMarkdown(
     .join("");
 }
 
+function extractTextFromChildren(children: React.ReactNode): string {
+  if (typeof children === "string") return children;
+  if (typeof children === "number") return String(children);
+  if (Array.isArray(children)) return children.map(extractTextFromChildren).join("");
+  if (React.isValidElement(children) && (children.props as any)?.children) {
+    return extractTextFromChildren((children.props as any).children);
+  }
+  return "";
+}
+
+function generateHeadingId(children: React.ReactNode): string {
+  const text = extractTextFromChildren(children);
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s.-]/g, "")
+    .replace(/[\s.]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function NoteRenderer({
   content,
   outgoingLinks = [],
@@ -214,26 +234,41 @@ export function NoteRenderer({
             );
           },
 
-          // Typography Styling adhering to Velqora Academic Theme
+          // Typography Styling adhering to Velqora Academic Theme & Sphinx Anchor Links
           h1({ children }) {
+            const id = generateHeadingId(children);
             return (
-              <h1 className="text-xl sm:text-2xl font-bold font-display text-text-primary mt-6 mb-3 tracking-tight border-b border-border/60 pb-2">
-                {children}
+              <h1 id={id} className="group relative text-2xl sm:text-3xl font-extrabold font-display text-text-primary mt-8 mb-4 tracking-tight border-b border-border/60 pb-3 scroll-mt-20">
+                <span>{children}</span>
+                <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
               </h1>
             );
           },
           h2({ children }) {
+            const id = generateHeadingId(children);
             return (
-              <h2 className="text-lg sm:text-xl font-bold font-display text-text-primary mt-5 mb-2.5 tracking-tight">
-                {children}
+              <h2 id={id} className="group relative text-xl sm:text-2xl font-bold font-display text-text-primary mt-7 mb-3 tracking-tight scroll-mt-20">
+                <span>{children}</span>
+                <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
               </h2>
             );
           },
           h3({ children }) {
+            const id = generateHeadingId(children);
             return (
-              <h3 className="text-base sm:text-lg font-bold text-text-primary mt-4 mb-2">
-                {children}
+              <h3 id={id} className="group relative text-base sm:text-lg font-bold text-text-primary mt-5 mb-2.5 scroll-mt-20">
+                <span>{children}</span>
+                <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
               </h3>
+            );
+          },
+          h4({ children }) {
+            const id = generateHeadingId(children);
+            return (
+              <h4 id={id} className="group relative text-sm sm:text-base font-semibold text-text-primary mt-4 mb-2 scroll-mt-20">
+                <span>{children}</span>
+                <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
+              </h4>
             );
           },
           p({ children }) {

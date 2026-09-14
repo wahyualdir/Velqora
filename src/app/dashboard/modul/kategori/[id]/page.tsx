@@ -28,6 +28,10 @@ import { ModuleDriveFile } from "@/types/module-drive";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
 import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
+import {
+  SCIKIT_LEARN_USER_GUIDE_SECTIONS,
+  getAllFlatScikitLearnSections,
+} from "@/lib/scikit-learn-curriculum";
 import { toast } from "sonner";
 
 export default function DedicatedCategoryModulesPage({
@@ -228,6 +232,22 @@ export default function DedicatedCategoryModulesPage({
 
   // Kumpulan Topik Materi (Notes Kurikulum Obsidian)
   const allTopicNotes = useMemo(() => {
+    const catName = category?.name || decodeURIComponent(categoryId);
+    const norm = catName.toLowerCase().trim();
+
+    // Khusus Machine Learning: gunakan materi Scikit-Learn 1.9 lengkap
+    if (norm.includes("machine learning") || norm.includes("pembelajaran mesin") || norm.includes("scikit")) {
+      const scikitFlat = getAllFlatScikitLearnSections();
+      return scikitFlat.map((sec) => ({
+        id: sec.id,
+        slug: sec.slug || slugify(sec.title),
+        title: sec.title,
+        description: sec.description || cleanMarkdownExcerpt(sec.content_markdown || "", sec.title, 160),
+        isPlaceholder: false,
+        content_markdown: sec.content_markdown || null,
+      }));
+    }
+
     if (vaultNotes && vaultNotes.length > 0) {
       return vaultNotes.map((n) => ({
         id: n.id,
@@ -239,7 +259,6 @@ export default function DedicatedCategoryModulesPage({
       }));
     }
 
-    const catName = category?.name || decodeURIComponent(categoryId);
     const defaults = getDefaultAiSections(catName);
     return defaults.map((sec) => ({
       id: sec.id,
@@ -251,9 +270,16 @@ export default function DedicatedCategoryModulesPage({
     }));
   }, [vaultNotes, category, categoryId]);
 
-  // Daftar Seksi untuk Documentation Reader View ala Scikit-Learn
+  // Daftar Seksi untuk Documentation Reader View ala Scikit-Learn (Lengkap dengan Subbab)
   const docSections = useMemo<DocSectionItem[]>(() => {
     const catName = category?.name || decodeURIComponent(categoryId);
+    const norm = catName.toLowerCase().trim();
+
+    // Khusus Machine Learning: sajikan seluruh Bab dan Subbab hierarkis resmi Scikit-Learn 1.9
+    if (norm.includes("machine learning") || norm.includes("pembelajaran mesin") || norm.includes("scikit")) {
+      return SCIKIT_LEARN_USER_GUIDE_SECTIONS;
+    }
+
     const defaults = getDefaultAiSections(catName);
 
     if (vaultNotes && vaultNotes.length > 0) {
