@@ -152,6 +152,7 @@ Boleh menyertakan [[Nama Catatan Lain]] untuk wikilink otomatis.
 
 ## 📚 Dokumentasi Arsitektur & Keamanan
 
+- [Panduan Impor Modul & Standar Kurikulum (SOP)](docs/PANDUAN_IMPORT_MODUL_DAN_STANDAR_KURIKULUM.md)
 - [Protected Core Specification](docs/architecture/PROTECTED_CORE.md)
 - [Web vs Mobile Boundary Specification](docs/architecture/WEB_MOBILE_BOUNDARY.md)
 - [Design System Boundary Specification](docs/architecture/DESIGN_SYSTEM_BOUNDARY.md)
