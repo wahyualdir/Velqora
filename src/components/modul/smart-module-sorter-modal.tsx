@@ -211,7 +211,7 @@ export function SmartModuleSorterModal({
             });
 
             // Embed structured file link into notes
-            fileAttachmentText = `📎 **Berkas Modul:** [${uploadedFile.name}](${publicUrlData.publicUrl})\n📦 **Ukuran:** ${formatFileSize(uploadedFile.size)}\n📄 **Tipe:** ${uploadedFile.type || fileExt?.toUpperCase()}`;
+            fileAttachmentText = `**Berkas Modul:** [${uploadedFile.name}](${publicUrlData.publicUrl})\n**Ukuran:** ${formatFileSize(uploadedFile.size)}\n**Tipe:** ${uploadedFile.type || fileExt?.toUpperCase()}`;
           }
         } catch (fileErr) {
           console.warn("Could not save original file to storage:", fileErr);
@@ -219,7 +219,7 @@ export function SmartModuleSorterModal({
       }
 
       // Build structured notes with author attribution
-      const authorMetadata = `👤 **Diposting oleh:** ${authorName}`;
+      const authorMetadata = `**Diposting oleh:** ${authorName}`;
       const combinedNotes = [authorMetadata, fileAttachmentText, notesPayload]
         .filter(Boolean)
         .join("\n\n");

@@ -426,7 +426,7 @@ export function extractModuleDriveFromNotes(notes?: string | null): {
   }
 
   // Fallback: Check if there's a legacy single file attached in notes
-  const legacyFileMatch = notes.match(/📎 \*\*Berkas Modul:\*\* \[(.*?)\]\((https?:\/\/[^\s\)]+)\)/);
+  const legacyFileMatch = notes.match(/(?:📎\s*)?\*\*Berkas Modul:\*\* \[(.*?)\]\((https?:\/\/[^\s\)]+)\)/);
   if (legacyFileMatch) {
     const rawName = legacyFileMatch[1];
     const url = legacyFileMatch[2];

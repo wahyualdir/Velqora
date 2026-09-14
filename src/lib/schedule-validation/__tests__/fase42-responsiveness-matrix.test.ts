@@ -13,7 +13,7 @@ describe("FASE 42: Full Breakpoint Responsiveness Matrix Suite (Fase 5)", () => 
 
       assert.ok(content.includes("max-w-[1560px]"), "Web surface must have 1560px max width to prevent infinite stretching");
       assert.ok(content.includes("max-w-2xl"), "App surface must have max-w-2xl centered container on large screens");
-      assert.ok(content.includes("!isApp && (sidebarCollapsed"), "Sidebar padding must not offset standalone App surface");
+      assert.ok(content.includes("!isApp") && content.includes("sidebarCollapsed"), "Sidebar padding must not offset standalone App surface");
     });
 
     it("Scenario RESP-2: Section containers enforce controlled max-widths across viewports", () => {

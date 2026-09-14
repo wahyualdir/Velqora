@@ -364,7 +364,7 @@ export function ProjectForm({ initialData, isEditing = false }: ProjectFormProps
           <Textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder={`# Judul Proyek\n\n## 🚀 Panduan Instalasi\n\`\`\`bash\npip install -r requirements.txt\npython main.py\n\`\`\``}
+            placeholder={`# Judul Proyek\n\n## Panduan Instalasi\n\`\`\`bash\npip install -r requirements.txt\npython main.py\n\`\`\``}
             rows={10}
             className="font-mono text-xs"
           />

@@ -110,29 +110,55 @@ export default function DedicatedCategoryModulesPage({
       let resolvedCat = catData?.category || catData;
 
       if (!resolvedCat) {
-        // Fallback pencarian di preset SYSTEM_PRIMARY_CATEGORIES
-        const aiPrimary = SYSTEM_PRIMARY_CATEGORIES.find((p) => p.name === "Kecerdasan Buatan");
-        const foundSub = aiPrimary?.subcategories.find(
-          (s) =>
-            s.name.toLowerCase() === decodedId.toLowerCase() ||
-            s.name.toLowerCase().replace(/[^a-z0-9]/g, "-") === decodedId.toLowerCase()
-        );
+        // Fallback pencarian di seluruh preset SYSTEM_PRIMARY_CATEGORIES
+        let foundPreset: { name: string; icon?: string; color?: string; primaryCategory: string } | null = null;
 
-        if (foundSub) {
+        for (const primary of SYSTEM_PRIMARY_CATEGORIES) {
+          const sub = primary.subcategories.find(
+            (s) =>
+              s.name.toLowerCase() === decodedId.toLowerCase() ||
+              s.name.toLowerCase().replace(/[^a-z0-9]/g, "-") === decodedId.toLowerCase()
+          );
+          if (sub) {
+            foundPreset = {
+              name: sub.name,
+              icon: sub.icon || primary.icon,
+              color: sub.color || primary.color,
+              primaryCategory: primary.name,
+            };
+            break;
+          }
+
+          // Periksa jika decodedId merujuk langsung ke nama kategori utama
+          if (
+            primary.name.toLowerCase() === decodedId.toLowerCase() ||
+            primary.name.toLowerCase().replace(/[^a-z0-9]/g, "-") === decodedId.toLowerCase()
+          ) {
+            foundPreset = {
+              name: primary.name,
+              icon: primary.icon,
+              color: primary.color,
+              primaryCategory: primary.name,
+            };
+            break;
+          }
+        }
+
+        if (foundPreset) {
           resolvedCat = {
-            id: foundSub.name,
-            name: foundSub.name,
-            color: foundSub.color || "#8B5CF6",
-            icon: foundSub.icon || "machine_learning",
-            description: `Kurikulum komprehensif materi ${foundSub.name} berbasis teori dan implementasi praktikum kode.`,
+            id: foundPreset.name,
+            name: foundPreset.name,
+            color: foundPreset.color || "#8B5CF6",
+            icon: foundPreset.icon || "code",
+            description: `Kurikulum komprehensif materi ${foundPreset.name} dalam bidang ${foundPreset.primaryCategory} berbasis teori dan implementasi praktikum kode.`,
           };
         } else {
           resolvedCat = {
             id: decodedId,
             name: decodedId,
-            color: "#8B5CF6",
-            icon: "machine_learning",
-            description: "Kumpulan modul kurikulum dan repositori proyek pembelajaran Kecerdasan Buatan.",
+            color: "#6366F1",
+            icon: "code",
+            description: `Kumpulan modul kurikulum dan repositori proyek pembelajaran ${decodedId}.`,
           };
         }
       }

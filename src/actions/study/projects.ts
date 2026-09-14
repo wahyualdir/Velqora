@@ -34,7 +34,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://weather-ml-demo.velqora.app",
     tech_stack: ["Python", "Scikit-Learn", "Pandas", "Streamlit", "Machine Learning"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 🌦️ Sistem Prediksi Cuaca (Machine Learning)\n\nRepositori proyek pembelajaran mesin terapan untuk analisis atmosfer dan prediksi curah hujan harian.\n\n## 🚀 Fitur Utama\n- Eksplorasi dataset cuaca atmosferik\n- Preprocessing dan Feature Engineering otomatis\n- Model Random Forest Classifier dengan akurasi 94%\n- Dashboard interaktif berbasis Streamlit",
+    notes: "# Sistem Prediksi Cuaca (Machine Learning)\n\nRepositori proyek pembelajaran mesin terapan untuk analisis atmosfer dan prediksi curah hujan harian.\n\n## Fitur Utama\n- Eksplorasi dataset cuaca atmosferik\n- Preprocessing dan Feature Engineering otomatis\n- Model Random Forest Classifier dengan akurasi 94%\n- Dashboard interaktif berbasis Streamlit",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {
@@ -57,7 +57,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://vision-yolo-demo.velqora.app",
     tech_stack: ["Python", "PyTorch", "YOLOv8", "OpenCV", "Computer Vision"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 👁️ Deteksi Objek Real-Time dengan YOLOv8\n\nRepositori implementasi computer vision modern untuk deteksi multi-objek berkecepatan tinggi.",
+    notes: "# Deteksi Objek Real-Time dengan YOLOv8\n\nRepositori implementasi computer vision modern untuk deteksi multi-objek berkecepatan tinggi.",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {
@@ -80,7 +80,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://rag-assistant-demo.velqora.app",
     tech_stack: ["Python", "LangChain", "OpenAI", "FAISS", "Large Language Model", "Vector DB"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 🤖 Enterprise RAG System\n\nImplementasi retrieval augmented generation untuk data internal perusahaan dengan latency rendah.",
+    notes: "# Enterprise RAG System\n\nImplementasi retrieval augmented generation untuk data internal perusahaan dengan latency rendah.",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {
@@ -103,7 +103,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://agent-crew-demo.velqora.app",
     tech_stack: ["Python", "CrewAI", "LangGraph", "FastAPI", "AI Agent"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 🤖 Autonomous Multi-Agent Engine\n\nPlatform kolaboratif antar agen AI cerdas untuk otomasi alur kerja analitis.",
+    notes: "# Autonomous Multi-Agent Engine\n\nPlatform kolaboratif antar agen AI cerdas untuk otomasi alur kerja analitis.",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {
@@ -149,7 +149,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://sentiment-id-demo.velqora.app",
     tech_stack: ["Python", "Transformers", "IndoBERT", "HuggingFace", "Natural Language Processing"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 📝 NLP Bahasa Indonesia dengan IndoBERT\n\nPipeline klasifikasi teks dan sentiment mining menggunakan transformer IndoBERT.",
+    notes: "# NLP Bahasa Indonesia dengan IndoBERT\n\nPipeline klasifikasi teks dan sentiment mining menggunakan transformer IndoBERT.",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {
@@ -172,7 +172,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://timeseries-demo.velqora.app",
     tech_stack: ["Python", "Prophet", "TensorFlow", "Time Series", "Pandas"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 📈 Time Series Forecasting & Anomaly Detection\n\nAnalisis tren musiman dan deteksi fluktuasi anomali finansial.",
+    notes: "# Time Series Forecasting & Anomaly Detection\n\nAnalisis tren musiman dan deteksi fluktuasi anomali finansial.",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {
@@ -195,7 +195,7 @@ const CURATED_AI_PROJECTS: Project[] = [
     demo_url: "https://semantic-search-demo.velqora.app",
     tech_stack: ["Python", "Qdrant", "Sentence-Transformers", "Vector DB", "FastAPI"],
     author_name: "Tim Kurikulum AI Velqora",
-    notes: "# 🔍 Vector Search dengan Qdrant\n\nMesin pencari vektor semantik berkinerja tinggi dengan indexing HNSW.",
+    notes: "# Vector Search dengan Qdrant\n\nMesin pencari vektor semantik berkinerja tinggi dengan indexing HNSW.",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     category: {

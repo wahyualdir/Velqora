@@ -342,7 +342,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "Python",
       level: "pemula",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul resmi kurikulum Python untuk mahasiswa dan pelajar.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul resmi kurikulum Python untuk mahasiswa dan pelajar.",
       chapters: [
         "Pengenalan Python, Variabel, dan Tipe Data",
         "Struktur Kendali (If-Else, For Loop, While Loop)",
@@ -358,7 +358,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "JavaScript",
       level: "menengah",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul panduan JavaScript & TypeScript modern.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul panduan JavaScript & TypeScript modern.",
       chapters: [
         "JavaScript ES6+ Syntax & Array Methods",
         "Asynchronous JavaScript: Promise, Async/Await",
@@ -373,7 +373,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "Next.js",
       level: "menengah",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul belajar Web Development dengan Next.js.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul belajar Web Development dengan Next.js.",
       chapters: [
         "Konsep Server Components vs Client Components",
         "Routing, Layouts, dan Dynamic Route Segments",
@@ -388,7 +388,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "Machine Learning",
       level: "menengah",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul kecerdasan buatan & machine learning.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul kecerdasan buatan & machine learning.",
       chapters: [
         "Pengantar Kecerdasan Buatan & Cabang AI",
         "Data Preprocessing & Feature Engineering",
@@ -404,7 +404,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "PostgreSQL",
       level: "pemula",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul perancangan dan kueri database SQL.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul perancangan dan kueri database SQL.",
       chapters: [
         "Konsep RDBMS & Normalisasi Database (1NF-3NF)",
         "DDL: CREATE, ALTER, DROP Table & Constraints",
@@ -420,7 +420,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "Data Science",
       level: "pemula",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul analisis data sains dan visualisasi.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul analisis data sains dan visualisasi.",
       chapters: [
         "Data Ingestion dari CSV, Excel, dan Database",
         "Data Cleaning: Missing Values & Outlier Detection",
@@ -435,7 +435,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "Cyber Security",
       level: "pemula",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul fundamental keamanan sistem informasi.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul fundamental keamanan sistem informasi.",
       chapters: [
         "Prinsip Dasar Keamanan Informasi (CIA Triad)",
         "Arsitektur Jaringan, Firewall, dan Port Scanning",
@@ -450,7 +450,7 @@ export async function seedStarterCommunityModules() {
       categoryMatch: "UI/UX Design",
       level: "pemula",
       author: "Tim Kurikulum Velqora",
-      notes: "👤 **Diposting oleh:** Tim Kurikulum Velqora\n\nModul panduan desain antarmuka dan pengalaman pengguna.",
+      notes: "**Diposting oleh:** Tim Kurikulum Velqora\n\nModul panduan desain antarmuka dan pengalaman pengguna.",
       chapters: [
         "User Research & Pembuatan Persona Pengguna",
         "Prinsip Tata Letak, Grid System & Visual Hierarchy",
@@ -469,7 +469,7 @@ export async function seedStarterCommunityModules() {
       level: "menengah",
       author: "Tim Kurikulum Velqora",
       notes: injectModuleDriveIntoNotes(
-        "👤 **Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek implementasi machine learning praktis end-to-end dengan notebook Jupyter, skrip training modular, dan dataset.",
+        "**Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek implementasi machine learning praktis end-to-end dengan notebook Jupyter, skrip training modular, dan dataset.",
         [
           { id: "f_src", name: "src", parentId: null, createdAt: new Date().toISOString() },
           { id: "f_data", name: "data", parentId: null, createdAt: new Date().toISOString() },
@@ -491,7 +491,7 @@ export async function seedStarterCommunityModules() {
               cells: [
                 {
                   cell_type: "markdown",
-                  source: ["# 🌦️ Sistem Prediksi Cuaca & Analisis Iklim\n\nNotebook ini mengimplementasikan pipeline klasifikasi cuaca (Hujan vs Cerah) menggunakan algoritma **Random Forest Classifier** dan evaluasi matriks akurasi."],
+                  source: ["# Sistem Prediksi Cuaca & Analisis Iklim\n\nNotebook ini mengimplementasikan pipeline klasifikasi cuaca (Hujan vs Cerah) menggunakan algoritma **Random Forest Classifier** dan evaluasi matriks akurasi."],
                 },
                 {
                   cell_type: "code",
@@ -646,16 +646,16 @@ if __name__ == "__main__":
             category: "markdown",
             description: "Dokumentasi proyek & instruksi instalasi",
             uploadedAt: new Date().toISOString(),
-            textContent: `# 🌦️ Sistem Prediksi Cuaca (Machine Learning)
+            textContent: `# Sistem Prediksi Cuaca (Machine Learning)
 
 Repositori proyek pembelajaran mesin terapan untuk analisis atmosfer dan prediksi curah hujan harian.
 
-## 🚀 Fitur Utama
+## Fitur Utama
 - **Jupyter Notebook Interaktif**: Eksplorasi data, visualisasi korelasi fitur, dan evaluasi matriks.
 - **Pipeline Skrip Modular**: Kode Python bersih yang siap dieksekusi melalui terminal.
 - **Akurasi Tinggi**: Menggunakan Random Forest Classifier dengan akurasi pengujian mencapai 94%.
 
-## 🛠️ Instalasi & Menjalankan
+## Instalasi & Menjalankan
 \`\`\`bash
 pip install -r requirements.txt
 python src/train_pipeline.py
@@ -688,7 +688,7 @@ Dibuat untuk keperluan materi pembelajaran & portofolio sains data.`
       level: "menengah",
       author: "Tim Kurikulum Velqora",
       notes: injectModuleDriveIntoNotes(
-        "👤 **Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek fullstack web application untuk manajemen transaksi, metrik penjualan, dan visualisasi analitik.",
+        "**Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek fullstack web application untuk manajemen transaksi, metrik penjualan, dan visualisasi analitik.",
         [
           { id: "f_comp", name: "components", parentId: null, createdAt: new Date().toISOString() },
           { id: "f_db", name: "database", parentId: null, createdAt: new Date().toISOString() },
@@ -799,17 +799,17 @@ CREATE TABLE IF NOT EXISTS order_items (
             category: "markdown",
             description: "Petunjuk instalasi dan arsitektur dashboard",
             uploadedAt: new Date().toISOString(),
-            textContent: `# 📊 Fullstack E-Commerce Analytics Dashboard
+            textContent: `# Fullstack E-Commerce Analytics Dashboard
 
 Aplikasi web dashboard realtime dibangun dengan Next.js 15 App Router dan Supabase Database.
 
-## 🌟 Tech Stack
+## Tech Stack
 - **Framework**: Next.js 15 & React 19
 - **Bahasa**: TypeScript
 - **Styling**: Tailwind CSS
 - **Database**: PostgreSQL / Supabase Relational
 
-## 🚀 Memulai
+## Memulai
 \`\`\`bash
 npm install
 npm run dev
@@ -839,7 +839,7 @@ npm run dev
       level: "pemula",
       author: "Tim Kurikulum Velqora",
       notes: injectModuleDriveIntoNotes(
-        "👤 **Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek aplikasi kasir desktop dengan basis data lokal SQLite dan antarmuka Python.",
+        "**Dibuat oleh:** Tim Kurikulum Velqora\n\nProyek aplikasi kasir desktop dengan basis data lokal SQLite dan antarmuka Python.",
         [],
         [
           {
@@ -893,7 +893,7 @@ if __name__ == "__main__":
             category: "markdown",
             description: "Panduan menjalankan sistem kasir",
             uploadedAt: new Date().toISOString(),
-            textContent: `# 🛒 Sistem Kasir POS Python
+            textContent: `# Sistem Kasir POS Python
 
 Aplikasi kasir mandiri ringan dengan basis data SQLite lokal untuk UMKM.`
           }

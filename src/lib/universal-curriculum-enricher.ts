@@ -927,45 +927,1082 @@ print("Kontrol kestabilan gerakan robotik berhasil disimulasikan.")`,
     };
   }
 
-  // Fallback: AI Fundamentals & Kurikulum Standar AI
-  return {
-    domainName: categoryName || "Kecerdasan Buatan",
-    frameworks: "Python 3.11+, NumPy, SciPy",
-    foundations: `Materi **${subtopicTitle}** merupakan pilar penting dalam penguasaan komprehensif kurikulum **${categoryName}**. Konsep ini dirancang untuk memecahkan tantangan representasi pengetahuan, optimasi algoritma, dan integrasi sistem cerdas modern dengan efisiensi komputasi terukur.`,
-    mathTitle: `Formulasi Matematis & Optimasi ${subtopicTitle}`,
-    mathFormula: `$$\\min_{\\theta} \\; \\mathcal{J}(\\theta) = \\frac{1}{N} \\sum_{i=1}^N \\mathcal{L}\\big(f(x_i; \\theta), y_i\\big) + \\lambda \\cdot \\Omega(\\theta)$$
+    // 12. Time Series Forecasting & Anomaly Detection
+  if (
+    norm.includes("time series") ||
+    norm.includes("forecasting") ||
+    norm.includes("deret waktu") ||
+    norm.includes("anomaly") ||
+    norm.includes("arima") ||
+    norm.includes("prophet")
+  ) {
+    return {
+      domainName: "Time Series Forecasting & Anomaly Detection",
+      frameworks: "Statsmodels, Prophet, SciPy Signal, Pandas TimeSeries",
+      foundations: `Analisis deret waktu (*Time Series Analysis*) memodelkan data observasi berurutan kronologis untuk menangkap dependensi temporal, osilasi musiman, tren sekuler, dan deteksi anomali. Pemodelan mensyaratkan pemeriksaan stasioneritas agar struktur statistik (rata-rata dan autokovarians) tidak bergeser terhadap waktu.`,
+      mathTitle: "Dekomposisi Deret Waktu & Uji Stasioneritas ADF",
+      mathFormula: `$$y_t = T_t + S_t + R_t \quad (\text{Aditif}), \quad \Delta y_t = \alpha + \beta t + \gamma y_{t-1} + \sum_{i=1}^p \delta_i \Delta y_{t-i} + \epsilon_t$$
 
-$$\\theta^{(t+1)} = \\theta^{(t)} - \\eta \\cdot \\nabla_\\theta \\mathcal{J}\\big(\\theta^{(t)}\\big)$$`,
-    mathExplanation: `Di mana $\\theta$ adalah himpunan parameter teroptimasi, $\\mathcal{L}$ adalah fungsi kerugian objektif, $\\Omega(\\theta)$ adalah fungsi pembatas kompleksitas (regularisasi), dan $\\eta$ merepresentasikan laju pembelajaran adaptif.`,
-    defaultCode: (sub, chap) => `# Implementasi Praktikum Python: ${sub}
+$$\text{ACF}(k) = \frac{\sum_{t=k+1}^T (y_t - \bar{y})(y_{t-k} - \bar{y})}{\sum_{t=1}^T (y_t - \bar{y})^2}$$`,
+      mathExplanation: `Di mana $T_t$ adalah komponen tren, $S_t$ musiman, $R_t$ residu stasioner, $\Delta y_t = y_t - y_{t-1}$ merupakan diferensiasi orde-1, dan koefisien $\gamma$ pada uji Augmented Dickey-Fuller (ADF) menguji keberadaan akar unit (*unit root*).`,
+      defaultCode: (sub, chap) => `# Praktikum Analisis Deret Waktu: ${sub}
+import numpy as np
+import pandas as pd
+from statsmodels.tsa.stattools import adfuller
+
+# Sintesis data deret waktu harian dengan tren dan musiman
+np.random.seed(42)
+dates = pd.date_range(start="2024-01-01", periods=120, freq="D")
+trend = np.linspace(100, 180, 120)
+seasonal = 15 * np.sin(2 * np.pi * np.arange(120) / 7)
+noise = np.random.normal(0, 3, 120)
+ts_series = pd.Series(trend + seasonal + noise, index=dates)
+
+# Uji Stasioneritas Augmented Dickey-Fuller (ADF)
+adf_result = adfuller(ts_series.dropna())
+print(f"ADF Statistic : {adf_result[0]:.4f}")
+print(f"p-value       : {adf_result[1]:.4f}")
+
+# Differencing orde-1 jika deret belum stasioner
+diff_series = ts_series.diff().dropna()
+diff_adf = adfuller(diff_series)
+print(f"p-value setelah Differencing: {diff_adf[1]:.4e}")
+print("Deret waktu berhasil ditransformasi menuju stasioneritas.")`,
+      parameterRows: [
+        { param: "order (p, d, q)", type: "Tuple", defaultValue: "(1, 1, 1)", desc: "Orde autoregresif (p), derajat diferensiasi (d), dan moving average (q)." },
+        { param: "seasonal_order", type: "Tuple", defaultValue: "(1, 1, 1, 7)", desc: "Parameter musiman (P, D, Q, s) di mana s melambangkan panjang periode musiman." },
+        { param: "alpha", type: "Float", defaultValue: "0.05", desc: "Tingkat signifikansi batas penolakan hipotesis nol unit root pada uji ADF." },
+      ],
+      bestPractices: [
+        "Hindari penggunaan Random Train-Test Split pada data sekuensial temporal guna mencegah kebocoran data; gunakan TimeSeriesSplit.",
+        "Lakukan diferensiasi atau transformasi logaritmik jika varians deret membesar seiring berjalannya waktu.",
+        "Gunakan metrik evaluasi MAE atau WAPE dibanding RMSE apabila terdapat lonjakan data pencilan ekstrem musiman.",
+      ],
+    };
+  }
+
+  // 13. Recommendation Systems
+  if (
+    norm.includes("recommendation") ||
+    norm.includes("rekomendasi") ||
+    norm.includes("collaborative filtering") ||
+    norm.includes("matrix factorization")
+  ) {
+    return {
+      domainName: "Recommendation Systems",
+      frameworks: "Surprise, Implicit, LightFM, PyTorch Two-Tower, Scikit-Learn",
+      foundations: `Sistem rekomendasi modern memadukan penyaringan kolaboratif (*Collaborative Filtering*), pemfaktoran matriks (*Matrix Factorization SVD/ALS*), dan arsitektur *Two-Tower Neural Retrieval*. Pendekatan ini memetakan preferensi laten pengguna dan atribut item ke dalam ruang vektor berdimensi rendah untuk estimasi afinitas.`,
+      mathTitle: "Pemfaktoran Matriks SVD & Kosinus Similaritas",
+      mathFormula: `$$\hat{r}_{ui} = \mu + b_u + b_i + p_u^T q_i, \quad \cos(\vec{u}, \vec{v}) = \frac{\vec{u} \cdot \vec{v}}{\|\vec{u}\|_2 \|\vec{v}\|_2}$$
+
+$$\min_{P, Q, b} \sum_{(u,i) \in R} (r_{ui} - \hat{r}_{ui})^2 + \lambda \big(\|p_u\|^2 + \|q_i\|^2 + b_u^2 + b_i^2\big)$$`,
+      mathExplanation: `Di mana $\mu$ adalah rata-rata global, $b_u$ dan $b_i$ bias pengguna dan item, $p_u$ vektor laten pengguna, $q_i$ vektor laten item, dan $\lambda$ adalah koefisien regularisasi norma $L_2$.`,
+      defaultCode: (sub, chap) => `# Praktikum Sistem Rekomendasi: ${sub}
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Matriks interaksi Pengguna-Item (User-Item Matrix)
+user_item = np.array([
+    [5, 3, 0, 1],
+    [4, 0, 0, 1],
+    [1, 1, 0, 5],
+    [0, 0, 5, 4],
+    [0, 1, 5, 4]
+])
+
+# Menghitung kesamaan antar item (Item-Item Collaborative Filtering)
+item_sim = cosine_similarity(user_item.T)
+print("Matriks Kosinus Kesamaan Antar Item:")
+print(np.round(item_sim, 3))
+
+# Prediksi skor ketertarikan Pengguna 0 terhadap Item 2 (yang belum ditonton)
+ratings_u0 = user_item[0]
+weights = item_sim[2]
+pred_score = np.dot(ratings_u0, weights) / (np.sum(np.abs(weights)) + 1e-6)
+print(f"Estimasi Skor Preferensi untuk Item 2: {pred_score:.2f}")`,
+      parameterRows: [
+        { param: "n_factors", type: "Integer", defaultValue: "50 atau 100", desc: "Dimensi dimensi ruang vektor laten representasi embedding pengguna dan item." },
+        { param: "regularization (λ)", type: "Float", defaultValue: "0.02", desc: "Penalti kompleksitas untuk membatasi nilai bobot faktor laten." },
+        { param: "top_k", type: "Integer", defaultValue: "10", desc: "Jumlah rekomendasi kandidat teratas yang disajikan kepada pengguna." },
+      ],
+      bestPractices: [
+        "Sediakan strategi Fallback berbasis popularitas untuk mengatasi tantangan pengguna atau item baru (*Cold-Start Problem*).",
+        "Terapkan Negative Sampling yang seimbang saat melatih model rekomendasi dengan umpan balik implisit.",
+        "Evaluasi sistem tidak hanya dengan metrik akurasi (Precision/NDCG), melainkan juga diversitas rekomendasi.",
+      ],
+    };
+  }
+
+  // 14. Speech & Audio AI
+  if (
+    norm.includes("speech") ||
+    norm.includes("audio") ||
+    norm.includes("suara") ||
+    norm.includes("stft") ||
+    norm.includes("spectrogram") ||
+    norm.includes("whisper")
+  ) {
+    return {
+      domainName: "Speech & Audio AI",
+      frameworks: "Librosa, Torchaudio, Whisper, SoundFile",
+      foundations: `Pemrosesan audio cerdas mentransformasikan gelombang tekanan suara digital satu dimensi menjadi representasi waktu-frekuensi 2D (*Time-Frequency Representation*) melalui Transformasi Fourier Waktu-Pendek (*STFT*) dan konversi ke skala persepsi Mel (*Mel-Spectrogram*). Arsitektur modern mengadopsi Transformer akustik untuk pengenalan wicara (*ASR*).`,
+      mathTitle: "Transformasi STFT & Skala Frekuensi Mel",
+      mathFormula: `$$\text{STFT}\{x\}(m, \omega) = \sum_{n=-\infty}^{\infty} x[n] \cdot w[n-m] \cdot e^{-j\omega n}$$
+
+$$m = 2595 \cdot \log_{10}\left(1 + \frac{f}{700}\right), \quad S(m, \omega) = |\text{STFT}(m, \omega)|^2$$`,
+      mathExplanation: `Di mana $x[n]$ adalah sinyal wicara digital, $w[n]$ adalah fungsi pembobotan jendela (*Hann Window*), dan formula Mel memetakan frekuensi Hertz fisik $f$ ke skala persepsi non-linear pendengaran manusia.`,
+      defaultCode: (sub, chap) => `# Praktikum Ekstraksi Fitur Akustik Audio: ${sub}
 import numpy as np
 
-print("=" * 60)
-print(f"Modul   : ${categoryName}")
-print(f"Topik   : ${sub}")
-print("=" * 60)
+# Simulasi gelombang sinyal audio digital (1 detik, sample rate 16 kHz)
+sr = 16000
+t = np.linspace(0, 1.0, sr, endpoint=False)
+signal = 0.6 * np.sin(2 * np.pi * 440 * t) + 0.3 * np.sin(2 * np.pi * 880 * t)
+signal += np.random.normal(0, 0.05, sr)
 
-# Simulasi evaluasi algoritma dan pengujian fungsi objektif
-np.random.seed(42)
-data_samples = np.random.randn(50, 4)
-weights = np.random.uniform(0.1, 1.0, 4)
+# Ekstraksi frame jendela (Framing & Windowing)
+frame_size = 512
+hop_size = 256
+window = np.hanning(frame_size)
+n_frames = 1 + (len(signal) - frame_size) // hop_size
 
-scores = np.dot(data_samples, weights)
-print(f"Jumlah Sampel Uji : {len(data_samples)}")
-print(f"Rata-rata Skor    : {np.mean(scores):.4f}")
-print(f"Standar Deviasi   : {np.std(scores):.4f}")
-print("Validasi algoritma selesai dieksekusi secara sukses.")`,
+frames = np.lib.stride_tricks.as_strided(
+    signal, shape=(n_frames, frame_size),
+    strides=(signal.strides[0] * hop_size, signal.strides[0])
+)
+windowed_frames = frames * window
+mag_spec = np.abs(np.fft.rfft(windowed_frames, n=frame_size))
+
+print(f"Sample Rate         : {sr} Hz")
+print(f"Dimensi Spektrogram : {mag_spec.shape} (Frames x Frequency Bins)")
+print("Representasi fitur frekuensi berhasil diekstraksi.")`,
+      parameterRows: [
+        { param: "sample_rate (sr)", type: "Integer", defaultValue: "16000", desc: "Frekuensi sampling standar untuk model ASR wicara modern." },
+        { param: "n_fft", type: "Integer", defaultValue: "512 atau 1024", desc: "Panjang jendela transformasi Fourier cepat (FFT)." },
+        { param: "n_mels", type: "Integer", defaultValue: "80 atau 128", desc: "Jumlah filter band frekuensi pada bank filter skala Mel." },
+      ],
+      bestPractices: [
+        "Selalu lakukan normalisasi amplitudo gelombang dan standarisasi sample rate (16 kHz) sebelum tahap inferensi model.",
+        "Terapkan augmentasi data akustik (seperti SpecAugment) untuk meningkatkan ketahanan terhadap noise lingkungan.",
+        "Gunakan Voice Activity Detection (VAD) untuk memotong bagian jeda hening sebelum sinyal diproses oleh Transformer.",
+      ],
+    };
+  }
+
+  // 15. AI Agent & Autonomous Systems
+  if (
+    norm.includes("agent") ||
+    norm.includes("agen") ||
+    norm.includes("autonomous") ||
+    norm.includes("langgraph") ||
+    norm.includes("crewai")
+  ) {
+    return {
+      domainName: "AI Agent & Autonomous Systems",
+      frameworks: "LangGraph, CrewAI, AutoGen, OpenAI Tool Calling",
+      foundations: `Arsitektur Agen AI otonom menggabungkan kapabilitas penalaran model bahasa besar dengan siklus ReAct (*Reasoning + Action*), pemanggilan fungsi eksternal (*Tool/Function Calling*), serta memori dinamis. Agen mengevaluasi observasi lingkungan untuk memutuskan langkah berikutnya secara berulang hingga kondisi terminasi tercapai.`,
+      mathTitle: "Siklus Keputusan Markov Agen & Formulasi ReAct",
+      mathFormula: `$$a_t = \arg\max_a \; P(a \mid s_t, \mathcal{M}_{t-1}, \mathcal{T}), \quad s_{t+1} = \mathcal{E}(s_t, a_t)$$
+
+$$\text{ReAct Loop}: \quad \text{Observation} \longrightarrow \text{Thought} \longrightarrow \text{Action} \longrightarrow \text{Feedback}$$`,
+      mathExplanation: `Di mana $s_t$ merepresentasikan keadaan lingkungan saat ini, $\mathcal{M}_{t-1}$ adalah riwayat konteks interaksi sebelumnya, $\mathcal{T}$ merupakan himpunan perkakas API yang dapat diakses, dan $\mathcal{E}$ adalah lingkungan eksekusi eksternal.`,
+      defaultCode: (sub, chap) => `# Praktikum Pola Eksekusi Agen ReAct: ${sub}
+class SimpleReActAgent:
+    def __init__(self):
+        self.tools = {
+            "calculator": lambda expr: str(eval(expr, {"__builtins__": None}, {})),
+            "search_db": lambda q: f"Hasil verifikasi untuk '{q}': Terkonfirmasi aktif."
+        }
+
+    def run(self, query: str):
+        print(f"Goal: {query}")
+        thought = "Memerlukan perhitungan matematis untuk memverifikasi nilai metrik."
+        print(f"Thought: {thought}")
+        
+        tool_name = "calculator"
+        tool_input = "250 * 1.15"
+        action_result = self.tools[tool_name](tool_input)
+        print(f"Action: Eksekusi perkakas '{tool_name}' dengan argumen '{tool_input}'")
+        print(f"Observation: Hasil komputasi = {action_result}")
+        
+        return f"Nilai metrik terproyeksi adalah {action_result}."
+
+agent = SimpleReActAgent()
+hasil = agent.run("Berapakah proyeksi target 250 ditambah 15%?")
+print("Respon Akhir Agen:", hasil)`,
+      parameterRows: [
+        { param: "temperature", type: "Float", defaultValue: "0.0 atau 0.2", desc: "Suhu sampling deterministik rendah untuk menjaga keandalan pemanggilan tool JSON." },
+        { param: "max_iterations", type: "Integer", defaultValue: "10", desc: "Batas atas perulangan loop aksi agen guna mencegah siklus rekursi tak terbatas." },
+        { param: "timeout", type: "Float (detik)", defaultValue: "30.0", desc: "Batas waktu tunggu respons eksekusi perkakas eksternal." },
+      ],
+      bestPractices: [
+        "Definisikan skema JSON parameter tool secara ketat menggunakan Pydantic untuk mencegah kegagalan validasi argumen model.",
+        "Pasang mekanisme Human-in-the-Loop (HITL) untuk tindakan yang memiliki dampak berisiko tinggi.",
+        "Simpan riwayat eksekusi agen dalam format log terstruktur untuk mempermudah audit jejak penalaran.",
+      ],
+    };
+  }
+
+  // 16. AutoML & Neural Architecture Search
+  if (
+    norm.includes("automl") ||
+    norm.includes("neural architecture search") ||
+    norm.includes("nas") ||
+    norm.includes("optuna")
+  ) {
+    return {
+      domainName: "AutoML & Neural Architecture Search",
+      frameworks: "Optuna, FLAML, Ray Tune, Auto-sklearn",
+      foundations: `Automated Machine Learning (AutoML) mengotomasi alur rekayasa fitur, pemilihan algoritma model, dan penyelarasan hiperparameter (*HPO*). Optimasi mengadopsi teknik Bayesian Optimization untuk menyeimbangkan eksplorasi ruang parameter dan eksploitasi konfigurasi berkinerja tinggi.`,
+      mathTitle: "Optimasi Bayesian & Kriteria Expected Improvement",
+      mathFormula: `$$\text{EI}(x) = \mathbb{E}\big[\max\big(0, f(x) - f(x^*)\big)\big] = (\mu(x) - f(x^*)) \Phi(Z) + \sigma(x) \phi(Z)$$
+
+$$Z = \frac{\mu(x) - f(x^*)}{\sigma(x)}$$`,
+      mathExplanation: `Di mana $\mu(x)$ dan $\sigma(x)$ adalah rata-rata prediksi dan deviasi standar fungsi pengganti (*Surrogate Model*), $f(x^*)$ adalah nilai metrik terbaik yang telah ditemukan, sedangkan $\Phi$ dan $\phi$ melambangkan fungsi distribusi kumulatif dan densitas normal standar.`,
+      defaultCode: (sub, chap) => `# Praktikum Optimasi Hiperparameter Bayesian: ${sub}
+import numpy as np
+
+def objective_metric(learning_rate, max_depth):
+    return 0.85 - (np.log10(learning_rate) + 2)**2 * 0.05 - (max_depth - 6)**2 * 0.008
+
+trials = [
+    {"lr": 0.01, "depth": 4},
+    {"lr": 0.05, "depth": 6},
+    {"lr": 0.10, "depth": 8},
+    {"lr": 0.001, "depth": 5}
+]
+
+best_score = -1
+best_config = None
+
+for idx, t in enumerate(trials):
+    score = objective_metric(t["lr"], t["depth"])
+    print(f"Trial {idx+1}: lr={t['lr']}, depth={t['depth']} -> Skor AUC = {score:.4f}")
+    if score > best_score:
+        best_score = score
+        best_config = t
+
+print(f"Konfigurasi Parameter Terbaik: {best_config} dengan Skor AUC = {best_score:.4f}")`,
+      parameterRows: [
+        { param: "n_trials", type: "Integer", defaultValue: "50 s/d 100", desc: "Jumlah putaran pencarian kombinasi parameter terarah." },
+        { param: "pruner", type: "Algoritma", defaultValue: "MedianPruner", desc: "Penghentian dini (*early stopping*) otomatis bagi uji coba yang menunjukkan performa buruk." },
+        { param: "direction", type: "String", defaultValue: "'maximize'", desc: "Arah tujuan optimasi terhadap metrik objektif (misal memaksimalkan AUC)." },
+      ],
+      bestPractices: [
+        "Gunakan skala logaritmik untuk hiperparameter yang mencakup rentang magnitudo luas (seperti learning rate).",
+        "Tetapkan anggaran waktu komputasi (*time budget*) yang jelas agar pencarian parameter tidak melebihi alokasi sumber daya komputasi.",
+        "Evaluasi model kandidat terbaik menggunakan cross-validation terpisah untuk menghindari optimasi yang bias terhadap satu partisi validasi.",
+      ],
+    };
+  }
+
+  // 17. Computational Intelligence & Soft Computing
+  if (
+    norm.includes("computational intelligence") ||
+    norm.includes("fuzzy") ||
+    norm.includes("genetic") ||
+    norm.includes("genetika") ||
+    norm.includes("swarm") ||
+    norm.includes("soft computing")
+  ) {
+    return {
+      domainName: "Computational Intelligence (Soft Computing)",
+      frameworks: "Scikit-Fuzzy, DEAP (Genetic Algorithm), PySwarms",
+      foundations: `Computational Intelligence berfokus pada metode komputasi yang meniru proses adaptif biologis dan toleran terhadap ketidakpastian: Logika Fuzzy (pemodelan derajat kebenaran kontinu), Komputasi Evolusioner (Algoritma Genetika), serta Inteligensi Kawanan (*Swarm Intelligence* seperti PSO).`,
+      mathTitle: "Fungsi Keanggotaan Fuzzy & Pembaruan Kecepatan PSO",
+      mathFormula: `$$\mu_A(x) = \max\left(0, \; \min\left(\frac{x - a}{b - a}, \; \frac{c - x}{c - b}\right)\right)$$
+
+$$v_i^{(t+1)} = w \cdot v_i^{(t)} + c_1 r_1 \cdot (p_i - x_i^{(t)}) + c_2 r_2 \cdot (g - x_i^{(t)})$$`,
+      mathExplanation: `Di mana $\mu_A(x)$ adalah fungsi keanggotaan fuzzy segitiga dengan batas interval $[a, b, c]$, sedangkan pada persamaan PSO, $w$ merupakan inersia bobot kecepatan, $p_i$ posisi terbaik individu, dan $g$ posisi terbaik kelompok kawanan.`,
+      defaultCode: (sub, chap) => `# Praktikum Algoritma Genetika Sederhana: ${sub}
+import numpy as np
+
+def fitness_function(chromosome):
+    x = np.sum(chromosome * (2 ** np.arange(len(chromosome))[::-1]))
+    return x ** 2
+
+population = np.random.randint(0, 2, size=(8, 6))
+scores = np.array([fitness_function(ind) for ind in population])
+
+best_idx = np.argmax(scores)
+print("Generasi 0:")
+print(f"  Individu Terbaik : {population[best_idx]}")
+print(f"  Nilai Fitness    : {scores[best_idx]}")
+
+prob = scores / np.sum(scores)
+selected_parent = population[np.random.choice(len(population), p=prob)]
+print(f"  Induk Terpilih   : {selected_parent}")`,
+      parameterRows: [
+        { param: "population_size", type: "Integer", defaultValue: "50 s/d 100", desc: "Jumlah individu solusi kandidat dalam satu generasi evolusi." },
+        { param: "crossover_rate", type: "Float [0, 1]", defaultValue: "0.80", desc: "Probabilitas terjadinya persilangan genetik antar pasangan induk." },
+        { param: "mutation_rate", type: "Float [0, 1]", defaultValue: "0.01 s/d 0.05", desc: "Probabilitas terjadinya mutasi genetik acak untuk menjaga diversitas populasi." },
+      ],
+      bestPractices: [
+        "Jaga keseimbangan antara tekanan seleksi (*selection pressure*) dan diversitas genetik agar algoritma tidak konvergen dini di optimum lokal.",
+        "Lakukan defuzzifikasi dengan metode Centroid untuk menghasilkan nilai kontrol numerik yang stabil dan halus.",
+        "Terapkan teknik elitisme (*Elitism*) agar individu terbaik di setiap generasi selalu dipreservasi ke generasi berikutnya.",
+      ],
+    };
+  }
+
+  // 18. Edge AI & TinyML
+  if (
+    norm.includes("edge ai") ||
+    norm.includes("tinyml") ||
+    norm.includes("embedded") ||
+    norm.includes("quantization") ||
+    norm.includes("kuantisasi") ||
+    norm.includes("onnx")
+  ) {
+    return {
+      domainName: "Edge AI & TinyML",
+      frameworks: "TensorFlow Lite Micro, ONNX Runtime Mobile, TensorRT, OpenVINO",
+      foundations: `Edge AI mengoptimalkan penerapan model cerdas pada perangkat berdaya komputasi dan memori terbatas (*Microcontroller*, perangkat IoT, dan smartphone) tanpa ketergantungan konektivitas cloud. Teknik inti mencakup Kuantisasi Pasca-Pelatihan (*PTQ FP32 to INT8*) dan Pemangkasan Bobot (*Pruning*).`,
+      mathTitle: "Formulasi Kuantisasi Afinitas Linier INT8",
+      mathFormula: `$$q = \text{clamp}\left(\text{round}\left(\frac{r}{S}\right) + Z, \; -128, \; 127\right)$$
+
+$$S = \frac{r_{\max} - r_{\min}}{q_{\max} - q_{\min}}, \quad Z = \text{round}\left(\frac{-r_{\min}}{S}\right) + q_{\min}$$`,
+      mathExplanation: `Di mana $r$ adalah bobot nilai kontinu riil FP32, $q$ adalah representasi bilangan bulat kuantisasi 8-bit, $S$ adalah faktor skala (*Scale factor*), dan $Z$ merupakan titik nol (*Zero-point*).`,
+      defaultCode: (sub, chap) => `# Praktikum Kuantisasi Bobot FP32 ke INT8: ${sub}
+import numpy as np
+
+weights_fp32 = np.array([-0.85, -0.42, 0.0, 0.38, 0.95], dtype=np.float32)
+r_min, r_max = weights_fp32.min(), weights_fp32.max()
+q_min, q_max = -128, 127
+
+scale = (r_max - r_min) / (q_max - q_min)
+zero_point = int(np.round(-r_min / scale) + q_min)
+
+weights_int8 = np.clip(np.round(weights_fp32 / scale) + zero_point, q_min, q_max).astype(np.int8)
+dequantized = (weights_int8.astype(np.float32) - zero_point) * scale
+
+print(f"Bobot FP32 Asli      : {weights_fp32}")
+print(f"Bobot Kuantisasi INT8: {weights_int8} (Penghematan Memori: 75%)")
+print(f"Bobot Rekonstruksi   : {np.round(dequantized, 2)}")`,
+      parameterRows: [
+        { param: "scale (S)", type: "Float", defaultValue: "Dihitung otomatis", desc: "Faktor pengali yang memetakan rentang dinamis nilai riil ke representasi bilangan bulat." },
+        { param: "zero_point (Z)", type: "Integer", defaultValue: "0 (Symmetric)", desc: "Offset titik nol agar nilai 0.0 riil dipetakan secara presisi tanpa pembulatan." },
+        { param: "target_runtime", type: "String", defaultValue: "'tflite' / 'onnx'", desc: "Mesin eksekusi inferensi ringan yang ditargetkan pada sistem operasi edge." },
+      ],
+      bestPractices: [
+        "Gunakan Kuantisasi Simetris (*Symmetric Quantization*) untuk bobot lapisan konvolusi guna menyederhanakan instruksi SIMD.",
+        "Lakukan kalibrasi representasi menggunakan subset data validasi representatif sebelum melakukan kuantisasi penuh.",
+        "Pantau degradasi metrik akurasi; jika penurunan performa >1%, pertimbangkan Quantization-Aware Training (QAT).",
+      ],
+    };
+  }
+
+  // 19. Expert System & Knowledge Representation
+  if (
+    norm.includes("expert system") ||
+    norm.includes("sistem pakar") ||
+    norm.includes("knowledge representation") ||
+    norm.includes("representasi pengetahuan") ||
+    norm.includes("ontology") ||
+    norm.includes("ontologi")
+  ) {
+    return {
+      domainName: "Expert Systems & Knowledge Engineering",
+      frameworks: "Pyke, Experta, RDFLib, Owlready2, SWI-Prolog",
+      foundations: `Sistem Pakar dan Rekayasa Pengetahuan merepresentasikan kepakaran domain terstruktur dalam bentuk basis fakta (*Fact Base*), aturan inferensi (*Rule Base IF-THEN*), dan jejaring semantik ontologi (RDF/OWL). Mesin inferensi mengeksekusi penalaran deduktif formal melalui algoritma *Forward Chaining* atau *Backward Chaining*.`,
+      mathTitle: "Kaidah Inferensi Formal & Certainty Factor",
+      mathFormula: `$$\text{Modus Ponens}: \quad \frac{P \implies Q, \quad P}{Q}$$
+
+$$\text{CF}(h, e) = \text{MB}(h, e) - \text{MD}(h, e), \quad \text{CF}_{\text{combine}}(a, b) = a + b - (a \cdot b)$$`,
+      mathExplanation: `Di mana $\text{MB}$ melambangkan tingkat ukuran kepercayaan (*Measure of Belief*), $\text{MD}$ merupakan tingkat ketidakyakinan (*Measure of Disbelief*), dan $\text{CF}_{\text{combine}}$ menggabungkan dua aturan independen yang mengarah ke hipotesis yang sama.`,
+      defaultCode: (sub, chap) => `# Praktikum Mesin Inferensi Rule-Based (Forward Chaining): ${sub}
+class RuleEngine:
+    def __init__(self):
+        self.facts = set()
+        self.rules = [
+            {"conditions": {"gejala_demam", "ruam_kulit"}, "conclusion": "indikasi_campak", "cf": 0.85},
+            {"conditions": {"indikasi_campak", "mata_merah"}, "conclusion": "diagnosis_campak_akut", "cf": 0.95}
+        ]
+
+    def add_facts(self, new_facts):
+        self.facts.update(new_facts)
+
+    def infer(self):
+        inferred = True
+        conclusions = []
+        while inferred:
+            inferred = False
+            for rule in self.rules:
+                if rule["conditions"].issubset(self.facts) and rule["conclusion"] not in self.facts:
+                    self.facts.add(rule["conclusion"])
+                    conclusions.append((rule["conclusion"], rule["cf"]))
+                    inferred = True
+        return conclusions
+
+engine = RuleEngine()
+engine.add_facts(["gejala_demam", "ruam_kulit", "mata_merah"])
+diagnosa = engine.infer()
+
+print("Fakta Aktif Teridentifikasi:")
+for c, cf in diagnosa:
+    print(f"  -> Kesimpulan: {c} (Certainty Factor = {cf * 100:.0f}%)")`,
+      parameterRows: [
+        { param: "chaining_mode", type: "String", defaultValue: "'forward' / 'backward'", desc: "Metode penalaran: Forward (berangkat dari fakta) atau Backward (berangkat dari hipotesis tujuan)." },
+        { param: "certainty_threshold", type: "Float", defaultValue: "0.60", desc: "Ambang batas minimal nilai kepastian untuk menerima konklusi sebagai rekomendasi sah." },
+        { param: "conflict_resolution", type: "Strategi", defaultValue: "'specificity'", desc: "Prioritas pemilihan aturan jika beberapa aturan aktif secara simultan." },
+      ],
+      bestPractices: [
+        "Pisahkan secara tegas antara basis pengetahuan domain (*Knowledge Base*) dan logika mesin penalaran (*Inference Engine*).",
+        "Verifikasi konsistensi basis aturan secara berkala guna mencegah aturan yang kontradiktif atau redundan.",
+        "Sediakan mekanisme pelacakan transparansi (*Explanation Facility*) agar sistem mampu menjelaskan alasan kesimpulan.",
+      ],
+    };
+  }
+
+  // 20. Multimodal AI
+  if (
+    norm.includes("multimodal") ||
+    norm.includes("cross-modal") ||
+    norm.includes("clip") ||
+    norm.includes("vqa")
+  ) {
+    return {
+      domainName: "Multimodal AI (Vision-Language & Cross-Modal)",
+      frameworks: "CLIP (OpenAI), OpenCLIP, Transformers, LLaVA",
+      foundations: `Multimodal AI menyelaraskan modalitas data heterogen (teks, citra visual, dan audio) ke dalam satu ruang representasi semantik bersatu (*Joint Embedding Space*). Melalui metode *Contrastive Language-Image Pretraining (CLIP)*, sistem mempelajari kesesuaian antara deskripsi tekstual dan konten visual untuk kemampuan *zero-shot transfer* yang tinggi.`,
+      mathTitle: "Formulasi Contrastive Loss (InfoNCE Multi-Modal)",
+      mathFormula: `$$\mathcal{L}_{\text{CLIP}} = \frac{1}{2} \left( \mathcal{L}_{I \to T} + \mathcal{L}_{T \to I} \right)$$
+
+$$\mathcal{L}_{I \to T} = -\frac{1}{B} \sum_{i=1}^B \log \frac{\exp(\cos(I_i, T_i) / \tau)}{\sum_{j=1}^B \exp(\cos(I_i, T_j) / \tau)}$$`,
+      mathExplanation: `Di mana $I_i$ adalah vektor representasi citra ternormalisasi, $T_i$ adalah vektor representasi teks pasangan, $B$ adalah ukuran batch, dan $\tau$ merupakan hiperparameter temperatur logaritma pengendali ketajaman distribusi probabilitas.`,
+      defaultCode: (sub, chap) => `# Praktikum Representasi Multimodal Kontrastif (Zero-Shot): ${sub}
+import numpy as np
+
+d_embed = 128
+n_classes = 3
+
+img_feature = np.random.randn(d_embed)
+img_feature /= np.linalg.norm(img_feature)
+
+candidate_texts = ["foto seekor kucing", "foto sebuah mobil sport", "foto pohon rindang"]
+text_features = np.random.randn(n_classes, d_embed)
+text_features /= np.linalg.norm(text_features, axis=1, keepdims=True)
+
+logits = np.dot(text_features, img_feature)
+temperature = 0.07
+probs = np.exp(logits / temperature) / np.sum(np.exp(logits / temperature))
+
+print("Prediksi Klasifikasi Multimodal Zero-Shot:")
+for txt, prob in zip(candidate_texts, probs):
+    print(f"  Teks: '{txt:25s}' -> Probabilitas = {prob * 100:.2f}%")`,
+      parameterRows: [
+        { param: "temperature (τ)", type: "Float", defaultValue: "0.07", desc: "Parameter skala temperatur yang menstabilkan gradien contrastive loss." },
+        { param: "embedding_dim", type: "Integer", defaultValue: "512 atau 768", desc: "Dimensi ruang embedding bersama untuk proyeksi fitur visual dan tekstual." },
+        { param: "context_length", type: "Integer", defaultValue: "77", desc: "Batas panjang tokenisasi teks masukan pada text encoder." },
+      ],
+      bestPractices: [
+        "Lakukan normalisasi norma L2 pada semua vektor embedding sebelum menghitung produk titik (*Dot Product*).",
+        "Gunakan prompt engineering yang terstruktur untuk memaksimalkan akurasi klasifikasi zero-shot.",
+        "Terapkan evaluasi silang pada dataset benchmark berstandar industri (seperti ImageNet Zero-Shot atau VQAv2).",
+      ],
+    };
+  }
+
+  // 21. Bahasa Pemrograman (Programming Languages)
+  if (
+    norm.includes("bahasa pemrograman") ||
+    norm.includes("pemrograman") ||
+    norm.includes("python") ||
+    norm.includes("javascript") ||
+    norm.includes("typescript") ||
+    norm.includes("golang") ||
+    norm.includes("rust") ||
+    norm.includes("c++") ||
+    norm.includes("java") ||
+    norm.includes("kotlin") ||
+    norm.includes("dart") ||
+    norm.includes("php") ||
+    norm.includes("swift")
+  ) {
+    return {
+      domainName: "Bahasa Pemrograman & Rekayasa Perangkat Lunak",
+      frameworks: "Python, TypeScript, Go, Rust, C++, Java",
+      foundations: `Penguasaan bahasa pemrograman modern menekankan pada pemahaman paradigma komputasi (Berorientasi Objek, Fungsional, Prosedural), sistem pengetikan (*Static vs Dynamic Type Safety*), manajemen memori (Heap/Stack dan Garbage Collection), serta pola arsitektur perangkat lunak yang kokoh (*Clean Architecture & SOLID Principles*).`,
+      mathTitle: "Analisis Kompleksitas Algoritmik & Teori Tipe",
+      mathFormula: `$$T(n) = \mathcal{O}(f(n)) \iff \exists c > 0, n_0 > 0 \; \text{s.t.} \; 0 \le T(n) \le c \cdot f(n) \; \forall n \ge n_0$$
+
+$$\Gamma \vdash e : \tau \quad (\text{Sistem Pembuktian Tipe Statis})$$`,
+      mathExplanation: `Notasi Big-O formal mengukur batas asimptotik atas kebutuhan waktu komputasi atau konsumsi memori saat ukuran input $n$ mendekati tak hingga.`,
+      defaultCode: (sub, chap) => `# Praktikum Idiom Pemrograman Profesional: ${sub}
+from typing import List, Dict
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class TransactionRecord:
+    id: str
+    amount: float
+    status: str
+
+class TransactionProcessor:
+    def __init__(self, fee_rate: float = 0.02):
+        self._fee_rate = fee_rate
+
+    def process_valid_records(self, records: List[TransactionRecord]) -> Dict[str, float]:
+        completed = [r for r in records if r.status == "success"]
+        total_vol = sum(r.amount for r in completed)
+        total_fee = total_vol * self._fee_rate
+        
+        return {
+            "total_completed": len(completed),
+            "net_volume": total_vol - total_fee,
+            "system_fee": total_fee
+        }
+
+records = [
+    TransactionRecord("TX-101", 150000.0, "success"),
+    TransactionRecord("TX-102", 75000.0, "failed"),
+    TransactionRecord("TX-103", 225000.0, "success")
+]
+
+processor = TransactionProcessor()
+summary = processor.process_valid_records(records)
+print("Hasil Pemrosesan Transaksi:")
+for k, v in summary.items():
+    print(f"  {k}: {v:,.2f}")`,
+      parameterRows: [
+        { param: "type_checking", type: "Static Analysis", defaultValue: "mypy / tsc", desc: "Pemeriksaan tipe statis pada waktu build untuk mencegah bug runtime tipe data." },
+        { param: "immutability", type: "Design Pattern", defaultValue: "frozen=True / readonly", desc: "Mencegah efek samping mutasi keadaan tak terduga (*unexpected side effects*)." },
+        { param: "concurrency_model", type: "Arsitektur", defaultValue: "Async/Await / ThreadPool", desc: "Pengelolaan tugas I/O intensif tanpa memblokir thread eksekusi utama." },
+      ],
+      bestPractices: [
+        "Gunakan Type Annotations secara konsisten pada tanda tangan fungsi publik dan antarmuka API internal.",
+        "Terapkan prinsip Fail-Fast dengan validasi input yang ketat sebelum logika bisnis inti dieksekusi.",
+        "Tulis unit test otomatis yang mencakup skenario batas (*edge cases*) dan penanganan kegagalan (*exception handling*).",
+      ],
+    };
+  }
+
+  // 22. Algoritma & Struktur Data
+  if (
+    norm.includes("algoritma") ||
+    norm.includes("struktur data") ||
+    norm.includes("array") ||
+    norm.includes("tree") ||
+    norm.includes("graph") ||
+    norm.includes("linked list") ||
+    norm.includes("stack") ||
+    norm.includes("queue") ||
+    norm.includes("heap") ||
+    norm.includes("hash table") ||
+    norm.includes("sorting") ||
+    norm.includes("searching") ||
+    norm.includes("dynamic programming") ||
+    norm.includes("recursion")
+  ) {
+    return {
+      domainName: "Algoritma & Struktur Data",
+      frameworks: "Python Standard Library (collections, heapq, bisect), C++ STL",
+      foundations: `Algoritma dan Struktur Data merupakan fondasi efisiensi rekayasa perangkat lunak. Pemilihan struktur data yang tepat (Array, Hash Map, Binary Search Tree, Graph, Heap) menentukan kompleksitas akses, pencarian, dan mutasi. Pola perancangan algoritma (Divide & Conquer, Dynamic Programming, Greedy, Backtracking) mengoptimasi pemanfaatan siklus CPU dan konsumsi memori.`,
+      mathTitle: "Relasi Rekurensi & Analisis Kompleksitas Master Theorem",
+      mathFormula: `$$T(n) = a \cdot T\left(\frac{n}{b}\right) + f(n)$$
+
+$$\text{Kasus 1}: \; f(n) = \mathcal{O}\big(n^{\log_b a - \epsilon}\big) \implies T(n) = \Theta\big(n^{\log_b a}\big)$$`,
+      mathExplanation: `Teorema Master menganalisis kompleksitas waktu dari algoritma rekursif yang membagi masalah ukuran $n$ menjadi $a$ buah sub-masalah berukuran $n/b$, dengan biaya pemisahan dan penggabungan sebesar $f(n)$.`,
+      defaultCode: (sub, chap) => `# Praktikum Algoritma Efisien (Binary Search): ${sub}
+from typing import List, Optional
+
+def binary_search(arr: List[int], target: int) -> Optional[int]:
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        mid = left + (right - left) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+            
+    return None
+
+data_terurut = [12, 24, 35, 47, 58, 69, 81, 93, 105, 120]
+target_val = 69
+posisi = binary_search(data_terurut, target_val)
+
+print(f"Data: {data_terurut}")
+print(f"Pencarian nilai {target_val} -> Ditemukan pada indeks: {posisi} (Kompleksitas: O(log n))")`,
+      parameterRows: [
+        { param: "time_complexity", type: "Asimptotik", defaultValue: "O(log n) / O(n log n)", desc: "Skalabilitas waktu eksekusi terhadap pertambahan ukuran input data." },
+        { param: "space_complexity", type: "Memori", defaultValue: "O(1) / O(n)", desc: "Tambahan alokasi memori fisik di luar struktur data input asli (*auxiliary space*)." },
+        { param: "stability", type: "Boolean", defaultValue: "True / False", desc: "Menjamin bahwa elemen dengan kunci bernilai sama mempertahankan urutan relatif aslinya." },
+      ],
+      bestPractices: [
+        "Selalu periksa kondisi batas (*Base Case* dan batas indeks 0 serta n-1) untuk mencegah error Off-by-One dan rekursi tak terbatas.",
+        "Gunakan Hash Map / Dictionary untuk mendapatkan waktu akses rata-rata O(1) saat sering melakukan operasi pencarian kunci unik.",
+        "Terapkan teknik Two Pointers atau Sliding Window untuk mereduksi kompleksitas waktu dari O(n^2) menjadi O(n) pada masalah array linier.",
+      ],
+    };
+  }
+
+  
+  // 23. Machine Learning (Supervised & Unsupervised Learning, Scikit-Learn)
+  if (
+    norm.includes("machine learning") ||
+    norm.includes("pembelajaran mesin") ||
+    norm.includes("scikit-learn") ||
+    norm.includes("supervised") ||
+    norm.includes("unsupervised") ||
+    norm.includes("random forest") ||
+    norm.includes("xgboost") ||
+    norm.includes("gradient boosting") ||
+    norm.includes("decision tree") ||
+    norm.includes("svm") ||
+    norm.includes("klasifikasi") ||
+    norm.includes("regresi") ||
+    norm.includes("clustering") ||
+    norm.includes("kmeans")
+  ) {
+    return {
+      domainName: "Machine Learning (Supervised & Unsupervised)",
+      frameworks: "Scikit-Learn (sklearn), XGBoost, LightGBM, NumPy, SciPy",
+      foundations: `Dalam domain **Machine Learning**, algoritma dirancang untuk mengekstraksi pola induktif dari data masukan berdimensi tinggi tanpa memerlukan penyusunan aturan logika imperatif manual. Pipeline pemodelan mencakup eksplorasi data terstruktur, penskalaan fitur (*StandardScaler* atau *MinMaxScaler*), rekayasa fitur (*Feature Engineering*), pencegahan kebocoran data (*Data Leakage*), serta penyeimbangan kompromi antara bias dan varians (*Bias-Variance Tradeoff*).`,
+      mathTitle: "Formulasi Regularisasi ElasticNet, Entropi Informasi, & Evaluasi F1",
+      mathFormula: `$$\\mathcal{L}_{\\text{ElasticNet}}(\\mathbf{w}) = \\frac{1}{2n} \\|\\mathbf{y} - \\mathbf{X}\\mathbf{w}\\|_2^2 + \\lambda \\left( \\alpha \\|\\mathbf{w}\\|_1 + \\frac{1-\\alpha}{2} \\|\\mathbf{w}\\|_2^2 \\right)$$
+
+$$H(S) = - \\sum_{c=1}^C p_c \\log_2 p_c, \\quad F_1 = 2 \\cdot \\frac{\\text{Precision} \\cdot \\text{Recall}}{\\text{Precision} + \\text{Recall}}$$`,
+      mathExplanation: `Di mana penalti regularisasi ElasticNet mengombinasikan sifat L1 (Lasso untuk seleksi kekosongan koefisien) dan L2 (Ridge untuk reduksi varians multikolinieritas), $H(S)$ mengukur ketidakmurnian sampel simpul pohon keputusan (*Decision Tree*), dan $F_1$ merupakan rata-rata harmonik evaluasi klasifikasi pada dataset tidak seimbang (*imbalanced*).`,
+      defaultCode: (sub, chap) => `# Praktikum Pemodelan Machine Learning: ${sub}
+import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+
+# 1. Pembentukan Dataset Sintetis dengan Pembagian Stratifikasi
+X, y = make_classification(n_samples=1000, n_features=20, n_informative=12, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+# 2. Pipeline Terintegrasi: Standarisasi Fitur + Estimator Random Forest
+model_pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("classifier", RandomForestClassifier(n_estimators=150, max_depth=8, random_state=42))
+])
+
+# 3. Validasi Silang (Stratified 5-Fold Cross Validation)
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+cv_scores = cross_val_score(model_pipeline, X_train, y_train, cv=cv, scoring="f1_macro")
+
+# 4. Pelatihan dan Inferensi
+model_pipeline.fit(X_train, y_train)
+y_pred = model_pipeline.predict(X_test)
+
+print(f"Rata-rata Skor F1 Validasi Silang: {np.mean(cv_scores):.4f} (+/- {np.std(cv_scores):.4f})")
+print("\nLaporan Evaluasi Pengujian:")
+print(classification_report(y_test, y_pred, digits=4))`,
+      parameterRows: [
+        { param: "n_estimators", type: "Integer", defaultValue: "100-300", desc: "Jumlah pohon keputusan dalam ensemble untuk mereduksi varians prediksi." },
+        { param: "max_depth", type: "Integer / None", defaultValue: "6-12", desc: "Batas kedalaman maksimal simpul pohon guna mencegah overfitting." },
+        { param: "stratify", type: "Array / None", defaultValue: "y_train", desc: "Menjamin proporsi distribusi kelas target tetap identik pada setiap partisi lipatan." },
+      ],
+      bestPractices: [
+        "Selalu gunakan Pipeline Scikit-Learn untuk membungkus preprocessing bersama estimator guna mencegah kebocoran data (*data leakage*).",
+        "Gunakan Stratified K-Fold saat mengevaluasi data klasifikasi dengan proporsi label yang tidak seimbang (*class imbalance*).",
+        "Periksa koefisien feature importance atau SHAP values sebelum menerapkan model ke lingkungan produksi untuk verifikasi interpretabilitas.",
+      ],
+    };
+  }
+
+  // 24. Artificial Intelligence Fundamentals & Search Algorithms
+  if (
+    norm.includes("artificial intelligence fundamentals") ||
+    norm.includes("ai fundamentals") ||
+    norm.includes("dasar kecerdasan buatan") ||
+    norm.includes("fondasi ai") ||
+    norm.includes("state space") ||
+    norm.includes("heuristic search") ||
+    norm.includes("a*") ||
+    norm.includes("minimax") ||
+    (norm.includes("kecerdasan buatan") && !norm.includes("data engineering"))
+  ) {
+    return {
+      domainName: "Artificial Intelligence Fundamentals",
+      frameworks: "Python Standard Library (heapq, collections), NetworkX, State Space Engine",
+      foundations: `Fondasi Kecerdasan Buatan berakar pada perancangan Agen Rasional (*Rational Agent*) yang mengamati kondisi lingkungan melalui sensor dan melakukan aksi melalui aktuator demi memaksimalkan ukuran performa yang diharapkan. Konsep fundamental mencakup pemodelan masalah dalam ruang keadaan (*State Space*), penelusuran graf solusi (Uninformed Search: BFS, DFS, UCS; Informed/Heuristic Search: A*, Greedy Best-First), pemenuhan kendala (*Constraint Satisfaction Problems*), serta pencarian adversarial (Minimax dengan Alpha-Beta Pruning).`,
+      mathTitle: "Fungsi Evaluasi Heuristik A* & Teorema Admisibilitas",
+      mathFormula: `$$f(n) = g(n) + h(n)$$
+
+$$0 \\le h(n) \\le h^*(n) \\implies A^* \\text{ Menjamin Solusi Optimal (Admissible)}$$`,
+      mathExplanation: `Di mana $g(n)$ adalah biaya riil akumulatif dari simpul awal ke simpul $n$, $h(n)$ merupakan fungsi heuristik perkiraan biaya dari simpul $n$ menuju simpul tujuan, dan $h^*(n)$ merepresentasikan jarak terpendek sebenarnya. Selama heuristik bersifat *admissible* dan konsisten (memenuhi pertidaksamaan segitiga), algoritma A* dijamin menemukan jalur berbiaya minimal tanpa mengeksplorasi ulang simpul tertutup.`,
+      defaultCode: (sub, chap) => `# Praktikum Pencarian Heuristik Graf (A* Search): ${sub}
+import heapq
+from typing import Dict, List, Tuple, Optional
+
+def a_star_search(
+    graph: Dict[str, List[Tuple[str, float]]],
+    heuristics: Dict[str, float],
+    start: str,
+    goal: str
+) -> Tuple[Optional[List[str]], float]:
+    # Priority queue elemen: (f_score, cost_so_far, current_node, path)
+    open_set = [(heuristics.get(start, 0.0), 0.0, start, [start])]
+    visited_costs = {start: 0.0}
+
+    while open_set:
+        f_score, g_cost, current, path = heapq.heappop(open_set)
+
+        if current == goal:
+            return path, g_cost
+
+        for neighbor, edge_weight in graph.get(current, []):
+            new_g = g_cost + edge_weight
+            if neighbor not in visited_costs or new_g < visited_costs[neighbor]:
+                visited_costs[neighbor] = new_g
+                new_f = new_g + heuristics.get(neighbor, 0.0)
+                heapq.heappush(open_set, (new_f, new_g, neighbor, path + [neighbor]))
+
+    return None, float("inf")
+
+# Contoh Peta Graf Berbobot
+peta = {
+    "A": [("B", 4.0), ("C", 2.0)],
+    "B": [("D", 5.0), ("E", 10.0)],
+    "C": [("D", 3.0), ("F", 8.0)],
+    "D": [("Goal", 6.0)],
+    "E": [("Goal", 2.0)],
+    "F": [("Goal", 4.0)],
+}
+estimasi_heuristik = {"A": 10.0, "B": 7.0, "C": 8.0, "D": 5.0, "E": 2.0, "F": 4.0, "Goal": 0.0}
+
+jalur_terbaik, total_biaya = a_star_search(peta, estimasi_heuristik, "A", "Goal")
+print(f"Hasil Penelusuran Ruang Keadaan:")
+print(f"Jalur Optimal : {' -> '.join(jalur_terbaik)}")
+print(f"Total Biaya   : {total_biaya}")`,
+      parameterRows: [
+        { param: "heuristic_function", type: "Callable", defaultValue: "Manhattan / Euclidean", desc: "Fungsi estimasi jarak yang tidak boleh melebihi biaya riil (admissible)." },
+        { param: "open_set", type: "Min-Heap", defaultValue: "heapq", desc: "Antrean berprioritas untuk mengekstrak simpul dengan nilai f(n) terkecil dalam O(log V)." },
+        { param: "visited_costs", type: "Hash Map", defaultValue: "dict", desc: "Menyimpan nilai g(n) terendah yang pernah ditemukan untuk mencegah traversal siklik." },
+      ],
+      bestPractices: [
+        "Pastikan fungsi heuristik selalu bersifat admissible ($h(n) \\le h^*(n)$) agar penelusuran dijamin konvergen pada solusi optimal.",
+        "Gunakan struktur data Adjacency List atau Grid Koordinat untuk meminimalkan beban memori saat ruang pencarian berukuran masif.",
+        "Terapkan pemangkasan cabang (pruning) untuk mereduksi ruang pencarian pada pohon keputusan kombinatorial.",
+      ],
+    };
+  }
+
+  // 25. Database Systems & Data Architecture
+  if (
+    norm.includes("database") ||
+    norm.includes("basis data") ||
+    norm.includes("postgresql") ||
+    norm.includes("mysql") ||
+    norm.includes("mongodb") ||
+    norm.includes("redis") ||
+    norm.includes("nosql") ||
+    norm.includes("sqlite") ||
+    norm.includes("rdbms")
+  ) {
+    return {
+      domainName: "Database Systems & Data Storage Architecture",
+      frameworks: "PostgreSQL, MySQL, Redis, MongoDB, SQLite, SQLAlchemy",
+      foundations: `Arsitektur Sistem Basis Data mengatur persistensi, konsistensi transaksi, dan pengindeksan data berkecepatan tinggi. Desain skema relasional menerapkan prinsip normalisasi (1NF hingga BCNF) untuk mengeliminasi anomali modifikasi, sementara sistem NoSQL dan Key-Value store (Redis) mengoptimasi penulisan horizontal terdistribusi sesuai kriteria CAP Theorem.`,
+      mathTitle: "Tinggi Pohon B-Tree Index & Formulasi ACID Isolation",
+      mathFormula: `$$h \\le \\left\\lceil \\log_B \\left( \\frac{N + 1}{2} \\right) \\right\\rceil$$
+
+$$\\text{Throughput Transaksi} = \\frac{\\text{Total Committed Transactions}}{\\Delta t}$$`,
+      mathExplanation: `Di mana $h$ adalah batas maksimal tinggi struktur indeks B-Tree dengan orde percabangan $B$ dan jumlah rekaman $N$. Indeks B-Tree menjamin kompleksitas pencarian, penyisipan, dan penghapusan tetap stabil dalam batas waktu logaritmik $\\mathcal{O}(\\log N)$ dengan I/O disk minimal.`,
+      defaultCode: (sub, chap) => `# Praktikum Interaksi Basis Data Transaksional: ${sub}
+import sqlite3
+from contextlib import closing
+
+# Inisialisasi basis data relasional dalam memori
+with sqlite3.connect(":memory:") as conn:
+    conn.execute("PRAGMA foreign_keys = ON;")
+    with closing(conn.cursor()) as cursor:
+        # 1. DDL: Pembuatan Tabel Berelasi dengan Integritas Referensial
+        cursor.execute("""
+            CREATE TABLE users (
+                user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE NOT NULL,
+                full_name TEXT NOT NULL,
+                balance REAL DEFAULT 0.0 CHECK(balance >= 0.0)
+            );
+        """)
+        
+        cursor.execute("""
+            CREATE TABLE audit_logs (
+                log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                action TEXT NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            );
+        """)
+        
+        # 2. DML: Transaksi Atomik Terisolasi
+        cursor.execute("INSERT INTO users (email, full_name, balance) VALUES (?, ?, ?);",
+                       ("alex@example.com", "Alex Pratama", 500000.0))
+        uid = cursor.lastrowid
+        cursor.execute("INSERT INTO audit_logs (user_id, action) VALUES (?, ?);",
+                       (uid, "ACCOUNT_INITIALIZED"))
+        conn.commit()
+
+        # 3. Kueri Verifikasi
+        cursor.execute("""
+            SELECT u.full_name, u.email, u.balance, a.action, a.timestamp
+            FROM users u
+            JOIN audit_logs a ON u.user_id = a.user_id;
+        """)
+        baris = cursor.fetchone()
+        print(f"Data Pengguna : {baris[0]} ({baris[1]})")
+        print(f"Saldo Akhir   : Rp {baris[2]:,.2f}")
+        print(f"Riwayat Log   : {baris[3]} pada {baris[4]}")`,
+      parameterRows: [
+        { param: "isolation_level", type: "ACID Standard", defaultValue: "READ COMMITTED", desc: "Mencegah fenomena kotor (dirty reads) pada eksekusi konkuren simultan." },
+        { param: "indexing_method", type: "Struktur Akses", defaultValue: "B-Tree / GIN / Hash", desc: "Metode struktur data indeks untuk mengakselerasi klausa WHERE dan JOIN." },
+        { param: "connection_pool_size", type: "Integer", defaultValue: "10-50 Koneksi", desc: "Membatasi koneksi soket aktif ke server basis data guna mencegah kehabisan sumber daya." },
+      ],
+      bestPractices: [
+        "Selalu buat indeks pada kolom foreign key dan kolom yang sering digunakan dalam klausa WHERE, ORDER BY, atau JOIN.",
+        "Gunakan transaksi berparameter (Prepared Statements) untuk mengeliminasi kerentanan serangan SQL Injection secara mutlak.",
+        "Rancang skema dengan aturan integritas referensial (FOREIGN KEY dengan ON DELETE CASCADE / SET NULL) untuk mencegah data yatim (orphaned records).",
+      ],
+    };
+  }
+
+  // 26. Web Development & Fullstack Engineering
+  if (
+    norm.includes("web development") ||
+    norm.includes("rekayasa web") ||
+    norm.includes("next.js") ||
+    norm.includes("react") ||
+    norm.includes("frontend") ||
+    norm.includes("backend") ||
+    norm.includes("rest api") ||
+    norm.includes("node.js") ||
+    norm.includes("express") ||
+    norm.includes("vue") ||
+    norm.includes("angular") ||
+    norm.includes("svelte")
+  ) {
+    return {
+      domainName: "Web Development & Fullstack Engineering",
+      frameworks: "Next.js, React, TypeScript, Node.js, TailwindCSS, REST API",
+      foundations: `Rekayasa Web Modern berpusat pada perancangan antarmuka pengguna responsif berbasis komponen modular, hidrasi rendering sisi server (*Server-Side Rendering / SSR*), dan komunikasi data asinkronus melalui protokol HTTP/REST atau GraphQL. Penerapan prinsip arsitektur bersih memisahkan logika antarmuka (*Presentation Layer*), manajemen status aplikasi (*State Management*), dan lapisan layanan data (*Service Layer*).`,
+      mathTitle: "Kompleksitas Pereduksian Virtual DOM & Analisis Latensi Jaringan",
+      mathFormula: `$$\\text{Kompleksitas Rekonsiliasi Diffing} = \\mathcal{O}(n)$$
+
+$$\\text{Total Waktu Muat Halaman} = \\text{DNS} + \\text{TCP/TLS Handshake} + \\text{TTFB} + \\text{Download Content}$$`,
+      mathExplanation: `Di mana algoritma rekonsiliasi Virtual DOM modern mereduksi perbandingan pohon elemen dari $\\mathcal{O}(n^3)$ menjadi batas linear $\\mathcal{O}(n)$ melalui penggunaan atribut kunci unik (\`key\`). Metrik TTFB (*Time to First Byte*) mengukur latensi respons server terhadap permintaan klien.`,
+      defaultCode: (sub, chap) => `# Praktikum Desain Endpoint REST API Bersih: ${sub}
+import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import Dict, Any
+
+class AcademicAPIHandler(BaseHTTPRequestHandler):
+    def _send_json_response(self, status_code: int, payload: Dict[str, Any]):
+        body = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self):
+        if self.path == "/api/status":
+            self._send_json_response(200, {
+                "system": "Velqora Fullstack Core",
+                "status": "operational",
+                "version": "2.4.0",
+                "module_loaded": "${sub}"
+            })
+        else:
+            self._send_json_response(404, {"error": "Endpoint tidak ditemukan"})
+
+print("Server HTTP Mock berhasil dikonfigurasi untuk endpoint: /api/status")`,
+      parameterRows: [
+        { param: "rendering_mode", type: "Arsitektur", defaultValue: "SSR / SSG / ISR", desc: "Metode kompilasi halaman web untuk menyeimbangkan performa SEO dan kecepatan muat." },
+        { param: "http_cache_control", type: "Header HTTP", defaultValue: "s-maxage=3600, stale-while-revalidate", desc: "Strategi penyimpanan cache edge CDN guna mereduksi beban komputasi server asal." },
+        { param: "cors_origin", type: "Keamanan", defaultValue: "Domain Terotorisasi", desc: "Membatasi akses sumber daya lintas domain hanya untuk klien yang sah." },
+      ],
+      bestPractices: [
+        "Terapkan pemisahan kode (*Code Splitting*) dan pemuatan malas (*Lazy Loading*) pada komponen berat untuk mempercepat First Contentful Paint (FCP).",
+        "Validasi masukan dari klien di kedua sisi (klien dan server) menggunakan skema tipe data ketat seperti Zod atau Pydantic.",
+        "Pastikan tata letak responsif dan aksesibilitas antarmuka memenuhi standar WCAG (kontras warna dan label semantik elemen ARIA).",
+      ],
+    };
+  }
+
+  // 27. Cyber Security & Cryptography
+  if (
+    norm.includes("cyber security") ||
+    norm.includes("keamanan siber") ||
+    norm.includes("cryptography") ||
+    norm.includes("kriptografi") ||
+    norm.includes("encryption") ||
+    norm.includes("enkripsi") ||
+    norm.includes("owasp") ||
+    norm.includes("network security")
+  ) {
+    return {
+      domainName: "Cyber Security & Information Assurance",
+      frameworks: "OpenSSL, PyCryptodome, Wireshark, OWASP Top 10 Framework",
+      foundations: `Keamanan Siber dan Kriptografi menjamin pilar CIA Triad: Kerahasiaan (*Confidentiality*), Integritas (*Integrity*), dan Ketersediaan (*Availability*). Pengamanan infrastruktur mencakup penerapan algoritma kriptografi simetris (AES-GCM), asimetris (RSA, ECC), fungsi hash satu arah resisten benturan (SHA-256), autentikasi token nirkeadaan (JWT dengan HMAC), serta mitigasi kerentanan perangkat lunak standar industri (OWASP).`,
+      mathTitle: "Kriptosistem Asimetris RSA & Sifat Resistensi Hash",
+      mathFormula: `$$c \\equiv m^e \\pmod n, \\quad m \\equiv c^d \\pmod n$$
+
+$$e \\cdot d \\equiv 1 \\pmod{\\phi(n)}, \\quad \\phi(n) = (p - 1)(q - 1)$$`,
+      mathExplanation: `Di mana $n = p \\cdot q$ adalah modulus publik dari hasil perkalian dua bilangan prima rahasia berukuran besar, $e$ adalah eksponen enkripsi publik, dan $d$ merupakan eksponen dekripsi privat yang diturunkan melalui algoritma Extended Euclidean. Keamanan RSA bersandar pada kesulitan komputasi faktorisasi bilangan bulat (*Integer Factorization Problem*).`,
+      defaultCode: (sub, chap) => `# Praktikum Kriptografi Integritas Data (HMAC-SHA256): ${sub}
+import hmac
+import hashlib
+import time
+
+def generate_secure_token(secret_key: bytes, message: str) -> Tuple[str, float]:
+    timestamp = time.time()
+    payload = f"{message}:{timestamp}".encode("utf-8")
+    
+    # Kalkulasi penandatanganan kriptografis HMAC
+    signature = hmac.new(secret_key, payload, hashlib.sha256).hexdigest()
+    token = f"{payload.decode('utf-8')}:{signature}"
+    return token, timestamp
+
+def verify_secure_token(secret_key: bytes, token: str, max_age_seconds: float = 60.0) -> bool:
+    parts = token.rsplit(":", 1)
+    if len(parts) != 2:
+        return False
+    payload_str, signature = parts
+    
+    expected_sig = hmac.new(secret_key, payload_str.encode("utf-8"), hashlib.sha256).hexdigest()
+    # Verifikasi waktu konstan guna mencegah serangan waktu (Timing Attack)
+    if not hmac.compare_digest(signature, expected_sig):
+        return False
+        
+    _, ts_str = payload_str.split(":", 1)
+    if time.time() - float(ts_str) > max_age_seconds:
+        return False # Token kedaluwarsa
+    return True
+
+kunci_rahasia = b"koleksi_belajar_velqora_production_key_2026"
+token, waktu_buat = generate_secure_token(kunci_rahasia, "USER_SESSION_10928")
+print(f"Token Tergenerasi : {token[:45]}...")
+print(f"Status Integritas : {'VALID & ASLI' if verify_secure_token(kunci_rahasia, token) else 'TIDAK VALID'}")`,
+      parameterRows: [
+        { param: "key_size", type: "Panjang Kunci", defaultValue: "AES-256 / RSA-4096", desc: "Kekuatan ruang kunci untuk menahan serangan brute-force komputasi kuantum." },
+        { param: "hash_algorithm", type: "Fungsi Hash", defaultValue: "SHA-256 / BLAKE3", desc: "Fungsi kondensasi data dengan jaminan resistensi preimage dan resistensi benturan (*collision-resistant*)." },
+        { param: "salt_iterations", type: "Integer", defaultValue: "100.000+ (PBKDF2 / Argon2id)", desc: "Faktor pelambatan komputasi untuk menangkal serangan kamus (*dictionary attacks*)." },
+      ],
+      bestPractices: [
+        "Gunakan perbandingan waktu konstan (\`hmac.compare_digest\`) untuk memeriksa hash dan token guna mencegah eksploitasi celah Timing Attack.",
+        "Jangan pernah mengimplementasikan pustaka kriptografi buatan sendiri (*Never Roll Your Own Crypto*); gunakan modul resmi teraudit seperti PyCryptodome atau WebCrypto.",
+        "Terapkan prinsip hak istimewa paling rendah (*Principle of Least Privilege*) pada kontrol akses otorisasi API dan layanan basis data.",
+      ],
+    };
+  }
+
+  // 28. DevOps, Cloud Computing, & Container Orchestration
+  if (
+    norm.includes("devops") ||
+    norm.includes("cloud") ||
+    norm.includes("docker") ||
+    norm.includes("kubernetes") ||
+    norm.includes("k8s") ||
+    norm.includes("ci/cd") ||
+    norm.includes("linux") ||
+    norm.includes("aws")
+  ) {
+    return {
+      domainName: "DevOps, Cloud Computing, & Container Orchestration",
+      frameworks: "Docker, Kubernetes, Linux, GitHub Actions, AWS, Prometheus",
+      foundations: `Disiplin DevOps dan Cloud Computing menjembatani rekayasa perangkat lunak dengan keandalan operasional sistem (*Site Reliability Engineering / SRE*). Prinsip inti mencakup kontainerisasi aplikasi (*Docker*), orkestrasi pod otomatis (*Kubernetes*), alur integrasi dan pengiriman berkesinambungan (*CI/CD*), serta observabilitas telemetri (metrik, jejak, dan log).`,
+      mathTitle: "Ketersediaan Sistem SLA & Formulasi Horizontal Pod Autoscaler",
+      mathFormula: `$$\\text{SLA (Availability)} = \\frac{\\text{MTBF}}{\\text{MTBF} + \\text{MTTR}} \\times 100\\%$$
+
+$$\\text{Jumlah Replikasi Desired} = \\left\\lceil \\text{Replikasi Saat Ini} \\times \\frac{\\text{Metrik Penggunaan Aktual}}{\\text{Metrik Penggunaan Target}} \\right\\rceil$$`,
+      mathExplanation: `Di mana MTBF (*Mean Time Between Failures*) mengukur rerata durasi operasional normal, MTTR (*Mean Time To Repair*) menghitung kecepatan waktu pemulihan insiden, dan HPA (*Horizontal Pod Autoscaler*) menyesuaikan kapasitas replikasi kontainer secara dinamis berdasarkan pemanfaatan CPU atau memori.`,
+      defaultCode: (sub, chap) => `# Praktikum Konfigurasi CI/CD & Healthcheck Pipeline: ${sub}
+import json
+import os
+
+def generate_container_spec(service_name: str, port: int, replicas: int = 3) -> dict:
+    return {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+            "name": f"{service_name}-deployment",
+            "labels": {"app": service_name}
+        },
+        "spec": {
+            "replicas": replicas,
+            "selector": {"matchLabels": {"app": service_name}},
+            "template": {
+                "metadata": {"labels": {"app": service_name}},
+                "spec": {
+                    "containers": [{
+                        "name": service_name,
+                        "image": f"registry.velqora.internal/{service_name}:latest",
+                        "ports": [{"containerPort": port}],
+                        "livenessProbe": {
+                            "httpGet": {"path": "/healthz", "port": port},
+                            "initialDelaySeconds": 15,
+                            "periodSeconds": 10
+                        }
+                    }]
+                }
+            }
+        }
+    }
+
+spec = generate_container_spec("analytics-worker", 8080)
+print(f"Spesifikasi Manifest Kubernetes untuk: {spec['metadata']['name']}")
+print(json.dumps(spec, indent=2)[:350] + "\n  ...\n}")`,
+      parameterRows: [
+        { param: "replicas", type: "Integer", defaultValue: "2 - 10", desc: "Jumlah instans kontainer pod redundan untuk menjaga High Availability (HA)." },
+        { param: "initialDelaySeconds", type: "Integer (detik)", defaultValue: "10-30", desc: "Waktu tunggu awal inisialisasi aplikasi sebelum pemeriksaan liveness probe dimulai." },
+        { param: "resource_limits", type: "CPU / Memori", defaultValue: "500m / 512Mi", desc: "Batas pemakaian sumber daya fisik per pod untuk mencegah Out-Of-Memory (OOM) Killer." },
+      ],
+      bestPractices: [
+        "Gunakan multistage build pada Dockerfile guna menghasilkan image berukuran minimal dan bebas dari compiler build dependencies yang tidak dibutuhkan saat runtime.",
+        "Tentukan probe liveness dan readiness pada setiap konfigurasi pod agar traffic tidak diarahkan ke kontainer yang belum siap.",
+        "Simpan rahasia autentikasi (*secrets*) pada vault terenkripsi, bukan sebagai plain-text dalam commit git atau Dockerfile.",
+      ],
+    };
+  }
+
+  // Fallback Universal: Ilmu Komputer & Rekayasa Komputasi
+  return {
+    domainName: categoryName || "Ilmu Komputer & Rekayasa Komputasi",
+    frameworks: "Python 3.11+, Standar Komputasi Terapan",
+    foundations: `Materi **${subtopicTitle}** merupakan modul inti dalam kerangka kurikulum **${categoryName}**. Pembahasan difokuskan pada penguasaan konsep komputasi terstruktur, arsitektur modular, efisiensi eksekusi sistem, dan penerapan praktik rekayasa perangkat lunak terstandarisasi.`,
+    mathTitle: `Analisis Asimptotik & Formulasi Kinerja ${subtopicTitle}`,
+    mathFormula: `$$T(n) = \mathcal{O}\big(f(n)\big), \quad \text{Throughput} = \frac{\text{Jumlah Operasi}}{\Delta t}$$
+
+$$\text{Efisiensi Sistem} = \frac{\text{Keluaran Berguna}}{\text{Total Sumber Daya Terpakai}} \times 100\%$$`,
+    mathExplanation: `Di mana $T(n)$ mengukur batas pertumbuhan kebutuhan komputasi terhadap ukuran masukan $n$, dan throughput mengukur kapasitas eksekusi operasional per satuan waktu.`,
+    defaultCode: (sub, chap) => `# Praktikum Komputasi Terapan: ${sub}
+import time
+
+def execute_computational_task(n_items: int = 5000):
+    start_time = time.perf_counter()
+    result = sum(i * 2 for i in range(n_items) if i % 3 == 0)
+    duration_ms = (time.perf_counter() - start_time) * 1000
+    return result, duration_ms
+
+hasil, durasi = execute_computational_task(10000)
+print(f"Topik Modul    : ${categoryName} - ${sub}")
+print(f"Hasil Eksekusi : {hasil}")
+print(f"Durasi Waktu   : {durasi:.3f} ms")
+print("Validasi algoritma berhasil diselesaikan secara presisi.")`,
     parameterRows: [
-      { param: "learning_rate (η)", type: "Float", defaultValue: "0.001", desc: "Besaran langkah adaptasi pembaruan parameter per iterasi." },
-      { param: "batch_size", type: "Integer", defaultValue: "32 atau 64", desc: "Ukuran partisi sampel yang diproses secara simultan." },
-      { param: "regularization (λ)", type: "Float", defaultValue: "0.01", desc: "Koefisien pembatas kompleksitas bobot model." },
+      { param: "throughput", type: "Float", defaultValue: "Ops / Detik", desc: "Kecepatan pemrosesan transaksi atau data per satuan waktu." },
+      { param: "latency", type: "Float (ms)", defaultValue: "< 50 ms", desc: "Waktu tunda yang dibutuhkan sistem dari masukan diterima hingga hasil dikeluarkan." },
+      { param: "concurrency", type: "Integer", defaultValue: "Tergantung Core CPU", desc: "Kapasitas eksekusi tugas paralel simultan tanpa degradasi performa." },
     ],
     bestPractices: [
-      "Selalu pisahkan data pengujian independen guna memverifikasi kapasitas generalisasi model pada data baru.",
-      "Terapkan teknik standardisasi data masukan agar skala nilai tidak mendistorsi bobot optimasi.",
-      "Lakukan logging metrik secara berkala untuk memantau tren konvergensi algoritma.",
+      "Awali setiap implementasi dengan merumuskan spesifikasi fungsional dan kriteria penerimaan yang terukur.",
+      "Lakukan profiling performa CPU dan memori sebelum melakukan optimasi prematur.",
+      "Pastikan kode terdokumentasi dengan baik serta memiliki cakupan pengujian modular yang memadai.",
     ],
   };
+
 }
 
 /**
