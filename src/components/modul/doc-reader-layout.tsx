@@ -233,9 +233,28 @@ export function DocReaderLayout({
     if (currentSection.content_markdown && currentSection.content_markdown.trim().length > 30) {
       return currentSection.content_markdown;
     }
-    // Fallback template
-    return `# ${currentSection.title}\n\n${currentSection.description || ""}\n\n*Materi komprehensif Scikit-Learn untuk bagian ini sedang dimuat.*`;
-  }, [currentSection]);
+
+    // Construct rich markdown from description and codeSnippets for all modules
+    let md = `# ${currentSection.title}\n\n`;
+    if (currentSection.description) {
+      md += `> ${currentSection.description}\n\n`;
+      md += `## Gambaran Umum & Konsep Fundamental\n\nMateri ini membahas konsep inti, arsitektur pemodelan matematis, serta praktik terbaik implementasi untuk **${currentSection.title}** dalam kurikulum ${categoryName}.\n\n`;
+    }
+
+    if (currentSection.codeSnippets && currentSection.codeSnippets.length > 0) {
+      md += `## Implementasi Praktikum Kode Python\n\nBerikut adalah implementasi kode yang dapat dijalankan langsung untuk mempraktikkan konsep ini:\n\n`;
+      for (const snip of currentSection.codeSnippets) {
+        if (snip.caption) {
+          md += `### ${snip.caption}\n\n`;
+        }
+        md += "```" + (snip.language || "python") + "\n" + snip.code + "\n```\n\n";
+      }
+    }
+
+    md += `## Ringkasan & Poin Penting\n\n1. Pemahaman mendalam mengenai **${currentSection.title}** merupakan pilar penting dalam spesialisasi ${categoryName}.\n2. Terapkan kode praktikum di atas ke dalam alur kerja analisis data atau pelatihan model mandiri.\n3. Gunakan panel daftar isi di sebelah kanan (*Pada Halaman Ini*) untuk menelusuri sub-bagian materi secara instan.`;
+
+    return md;
+  }, [currentSection, categoryName]);
 
   // In-Page Table of Contents (On this page)
   const tocItems = useMemo(() => {
@@ -259,7 +278,7 @@ export function DocReaderLayout({
 
       for (const el of headingElements) {
         const rect = el.getBoundingClientRect();
-        if (rect.top - containerTop <= 120) {
+        if (rect.top - containerTop <= 100) {
           currentActive = el.id;
         } else {
           break;
@@ -270,10 +289,8 @@ export function DocReaderLayout({
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [tocItems, selectedId]);
+  }, [tocItems]);
 
   // Smooth scroll to an in-page heading
   const scrollToHeading = useCallback((id: string) => {
@@ -284,11 +301,15 @@ export function DocReaderLayout({
     }
   }, []);
 
-  const handleSelect = (id: string) => {
-    setSelectedId(id);
-    onSelectSection?.(id);
+  // Handle section click
+  const handleSelect = (sectionId: string) => {
+    setSelectedId(sectionId);
+    if (onSelectSection) {
+      onSelectSection(sectionId);
+    }
   };
 
+  // Toggle chapter accordion expand/collapse
   const toggleChapter = (chapterId: string) => {
     setExpandedChapters((prev) => ({
       ...prev,
@@ -331,205 +352,142 @@ export function DocReaderLayout({
           : "flex-1 h-full min-h-[calc(100vh-3.5rem)]"
       }`}
     >
-      {/* ─── 1. TOP DOCUMENTATION NAVBAR (Scikit-Learn Sphinx Style) ─── */}
-      <header className="flex items-center justify-between px-4 py-2 border-b border-border bg-[#FFFFFF] dark:bg-[#18181B] select-none shrink-0 gap-3 z-20">
-        {/* Left: Scikit-learn Logo & Main Navigation Tabs */}
-        <div className="flex items-center gap-4 sm:gap-6 min-w-0">
-          {/* Scikit-Learn Logo Representation */}
+      {/* ─── 1. TOP DOCUMENTATION NAVBAR (Velqora Modern Docs Header) ─── */}
+      <header className="flex items-center justify-between px-3 sm:px-5 py-2.5 border-b border-border bg-[#FFFFFF] dark:bg-[#18181B] select-none shrink-0 gap-3 z-20">
+        {/* Left: Velqora Brand + Category Identity */}
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          {/* Back to Module Catalog */}
           <Link
             href="/dashboard/modul"
-            className="flex items-center gap-2 group shrink-0"
+            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors shrink-0"
             title="Kembali ke Katalog Modul"
           >
-            <div className="relative flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-tr from-[#0284c7] via-[#0284c7] to-[#ea580c] shadow-xs">
-              <span className="text-[11px] font-black text-white italic tracking-tighter">sk</span>
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-sm font-extrabold text-[#ea580c] dark:text-[#f97316] font-display tracking-tight group-hover:underline">
-                scikit<span className="text-[#0284c7] dark:text-[#38bdf8]">-learn</span>
-              </span>
-              <span className="text-[9px] font-mono text-text-tertiary">1.9.1 documentation</span>
-            </div>
+            <ArrowLeft className="w-4 h-4" />
           </Link>
 
-          {/* Nav Tabs (Install, User Guide [active], API, Examples, Community) */}
-          <nav className="hidden md:flex items-center gap-1 text-xs font-medium font-sans">
-            <Link
-              href="/dashboard/modul"
-              className="px-2.5 py-1 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
+          {/* Velqora Docs Brand */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white shadow-xs shrink-0"
+              style={{
+                backgroundColor: themeColor,
+              }}
             >
-              Install
-            </Link>
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-extrabold text-text-primary font-display tracking-tight flex items-center gap-1.5">
+                Velqora <span className="font-mono text-xs font-normal text-text-tertiary">/ Docs</span>
+              </span>
+              <span className="text-[10px] font-mono text-text-secondary mt-0.5 truncate max-w-[140px] sm:max-w-[200px]">
+                {categoryName}
+              </span>
+            </div>
+          </div>
+
+          {/* Category Pill */}
+          <div
+            className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border shrink-0"
+            style={{
+              backgroundColor: `${themeColor}15`,
+              borderColor: `${themeColor}35`,
+              color: themeColor,
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: themeColor }} />
+            <span className="font-medium truncate max-w-[180px]">{categoryName}</span>
+          </div>
+
+          {/* Navigation Tabs (Velqora Learning Flow) */}
+          <nav className="hidden xl:flex items-center gap-1 text-xs font-medium font-sans ml-2">
             <span
-              className="px-2.5 py-1 border-b-2 border-[#0284c7] dark:border-[#38bdf8] text-[#0284c7] dark:text-[#38bdf8] font-bold cursor-default"
+              className="px-3 py-1.5 border-b-2 font-bold cursor-default flex items-center gap-1.5"
+              style={{
+                borderColor: themeColor,
+                color: themeColor,
+              }}
             >
-              User Guide
+              <FileText className="w-3.5 h-3.5" />
+              <span>Dokumentasi & Teori</span>
             </span>
             <Link
               href="/dashboard/modul"
-              className="px-2.5 py-1 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
+              className="px-3 py-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
             >
-              API
+              Katalog Modul
             </Link>
             <Link
-              href="/dashboard/modul"
-              className="px-2.5 py-1 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
+              href="/dashboard/catatan"
+              className="px-3 py-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
             >
-              Examples
+              Catatan Vault
             </Link>
-            <a
-              href="https://blog.scikit-learn.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:flex items-center gap-1 px-2.5 py-1 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
+            <Link
+              href="/dashboard/proyek"
+              className="px-3 py-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
             >
-              <span>Community</span>
-              <ExternalLink className="w-3 h-3 opacity-60" />
-            </a>
-
-            {/* More Dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setShowMoreDropdown(!showMoreDropdown)}
-                className="flex items-center gap-1 px-2 py-1 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
-              >
-                <span>More</span>
-                <ChevronDown className="w-3 h-3 opacity-70" />
-              </button>
-
-              {showMoreDropdown && (
-                <div className="absolute left-0 mt-1.5 w-44 rounded-lg border border-border bg-surface p-1 shadow-lg z-30 space-y-0.5 text-xs">
-                  <a
-                    href="https://scikit-learn.org/stable/getting_started.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-2.5 py-1.5 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
-                  >
-                    <span>Getting Started</span>
-                    <ExternalLink className="w-3 h-3 opacity-50" />
-                  </a>
-                  <a
-                    href="https://scikit-learn.org/stable/whats_new.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-2.5 py-1.5 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
-                  >
-                    <span>Release History</span>
-                    <ExternalLink className="w-3 h-3 opacity-50" />
-                  </a>
-                  <a
-                    href="https://scikit-learn.org/stable/glossary.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-2.5 py-1.5 rounded text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
-                  >
-                    <span>Glossary</span>
-                    <ExternalLink className="w-3 h-3 opacity-50" />
-                  </a>
-                </div>
-              )}
-            </div>
+              Praktikum Proyek
+            </Link>
           </nav>
         </div>
 
-        {/* Right: Search, Theme Switcher, GitHub Link, Version Switcher */}
+        {/* Right: Search, Switcher, Theme, Fullscreen */}
         <div className="flex items-center gap-2 shrink-0">
           {/* Quick Search Shortcut */}
           <button
             type="button"
             onClick={() => {
-              const searchInput = document.getElementById("scikit-toc-search");
+              const searchInput = document.getElementById("doc-toc-search");
               searchInput?.focus();
             }}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-surface-secondary/60 hover:bg-surface-secondary text-xs text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
-            title="Cari di dokumentasi"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-surface-secondary/60 hover:bg-surface-secondary text-xs text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
+            title="Cari bab atau materi"
           >
             <Search className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Search</span>
+            <span className="hidden sm:inline">Cari</span>
             <kbd className="hidden lg:inline text-[10px] font-mono px-1 py-0.2 rounded border border-border bg-surface text-text-tertiary">
               Ctrl K
             </kbd>
           </button>
-
-          {/* Theme Switcher Toggle */}
-          <button
-            type="button"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="p-1.5 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-            title={resolvedTheme === "dark" ? "Ganti ke Light Mode" : "Ganti ke Dark Mode"}
-          >
-            {resolvedTheme === "dark" ? (
-              <Sun className="w-3.5 h-3.5 text-amber-400" />
-            ) : (
-              <Moon className="w-3.5 h-3.5 text-slate-700" />
-            )}
-          </button>
-
-          {/* Official Scikit-Learn GitHub Repository Link */}
-          <a
-            href="https://github.com/scikit-learn/scikit-learn"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1.5 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors"
-            title="Scikit-Learn di GitHub"
-          >
-            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-          </a>
-
-          {/* Version Switcher Badge */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowVersionDropdown(!showVersionDropdown)}
-              className="flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-surface text-xs font-mono font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-            >
-              <span>1.9.1 (stable)</span>
-              <ChevronDown className="w-3 h-3 opacity-60" />
-            </button>
-
-            {showVersionDropdown && (
-              <div className="absolute right-0 mt-1.5 w-36 rounded-lg border border-border bg-surface p-1 shadow-lg z-30 space-y-0.5 text-xs font-mono">
-                <div className="px-2 py-1 font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 rounded flex items-center justify-between">
-                  <span>1.9.1 (stable)</span>
-                  <Check className="w-3 h-3" />
-                </div>
-                <div className="px-2 py-1 text-text-tertiary hover:text-text-primary cursor-pointer rounded hover:bg-surface-secondary">
-                  1.8.2
-                </div>
-                <div className="px-2 py-1 text-text-tertiary hover:text-text-primary cursor-pointer rounded hover:bg-surface-secondary">
-                  dev (1.10.dev)
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* Toggle view mode to Grid Kartu */}
           {onToggleViewMode && (
             <button
               type="button"
               onClick={onToggleViewMode}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-surface hover:bg-surface-secondary text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
               title="Ganti ke Tampilan Ringkasan Grid Kartu"
             >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Tampilan Kartu</span>
+              <LayoutGrid className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="hidden sm:inline">Tampilan Kartu</span>
             </button>
           )}
+
+          {/* Theme Switcher Toggle */}
+          <button
+            type="button"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            title={resolvedTheme === "dark" ? "Ganti ke Light Mode" : "Ganti ke Dark Mode"}
+          >
+            {resolvedTheme === "dark" ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700" />
+            )}
+          </button>
 
           {/* Fullscreen focus reading mode toggle */}
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             title={isFullscreen ? "Keluar dari Layar Penuh" : "Mode Baca Layar Penuh"}
           >
             {isFullscreen ? (
-              <Minimize2 className="w-3.5 h-3.5 text-brand-600" />
+              <Minimize2 className="w-4 h-4 text-brand-600" />
             ) : (
-              <Maximize2 className="w-3.5 h-3.5" />
+              <Maximize2 className="w-4 h-4" />
             )}
           </button>
         </div>
@@ -550,14 +508,14 @@ export function DocReaderLayout({
           {/* Top Collapse Button & Section Navigation Title */}
           <div className="p-3 border-b border-border/80 space-y-2">
             <div className="flex items-center justify-between">
-              {/* Collapse Sidebar Button (Styled exactly like Image 2) */}
+              {/* Collapse Sidebar Button */}
               <button
                 type="button"
                 onClick={() => setSidebarCollapsed(true)}
                 className="flex items-center gap-1.5 px-2 py-1 rounded border border-border bg-surface hover:bg-surface-secondary text-[11px] font-mono font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
                 title="Sembunyikan panel navigasi"
               >
-                <PanelLeftClose className="w-3.5 h-3.5 text-[#0284c7] dark:text-[#38bdf8]" />
+                <PanelLeftClose className="w-3.5 h-3.5" style={{ color: themeColor }} />
                 <span>Collapse Sidebar</span>
               </button>
 
@@ -567,19 +525,19 @@ export function DocReaderLayout({
             </div>
 
             <h3 className="text-xs font-bold font-mono tracking-wider text-text-primary uppercase pt-1">
-              Section Navigation
+              Navigasi Materi & Bab
             </h3>
 
             {/* Quick search input */}
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-text-tertiary pointer-events-none" />
               <input
-                id="scikit-toc-search"
+                id="doc-toc-search"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari bab atau subbab..."
-                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-md border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-[#0284c7]"
+                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-md border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
             </div>
           </div>
@@ -597,9 +555,10 @@ export function DocReaderLayout({
                   <div
                     className={`flex items-center justify-between px-2.5 py-1.5 rounded-md font-sans transition-colors group cursor-pointer ${
                       isChapterActive
-                        ? "bg-surface font-bold text-[#0284c7] dark:text-[#38bdf8] shadow-2xs"
+                        ? "bg-surface font-bold shadow-2xs"
                         : "text-text-primary hover:bg-surface/70 font-semibold"
                     }`}
+                    style={isChapterActive ? { color: themeColor } : undefined}
                     onClick={() => {
                       if (hasSubsections) {
                         toggleChapter(chapter.id);
@@ -630,7 +589,7 @@ export function DocReaderLayout({
                     )}
                   </div>
 
-                  {/* Subbab Tree (Subsections with left guideline and active blue indicator) */}
+                  {/* Subbab Tree (Subsections with left guideline and active indicator) */}
                   {hasSubsections && isExpanded && (
                     <div className="pl-3.5 ml-2 border-l border-border/80 space-y-0.5 my-0.5">
                       {chapter.subsections!.map((sub) => {
@@ -643,15 +602,23 @@ export function DocReaderLayout({
                             onClick={() => handleSelect(sub.id)}
                             className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer relative ${
                               isSubActive
-                                ? "bg-white dark:bg-[#1c1c20] text-[#0284c7] dark:text-[#38bdf8] font-bold border-l-3 border-[#0284c7] dark:border-[#38bdf8] -ml-[15px] pl-[18px] shadow-2xs"
+                                ? "bg-white dark:bg-[#1c1c20] font-bold -ml-[15px] pl-[18px] shadow-2xs"
                                 : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
                             }`}
+                            style={
+                              isSubActive
+                                ? {
+                                    color: themeColor,
+                                    borderLeft: `3px solid ${themeColor}`,
+                                  }
+                                : undefined
+                            }
                           >
                             <span className="leading-snug line-clamp-2">
                               {sub.title}
                             </span>
                             {isSubActive && (
-                              <ChevronRight className="w-3 h-3 text-[#0284c7] dark:text-[#38bdf8] shrink-0 mt-0.5" />
+                              <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
                             )}
                           </button>
                         );
@@ -672,8 +639,8 @@ export function DocReaderLayout({
           {/* Bottom Sidebar Footer */}
           <div className="p-2.5 border-t border-border/80 bg-surface/50 flex items-center justify-between text-[10px] font-mono text-text-tertiary">
             <span className="truncate">{categoryName}</span>
-            <span className="text-[#0284c7] dark:text-[#38bdf8] font-semibold shrink-0">
-              Scikit-Learn 1.9.1
+            <span className="font-semibold shrink-0" style={{ color: themeColor }}>
+              Velqora Learning
             </span>
           </div>
         </aside>
@@ -693,13 +660,13 @@ export function DocReaderLayout({
                 onClick={() => setSidebarCollapsed(false)}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
               >
-                <PanelLeftOpen className="w-3.5 h-3.5 text-[#0284c7] dark:text-[#38bdf8]" />
-                <span>Expand Sidebar</span>
+                <PanelLeftOpen className="w-3.5 h-3.5" style={{ color: themeColor }} />
+                <span>Buka Navigasi Materi</span>
               </button>
             </div>
           )}
 
-          {/* Breadcrumbs Styled Exactly like Scikit-Learn (🏠 > User Guide > 1. Supervised learning > 1.1. Linear Models) */}
+          {/* Breadcrumbs Styled Elegantly (Dashboard > Modul AI > Category > Chapter > Section) */}
           <nav
             aria-label="Breadcrumb"
             className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary flex-wrap"
@@ -707,13 +674,20 @@ export function DocReaderLayout({
             <Link
               href="/dashboard"
               className="hover:text-text-primary transition-colors flex items-center gap-1 shrink-0"
-              title="Home"
+              title="Dashboard"
             >
               <Home className="w-3.5 h-3.5 opacity-80" />
             </Link>
             <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
-            <span className="hover:text-text-primary transition-colors shrink-0">
-              User Guide
+            <Link
+              href="/dashboard/modul"
+              className="hover:text-text-primary transition-colors shrink-0"
+            >
+              Modul AI
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
+            <span className="hover:text-text-primary transition-colors shrink-0 font-medium" style={{ color: themeColor }}>
+              {categoryName}
             </span>
             {parentChapter && (
               <>

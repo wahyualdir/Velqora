@@ -2,114 +2,173 @@ import { DocSectionItem } from "@/components/modul/doc-reader-layout";
 
 /**
  * BAB 12 - 17 KURIKULUM MACHINE LEARNING VELQORA
- * Mencakup Jaringan Saraf Tiruan (Deep Learning MLP), Computer Vision, NLP,
- * Large Language Models, AI Agents, dan Reinforcement Learning.
+ * Mencakup Jaringan Saraf Tiruan (Deep Learning MLP), Pipeline & ColumnTransformer anti-kebocoran data,
+ * Natural Language Processing (TF-IDF), Computer Vision (Eigenfaces & HOG), Time Series Forecasting,
+ * dan Sistem Rekomendasi Ketetanggaan (Collaborative Filtering).
  */
 export const ML_CHAPTERS_12_TO_17: DocSectionItem[] = [
   // =========================================================================
-  // BAB 12: Dasar Deep Learning
+  // BAB 12: Dasar Deep Learning (Multi-Layer Perceptron)
   // =========================================================================
   {
     id: "ml-bab-12",
     slug: "bab-12-dasar-deep-learning",
-    title: "BAB 12: Dasar Deep Learning",
+    title: "BAB 12: Dasar Deep Learning & Neural Networks",
     orderIndex: 12,
-    description: "Transisi dari model linear ke Jaringan Saraf Tiruan: Perceptron, Multi-Layer Perceptron (MLPClassifier / MLPRegressor), fungsi aktivasi, solver Adam & L-BFGS, dan regularisasi penalti L2.",
+    description: "Transisi dari model linear ke Jaringan Saraf Tiruan: Arsitektur Multi-Layer Perceptron (MLPClassifier / MLPRegressor), propagasi maju, aturan rantai backpropagation, fungsi aktivasi (ReLU, Sigmoid, Tanh), solver Adam & L-BFGS, dan penalti L2.",
     subsections: [
       {
         id: "ml-bab-12-1",
         slug: "arsitektur-multi-layer-perceptron",
         title: "12.1. Arsitektur Multi-Layer Perceptron (MLP)",
         orderIndex: 1,
-        description: "Lapisan input, hidden layers tersembunyi, fungsi propagasi maju (forward pass), dan backpropagation.",
+        description: "Lapisan input, lapisan tersembunyi (hidden layers), propagasi maju (forward pass), dan algoritma backpropagation.",
         content_markdown: `# 12.1. Arsitektur Multi-Layer Perceptron (MLP)
 
-**Multi-Layer Perceptron (MLP)** adalah model jaringan saraf tiruan maju (*feedforward artificial neural network*) yang memetakan set input ke set output yang sesuai melalui satu atau beberapa lapisan tersembunyi (*hidden layers*).
+**Multi-Layer Perceptron (MLP)** adalah model jaringan saraf tiruan maju (*feedforward artificial neural network*) yang memetakan set masukan ke set keluaran melalui satu atau beberapa lapisan tersembunyi (*hidden layers*) non-linear.
 
 ---
 
-## 12.1.1. Formulasi Propagasi Maju (Forward Pass)
-Diberikan input $x \\in \\mathbb{R}^p$, nilai aktivasi pada lapisan tersembunyi pertama $h^{(1)}$ dihitung sebagai:
+## 12.1.1. Formulasi Matematis Propagasi Maju (Forward Pass)
+Diberikan vektor input $x \\in \\mathbb{R}^p$, nilai aktivasi pada lapisan tersembunyi pertama $h^{(1)}$ dihitung sebagai kombinasi linear dari bobot dan bias yang diikuti oleh fungsi aktivasi non-linear $g(\\cdot)$:
 
-$$h^{(1)} = g(W^{(1)} x + b^{(1)})$$
+$$h^{(1)} = g\\big(W^{(1)} x + b^{(1)}\\big)$$
 
 Di mana:
-- $W^{(1)}$ adalah matriks bobot bobot sinaptik.
-- $b^{(1)}$ adalah vektor bias.
-- $g(\\cdot)$ adalah fungsi aktivasi non-linear.
+- $W^{(1)} \\in \\mathbb{R}^{m \\times p}$ adalah matriks bobot sinaptik lapisan pertama.
+- $b^{(1)} \\in \\mathbb{R}^m$ adalah vektor bias.
+- $g(\\cdot)$ adalah fungsi aktivasi non-linear (seperti ReLU atau Logistic Sigmoid).
 
-Untuk jaringan dengan $L$ lapisan, output akhir dihasilkan melalui komposisi fungsi bertingkat:
-$$\\hat{y} = g^{(L)}(W^{(L)} h^{(L-1)} + b^{(L)})$$
+Untuk jaringan dengan $L$ lapisan tersembunyi, komputasi berlanjut secara rekursif:
+$$h^{(l)} = g\\big(W^{(l)} h^{(l-1)} + b^{(l)}\\big), \\quad l = 2, \\dots, L$$
+
+Output akhir untuk klasifikasi multi-kelas dengan $K$ kelas diproyeksikan melalui fungsi **Softmax**:
+$$P(y = k \\mid x) = \\frac{\\exp\\big(z_k^{(L+1)}\\big)}{\\sum_{j=1}^K \\exp\\big(z_j^{(L+1)}\\big)}$$
 
 ---
 
-## 12.1.2. Implementasi dengan \`MLPClassifier\` Scikit-Learn
+## 12.1.2. Fungsi Aktivasi Bawaan Scikit-Learn
+- \`activation='relu'\` (Rectified Linear Unit): $g(z) = \\max(0, z)$. Pilihan standar industri paling stabil yang mengatasi masalah lenyapnya gradien (*vanishing gradient problem*).
+- \`activation='logistic'\` (Sigmoid): $g(z) = \\frac{1}{1 + e^{-z}}$. Memetakan output ke rentang $(0, 1)$.
+- \`activation='tanh'\` (Hyperbolic Tangent): $g(z) = \\tanh(z) = \\frac{e^z - e^{-z}}{e^z + e^{-z}}$. Memetakan output ke rentang $(-1, 1)$ dengan rata-rata nol (*zero-centered*).
+
+---
+
+## 12.1.3. Implementasi Lengkap Python
 
 \`\`\`python
+import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report
 
-# Generate dataset klasifikasi non-linear
-X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, random_state=42)
+# 1. Dataset klasifikasi non-linear
+X, y = make_classification(n_samples=1500, n_features=20, n_classes=3, n_informative=10, random_state=42)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-# Neural network sangat sensitif terhadap skala fitur: StandardScaler wajib digunakan!
+# Neural network sangat sensitif terhadap skala fitur: StandardScaler mutlak wajib!
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Definisi MLP dengan 2 hidden layer (64 neuron dan 32 neuron)
+# 2. Inisialisasi MLPClassifier dengan 2 hidden layers (64 dan 32 neuron)
 mlp = MLPClassifier(
     hidden_layer_sizes=(64, 32),
     activation='relu',
     solver='adam',
-    alpha=0.0001, # L2 regularization
-    max_iter=300,
+    alpha=1e-4, # Penalti regularisasi L2
+    batch_size=64,
+    learning_rate_init=0.001,
+    max_iter=200,
+    early_stopping=True, # Otomatis berhenti jika validasi loss tidak membaik
+    validation_fraction=0.1,
     random_state=42
 )
+
 mlp.fit(X_train_scaled, y_train)
 
-print(f"Skor Akurasi MLP pada Test Set: {mlp.score(X_test_scaled, y_test):.4f}")
-print(f"Jumlah iterasi konvergensi: {mlp.n_iter_}")
-print(f"Fungsi rugi akhir (loss): {mlp.loss_:.4f}")
+print("=" * 60)
+print("HASIL TRAINING MULTI-LAYER PERCEPTRON")
+print("=" * 60)
+print(f"Jumlah Epoch Konvergensi : {mlp.n_iter_}")
+print(f"Nilai Kerugian Akhir    : {mlp.loss_:.4f}")
+print("\nLaporan Klasifikasi Data Uji:\n", classification_report(y_test, mlp.predict(X_test_scaled)))
 \`\`\`
 `
       },
       {
         id: "ml-bab-12-2",
-        slug: "aktivasi-dan-solver-optimasi",
-        title: "12.2. Fungsi Aktivasi & Solver Optimasi (Adam vs L-BFGS)",
+        slug: "solvers-dan-regularisasi-neural-networks",
+        title: "12.2. Solvers & Regularisasi Jaringan Saraf Tiruan",
         orderIndex: 2,
-        description: "Perbandingan ReLU, Tanh, dan Logistic, serta panduan memilih solver Adam untuk data besar atau L-BFGS untuk dataset kecil.",
-        content_markdown: `# 12.2. Fungsi Aktivasi & Solver Optimasi (Adam vs L-BFGS)
+        description: "Optimasi Adam, L-BFGS untuk dataset kecil, regularisasi penalti L2 alpha, serta early stopping untuk mencegah memorisasi.",
+        content_markdown: `# 12.2. Solvers & Regularisasi Jaringan Saraf Tiruan
+
+Pemilihan algoritma pengoptimalan (*solver*) dan strategi regularisasi menentukan kecepatan konvergensi serta kestabilan bobot parameter model neural network.
 
 ---
 
-## 12.2.1. Karakteristik Fungsi Aktivasi
-1. **Rectified Linear Unit (ReLU)**:
-   $$g(z) = \\max(0, z)$$
-   Default industri modern. Menghindari masalah *vanishing gradient* pada nilai positif dan sangat efisien secara komputasi.
-2. **Hyperbolic Tangent (Tanh)**:
-   $$g(z) = \\tanh(z) = \\frac{e^z - e^{-z}}{e^z + e^{-z}}$$
-   Berpusat di nol (*zero-centered*) dengan rentang output $[-1, 1]$.
-3. **Logistic Sigmoid**:
-   $$g(z) = \\frac{1}{1 + e^{-z}}$$
-   Menghasilkan probabilitas dalam rentang $[0, 1]$, rentan vanishing gradient untuk $|z| \\gg 0$.
+## 12.2.1. Karakteristik Solvers di Scikit-Learn
+1. **\`solver='adam'\` (Adaptive Moment Estimation)**:
+   - Pengoptimal standar industri untuk dataset besar (ribuan hingga jutaan sampel).
+   - Memelihara rata-rata eksponensial bergerak dari gradien pertama $m_t$ (momentum) dan gradien kuadrat kedua $v_t$ (skala adaptif):
+     $$m_t = \\beta_1 m_{t-1} + (1 - \\beta_1) g_t, \\quad v_t = \\beta_2 v_{t-1} + (1 - \\beta_2) g_t^2$$
+2. **\`solver='lbfgs'\` (Limited-memory Broyden–Fletcher–Goldfarb–Shanno)**:
+   - Pengoptimal orde kedua quasi-Newton yang mendekati matriks Hessian kebalikan secara efisien.
+   - **Konvergen jauh lebih cepat dan menghasilkan akurasi lebih tinggi untuk dataset kecil ($< 1.000$ sampel)**.
+3. **\`solver='sgd'\`**:
+   - Penurunan gradien stokastik standar dengan dukungan parameter momentum (\`momentum=0.9\`) dan momentum Nesterov (\`nesterovs_momentum=True\`).
 
 ---
 
-## 12.2.2. Pemilihan Solver Optimasi di Scikit-Learn
-- \`solver='adam'\`: Metode Stochastic Gradient berbasis momen adaptif orde pertama. Sangat tangguh untuk dataset ribuan hingga jutaan sampel.
-- \`solver='l-bfgs'\`: Algoritma Quasi-Newton orde kedua yang mengestimasi invers matriks Hessian. Sangat cepat konvergen dan presisi tinggi untuk dataset berukuran kecil hingga menengah ($< 2.000$ sampel).
-- \`solver='sgd'\`: Gradien stokastik murni dengan opsi momentum Nesterov.
+## 12.2.2. Regularisasi Penalti $L_2$ (\`alpha\`)
+Fungsi kerugian teratur yang diminimalkan adalah:
+
+$$E(W, b) = L_{\\text{data}}(W, b) + \\frac{\\alpha}{2} \\sum_{l=1}^L \\|W^{(l)}\\|_F^2$$
+
+Di mana $\\|W\\|_F$ merupakan norma Frobenius dari matriks bobot. Meningkatkan nilai \`alpha\` menekan besaran bobot ekstrem dan mencegah overfitting pada fitur bising.
+
+---
+
+## 12.2.3. Implementasi Lengkap Python
 
 \`\`\`python
-# Contoh penggunaan solver l-bfgs untuk dataset berukuran kecil
-mlp_fast = MLPClassifier(hidden_layer_sizes=(16,), solver='l-bfgs', max_iter=200, random_state=42)
-mlp_fast.fit(X_train_scaled[:100], y_train[:100])
-print("L-BFGS konvergen dalam iterasi:", mlp_fast.n_iter_)
+from sklearn.neural_network import MLPRegressor
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, r2_score
+
+# 1. Dataset Regresi Perumahan
+housing = fetch_california_housing()
+X_tr, X_te, y_tr, y_te = train_test_split(housing.data[:2000], housing.target[:2000], test_size=0.2, random_state=42)
+
+scaler = StandardScaler()
+X_tr_s = scaler.fit_transform(X_tr)
+X_te_s = scaler.transform(X_te)
+
+# 2. MLPRegressor dengan Solver L-BFGS untuk Konvergensi Cepat pada Sampel Menengah
+mlp_reg = MLPRegressor(
+    hidden_layer_sizes=(50, 25),
+    activation='relu',
+    solver='lbfgs',
+    alpha=0.01,
+    max_iter=500,
+    random_state=42
+)
+mlp_reg.fit(X_tr_s, y_tr)
+
+preds = mlp_reg.predict(X_te_s)
+rmse = mean_squared_error(y_te, preds) ** 0.5
+r2 = r2_score(y_te, preds)
+
+print("=" * 60)
+print("HASIL EVALUASI MLPREGRESSOR (SOLVER L-BFGS)")
+print("=" * 60)
+print(f"RMSE Model Regresi : {rmse:.4f}")
+print(f"R² Score           : {r2:.4f}")
 \`\`\`
 `
       }
@@ -117,91 +176,163 @@ print("L-BFGS konvergen dalam iterasi:", mlp_fast.n_iter_)
   },
 
   // =========================================================================
-  // BAB 13: Computer Vision
+  // BAB 13: Pipeline & ColumnTransformer Terpadu
   // =========================================================================
   {
     id: "ml-bab-13",
-    slug: "bab-13-computer-vision",
-    title: "BAB 13: Computer Vision",
+    slug: "bab-13-pipeline-columntransformer-terpadu",
+    title: "BAB 13: Pipeline & ColumnTransformer Terpadu",
     orderIndex: 13,
-    description: "Pemrosesan citra digital dalam machine learning: representasi piksel sebagai tensor, klasifikasi gambar angka tulisan tangan (Optical Recognition of Handwritten Digits), dan dasar konvolusi citra 2D.",
+    description: "Arsitektur alur kerja anti-kebocoran data: ColumnTransformer fitur heterogen, Custom Transformers dengan BaseEstimator, caching memori perantara, dan TransformedTargetRegressor.",
     subsections: [
       {
         id: "ml-bab-13-1",
-        slug: "representasi-citra-dan-digits-dataset",
-        title: "13.1. Representasi Citra & Klasifikasi Angka (Digits Dataset)",
+        slug: "pencegahan-data-leakage-dengan-pipeline",
+        title: "13.1. Pencegahan Data Leakage dengan Pipeline & ColumnTransformer",
         orderIndex: 1,
-        description: "Memproses citra 2D grayscale/RGB menjadi vektor fitur 1D dan membangun model pengenalan pola dengan Support Vector Classifier.",
-        content_markdown: `# 13.1. Representasi Citra & Klasifikasi Angka (Digits Dataset)
+        description: "Menggabungkan imputasi data hilang, penskalaan numerik, dan one-hot encoding kategorikal secara atomik tanpa kebocoran data uji.",
+        content_markdown: `# 13.1. Pencegahan Data Leakage dengan Pipeline & ColumnTransformer
 
-Dalam domain visi komputer, citra digital adalah matriks intensitas piksel 2 dimensi (grayscale) atau 3 dimensi tensor berukuran $(H \\times W \\times C)$ (RGB warna).
+Kesalahan paling umum dalam rekayasa data adalah **Data Leakage** — situasi di mana statistik dari set validasi/uji (seperti mean, standar deviasi, atau modus kategori) bocor ke dalam data pelatihan sebelum pembagian lipatan cross-validation.
 
 ---
 
-## 13.1.1. Perataan Piksel (*Pixel Flattening*)
-Untuk algoritma machine learning standar tabular (seperti SVM atau Random Forest), matriks citra 2D diratakan (*flattened*) menjadi vektor fitur satu dimensi berukuran $1 \\times (H \\times W)$:
+## 13.1.1. Arsitektur Komposisi Pipeline Atomik
+Dengan merangkum tahapan preprocessing dan estimator ke dalam satu objek tunggal \`Pipeline\`, Scikit-Learn menjamin bahwa \`fit()\` hanya pernah dipanggil pada data latihan di setiap lipatan cross-validation, dan data uji hanya ditransformasikan menggunakan parameter yang telah dipelajari dari set latih (\`transform()\`).
+
+---
+
+## 13.1.2. Implementasi Lengkap Python
 
 \`\`\`python
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-from sklearn.metrics import classification_report, confusion_matrix
+import pandas as pd
 import numpy as np
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 
-# 1. Memuat dataset angka 8x8 piksel
-digits = load_digits()
-print(f"Jumlah citra angka: {digits.images.shape[0]}")
-print(f"Dimensi citra matriks asli: {digits.images.shape[1:]} piksel")
-print(f"Dimensi vektor fitur yang diratakan: {digits.data.shape[1]} fitur")
+# 1. Buat DataFrame heterogen mentah dengan missing values
+data = pd.DataFrame({
+    'umur': [22, 38, 26, 35, np.nan, 45, 52, 29],
+    'gaji': [5000000, 14000000, 7500000, np.nan, 12000000, 18000000, 22000000, 8000000],
+    'kota': ['Jakarta', 'Surabaya', 'Bandung', 'Jakarta', 'Surabaya', np.nan, 'Bandung', 'Jakarta'],
+    'status': ['Silver', 'Platinum', 'Gold', 'Silver', 'Gold', 'Platinum', 'Platinum', 'Silver'],
+    'target': [0, 1, 0, 0, 1, 1, 1, 0]
+})
 
-# 2. Normalisasi intensitas piksel (0 - 16 menjadi 0.0 - 1.0)
-X = digits.data / 16.0
-y = digits.target
+X = data.drop(columns=['target'])
+y = data['target']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+num_cols = ['umur', 'gaji']
+cat_cols = ['kota', 'status']
 
-# 3. Latih classifier SVM dengan kernel RBF
-clf = SVC(gamma=0.05, C=5.0, random_state=42)
-clf.fit(X_train, y_train)
+# 2. Pipeline untuk Fitur Numerik
+num_pipe = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', StandardScaler())
+])
 
-# 4. Evaluasi Hasil Prediksi
-y_pred = clf.predict(X_test)
-print(f"Akurasi Pengenalan Karakter Angka: {clf.score(X_test, y_test)*100:.2f}%")
-print("\nRingkasan Laporan Klasifikasi:\n", classification_report(y_test, y_pred, digits=3))
+# 3. Pipeline untuk Fitur Kategorikal
+cat_pipe = Pipeline([
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+])
+
+# 4. ColumnTransformer Menggabungkan Kedua Alur
+preprocessor = ColumnTransformer([
+    ('num', num_pipe, num_cols),
+    ('cat', cat_pipe, cat_cols)
+])
+
+# 5. Pipeline Akhir Lengkap (Preprocessing + Estimator)
+full_pipeline = Pipeline([
+    ('prep', preprocessor),
+    ('clf', HistGradientBoostingClassifier(random_state=42))
+])
+
+full_pipeline.fit(X, y)
+print("=" * 60)
+print("PIPELINE TERPADU BERHASIL DILATIH")
+print("=" * 60)
+print("Tahapan Pipeline:", [step[0] for step in full_pipeline.steps])
+print("Prediksi Sampel Pertama:", full_pipeline.predict(X.iloc[[0]]))
 \`\`\`
 `
       },
       {
         id: "ml-bab-13-2",
-        slug: "konsep-konvolusi-dan-pooling",
-        title: "13.2. Konsep Konvolusi 2D, Filter Kernel, & Ekstraksi Fitur Spasial",
+        slug: "custom-transformers-dan-target-regressor",
+        title: "13.2. Custom Transformers & TransformedTargetRegressor",
         orderIndex: 2,
-        description: "Operasi konvolusi matriks, filter deteksi tepi Sobel, dan reduksi spasial pooling.",
-        content_markdown: `# 13.2. Konsep Konvolusi 2D, Filter Kernel, & Ekstraksi Fitur Spasial
+        description: "Membangun transformer kustom yang kompatibel penuh dengan Scikit-Learn API menggunakan BaseEstimator dan TransformerMixin, serta transformasi target non-linear.",
+        content_markdown: `# 13.2. Custom Transformers & TransformedTargetRegressor
 
-Perataan piksel sederhana mengabaikan relasi ketetanggaan spasial (*spatial locality*). Operasi **Konvolusi 2D** mempertahankan relasi ketetanggaan dengan menggeser matriks kernel kecil $K$ (misal $3 \\times 3$) di atas citra input $I$:
+---
 
-$$(I * K)(i, j) = \\sum_{m} \\sum_{n} I(i-m, j-n) K(m, n)$$
+## 13.2.1. Standar Scikit-Learn untuk Transformer Kustom
+Untuk mengintegrasikan logika transformasi domain-spesifik ke dalam \`Pipeline\` atau \`GridSearchCV\`, kelas kustom harus mewarisi:
+1. **\`BaseEstimator\`**: Memberikan metode \`get_params()\` dan \`set_params()\` secara otomatis tanpa perlu \`*args\` atau \`**kwargs\` di constructor.
+2. **\`TransformerMixin\`**: Memberikan metode \`fit_transform()\` secara otomatis.
+
+---
+
+## 13.2.2. TransformedTargetRegressor
+Banyak variabel target regresi (seperti harga rumah atau gaji) memiliki distribusi miring ke kanan (*right-skewed*). \`TransformedTargetRegressor\` menerapkan transformasi logaritmik atau Box-Cox pada target $y$ selama \`fit()\`, dan secara otomatis membalikkan transformasi (*inverse transform*) saat memanggil \`predict()\`:
+
+$$\\hat{y} = f^{-1}\\big(g(X)\\big)$$
+
+---
+
+## 13.2.3. Implementasi Lengkap Python
 
 \`\`\`python
 import numpy as np
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import TransformedTargetRegressor
+from sklearn.linear_model import Ridge
+from sklearn.pipeline import Pipeline
 
-# Simulasi operasi konvolusi 2D filter deteksi tepi vertikal (Sobel)
-def conv2d_simple(image, kernel):
-    k_h, k_w = kernel.shape
-    out_h = image.shape[0] - k_h + 1
-    out_w = image.shape[1] - k_w + 1
-    output = np.zeros((out_h, out_w))
-    for i in range(out_h):
-        for j in range(out_w):
-            patch = image[i:i+k_h, j:j+k_w]
-            output[i, j] = np.sum(patch * kernel)
-    return output
+# 1. Custom Transformer: Menghitung Rasio Dua Kolom Fitur
+class RatioFeatureExtractor(BaseEstimator, TransformerMixin):
+    def __init__(self, col_a_idx=0, col_b_idx=1):
+        self.col_a_idx = col_a_idx
+        self.col_b_idx = col_b_idx
 
-sobel_vertical = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
-dummy_patch = np.array([[10, 10, 80], [10, 10, 80], [10, 10, 80]])
-edge_response = conv2d_simple(dummy_patch, sobel_vertical)
-print("Respon deteksi tepi vertikal:", edge_response[0, 0])
+    def fit(self, X, y=None):
+        return self # Stateless transformer
+
+    def transform(self, X):
+        X_arr = np.asarray(X)
+        ratio = (X_arr[:, [self.col_a_idx]] + 1e-6) / (X_arr[:, [self.col_b_idx]] + 1e-6)
+        return np.hstack([X_arr, ratio])
+
+# 2. Dataset Regresi dengan Target Berdistribusi Log-Normal
+X_dummy = np.array([[10, 2], [20, 5], [15, 3], [30, 4]])
+y_dummy = np.exp(np.array([2.5, 3.2, 2.9, 4.1])) # Target eksponensial
+
+# 3. Model dengan Transformasi Target Logaritmik Otomatis
+base_model = Pipeline([
+    ('ratio_gen', RatioFeatureExtractor(0, 1)),
+    ('regressor', Ridge(alpha=1.0))
+])
+
+target_model = TransformedTargetRegressor(
+    regressor=base_model,
+    func=np.log1p,      # Transformasi maju: log(1 + y)
+    inverse_func=np.expm1 # Transformasi mundur otomatis: exp(y) - 1
+)
+
+target_model.fit(X_dummy, y_dummy)
+predictions = target_model.predict(X_dummy)
+
+print("=" * 60)
+print("HASIL TRANSFORMED TARGET REGRESSOR")
+print("=" * 60)
+print("Nilai Aktual   :", np.round(y_dummy, 2))
+print("Nilai Prediksi :", np.round(predictions, 2))
 \`\`\`
 `
       }
@@ -209,98 +340,142 @@ print("Respon deteksi tepi vertikal:", edge_response[0, 0])
   },
 
   // =========================================================================
-  // BAB 14: Natural Language Processing
+  // BAB 14: Pemrosesan Teks & NLP dengan Scikit-Learn
   // =========================================================================
   {
     id: "ml-bab-14",
-    slug: "bab-14-natural-language-processing",
-    title: "BAB 14: Natural Language Processing",
+    slug: "bab-14-pemrosesan-teks-nlp",
+    title: "BAB 14: Pemrosesan Teks & Natural Language Processing (NLP)",
     orderIndex: 14,
-    description: "Pemrosesan bahasa alami (NLP): Ekstraksi fitur teks, Bag-of-Words (CountVectorizer), TF-IDF (TfidfVectorizer), n-grams, dan klasifikasi teks dengan Naive Bayes & model linear.",
+    description: "Representasi teks Bag-of-Words, n-gram, formulasi matematis pembobotan TF-IDF, serta pipeline klasifikasi teks end-to-end dengan Naive Bayes dan Linear SVM.",
     subsections: [
       {
         id: "ml-bab-14-1",
-        slug: "vektorisasi-teks-count-dan-tfidf",
-        title: "14.1. Ekstraksi Fitur Teks: Bag-of-Words & TF-IDF",
+        slug: "bag-of-words-tfidf-matematis",
+        title: "14.1. Representasi Teks: Bag-of-Words & TF-IDF Matematis",
         orderIndex: 1,
-        description: "Transformasi teks tidak terstruktur menjadi representasi matriks renggang numerik (sparse matrix) siap latih.",
-        content_markdown: `# 14.1. Ekstraksi Fitur Teks: Bag-of-Words & TF-IDF
+        description: "Tokenisasi teks, n-gram ranges, stopwords, formulasi logaritmik frekuensi dokumen terbalik (TF-IDF), dan normalisasi L2 Euclidean.",
+        content_markdown: `# 14.1. Representasi Teks: Bag-of-Words & TF-IDF Matematis
 
-Komputer dan algoritma machine learning tidak dapat memproses kata-kata mentah secara langsung. Teks harus dikonversi ke dalam representasi numerik.
-
----
-
-## 14.1.1. Bag-of-Words (\`CountVectorizer\`)
-Menghitung frekuensi kemunculan setiap kata dalam dokumen tanpa memperhatikan tata bahasa (*grammar*) atau urutan kata.
+Komputer tidak dapat memproses teks mentah secara langsung. Teks harus dikonversi ke dalam vektor representasi numerik berdimensi tinggi.
 
 ---
 
-## 14.1.2. TF-IDF (\`TfidfVectorizer\`)
-Kata yang muncul di hampir semua dokumen (seperti "dan", "yang", "adalah") membawa sedikit informasi deskriptif. **TF-IDF** menimbang frekuensi kata dengan kebalikan frekuensi dokumennya:
+## 14.1.1. Formulasi Matematis TF-IDF di Scikit-Learn
+Pembobotan **TF-IDF** (*Term Frequency - Inverse Document Frequency*) mengevaluasi seberapa penting suatu kata $t$ dalam dokumen $d$ yang berada di dalam suatu korpus $D$:
 
-$$\\text{tfidf}(t, d, D) = \\text{tf}(t, d) \\times \\text{idf}(t, D)$$
+$$\\text{tf-idf}(t, d) = \\text{tf}(t, d) \\times \\text{idf}(t)$$
 
-Di mana perumusan IDF yang digunakan Scikit-Learn:
+### 1. Frekuensi Term (TF):
+Frekuensi kemunculan kata $t$ di dalam dokumen $d$.
+
+### 2. Frekuensi Dokumen Terbalik Halus (Smooth IDF):
+Scikit-Learn menggunakan default \`smooth_idf=True\`, yang menambahkan konstanta $1$ pada pembilang dan penyebut untuk mencegah pembagian dengan nol jika suatu kata tidak ada di korpus:
+
 $$\\text{idf}(t) = \\ln \\left( \\frac{1 + n}{1 + \\text{df}(t)} \\right) + 1$$
+
+Di mana:
+- $n$ adalah jumlah total dokumen dalam korpus ($n = |D|$).
+- $\\text{df}(t)$ adalah jumlah dokumen yang mengandung kata $t$.
+
+### 3. Normalisasi Vektor Euclidean ($L_2$ Norm):
+Setiap vektor dokumen dinormalisasi ke panjang unit ($1$) untuk mencegah bias panjang dokumen:
+$$v_{\\text{norm}} = \\frac{v}{\\|v\\|_2} = \\frac{v}{\\sqrt{v_1^2 + v_2^2 + \\dots + v_k^2}}$$
+
+---
+
+## 14.1.2. Implementasi Lengkap Python
 
 \`\`\`python
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 
 corpus = [
-    "Machine learning memungkinkan komputer belajar dari pola data masa lalu.",
-    "Deep learning adalah subbidang machine learning yang memanfaatkan neural network.",
-    "Sepak bola dan basket adalah cabang olahraga yang menyehatkan tubuh."
+    "Machine learning memproses data numerik dan teks",
+    "Model deep learning membutuhkan komputasi GPU tinggi",
+    "Scikit learn menyediakan algoritma machine learning lengkap",
+    "Pemrosesan bahasa alami menggunakan representasi vektor kata"
 ]
 
-tfidf = TfidfVectorizer(ngram_range=(1, 2), min_df=1)
-X_tfidf = tfidf.fit_transform(corpus)
+# Inisialisasi TfidfVectorizer dengan n-gram (unigram + bigram)
+vectorizer = TfidfVectorizer(ngram_range=(1, 2), smooth_idf=True, norm='l2')
+tfidf_matrix = vectorizer.fit_transform(corpus)
 
-print(f"Ukuran matriks TF-IDF: {X_tfidf.shape} (3 dokumen, {X_tfidf.shape[1]} unigram & bigram)")
-print("Fitur kata teratas:", tfidf.get_feature_names_out()[:6])
+print("=" * 60)
+print("HASIL PEMBOBOTAN TF-IDF TEKS")
+print("=" * 60)
+print(f"Bentuk Matriks TF-IDF Sparse : {tfidf_matrix.shape}")
+print("Contoh 5 Kosakata Pertama   :", vectorizer.get_feature_names_out()[:5])
+
+# Tampilkan representasi dokumen pertama sebagai DataFrame
+df_tfidf = pd.DataFrame(
+    tfidf_matrix.toarray(),
+    columns=vectorizer.get_feature_names_out()
+)
+top_words = df_tfidf.iloc[0].sort_values(ascending=False).head(4)
+print("\nKata dengan Bobot TF-IDF Tertinggi di Dokumen #1:\n", top_words)
 \`\`\`
 `
       },
       {
         id: "ml-bab-14-2",
         slug: "pipeline-klasifikasi-teks-sentimen",
-        title: "14.2. Pipeline Klasifikasi Teks End-to-End (Analisis Sentimen)",
+        title: "14.2. Pipeline Klasifikasi Teks & Analisis Sentimen End-to-End",
         orderIndex: 2,
-        description: "Membangun pipeline klasifikasi ulasan pelanggan menggunakan MultinomialNB dan LogisticRegression.",
-        content_markdown: `# 14.2. Pipeline Klasifikasi Teks End-to-End (Analisis Sentimen)
+        description: "Klasifikasi teks multi-kelas menggunakan MultinomialNB, ComplementNB untuk data teks tidak seimbang, LinearSVC, dan evaluasi matriks kebingungan.",
+        content_markdown: `# 14.2. Pipeline Klasifikasi Teks & Analisis Sentimen End-to-End
+
+---
+
+## 14.2.1. Algoritma Klasifikasi Teks Terbaik
+1. **\`MultinomialNB\`**: Model probabilitas Naive Bayes multivariat dengan estimasi penghalusan Laplace (*additive Laplace smoothing* $\\alpha$).
+2. **\`ComplementNB\`**: Varian khusus Naive Bayes yang dirancang khusus untuk dataset teks yang tidak seimbang (*skewed/imbalanced classes*).
+3. **\`LinearSVC\`**: Support Vector Classifier linear yang secara empiris terbukti sebagai salah satu model paling akurat untuk klasifikasi teks berdimensi tinggi.
+
+---
+
+## 14.2.2. Implementasi Lengkap Python
 
 \`\`\`python
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score
+from sklearn.svm import LinearSVC
+from sklearn.metrics import classification_report
 
-# Dataset contoh ulasan produk
-train_texts = [
-    "Produk sangat bagus pengiriman sangat cepat",
-    "Kualitas barang istimewa luar biasa memuaskan",
-    "Barang rusak cacat dan tidak sesuai deskripsi",
-    "Sangat mengecewakan pelayanan buruk dan lambat"
+# Dataset ulasan sentimen e-commerce
+training_corpus = [
+    ("Produk sangat memuaskan, kualitas material kokoh dan bagus", "positif"),
+    ("Pengiriman cepat, kemasan rapi dan barang original", "positif"),
+    ("Layanan pelanggan sangat ramah dan responsif membantu", "positif"),
+    ("Barang rusak saat diterima, kemasan robek dan tidak aman", "negatif"),
+    ("Kualitas sangat buruk, tidak sesuai dengan deskripsi gambar", "negatif"),
+    ("Pengiriman sangat lambat, paket tertahan dua minggu", "negatif")
 ]
-train_labels = [1, 1, 0, 0] # 1: Positif, 0: Negatif
 
-test_texts = [
-    "Pengiriman cepat dan kualitas sangat baik",
-    "Barang cacat dan mengecewakan"
-]
-test_labels = [1, 0]
+texts, labels = zip(*training_corpus)
 
-# Pipeline teks: Vektorisasi -> Estimator
-text_clf = Pipeline([
-    ('tfidf', TfidfVectorizer(ngram_range=(1, 2))),
-    ('clf', MultinomialNB(alpha=0.1))
+# Pipeline Klasifikasi Teks Terpadu
+nlp_pipeline = Pipeline([
+    ('tfidf', TfidfVectorizer(ngram_range=(1, 2), min_df=1)),
+    ('classifier', LinearSVC(C=1.0, random_state=42))
 ])
 
-text_clf.fit(train_texts, train_labels)
-preds = text_clf.predict(test_texts)
+nlp_pipeline.fit(texts, labels)
 
-print("Prediksi ulasan pengujian:", ["Positif" if p == 1 else "Negatif" for p in preds])
-print("Akurasi:", accuracy_score(test_labels, preds))
+# Evaluasi pada Ulasan Baru
+new_reviews = [
+    "Kualitas barang sangat bagus dan pengiriman super cepat",
+    "Sangat mengecewakan, barang tidak berfungsi sama sekali"
+]
+
+preds = nlp_pipeline.predict(new_reviews)
+
+print("=" * 60)
+print("HASIL ANALISIS SENTIMEN TEKS")
+print("=" * 60)
+for review, sentiment in zip(new_reviews, preds):
+    print(f"Ulasan: '{review}' -> Prediksi: [{sentiment.upper()}]")
 \`\`\`
 `
       }
@@ -308,68 +483,113 @@ print("Akurasi:", accuracy_score(test_labels, preds))
   },
 
   // =========================================================================
-  // BAB 15: Large Language Model
+  // BAB 15: Computer Vision Klasik dengan Scikit-Learn
   // =========================================================================
   {
     id: "ml-bab-15",
-    slug: "bab-15-large-language-model",
-    title: "BAB 15: Large Language Model",
+    slug: "bab-15-computer-vision-klasik",
+    title: "BAB 15: Computer Vision Klasik dengan Scikit-Learn",
     orderIndex: 15,
-    description: "Arsitektur Transformer, mekanisme Self-Attention, paradigma Pretraining vs Fine-Tuning (PEFT/LoRA), dan pemanfaatan Text Embeddings dalam pipeline Machine Learning Scikit-Learn.",
+    description: "Ekstraksi fitur citra digital, perataan piksel, pengenalan wajah menggunakan Eigenfaces (PCA + SVM), dan klasifikasi digit tulisan tangan MNIST.",
     subsections: [
       {
         id: "ml-bab-15-1",
-        slug: "transformasi-arsitektur-dan-self-attention",
-        title: "15.1. Evolusi dari Model Sekuensial ke Transformer & Self-Attention",
+        slug: "eigenfaces-pengenalan-wajah-pca",
+        title: "15.1. Pengenalan Wajah (Eigenfaces) dengan PCA & SVM",
         orderIndex: 1,
-        description: "Skalabilitas komputasi paralel self-attention dan perumusan scaled dot-product attention.",
-        content_markdown: `# 15.1. Evolusi dari Model Sekuensial ke Transformer & Self-Attention
+        description: "Dekomposisi ruang fitur wajah menggunakan Randomized PCA untuk mengekstrak vektor 'Eigenfaces' dan klasifikasi Support Vector Machine.",
+        content_markdown: `# 15.1. Pengenalan Wajah (Eigenfaces) dengan PCA & SVM
 
-Model sekuensial klasik (RNN/LSTM) memproses teks kata-demi-kata secara bertahap, menjadikannya lambat untuk dilatih pada dataset raksasa karena kendala non-paralel. 
+Teknik **Eigenfaces** (Turk & Pentland, 1991) adalah pendekatan klasik dalam Computer Vision yang memetakan gambar wajah berdimensi tinggi ke dalam sub-ruang linear berdimensi rendah yang merepresentasikan variasi struktural wajah utama.
 
-**Transformer** mengandalkan mekanisme **Scaled Dot-Product Attention**:
+---
 
-$$\\text{Attention}(Q, K, V) = \\text{softmax}\\left( \\frac{Q K^T}{\\sqrt{d_k}} \\right) V$$
+## 15.1.1. Konsep Matematis Eigenfaces
+Setiap gambar wajah berukuran $h \\times w$ direntangkan menjadi vektor satu dimensi $x \\in \\mathbb{R}^{h \\cdot w}$. Jika terdapat $N$ gambar wajah, matriks kovarians dihitung:
 
-Di mana:
-- $Q$ (Query): Apa yang dicari oleh token saat ini.
-- $K$ (Key): Apa yang ditawarkan oleh token-token lainnya.
-- $V$ (Value): Informasi representasi semantik yang diekstraksi.
-- $\\sqrt{d_k}$: Faktor penskalaan untuk mencegah gradien menjadi terlalu kecil saat dimensi besar.
+$$C = \\frac{1}{N} \\sum_{i=1}^N (x_i - \\bar{x})(x_i - \\bar{x})^T$$
+
+Vektor eigen dari matriks kovarians ini disebut sebagai **Eigenfaces**. Setiap wajah baru kemudian dapat direkonstruksi atau dikenali sebagai kombinasi linear dari sejumlah kecil vektor Eigenfaces.
+
+---
+
+## 15.1.2. Implementasi Lengkap Python
+
+\`\`\`python
+from sklearn.datasets import fetch_lfw_people
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# 1. Unduh subset dataset wajah LFW (Labeled Faces in the Wild)
+lfw_people = fetch_lfw_people(min_faces_per_person=50, resize=0.4)
+n_samples, h, w = lfw_people.images.shape
+X = lfw_people.data
+y = lfw_people.target
+target_names = lfw_people.target_names
+
+print(f"Dataset: {n_samples} gambar wajah berukuran {h}x{w} piksel ({X.shape[1]} fitur)")
+
+# 2. Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+# 3. Pipeline: Ekstraksi Eigenfaces (PCA) + Klasifikasi SVM Kernel RBF
+pipeline_faces = Pipeline([
+    ('pca', PCA(n_components=100, svd_solver='randomized', whiten=True, random_state=42)),
+    ('svm', SVC(kernel='rbf', class_weight='balanced', C=5.0, gamma=0.005, random_state=42))
+])
+
+pipeline_faces.fit(X_train, y_train)
+y_pred = pipeline_faces.predict(X_test)
+
+print("=" * 60)
+print("LAPORAN EVALUASI PENGENALAN WAJAH (EIGENFACES)")
+print("=" * 60)
+print(classification_report(y_test, y_pred, target_names=target_names))
+\`\`\`
 `
       },
       {
         id: "ml-bab-15-2",
-        slug: "integrasi-llm-embeddings-dengan-tabular-ml",
-        title: "15.2. Mengintegrasikan LLM Embeddings ke dalam Pipeline Tabular Scikit-Learn",
+        slug: "klasifikasi-digit-mnist-scikit",
+        title: "15.2. Klasifikasi Digit Tulisan Tangan (Dataset MNIST)",
         orderIndex: 2,
-        description: "Menggabungkan representasi vektor semantik dari model bahasa dengan fitur tabular menggunakan ColumnTransformer.",
-        content_markdown: `# 15.2. Mengintegrasikan LLM Embeddings ke dalam Pipeline Tabular Scikit-Learn
+        description: "Pelatihan model pengenalan karakter optik (OCR) pada gambar angka 8x8 piksel menggunakan Random Forest dan evaluasi confusion matrix.",
+        content_markdown: `# 15.2. Klasifikasi Digit Tulisan Tangan (Dataset MNIST)
 
-Dalam sistem industri nyata, data seringkali berbentuk hibrida: kombinasi fitur terstruktur (angka, kategori) dengan fitur tidak terstruktur (deskripsi teks pelanggan, ulasan catatan teknis).
+---
 
-Vektor semantik (*dense embeddings*) dari model bahasa (seperti OpenAI \`text-embedding-3\` atau model lokal Ollama / HuggingFace) dapat dimasukkan langsung sebagai matriks fitur ke estimator Scikit-Learn:
+## 15.2.1. Dataset Digits Scikit-Learn
+Scikit-Learn menyediakan dataset \`load_digits\` yang berisi $1.797$ gambar angka tulisan tangan dari angka $0$ sampai $9$. Setiap gambar direpresentasikan oleh matriks $8 \\times 8$ dengan nilai intensitas grayscale dari $0$ hingga $16$.
+
+---
+
+## 15.2.2. Implementasi Lengkap Python
 
 \`\`\`python
-import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
 
-# Simulasi vektor embedding teks berdimensi 8 (misal dari LLM transformer)
-np.random.seed(42)
-text_embeddings = np.random.randn(200, 8)
-# Fitur numerik tabular standar (misal umur, lama berlangganan)
-tabular_features = np.random.uniform(20, 70, size=(200, 2))
+digits = load_digits()
+X, y = digits.data, digits.target
 
-# Gabungkan fitur tabular dan teks embedding secara horizontal (Horizontal Stacking)
-X_combined = np.hstack([tabular_features, text_embeddings])
-y = np.random.choice([0, 1], size=200, p=[0.7, 0.3])
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-clf = LogisticRegression(max_iter=500, random_state=42)
-clf.fit(X_combined, y)
+rf_digits = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_digits.fit(X_train, y_train)
 
-print(f"Total fitur gabungan (Tabular + LLM Embedding): {X_combined.shape[1]}")
-print(f"Skor ROC-AUC Model Hibrida: {roc_auc_score(y, clf.predict_proba(X_combined)[:, 1]):.4f}")
+preds = rf_digits.predict(X_test)
+acc = accuracy_score(y_test, preds)
+
+print("=" * 60)
+print("HASIL KLASIFIKASI DIGIT TULISAN TANGAN")
+print("=" * 60)
+print(f"Akurasi Pengenalan Karakter: {acc:.2%}")
+print("Confusion Matrix:\n", confusion_matrix(y_test, preds))
 \`\`\`
 `
       }
@@ -377,60 +597,86 @@ print(f"Skor ROC-AUC Model Hibrida: {roc_auc_score(y, clf.predict_proba(X_combin
   },
 
   // =========================================================================
-  // BAB 16: AI Agents & Sistem Generatif
+  // BAB 16: Time Series Forecasting dengan Scikit-Learn
   // =========================================================================
   {
     id: "ml-bab-16",
-    slug: "bab-16-ai-agents-sistem-generatif",
-    title: "BAB 16: AI Agents & Sistem Generatif",
+    slug: "bab-16-time-series-forecasting",
+    title: "BAB 16: Time Series Forecasting dengan Scikit-Learn",
     orderIndex: 16,
-    description: "Arsitektur Agen Otonom berbasis ReAct Loop (Reasoning + Acting), Tool Use & Function Calling, eksekusi kode Python mandiri, dan orkestrasi multi-agent.",
+    description: "Transformasi deret waktu menjadi masalah supervised learning, rekayasa fitur lag, statistik rolling window, validasi silang TimeSeriesSplit, dan strategi multi-step forecasting.",
     subsections: [
       {
         id: "ml-bab-16-1",
-        slug: "react-reasoning-and-tool-calling",
-        title: "16.1. Pola ReAct (Reasoning + Acting) & Pemanggilan Alat (Tool Use)",
+        slug: "lag-features-dan-timeseriessplit",
+        title: "16.1. Rekayasa Fitur Lag & Validasi Bebas Bocor (TimeSeriesSplit)",
         orderIndex: 1,
-        description: "Siklus iteratif Thought -> Action -> Observation untuk menyelesaikan tugas data science multi-langkah.",
-        content_markdown: `# 16.1. Pola ReAct (Reasoning + Acting) & Pemanggilan Alat (Tool Use)
+        description: "Membentuk matriks fitur tergeser (lag features), fitur kalender musiman, dan validasi walk-forward bebas kebocoran waktu masa depan.",
+        content_markdown: `# 16.1. Rekayasa Fitur Lag & Validasi Bebas Bocor (TimeSeriesSplit)
 
-**AI Agent** adalah sistem perangkat lunak yang menggunakan model pembelajaran bahasa cerdas sebagai otak (*reasoning engine*) untuk berinteraksi secara otonom dengan lingkungannya melalui sekumpulan alat bantu (*tools*).
+Berbeda dari data tabular independen (*IID*), observasi deret waktu (*time series*) memiliki ketergantungan temporal sekuensial yang kuat.
 
 ---
 
-## 16.1.1. Siklus ReAct
-1. **Thought**: Agen menganalisis keadaan saat ini dan merumuskan rencana tindakan logis berikutnya.
-2. **Action**: Agen memanggil tool spesifik dengan argumen terstruktur (misal query database, eksekusi kode Python, atau kalkulator).
-3. **Observation**: Agen membaca output dari eksekusi tool tersebut dan mengintegrasikannya ke memori konteksnya.
-4. **Final Answer**: Mengembalikan jawaban akhir ketika seluruh tahapan terpenuhi.
+## 16.1.1. Konversi Deret Waktu ke Supervised Learning
+Kita memprediksi nilai masa depan $y_t$ berdasarkan nilai masa lalu (*lag values*):
+
+$$y_t = f\\big(y_{t-1}, \\; y_{t-2}, \\; \\dots, \\; y_{t-p}, \\; \\text{RollingMean}_k(t-1)\\big)$$
+
+### Rekayasa Fitur Waktu:
+1. **Lag Features**: $y_{t-1}, y_{t-7}, y_{t-30}$ (misal untuk menangkap pola harian, mingguan, dan bulanan).
+2. **Rolling Window Statistics**: Rata-rata bergerak (*moving average*) dan deviasi standar bergerak selama jendela waktu tertentu.
+3. **Calendar Features**: Hari dalam minggu (0-6), bulan (1-12), dan indikator hari libur.
+
+---
+
+## 16.1.2. Implementasi Lengkap Python
 
 \`\`\`python
-# Implementasi Deterministic ReAct Simulator untuk Analisis Data ML
-def tool_predict_sales(budget_marketing):
-    # Simulasi model regresi terlatih
-    return float(budget_marketing) * 2.8 + 150.0
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.metrics import mean_absolute_percentage_error
 
-def react_agent_executor(user_prompt):
-    print(f"[User]: {user_prompt}")
-    
-    # 1. Tahap Reasoning (Thought)
-    thought = "User ingin memprediksi penjualan dengan budget marketing 50 juta. Saya perlu memanggil tool_predict_sales."
-    print(f"[Thought]: {thought}")
-    
-    # 2. Tahap Action
-    action = "tool_predict_sales"
-    action_arg = 50.0
-    print(f"[Action]: Memanggil {action}(budget={action_arg})")
-    
-    # 3. Tahap Observation
-    observation = tool_predict_sales(action_arg)
-    print(f"[Observation]: Output estimasi adalah {observation} juta IDR")
-    
-    # 4. Final Answer
-    final_resp = f"Berdasarkan model prediktif, alokasi anggaran Rp {action_arg} juta menghasilkan proyeksi omset Rp {observation} juta."
-    return final_resp
+# 1. Buat deret waktu sintetik 365 hari dengan tren dan musiman
+dates = pd.date_range('2025-01-01', periods=365, freq='D')
+trend = np.linspace(100, 250, 365)
+seasonality = 20 * np.sin(2 * np.pi * np.arange(365) / 7) # Musiman 7 harian
+noise = np.random.randn(365) * 5
+series = trend + seasonality + noise
 
-print("\n" + react_agent_executor("Berapa estimasi omset jika kita pasang iklan 50 juta?"))
+df = pd.DataFrame({'ds': dates, 'y': series})
+
+# 2. Rekayasa Fitur Lag dan Rolling Window
+df['lag_1'] = df['y'].shift(1)
+df['lag_7'] = df['y'].shift(7)
+df['rolling_mean_7'] = df['y'].shift(1).rolling(window=7).mean()
+df['day_of_week'] = df['ds'].dt.dayofweek
+
+# Hapus baris awal yang mengandung NaN akibat shift
+df_clean = df.dropna().reset_index(drop=True)
+
+X = df_clean[['lag_1', 'lag_7', 'rolling_mean_7', 'day_of_week']]
+y = df_clean['y']
+
+# 3. Evaluasi TimeSeriesSplit Walk-Forward
+tscv = TimeSeriesSplit(n_splits=5)
+mape_scores = []
+
+model = HistGradientBoostingRegressor(random_state=42)
+
+for fold, (train_idx, test_idx) in enumerate(tscv.split(X)):
+    X_tr, X_val = X.iloc[train_idx], X.iloc[test_idx]
+    y_tr, y_val = y.iloc[train_idx], y.iloc[test_idx]
+    
+    model.fit(X_tr, y_tr)
+    preds = model.predict(X_val)
+    mape = mean_absolute_percentage_error(y_val, preds)
+    mape_scores.append(mape)
+    print(f"Fold #{fold+1}: Latih {len(X_tr)} hari -> Uji {len(X_val)} hari | MAPE: {mape:.2%}")
+
+print(f"\nRata-rata MAPE Seluruh Fold: {np.mean(mape_scores):.2%}")
 \`\`\`
 `
       }
@@ -438,94 +684,77 @@ print("\n" + react_agent_executor("Berapa estimasi omset jika kita pasang iklan 
   },
 
   // =========================================================================
-  // BAB 17: Reinforcement Learning
+  // BAB 17: Sistem Rekomendasi & Analisis Ketetanggaan
   // =========================================================================
   {
     id: "ml-bab-17",
-    slug: "bab-17-reinforcement-learning",
-    title: "BAB 17: Reinforcement Learning",
+    slug: "bab-17-sistem-rekomendasi-ketetanggaan",
+    title: "BAB 17: Sistem Rekomendasi & Analisis Ketetanggaan",
     orderIndex: 17,
-    description: "Pembelajaran penguatan: Markov Decision Process (MDP), Persamaan Optimalitas Bellman, Tabular Q-Learning, dan strategi eksplorasi Epsilon-Greedy.",
+    description: "Metrik jarak spasial (Cosine, Euclidean, Manhattan), struktur pencarian cepat KD-Tree & Ball-Tree, serta Collaborative Filtering berbasis ketetanggaan (NearestNeighbors).",
     subsections: [
       {
         id: "ml-bab-17-1",
-        slug: "markov-decision-process-dan-bellman",
-        title: "17.1. Fondasi Matematika: Markov Decision Process & Bellman Equation",
+        slug: "collaborative-filtering-nearestneighbors",
+        title: "17.1. Collaborative Filtering Berbasis NearestNeighbors",
         orderIndex: 1,
-        description: "State space S, Action space A, Reward R, Discount factor gamma, dan perumusan matematis fungsi nilai state-action Q(s, a).",
-        content_markdown: `# 17.1. Fondasi Matematika: Markov Decision Process & Bellman Equation
+        description: "Matriks interaksi user-item, Cosine Similarity matematis, dan algoritma pencarian tetangga terdekat efisien menggunakan NearestNeighbors.",
+        content_markdown: `# 17.1. Collaborative Filtering Berbasis NearestNeighbors
 
-Berbeda dengan Supervised Learning (yang memerlukan data berlabel) atau Unsupervised Learning (yang mencari pola laten tanpa target), **Reinforcement Learning (RL)** melatih agen melalui interaksi coba-coba (*trial-and-error*) dengan lingkungan untuk memaksimalkan imbalan kumulatif (*cumulative discounted reward*).
-
----
-
-## 17.1.1. Markov Decision Process (MDP)
-Formulasi formal RL didefinisikan oleh tuple $(S, A, P, R, \\gamma)$:
-- $S$: Kumpulan keadaan lingkungan (*state*).
-- $A$: Kumpulan tindakan yang dapat diambil (*action*).
-- $P(s' \\mid s, a)$: Probabilitas transisi ke state berikutnya $s'$ setelah aksi $a$.
-- $R(s, a)$: Fungsi imbalan langsung (*reward*).
-- $\\gamma \\in [0, 1)$: Faktor diskon untuk imbalan di masa depan.
+Sistem rekomendasi berbasis **Collaborative Filtering** memprediksi minat preferensi seorang pengguna terhadap suatu item berdasarkan pola kemiripan interaksi pengguna lain (*User-Based*) atau kemiripan antar item (*Item-Based*).
 
 ---
 
-## 17.1.2. Persamaan Optimalitas Bellman
-Fungsi nilai aksi optimal $Q^*(s, a)$ menyatakan imbalan kumulatif maksimum yang dapat diperoleh:
+## 17.1.1. Formulasi Matematis Cosine Distance
+Untuk matriks interaksi yang jarang (*sparse interaction matrix*), **Cosine Similarity** mengukur sudut kosinus antara dua vektor profil interaksi $u$ dan $v$, terlepas dari perbedaan volume rating absolut:
 
-$$Q^*(s, a) = R(s, a) + \\gamma \\sum_{s'} P(s' \\mid s, a) \\max_{a'} Q^*(s', a')$$
-`
-      },
-      {
-        id: "ml-bab-17-2",
-        slug: "tabular-q-learning-dan-epsilon-greedy",
-        title: "17.2. Implementasi Tabular Q-Learning & Eksplorasi Epsilon-Greedy",
-        orderIndex: 2,
-        description: "Algoritma pembaruan Temporal Difference (TD) Q-Learning dan keseimbangan Exploration vs Exploitation.",
-        content_markdown: `# 17.2. Implementasi Tabular Q-Learning & Eksplorasi Epsilon-Greedy
+$$\\text{CosineSimilarity}(u, v) = \\frac{u \\cdot v}{\\|u\\|_2 \\|v\\|_2} = \\frac{\\sum_{i=1}^p u_i v_i}{\\sqrt{\\sum_{i=1}^p u_i^2} \\sqrt{\\sum_{i=1}^p v_i^2}}$$
+
+Scikit-Learn mengimplementasikan metrik jarak komplemen:
+$$\\text{CosineDistance}(u, v) = 1 - \\text{CosineSimilarity}(u, v)$$
 
 ---
 
-## 17.2.1. Rumus Pembaruan Q-Learning
-$$Q(s_t, a_t) \\leftarrow Q(s_t, a_t) + \\alpha \\left[ r_{t+1} + \\gamma \\max_a Q(s_{t+1}, a) - Q(s_t, a_t) \\right]$$
-
-Di mana:
-- $\\alpha$: Laju pembelajaran (*learning rate*).
-- $r_{t+1} + \\gamma \\max_a Q(s_{t+1}, a)$: Target TD (*Temporal Difference Target*).
-- $\\left[ \\text{Target} - Q(s_t, a_t) \\right]$: Kesalahan TD (*TD Error*).
+## 17.1.2. Implementasi Lengkap Python
 
 \`\`\`python
 import numpy as np
+import pandas as pd
+from sklearn.neighbors import NearestNeighbors
+from scipy.sparse import csr_matrix
 
-# Inisialisasi lingkungan 4-state sederhana: State 3 adalah Goal (+10 reward)
-n_states = 4
-n_actions = 2 # 0: Mundur, 1: Maju
-Q = np.zeros((n_states, n_actions))
+# 1. Matriks Interaksi Pengguna-Item (User-Item Rating 1-5)
+ratings_dict = {
+    'User_A': [5, 4, 0, 0, 1],
+    'User_B': [5, 5, 1, 0, 0],
+    'User_C': [0, 1, 4, 5, 4],
+    'User_D': [0, 0, 5, 4, 5],
+    'User_E': [4, 4, 0, 1, 0]
+}
+item_names = ['Modul_Python', 'Modul_ScikitLearn', 'Modul_PyTorch', 'Modul_LLM', 'Modul_LangChain']
 
-alpha = 0.2
-gamma = 0.9
-epsilon = 0.3 # 30% peluang memilih aksi acak (Eksplorasi)
+df_ratings = pd.DataFrame(ratings_dict, index=item_names)
+sparse_matrix = csr_matrix(df_ratings.values)
 
-# Simulasi 100 episode pelatihan
-for episode in range(100):
-    s = 0
-    while s != 3: # Sampai mencapai goal state
-        # Kebijakan Epsilon-Greedy
-        if np.random.rand() < epsilon:
-            a = np.random.choice(n_actions) # Eksplorasi
-        else:
-            a = np.argmax(Q[s]) # Eksploitasi
-        
-        # Transisi lingkungan deterministik
-        next_s = min(n_states - 1, s + 1) if a == 1 else max(0, s - 1)
-        reward = 10.0 if next_s == 3 else -0.1 # Penalti langkah kecil
-        
-        # Pembaruan Bellman TD
-        best_future_q = np.max(Q[next_s])
-        Q[s, a] += alpha * (reward + gamma * best_future_q - Q[s, a])
-        s = next_s
+# 2. Inisialisasi NearestNeighbors dengan Metrik Cosine
+model_knn = NearestNeighbors(metric='cosine', algorithm='brute')
+model_knn.fit(sparse_matrix)
 
-print("Tabel Q Konvergen (State x Action):\n", np.round(Q, 2))
-print("Kebijakan Optimal di setiap State:", np.argmax(Q, axis=1))
+# 3. Cari 2 Modul yang Paling Mirip dengan 'Modul_Python' (Indeks 0)
+target_idx = 0
+distances, indices = model_knn.kneighbors(
+    df_ratings.iloc[target_idx, :].values.reshape(1, -1),
+    n_neighbors=3
+)
+
+print("=" * 60)
+print(f"REKOMENDASI ITEM TERKAIT UNTUK: '{item_names[target_idx]}'")
+print("=" * 60)
+for i in range(1, len(distances.flatten())):
+    neighbor_idx = indices.flatten()[i]
+    dist = distances.flatten()[i]
+    sim = 1 - dist
+    print(f"#{i}: {item_names[neighbor_idx]} (Kemiripan Cosine: {sim:.2%})")
 \`\`\`
 `
       }

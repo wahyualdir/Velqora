@@ -32,6 +32,7 @@ import {
   SCIKIT_LEARN_USER_GUIDE_SECTIONS,
   getAllFlatScikitLearnSections,
 } from "@/lib/scikit-learn-curriculum";
+import { enrichCurriculumToDocSections } from "@/lib/universal-curriculum-enricher";
 import { toast } from "sonner";
 
 export default function DedicatedCategoryModulesPage({
@@ -283,8 +284,9 @@ export default function DedicatedCategoryModulesPage({
     const defaults = getDefaultAiSections(catName);
 
     if (vaultNotes && vaultNotes.length > 0) {
+      const enrichedDefaults = enrichCurriculumToDocSections(defaults, catName);
       return vaultNotes.map((n, idx) => {
-        const defMatch = defaults.find(
+        const defMatch = enrichedDefaults.find(
           (d) => slugify(d.title) === n.slug || d.orderIndex === n.order_index
         );
         return {
@@ -294,20 +296,13 @@ export default function DedicatedCategoryModulesPage({
           orderIndex: n.order_index || idx + 1,
           description: cleanMarkdownExcerpt(n.content_markdown, n.title, 160),
           content_markdown: n.content_markdown,
+          subsections: defMatch?.subsections || [],
           codeSnippets: defMatch?.codeSnippets || [],
         };
       });
     }
 
-    return defaults.map((sec, idx) => ({
-      id: sec.id,
-      slug: slugify(sec.title),
-      title: sec.title,
-      orderIndex: sec.orderIndex || idx + 1,
-      description: sec.description || "",
-      content_markdown: null,
-      codeSnippets: sec.codeSnippets || [],
-    }));
+    return enrichCurriculumToDocSections(defaults, catName);
   }, [vaultNotes, category, categoryId]);
 
   // Filtered topics based on search & contentMode

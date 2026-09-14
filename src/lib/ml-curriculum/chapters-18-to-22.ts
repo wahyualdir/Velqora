@@ -2,182 +2,167 @@ import { DocSectionItem } from "@/components/modul/doc-reader-layout";
 
 /**
  * BAB 18 - 22 KURIKULUM MACHINE LEARNING VELQORA
- * Mencakup MLOps & Deployment, Etika & Responsible AI, Riset Terkini,
- * Ekosistem Tools, dan Proyek Portofolio / Studi Kasus Nyata.
+ * Mencakup MLOps & Deployment Produksi (Joblib, FastAPI, Data Drift), Semi-Supervised Learning,
+ * Optimasi Hiperparameter Bayesian & AutoML, Etika & Algorithmic Fairness, serta
+ * Proyek Portofolio Nyata (End-to-End Telco Customer Churn Enterprise Pipeline).
  */
 export const ML_CHAPTERS_18_TO_22: DocSectionItem[] = [
   // =========================================================================
-  // BAB 18: MLOps & Deployment
+  // BAB 18: MLOps & Deployment Produksi
   // =========================================================================
   {
     id: "ml-bab-18",
     slug: "bab-18-mlops-deployment",
-    title: "BAB 18: MLOps & Deployment",
+    title: "BAB 18: MLOps & Model Deployment Produksi",
     orderIndex: 18,
-    description: "Siklus hidup model di produksi: Scikit-Learn Pipeline & ColumnTransformer anti kebocoran data, persistensi Joblib, serving REST API dengan FastAPI, dan monitoring data drift.",
+    description: "Siklus hidup model di produksi: Persistensi Joblib vs ONNX, penyajian REST API dengan FastAPI & Pydantic, serta monitoring pergeseran distribusi data (Data Drift & Concept Drift).",
     subsections: [
       {
         id: "ml-bab-18-1",
-        slug: "pipeline-columntransformer-anti-leakage",
-        title: "18.1. Scikit-Learn Pipeline & ColumnTransformer: Mencegah Data Leakage",
+        slug: "persistensi-model-joblib-onnx",
+        title: "18.1. Persistensi Model: Joblib, Safe Serialization, & ONNX",
         orderIndex: 1,
-        description: "Mengemas imputasi, penskalaan, one-hot encoding, dan model estimasi ke dalam satu objek terpadu yang aman dari kebocoran data uji.",
-        content_markdown: `# 18.1. Scikit-Learn Pipeline & ColumnTransformer: Mencegah Data Leakage
+        description: "Serialisasi pipeline lengkap, kompresi level, portabilitas inferensi lintas platform (Open Neural Network Exchange), dan keamanan pickle.",
+        content_markdown: `# 18.1. Persistensi Model: Joblib, Safe Serialization, & ONNX
 
-Salah satu kesalahan fatal dalam machine learning adalah **Data Leakage** — kondisi di mana informasi dari data evaluasi/uji secara tidak sengaja bocor ke proses pelatihan (misal menghitung rata-rata penskalaan atau imputasi pada seluruh dataset sebelum *train_test_split*).
+Setelah model selesai dilatih dan divalidasi, artefak model harus diekspor ke disk agar dapat dimuat ulang oleh sistem backend tanpa memerlukan pelatihan ulang.
 
 ---
 
-## 18.1.1. Arsitektur Komposisi Pipeline
-Scikit-Learn menyediakan \`Pipeline\` dan \`ColumnTransformer\` untuk merangkai alur kerja data secara atomik:
+## 18.1.1. Joblib vs. Standar Pickle Python
+Modul \`pickle\` bawaan Python tidak efisien dalam menangani array NumPy berukuran besar. Scikit-Learn merekomendasikan **\`joblib\`**, yang mengoptimalkan serialisasi memori terbagi (*memory-mapping*) dan kompresi zlib/lz4:
 
 \`\`\`python
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-import pandas as pd
+import joblib
+# Menyimpan seluruh objek pipeline (termasuk transformer dan estimator)
+joblib.dump(full_pipeline, 'model_pipeline.joblib', compress=3)
+
+# Memuat model di lingkungan server produksi
+loaded_pipeline = joblib.load('model_pipeline.joblib')
+\`\`\`
+
+---
+
+## 18.1.2. Portabilitas Lintas Bahasa dengan ONNX
+Untuk mengeksekusi inferensi di lingkungan non-Python (seperti C++, Java, Rust, atau browser JavaScript), model Scikit-Learn dapat diekspor ke format **ONNX** (*Open Neural Network Exchange*) menggunakan library \`skl2onnx\`.
+
+---
+
+## 18.1.3. Implementasi Lengkap Python
+
+\`\`\`python
 import numpy as np
+import joblib
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
+import tempfile
+import os
 
-# Simulasi data mentah heterogen
-df = pd.DataFrame({
-    'umur': [25, 42, np.nan, 38, 55],
-    'pendapatan': [5000, 12000, 8500, np.nan, 21000],
-    'kota': ['Jakarta', 'Surabaya', 'Bandung', 'Jakarta', 'Surabaya'],
-    'status_member': ['Silver', 'Gold', 'Silver', 'Platinum', 'Gold'],
-    'churn': [0, 1, 0, 0, 1]
-})
-
-X = df.drop(columns=['churn'])
-y = df['churn']
-
-numeric_features = ['umur', 'pendapatan']
-categorical_features = ['kota', 'status_member']
-
-# 1. Pipeline untuk fitur numerik
-numeric_transformer = Pipeline(steps=[
-    ('imputer', SimpleImputer(strategy='median')),
-    ('scaler', StandardScaler())
+# 1. Latih model dalam Pipeline
+X, y = load_iris(return_X_y=True)
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),
+    ('rf', RandomForestClassifier(n_estimators=30, random_state=42))
 ])
+pipeline.fit(X, y)
 
-# 2. Pipeline untuk fitur kategorikal
-categorical_transformer = Pipeline(steps=[
-    ('imputer', SimpleImputer(strategy='most_frequent')),
-    ('encoder', OneHotEncoder(handle_unknown='ignore'))
-])
+# 2. Simpan ke file temporer menggunakan joblib
+with tempfile.NamedTemporaryFile(suffix='.joblib', delete=False) as tmp_file:
+    model_path = tmp_file.name
+    joblib.dump(pipeline, model_path, compress=('zlib', 3))
 
-# 3. Gabungkan preprocessor berdasarkan kolom
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', numeric_transformer, numeric_features),
-        ('cat', categorical_transformer, categorical_features)
-    ]
-)
+print("=" * 60)
+print("HASIL SERIALISASI ARTEFAK MODEL")
+print("=" * 60)
+print(f"File Model Tersimpan di : {model_path}")
+print(f"Ukuran File Artefak     : {os.path.getsize(model_path)} bytes")
 
-# 4. Satukan Preprocessor dan Estimator ke Pipeline Akhir
-full_pipeline = Pipeline(steps=[
-    ('preprocessor', preprocessor),
-    ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
-])
+# 3. Muat kembali model dan jalankan inferensi verifikasi
+loaded_model = joblib.load(model_path)
+sample = np.array([[5.1, 3.5, 1.4, 0.2]])
+pred_class = loaded_model.predict(sample)[0]
+pred_prob = loaded_model.predict_proba(sample)[0]
 
-# Fit hanya pada data latih (Anti Kebocoran Data Terjamin!)
-full_pipeline.fit(X, y)
-print("Pipeline lengkap berhasil dilatih.")
+print(f"Prediksi Kelas Model Terload : {pred_class} (Prob: {pred_prob[pred_class]:.2%})")
+os.remove(model_path) # Bersihkan file temporer
 \`\`\`
 `
       },
       {
         id: "ml-bab-18-2",
-        slug: "serialisasi-joblib-dan-serving-fastapi",
-        title: "18.2. Serialisasi Model (Joblib) & Serving Microservice REST API (FastAPI)",
+        slug: "serving-rest-api-fastapi-drift",
+        title: "18.2. Serving REST API dengan FastAPI & Monitoring Data Drift",
         orderIndex: 2,
-        description: "Menyimpan artefak model ke disk dan mengekspos endpoint inferensi berkinerja tinggi dengan validasi skema Pydantic.",
-        content_markdown: `# 18.2. Serialisasi Model (Joblib) & Serving Microservice REST API (FastAPI)
+        description: "Arsitektur microservice inferensi real-time berbasis schema Pydantic, serta uji Kolmogorov-Smirnov untuk mendeteksi pergeseran distribusi fitur.",
+        content_markdown: `# 18.2. Serving REST API dengan FastAPI & Monitoring Data Drift
 
 ---
 
-## 18.2.1. Persistensi Model dengan \`joblib\`
-\`joblib\` dioptimalkan khusus untuk objek Python yang menyimpan array NumPy berukuran besar di dalamnya:
-
-\`\`\`python
-import joblib
-
-# Menyimpan pipeline terlatih ke file
-joblib.dump(full_pipeline, 'model_churn_pipeline.joblib')
-
-# Memuat kembali model di server produksi
-loaded_model = joblib.load('model_churn_pipeline.joblib')
-\`\`\`
+## 18.2.1. Arsitektur REST API dengan FastAPI
+FastAPI merupakan standar modern untuk menyajikan model machine learning karena memanfaatkan skema validasi tipe data Pydantic yang kuat, performa asinkron tinggi (*async/await*), serta dokumentasi interaktif Swagger otomatis.
 
 ---
 
-## 18.2.2. Implementasi Endpoint Inferensi FastAPI
+## 18.2.2. Deteksi Pergeseran Data (Data Drift)
+Performa model di produksi perlahan memburuk seiring berjalannya waktu karena perubahan perilaku pengguna atau kondisi ekonomi. 
+- **Data Drift**: Distribusi fitur masukan bergeser $P(X_{\\text{prod}}) \\ne P(X_{\\text{train}})$.
+- **Concept Drift**: Hubungan kausal antara fitur dan label berubah $P(Y \\mid X_{\\text{prod}}) \\ne P(Y \\mid X_{\\text{train}})$.
+
+Uji statistik **Kolmogorov-Smirnov (KS-Test)** dua sampel membandingkan distribusi empiris untuk mendeteksi pergeseran secara otomatis:
+
+$$D = \\sup_x |F_{\\text{train}}(x) - F_{\\text{prod}}(x)|$$
+
+Jika nilai $p$-value $< 0.05$, hipotesis nol ditolak, menandakan fitur telah mengalami *drift* dan model perlu dilatih ulang.
+
+---
+
+## 18.2.3. Implementasi Lengkap Python
 
 \`\`\`python
-# main_api.py (Contoh implementasi microservice FastAPI)
-from fastapi import FastAPI
-from pydantic import BaseModel
-import pandas as pd
+import numpy as np
+from scipy import stats
+
+# 1. Simulasi Skrip Server FastAPI (Snippet Konseptual)
+FASTAPI_CODE = """
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
 import joblib
 
-app = FastAPI(title="Velqora ML Inference API", version="1.0.0")
+app = FastAPI(title="ML Prediction Service", version="1.0")
+model = joblib.load("model_pipeline.joblib")
 
-# Skema request validasi tipe data Pydantic
-class CustomerPayload(BaseModel):
-    umur: float
-    pendapatan: float
-    kota: str
-    status_member: str
+class IrisInput(BaseModel):
+    sepal_length: float = Field(..., example=5.1)
+    sepal_width: float = Field(..., example=3.5)
+    petal_length: float = Field(..., example=1.4)
+    petal_width: float = Field(..., example=0.2)
 
 @app.post("/predict")
-def predict_churn(customer: CustomerPayload):
-    # Konversi payload menjadi DataFrame satu baris
-    input_df = pd.DataFrame([customer.model_dump()])
-    
-    # Inferensi melalui model pipeline
-    prob_churn = float(loaded_model.predict_proba(input_df)[0][1])
-    is_churn = int(prob_churn >= 0.5)
-    
-    return {
-        "churn_prediction": is_churn,
-        "churn_probability": round(prob_churn, 4),
-        "status": "success"
-    }
-\`\`\`
-`
-      },
-      {
-        id: "ml-bab-18-3",
-        slug: "monitoring-data-drift",
-        title: "18.3. Monitoring Model & Deteksi Data Drift di Lingkungan Produksi",
-        orderIndex: 3,
-        description: "Mendeteksi pergeseran distribusi data input (Covariate Shift) menggunakan uji statistik Kolmogorov-Smirnov.",
-        content_markdown: `# 18.3. Monitoring Model & Deteksi Data Drift di Lingkungan Produksi
+def predict(data: IrisInput):
+    X = [[data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]]
+    pred = int(model.predict(X)[0])
+    prob = model.predict_proba(X)[0].tolist()
+    return {"prediction": pred, "probabilities": prob}
+"""
 
-Performa model machine learning di produksi dapat menurun seiring waktu karena **Data Drift** (perubahan perilaku pengguna atau tren pasar).
+print("Kode Template FastAPI Microservice Siap Digunakan.")
 
-Uji statistik **Kolmogorov-Smirnov (KS-Test)** membandingkan apakah distribusi data produksi saat ini berbeda secara signifikan dari distribusi data pelatihan:
+# 2. Uji Kolmogorov-Smirnov untuk Deteksi Data Drift
+np.random.seed(42)
+dist_train = np.random.normal(loc=50, scale=10, size=1000) # Distribusi latihan
+dist_prod_normal = np.random.normal(loc=50.2, scale=9.8, size=500) # Produksi stabil
+dist_prod_drifted = np.random.normal(loc=56.0, scale=12.0, size=500) # Produksi bergeser drastis
 
-\`\`\`python
-from scipy import stats
-import numpy as np
+ks_stat_1, p_val_1 = stats.ks_2samp(dist_train, dist_prod_normal)
+ks_stat_2, p_val_2 = stats.ks_2samp(dist_train, dist_prod_drifted)
 
-# Distribusi fitur data saat training
-training_distribution = np.random.normal(loc=50, scale=10, size=1000)
-
-# Distribusi data live dari pengguna bulan ini (terjadi drift pergeseran rata-rata ke 62)
-production_distribution = np.random.normal(loc=62, scale=12, size=1000)
-
-# Uji Kolmogorov-Smirnov 2-sampel
-ks_stat, p_value = stats.ks_2samp(training_distribution, production_distribution)
-
-print(f"KS Statistic: {ks_stat:.4f} | p-value: {p_value:.4e}")
-if p_value < 0.05:
-    print("PERINGATAN: Terdeteksi Data Drift signifikan! Model perlu dilatih ulang (Retrain Triggered).")
-else:
-    print("Distribusi stabil.")
+print("=" * 60)
+print("HASIL DETEKSI DATA DRIFT (KS-TEST)")
+print("=" * 60)
+print(f"Batch Produksi Normal  : KS Stat={ks_stat_1:.4f}, p-value={p_val_1:.4f} -> {'DRIFT TERDETEKSI' if p_val_1 < 0.05 else 'STABIL'}")
+print(f"Batch Produksi Drifted : KS Stat={ks_stat_2:.4f}, p-value={p_val_2:.4e} -> {'DRIFT TERDETEKSI' if p_val_2 < 0.05 else 'STABIL'}")
 \`\`\`
 `
       }
@@ -185,56 +170,74 @@ else:
   },
 
   // =========================================================================
-  // BAB 19: Etika & Responsible AI
+  // BAB 19: Semi-Supervised Learning
   // =========================================================================
   {
     id: "ml-bab-19",
-    slug: "bab-19-etika-responsible-ai",
-    title: "BAB 19: Etika & Responsible AI",
+    slug: "bab-19-semi-supervised-learning",
+    title: "BAB 19: Semi-Supervised Learning",
     orderIndex: 19,
-    description: "Keadilan algoritmik (Fairness), rasio Disparate Impact, Demographic Parity, mitigasi bias demografi, dan privasi data terdistribusi.",
+    description: "Memanfaatkan data tak berlabel dalam jumlah besar bersama sedikit data berlabel: Algoritma LabelPropagation, LabelSpreading, dan SelfTrainingClassifier.",
     subsections: [
       {
         id: "ml-bab-19-1",
-        slug: "metrik-keadilan-disparate-impact",
-        title: "19.1. Metrik Keadilan Algoritmik: Disparate Impact & Demographic Parity",
+        slug: "label-propagation-dan-self-training",
+        title: "19.1. Label Propagation, Label Spreading, & Self-Training",
         orderIndex: 1,
-        description: "Mengukur apakah keputusan otomatis model adil terhadap kelompok yang dilindungi (aturan empat per lima / four-fifths rule).",
-        content_markdown: `# 19.1. Metrik Keadilan Algoritmik: Disparate Impact & Demographic Parity
+        description: "Penyebaran label berbasis graf ketetanggaan, fungsi harmonik, dan pseudo-labeling menggunakan SelfTrainingClassifier.",
+        content_markdown: `# 19.1. Label Propagation, Label Spreading, & Self-Training
 
-Model machine learning yang dilatih pada data historis yang memiliki bias manusia akan mereproduksi dan memperparah diskriminasi tersebut.
+Dalam banyak domain industri nyata (seperti analisis citra medis atau deteksi penipuan), mendapatkan data berlabel (*ground-truth*) sangat mahal karena membutuhkan verifikasi manual oleh ahli (*expert annotator*), sedangkan data tanpa label (*unlabeled data*) sangat melimpah.
 
 ---
 
-## 19.1.1. Rasio Dampak Berbeda (*Disparate Impact*)
-Aturan standar hukum ketenagakerjaan AS (EEOC 80% Rule) menyatakan bahwa tingkat penerimaan kelompok non-istimewa (*unprivileged*) tidak boleh kurang dari 80% dari tingkat penerimaan kelompok istimewa (*privileged*):
+## 19.1.1. Konsep Inti Pembelajaran Semi-Supervised
+Scikit-Learn merepresentasikan data tanpa label menggunakan nilai target **\`-1\`**.
+1. **\`LabelPropagation\`**: Membangun graf ketetanggaan lengkap di mana bobot sisi merepresentasikan kedekatan sampel (kernel RBF atau KNN). Probabilitas label disebarkan secara iteratif melalui graf:
+   $$Y^{(t+1)} = T Y^{(t)}$$
+   Di mana $T$ adalah matriks transisi probabilitas stokastik baris.
+2. **\`LabelSpreading\`**: Menggunakan regularisasi fungsi harmonik dan normalisasi Laplacian graf yang lebih tahan terhadap derau label awal.
+3. **\`SelfTrainingClassifier\`**: Membungkus estimator terkalibrasi. Pada setiap iterasi, model memprediksi data tak berlabel dan menambahkan prediksi yang memiliki kepercayaan probabilitas di atas ambang batas (\`threshold=0.85\`) ke dalam set data latih (*pseudo-labeling*).
 
-$$\\text{Disparate Impact} = \\frac{P(\\hat{y}=1 \\mid D=\\text{unprivileged})}{P(\\hat{y}=1 \\mid D=\\text{privileged})}$$
+---
 
-Jika rasio $< 0.8$, model dinyatakan memiliki bias diskriminasi yang merugikan.
+## 19.1.2. Implementasi Lengkap Python
 
 \`\`\`python
 import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.semi_supervised import LabelSpreading, SelfTrainingClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
 
-def evaluate_fairness(y_pred, sensitive_attribute):
-    # sensitive_attribute: 1 (Privileged), 0 (Unprivileged)
-    rate_unprivileged = np.mean(y_pred[sensitive_attribute == 0])
-    rate_privileged = np.mean(y_pred[sensitive_attribute == 1])
-    
-    di_ratio = rate_unprivileged / (rate_privileged + 1e-9)
-    print(f"Tingkat Penerimaan Kelompok Privileged: {rate_privileged*100:.1f}%")
-    print(f"Tingkat Penerimaan Kelompok Unprivileged: {rate_unprivileged*100:.1f}%")
-    print(f"Rasio Disparate Impact: {di_ratio:.3f}")
-    
-    if di_ratio < 0.8:
-        print("STATUS: Model GAGAL uji keadilan (Indikasi Bias Sistemik)!")
-    else:
-        print("STATUS: Model MEMENUHI kriteria keadilan (Fairness Passed).")
+# 1. Load dataset
+X, y_true = load_iris(return_X_y=True)
 
-# Contoh evaluasi keputusan persetujuan kredit pinjaman
-dummy_preds = np.array([1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0])
-dummy_group = np.array([1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
-evaluate_fairness(dummy_preds, dummy_group)
+# 2. Simulasikan skenario 80% data TIDAK berlabel (label = -1)
+rng = np.random.RandomState(42)
+random_unlabeled_points = rng.rand(len(y_true)) < 0.80
+y_semi = np.copy(y_true)
+y_semi[random_unlabeled_points] = -1
+
+n_labeled = np.sum(y_semi != -1)
+print(f"Total Sampel: {len(y_true)} | Hanya {n_labeled} sampel berlabel ({n_labeled/len(y_true):.1%})")
+
+# 3. Label Spreading
+ls = LabelSpreading(kernel='rbf', alpha=0.8, max_iter=30)
+ls.fit(X, y_semi)
+acc_ls = accuracy_score(y_true, ls.predict(X))
+
+# 4. Self-Training Classifier dengan Base SVC
+base_svc = SVC(probability=True, kernel='rbf', random_state=42)
+self_training = SelfTrainingClassifier(base_estimator=base_svc, threshold=0.80)
+self_training.fit(X, y_semi)
+acc_st = accuracy_score(y_true, self_training.predict(X))
+
+print("=" * 60)
+print("HASIL PEMBELAJARAN SEMI-SUPERVISED")
+print("=" * 60)
+print(f"Akurasi Label Spreading        : {acc_ls:.2%}")
+print(f"Akurasi Self-Training (SVM)    : {acc_st:.2%}")
 \`\`\`
 `
       }
@@ -242,117 +245,155 @@ evaluate_fairness(dummy_preds, dummy_group)
   },
 
   // =========================================================================
-  // BAB 20: Topik Lanjutan & Riset Terkini
+  // BAB 20: Hyperparameter Optimization Lanjutan & AutoML
   // =========================================================================
   {
     id: "ml-bab-20",
-    slug: "bab-20-topik-lanjutan-riset-terkini",
-    title: "BAB 20: Topik Lanjutan & Riset Terkini",
+    slug: "bab-20-automl-bayesian-optimization",
+    title: "BAB 20: Hyperparameter Optimization Lanjutan & AutoML",
     orderIndex: 20,
-    description: "Arah penelitian terdepan: Self-Supervised & Contrastive Learning (SimCLR), Graph Neural Networks (GNN), AutoML, dan Causal Inference.",
+    description: "Penyetelan efisien berbasis model probabilistik Bayesian (Gaussian Process surrogate), fungsi akuisisi Expected Improvement, dan konsep Automated Machine Learning (AutoML).",
     subsections: [
       {
         id: "ml-bab-20-1",
-        slug: "contrastive-learning-dan-infonce",
-        title: "20.1. Self-Supervised Learning & Contrastive Loss (SimCLR)",
+        slug: "bayesian-optimization-automl-concepts",
+        title: "20.1. Bayesian Optimization & Konsep Dasar AutoML",
         orderIndex: 1,
-        description: "Belajar representasi fitur berkualitas tinggi dari data tanpa label dengan mendekatkan augmentasi positif dan menjauhkan contoh negatif.",
-        content_markdown: `# 20.1. Self-Supervised Learning & Contrastive Loss (SimCLR)
+        description: "Surrogate model Gaussian Process, fungsi akuisisi eksplorasi vs eksploitasi (Expected Improvement), dan perbandingannya dengan Random Search.",
+        content_markdown: `# 20.1. Bayesian Optimization & Konsep Dasar AutoML
 
-Pelabelan manual jutaan data membutuhkan biaya yang sangat tinggi. **Self-Supervised Learning** melatih representasi data secara mandiri tanpa label manusia.
+Ketika evaluasi model membutuhkan waktu berjam-jam (misal pada dataset besar atau model ansambel rumit), pengujian acak (*Random Search*) atau kisi penuh (*Grid Search*) membuang terlalu banyak waktu untuk menguji konfigurasi yang buruk.
 
-Dalam **Contrastive Learning** (seperti SimCLR), dua augmentasi berbeda dari gambar yang sama membentuk pasangan positif $(z_i, z_j)$. Fungsi kerugian **InfoNCE** memaksimalkan kemiripan pasangan positif sekaligus meminimalkan kemiripan dengan contoh negatif lainnya:
+---
 
-$$\\ell_{i, j} = -\\log \\frac{\\exp(\\text{sim}(z_i, z_j) / \\tau)}{\\sum_{k=1}^{2N} \\mathbf{1}_{[k \\neq i]} \\exp(\\text{sim}(z_i, z_k) / \\tau)}$$
+## 20.1.1. Prinsip Bayesian Optimization
+Bayesian Optimization memperlakukan penyetelan hiperparameter sebagai optimasi fungsi kotak-hitam (*black-box function*) yang mahal:
+1. **Surrogate Model (Model Pengganti)**: Memodelkan distribusi probabilitas performa fungsi menggunakan **Gaussian Process (GP)**:
+   $$f(x) \\sim \\mathcal{GP}\\big(m(x), k(x, x')\\big)$$
+2. **Acquisition Function (Fungsi Akuisisi)**: Menyeimbangkan antara **eksplorasi** (menguji area dengan ketidakpastian tinggi) dan **eksploitasi** (menguji area yang diprediksi menghasilkan skor tinggi), seperti *Expected Improvement (EI)*:
+   $$\\text{EI}(x) = \\mathbb{E}\\big[\\max(0, f(x) - f(x^+))\\big]$$
+
+---
+
+## 20.1.2. Implementasi Lengkap Python
+
+\`\`\`python
+import numpy as np
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.datasets import load_breast_cancer
+from scipy.stats import uniform, randint
+
+# 1. Dataset
+X, y = load_breast_cancer(return_X_y=True)
+
+# 2. Distribusi Probabilitas Kontinu & Diskrit
+param_distributions = {
+    'learning_rate': uniform(0.01, 0.25),
+    'max_leaf_nodes': randint(15, 64),
+    'min_samples_leaf': randint(5, 40),
+    'l2_regularization': uniform(0.0, 2.0)
+}
+
+# 3. RandomizedSearchCV yang Diarahkan
+random_search = RandomizedSearchCV(
+    estimator=HistGradientBoostingClassifier(random_state=42),
+    param_distributions=param_distributions,
+    n_iter=20,
+    scoring='roc_auc',
+    cv=3,
+    random_state=42,
+    n_jobs=-1
+)
+random_search.fit(X, y)
+
+print("=" * 60)
+print("HASIL OPTIMASI HIPERPARAMETER ACAK TERARAH")
+print("=" * 60)
+print(f"Skor ROC-AUC Terbaik : {random_search.best_score_:.4f}")
+print("Konfigurasi Parameter Terbaik:\n", random_search.best_params_)
+\`\`\`
+`
+      }
+    ]
+  },
+
+  // =========================================================================
+  // BAB 21: Etika, Fairness, & Responsible AI
+  // =========================================================================
+  {
+    id: "ml-bab-21",
+    slug: "bab-21-etika-fairness-responsible-ai",
+    title: "BAB 21: Etika, Fairness, & Responsible AI",
+    orderIndex: 21,
+    description: "Keadilan algoritmik (Disparate Impact, Aturan 80%), Demographic Parity, Equalized Odds, mitigasi bias demografis, dan kepatuhan regulasi AI.",
+    subsections: [
+      {
+        id: "ml-bab-21-1",
+        slug: "metrik-fairness-dan-mitigasi-bias",
+        title: "21.1. Metrik Keadilan Algoritmik (Fairness) & Mitigasi Bias",
+        orderIndex: 1,
+        description: "Mengukur Disparate Impact (rasio 80%), Demographic Parity, Equal Opportunity, dan teknik mitigasi pre/in/post-processing.",
+        content_markdown: `# 21.1. Metrik Keadilan Algoritmik (Fairness) & Mitigasi Bias
+
+Model machine learning yang dilatih pada data historis dapat mereplikasi atau bahkan memperparah bias diskriminatif terhadap kelompok rentan atau minoritas (berdasarkan gender, ras, usia, atau wilayah).
+
+---
+
+## 21.1.1. Metrik Keadilan Formal
+Misalkan $A \\in \\{0, 1\\}$ adalah atribut sensitif (misal $A=0$: kelompok minoritas, $A=1$: kelompok mayoritas), dan $\\hat{Y} \\in \\{0, 1\\}$ adalah keputusan model (misal $1$: disetujui pinjaman):
+
+1. **Demographic Parity (Paritas Demografis)**:
+   Probabilitas penerimaan harus independen dari atribut sensitif:
+   $$P(\\hat{Y} = 1 \\mid A = 0) = P(\\hat{Y} = 1 \\mid A = 1)$$
+2. **Disparate Impact (Aturan 80% / Four-Fifths Rule)**:
+   Rasio tingkat penerimaan kelompok minoritas terhadap kelompok mayoritas minimal harus $80\\%$ ($0.80$):
+   $$\\text{Disparate Impact} = \\frac{P(\\hat{Y} = 1 \\mid A = 0)}{P(\\hat{Y} = 1 \\mid A = 1)} \\ge 0.80$$
+3. **Equal Opportunity (Kesetaraan Peluang)**:
+   Tingkat True Positive Rate ($TPR$) harus identik antar kelompok yang memenuhi kualifikasi ($Y=1$):
+   $$P(\\hat{Y} = 1 \\mid Y = 1, A = 0) = P(\\hat{Y} = 1 \\mid Y = 1, A = 1)$$
+
+---
+
+## 21.1.2. Implementasi Lengkap Python
 
 \`\`\`python
 import numpy as np
 
-def compute_infonce_loss(z_i, z_j, negatives, temperature=0.07):
-    # Cosine similarity
-    sim_pos = np.dot(z_i, z_j) / (np.linalg.norm(z_i) * np.linalg.norm(z_j))
-    numerator = np.exp(sim_pos / temperature)
-    
-    denominator = numerator
-    for neg in negatives:
-        sim_neg = np.dot(z_i, neg) / (np.linalg.norm(z_i) * np.linalg.norm(neg))
-        denominator += np.exp(sim_neg / temperature)
-        
-    return -np.log(numerator / denominator)
+# Simulasi data keputusan persetujuan kredit pinjaman
+np.random.seed(42)
+n_samples = 1000
 
-z_anchor = np.array([1.0, 0.2, -0.1])
-z_positive = np.array([0.95, 0.25, -0.05])
-z_negs = [np.array([-0.8, -0.4, 0.5]), np.array([0.0, -0.9, 0.1])]
+# Atribut sensitif: 0 = Kelompok Minoritas, 1 = Kelompok Mayoritas
+protected_attribute = np.random.binomial(1, 0.7, size=n_samples)
 
-print(f"InfoNCE Contrastive Loss: {compute_infonce_loss(z_anchor, z_positive, z_negs):.4f}")
-\`\`\`
-`
-      },
-      {
-        id: "ml-bab-20-2",
-        slug: "graph-neural-networks-dan-automl",
-        title: "20.2. Pengantar Graph Neural Networks (GNN) & AutoML",
-        orderIndex: 2,
-        description: "Pembelajaran representasi pada struktur graf non-Euclidean (molekul obat, jejaring sosial) dan otomatisasi pipeline ML.",
-        content_markdown: `# 20.2. Pengantar Graph Neural Networks (GNN) & AutoML
+# Keputusan model (1: Pinjaman Disetujui, 0: Ditolak)
+# Mensimulasikan model yang memiliki bias diskriminatif
+model_predictions = np.zeros(n_samples)
+for i in range(n_samples):
+    if protected_attribute[i] == 1:
+        model_predictions[i] = np.random.binomial(1, 0.65) # 65% diterima untuk mayoritas
+    else:
+        model_predictions[i] = np.random.binomial(1, 0.40) # Hanya 40% diterima untuk minoritas
 
----
+# 1. Menghitung Acceptance Rate per Kelompok
+rate_minority = np.mean(model_predictions[protected_attribute == 0])
+rate_majority = np.mean(model_predictions[protected_attribute == 1])
 
-## 20.2.1. Graph Neural Networks (GNN)
-Data dunia nyata seringkali berbentuk graf $G = (V, E)$ di mana entitas saling terhubung:
-- Molekul kimia untuk penemuan obat baru (*drug discovery*).
-- Graf jejaring sosial dan pencegahan penipuan transaksi keuangan (*fraud ring*).
+# 2. Menghitung Disparate Impact
+disparate_impact = rate_minority / rate_majority
 
-GNN menggunakan paradigma **Message Passing**: setiap node mengagregasikan informasi dari tetangga sekitarnya untuk memperbarui representasi vektor dirinya sendiri.
+print("=" * 60)
+print("AUDIT KEADILAN ALGORITMIK (FAIRNESS AUDIT)")
+print("=" * 60)
+print(f"Tingkat Persetujuan Kelompok Mayoritas : {rate_majority:.2%}")
+print(f"Tingkat Persetujuan Kelompok Minoritas : {rate_minority:.2%}")
+print(f"Rasio Disparate Impact                 : {disparate_impact:.4f}")
 
----
-
-## 20.2.2. Automated Machine Learning (AutoML)
-AutoML mengotomatiskan pencarian algoritma terbaik dan tuning hyperparameter secara cerdas menggunakan Bayesian Optimization atau Genetic Algorithms:
-- Pustaka: TPOT, Auto-Sklearn, Optuna, FLAML.
-`
-      }
-    ]
-  },
-
-  // =========================================================================
-  // BAB 21: Tools & Ekosistem
-  // =========================================================================
-  {
-    id: "ml-bab-21",
-    slug: "bab-21-tools-ekosistem",
-    title: "BAB 21: Tools & Ekosistem",
-    orderIndex: 21,
-    description: "Peta ekosistem machine learning profesional: Peran komparatif Scikit-Learn, PyTorch, Hugging Face, XGBoost, LightGBM, serta integrasi OpenML dan MLflow.",
-    subsections: [
-      {
-        id: "ml-bab-21-1",
-        slug: "peta-ekosistem-dan-komparasi-tools",
-        title: "21.1. Lanskap Alat Machine Learning: Dari Tabular ke Deep Learning",
-        orderIndex: 1,
-        description: "Kapan memilih Scikit-Learn vs PyTorch vs Gradient Boosting Libraries (XGBoost/LightGBM).",
-        content_markdown: `# 21.1. Lanskap Alat Machine Learning: Dari Tabular ke Deep Learning
-
-| Pustaka | Domain Utama | Kelebihan Utama |
-|---|---|---|
-| **Scikit-Learn** | Tabular Data, Preprocessing, ML Klasik | API konsisten terbaik (\`fit\`/\`transform\`/\`predict\`), dokumentasi emas, ringan di CPU. |
-| **XGBoost / LightGBM** | Tabular Kompetisi (High Performance) | Sangat cepat di tabular besar, native GPU support, akurasi state-of-the-art. |
-| **PyTorch** | Deep Learning, Vision, Audio, NLP Riset | Graf komputasi dinamis (Autograd), ekosistem riset paling populer di dunia. |
-| **Hugging Face** | Pretrained Transformers & LLMs | Repository puluhan ribu model open-source, API \`pipeline\` praktis. |
-| **MLflow** | MLOps & Experiment Tracking | Tracking metrik, parameter log, dan Model Registry terintegrasi. |
-
----
-
-## 21.1.2. Integrasi OpenML di Scikit-Learn
-Scikit-Learn terhubung langsung dengan basis data repositori dataset dunia **OpenML**:
-
-\`\`\`python
-from sklearn.datasets import fetch_openml
-
-# Mengunduh dataset resmi Titanic dari OpenML secara programmatic
-titanic = fetch_openml('titanic', version=1, as_frame=True)
-print("Nama kolom dataset Titanic OpenML:\n", titanic.feature_names)
-print(f"Bentuk data: {titanic.data.shape}")
+if disparate_impact < 0.80:
+    print("STATUS: PERINGATAN! Model melanggar aturan 80% (Terindikasi Disparate Impact).")
+else:
+    print("STATUS: AMAN. Model memenuhi standar keadilan minimum 80%.")
 \`\`\`
 `
       }
@@ -360,132 +401,149 @@ print(f"Bentuk data: {titanic.data.shape}")
   },
 
   // =========================================================================
-  // BAB 22: Proyek & Studi Kasus
+  // BAB 22: Proyek Capstone: End-to-End Enterprise ML Pipeline
   // =========================================================================
   {
     id: "ml-bab-22",
-    slug: "bab-22-proyek-studi-kasus",
-    title: "BAB 22: Proyek & Studi Kasus",
+    slug: "bab-22-proyek-capstone-telco-churn",
+    title: "BAB 22: Proyek Capstone: End-to-End Enterprise ML Pipeline",
     orderIndex: 22,
-    description: "Proyek portofolio end-to-end: Studi kasus lengkap prediksi churn pelanggan telekomunikasi, strategi kompetisi Kaggle, dan pengujian model di produksi.",
+    description: "Proyek komprehensif dari hulu ke hilir: Prediksi Telco Customer Churn, EDA, penanganan data tidak seimbang, ColumnTransformer terintegrasi, benchmark 4 algoritma, evaluasi PR-AUC, dan skrip ekspor inferensi produksi.",
     subsections: [
       {
         id: "ml-bab-22-1",
-        slug: "proyek-portofolio-churn-prediction-end-to-end",
-        title: "22.1. Proyek Portofolio: End-to-End Telco Customer Churn Pipeline",
+        slug: "telco-churn-capstone-pipeline",
+        title: "22.1. End-to-End Enterprise Pipeline: Prediksi Telco Customer Churn",
         orderIndex: 1,
-        description: "Implementasi proyek lengkap dari eksplorasi data, rekayasa fitur, penanganan imbalance, tuning cross-validation, hingga evaluasi bisnis.",
-        content_markdown: `# 22.1. Proyek Portofolio: End-to-End Telco Customer Churn Pipeline
+        description: "Membangun sistem pembelajaran mesin industri lengkap dari pembersihan data mentah hingga pengujian inferensi real-time.",
+        content_markdown: `# 22.1. End-to-End Enterprise Pipeline: Prediksi Telco Customer Churn
 
-## Latar Belakang Masalah Bisnis
-Mempertahankan pelanggan lama jauh lebih murah (5-7 kali lipat) daripada mencari pelanggan baru. Perusahaan telekomunikasi ingin mengidentifikasi pelanggan berisiko berhenti (*churn*) 30 hari sebelum kontrak berakhir agar tim retensi dapat menawarkan promosi yang tepat.
+Pada proyek capstone akhir ini, kita merangkai seluruh pengetahuan kurikulum menjadi sebuah **arsitektur machine learning produksi kelas enterprise** untuk memprediksi pelanggan telekomunikasi yang berisiko berhenti berlangganan (*Customer Churn*).
 
 ---
 
-## Implementasi Pipeline Lengkap
+## 22.1.1. Alur Kerja Arsitektur Enterprise
+1. **Pembersihan & Imputasi**: Menangani nilai kosong pada fitur numerik dan kategorikal.
+2. **Transformasi Kolom Atomik**: Penskalaan fitur numerik dan One-Hot Encoding fitur kategori dalam \`ColumnTransformer\`.
+3. **Pelatihan & Penyetelan Model**: Menggunakan \`HistGradientBoostingClassifier\` dengan penalti regularisasi.
+4. **Evaluasi Matriks Bisnis**: Menghitung skor ROC-AUC, PR-AUC, dan F1-score terkalibrasi.
+5. **Ekspor Model Produksi**: Menyimpan seluruh pipeline ke dalam artefak terkompresi \`joblib\`.
+
+---
+
+## 22.1.2. Implementasi Lengkap Python
 
 \`\`\`python
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+import joblib
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import classification_report, roc_auc_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, roc_auc_score, average_precision_score
 
-# 1. Generate dataset telekomunikasi realistis
+print("=" * 60)
+print("PROYEK CAPSTONE: TELCO CUSTOMER CHURN ENTERPRISE")
+print("=" * 60)
+
+# 1. Generate Dataset Sintetis Telco Enterprise Realistis (2.000 Pelanggan)
 np.random.seed(42)
-n_samples = 1200
+n_users = 2000
 
-data = {
-    'tenure_months': np.random.randint(1, 72, size=n_samples),
-    'monthly_charges': np.random.uniform(20.0, 120.0, size=n_samples),
-    'total_charges': np.random.uniform(100.0, 8000.0, size=n_samples),
-    'contract_type': np.random.choice(['Month-to-month', 'One-year', 'Two-year'], p=[0.5, 0.3, 0.2], size=n_samples),
-    'payment_method': np.random.choice(['Electronic check', 'Mailed check', 'Bank transfer', 'Credit card'], size=n_samples),
-    'internet_service': np.random.choice(['DSL', 'Fiber optic', 'No'], p=[0.4, 0.4, 0.2], size=n_samples)
-}
+df_telco = pd.DataFrame({
+    'masa_berlangganan_bulan': np.random.randint(1, 72, size=n_users),
+    'tagihan_bulanan': np.random.uniform(20.0, 120.0, size=n_users),
+    'total_tagihan': np.random.uniform(50.0, 8000.0, size=n_users),
+    'jenis_kontrak': np.random.choice(['Bulan_ke_Bulan', 'Satu_Tahun', 'Dua_Tahun'], size=n_users, p=[0.5, 0.3, 0.2]),
+    'metode_pembayaran': np.random.choice(['Transfer_Bank', 'Kartu_Kredit', 'E_Wallet'], size=n_users),
+    'layanan_internet': np.random.choice(['Fiber_Optic', 'DSL', 'Tidak_Ada'], size=n_users),
+    'dukungan_teknis': np.random.choice(['Ya', 'Tidak'], size=n_users, p=[0.3, 0.7])
+})
 
-df = pd.DataFrame(data)
-# Hubungan probabilitas churn (Month-to-month + Fiber optic berpeluang churn lebih tinggi)
+# Tambahkan nilai hilang acak (Missing Values)
+df_telco.loc[np.random.choice(n_users, 30), 'total_tagihan'] = np.nan
+
+# Buat Label Target Churn (1 = Churn, 0 = Bertahan)
 churn_prob = (
-    0.15 +
-    (df['contract_type'] == 'Month-to-month') * 0.35 +
-    (df['internet_service'] == 'Fiber optic') * 0.20 -
-    (df['tenure_months'] / 100.0) * 0.25
-).clip(0.05, 0.90)
-
-df['churn'] = (np.random.rand(n_samples) < churn_prob).astype(int)
-
-# 2. Split Data dengan Stratifikasi (Menjaga rasio churn seimbang)
-X = df.drop(columns=['churn'])
-y = df['churn']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
-
-# 3. Preprocessing ColumnTransformer
-num_cols = ['tenure_months', 'monthly_charges', 'total_charges']
-cat_cols = ['contract_type', 'payment_method', 'internet_service']
-
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', Pipeline([
-            ('imputer', SimpleImputer(strategy='median')),
-            ('scaler', StandardScaler())
-        ]), num_cols),
-        ('cat', Pipeline([
-            ('imputer', SimpleImputer(strategy='most_frequent')),
-            ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
-        ]), cat_cols)
-    ]
+    (df_telco['jenis_kontrak'] == 'Bulan_ke_Bulan') * 0.35 +
+    (df_telco['tagihan_bulanan'] > 80.0) * 0.25 -
+    (df_telco['masa_berlangganan_bulan'] > 24) * 0.30 +
+    (df_telco['dukungan_teknis'] == 'Tidak') * 0.15
 )
+churn_prob = np.clip(churn_prob, 0.05, 0.90)
+df_telco['churn'] = np.random.binomial(1, churn_prob)
 
-# 4. Model Pipeline dengan HistGradientBoosting
-pipeline = Pipeline([
-    ('prep', preprocessor),
-    ('model', HistGradientBoostingClassifier(max_iter=150, learning_rate=0.08, random_state=42))
+X = df_telco.drop(columns=['churn'])
+y = df_telco['churn']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, stratify=y, random_state=42)
+
+# 2. Definisikan Pipeline Preprocessing
+numeric_features = ['masa_berlangganan_bulan', 'tagihan_bulanan', 'total_tagihan']
+categorical_features = ['jenis_kontrak', 'metode_pembayaran', 'layanan_internet', 'dukungan_teknis']
+
+numeric_transformer = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', StandardScaler())
 ])
 
-# 5. Evaluasi K-Fold Cross Validation
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-cv_scores = cross_val_score(pipeline, X_train, y_train, cv=cv, scoring='roc_auc')
-print(f"Rata-rata 5-Fold ROC-AUC Latih: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
+categorical_transformer = Pipeline([
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+])
 
-# 6. Fit pada Full Train & Evaluasi Test Set Independen
-pipeline.fit(X_train, y_train)
-y_prob = pipeline.predict_proba(X_test)[:, 1]
-y_pred = (y_prob >= 0.45).astype(int) # Ambang batas yang disesuaikan
+preprocessor = ColumnTransformer([
+    ('num', numeric_transformer, numeric_features),
+    ('cat', categorical_transformer, categorical_features)
+])
 
-print("\n--- HASIL EVALUASI BISNIS TEST SET ---")
-print(f"ROC-AUC Test: {roc_auc_score(y_test, y_prob):.4f}")
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
-print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=['Tetap', 'Churn']))
+# 3. Pipeline Akhir Lengkap
+production_pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('classifier', HistGradientBoostingClassifier(
+        max_iter=150,
+        learning_rate=0.08,
+        max_leaf_nodes=31,
+        l2_regularization=0.5,
+        random_state=42
+    ))
+])
+
+# 4. Pelatihan Model
+production_pipeline.fit(X_train, y_train)
+
+# 5. Evaluasi Kinerja
+y_pred = production_pipeline.predict(X_test)
+y_prob = production_pipeline.predict_proba(X_test)[:, 1]
+
+print(f"ROC-AUC Score         : {roc_auc_score(y_test, y_prob):.4f}")
+print(f"PR-AUC Score          : {average_precision_score(y_test, y_prob):.4f}")
+print("\nLaporan Klasifikasi Komprehensif:\n", classification_report(y_test, y_pred, digits=4))
+
+# 6. Uji Inferensi Sampel Pelanggan Baru
+new_customer = pd.DataFrame([{
+    'masa_berlangganan_bulan': 3,
+    'tagihan_bulanan': 105.50,
+    'total_tagihan': 316.50,
+    'jenis_kontrak': 'Bulan_ke_Bulan',
+    'metode_pembayaran': 'E_Wallet',
+    'layanan_internet': 'Fiber_Optic',
+    'dukungan_teknis': 'Tidak'
+}])
+
+risk_pred = production_pipeline.predict(new_customer)[0]
+risk_prob = production_pipeline.predict_proba(new_customer)[0][1]
+
+print("=" * 60)
+print("INFERENSI PELANGGAN BARU")
+print("=" * 60)
+print(f"Status Prediksi : {'BERISIKO CHURN TINGGI' if risk_pred == 1 else 'SETIA'}")
+print(f"Probabilitas Risiko Churn: {risk_prob:.2%}")
+print("\nProyek Capstone Machine Learning Berhasil Diselesaikan dan Siap Digunakan.")
 \`\`\`
-`
-      },
-      {
-        id: "ml-bab-22-2",
-        slug: "strategi-kompetisi-kaggle-dan-ab-testing",
-        title: "22.2. Strategi Juara Kaggle: Validasi Kokoh, Stacking, & A/B Testing",
-        orderIndex: 2,
-        description: "Praktek terbaik machine learning kompetitif: penyelarasan validasi lokal dengan leaderboard, blend ensemble, dan uji A/B di produksi.",
-        content_markdown: `# 22.2. Strategi Juara Kaggle: Validasi Kokoh, Stacking, & A/B Testing
-
----
-
-## 22.2.1. Golden Rule: "Trust Your Local CV"
-Kesalahan umum pemula di kompetisi Kaggle adalah melakukan *overfitting* pada Public Leaderboard. 
-- Gunakan skema **Stratified K-Fold** atau **Group K-Fold** (jika ada relasi kelompok pasien/toko) yang ketat.
-- Jangan pernah memilih model hanya berdasarkan kenaikan minor di leaderboard publik jika skor CV lokal menurun.
-
----
-
-## 22.2.2. Siklus A/B Testing Produksi
-Setelah model berhasil dilatih:
-1. **Shadow Deployment**: Model baru menerima salinan traffic nyata dan memprediksi secara pasif di latar belakang tanpa mempengaruhi pengguna untuk memverifikasi latensi dan reliabilitas.
-2. **Canary Release**: 5% traffic dialihkan ke model baru.
-3. **A/B Testing**: Kelompok kontrol (Model A lama) dibandingkan dengan kelompok perlakuan (Model B baru) terhadap metrik bisnis nyata (seperti rasio retensi atau konversi penjualan).
 `
       }
     ]
