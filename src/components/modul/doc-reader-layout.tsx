@@ -346,10 +346,10 @@ export function DocReaderLayout({
 
   return (
     <div
-      className={`flex flex-col border border-border rounded-xl bg-white dark:bg-[#111113] overflow-hidden shadow-sm transition-all duration-300 font-sans ${
+      className={`flex flex-col bg-white dark:bg-[#111113] overflow-hidden transition-all duration-300 font-sans w-full h-screen ${
         isFullscreen
-          ? "fixed inset-0 z-50 rounded-none shadow-2xl h-screen"
-          : "flex-1 h-full min-h-[calc(100vh-3.5rem)]"
+          ? "fixed inset-0 z-50 rounded-none shadow-2xl"
+          : "border-0 rounded-none flex-1"
       }`}
     >
       {/* ─── 1. TOP DOCUMENTATION NAVBAR (Velqora Modern Docs Header) ─── */}

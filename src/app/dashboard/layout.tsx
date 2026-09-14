@@ -25,6 +25,7 @@ export default function DashboardLayout({
 
   // Exact check: ONLY "/dashboard" gets full rich footer; every other route gets MinimalCopyright
   const isDashboardHome = pathname === "/dashboard";
+  const isDocReader = pathname.includes("/dashboard/modul/kategori/");
 
   useEffect(() => {
     trackUserVisit();
@@ -74,47 +75,54 @@ export default function DashboardLayout({
         onClose={() => setCommandPaletteOpen(false)}
       />
 
-      {/* Fixed Desktop Sidebar (>= 1024px) & Tablet Drawer */}
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        isCollapsed={sidebarCollapsed}
-        onToggleCollapse={handleToggleCollapse}
-        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-      />
+      {/* Fixed Desktop Sidebar (>= 1024px) & Tablet Drawer (Hidden in immersive Doc Reader mode) */}
+      {!isDocReader && (
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={handleToggleCollapse}
+          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+        />
+      )}
 
       {/* Main Content Area: Desktop Workspace on >=1024px, Mobile App Shell on <1024px */}
       <div
         className={cn(
           "flex-1 flex flex-col min-w-0 z-10 transition-all duration-200 ease-out",
-          !isApp && (sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]")
+          !isApp && !isDocReader && (sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]"),
+          isDocReader && "lg:pl-0"
         )}
       >
-        {/* Responsive Header: Mobile Top Bar ONLY on Mobile & App (<1024px or isApp). Desktop has NO top header! */}
-        {isApp ? (
-          <MobileTopBar
-            onOpenSearch={() => setCommandPaletteOpen(true)}
-            onOpenMenu={() => setSidebarOpen(true)}
-          />
-        ) : (
-          <div className="block lg:hidden">
+        {/* Responsive Header: Mobile Top Bar ONLY on Mobile & App (<1024px or isApp). Hidden in Doc Reader! */}
+        {!isDocReader && (
+          isApp ? (
             <MobileTopBar
               onOpenSearch={() => setCommandPaletteOpen(true)}
               onOpenMenu={() => setSidebarOpen(true)}
             />
-          </div>
+          ) : (
+            <div className="block lg:hidden">
+              <MobileTopBar
+                onOpenSearch={() => setCommandPaletteOpen(true)}
+                onOpenMenu={() => setSidebarOpen(true)}
+              />
+            </div>
+          )
         )}
 
         <main
           className={cn(
             "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-screen",
-            isApp
+            isDocReader
+              ? "max-w-none p-0 m-0 w-full min-h-screen"
+              : isApp
               ? "max-w-2xl px-3 sm:px-5 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]"
               : "max-w-[1560px] px-3 sm:px-5 lg:px-8 xl:px-10 py-3.5 sm:py-5 lg:py-7 pb-8"
           )}
         >
           <div className="flex-1 min-w-0">{children}</div>
-          {isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />}
+          {!isDocReader && (isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />)}
         </main>
       </div>
 
