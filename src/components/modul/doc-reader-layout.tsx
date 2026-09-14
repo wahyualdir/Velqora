@@ -114,6 +114,10 @@ function extractTocFromMarkdown(markdown: string): TocItem[] {
 function flattenDocSections(sections: DocSectionItem[]): DocSectionItem[] {
   const flat: DocSectionItem[] = [];
   for (const sec of sections) {
+    // Sertakan bab utama jika memiliki konten mandiri (seperti catatan kurikulum)
+    if (sec.content_markdown && sec.content_markdown.trim().length > 0) {
+      flat.push(sec);
+    }
     if (sec.subsections && sec.subsections.length > 0) {
       for (const sub of sec.subsections) {
         flat.push({
@@ -122,7 +126,7 @@ function flattenDocSections(sections: DocSectionItem[]): DocSectionItem[] {
           chapterNumber: sec.orderIndex,
         });
       }
-    } else {
+    } else if (!sec.content_markdown || sec.content_markdown.trim().length === 0) {
       flat.push(sec);
     }
   }
@@ -560,10 +564,9 @@ export function DocReaderLayout({
                     }`}
                     style={isChapterActive ? { color: themeColor } : undefined}
                     onClick={() => {
-                      if (hasSubsections) {
+                      handleSelect(chapter.id);
+                      if (hasSubsections && !isExpanded) {
                         toggleChapter(chapter.id);
-                      } else {
-                        handleSelect(chapter.id);
                       }
                     }}
                   >
@@ -599,7 +602,17 @@ export function DocReaderLayout({
                           <button
                             key={sub.id}
                             type="button"
-                            onClick={() => handleSelect(sub.id)}
+                            onClick={() => {
+                              if (sub.id.includes("#")) {
+                                const [parentId, anchor] = sub.id.split("#");
+                                handleSelect(parentId);
+                                setTimeout(() => {
+                                  scrollToHeading(anchor);
+                                }, 120);
+                              } else {
+                                handleSelect(sub.id);
+                              }
+                            }}
                             className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer relative ${
                               isSubActive
                                 ? "bg-white dark:bg-[#1c1c20] font-bold -ml-[15px] pl-[18px] shadow-2xs"

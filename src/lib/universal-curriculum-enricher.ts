@@ -32,6 +32,246 @@ interface DomainProfile {
 function resolveDomainProfile(categoryName: string, chapterTitle: string, subtopicTitle: string): DomainProfile {
   const norm = `${categoryName} ${chapterTitle} ${subtopicTitle}`.toLowerCase();
 
+  // 0. Data Analyst & Business Intelligence Specializations
+  if (norm.includes("data analyst") || norm.includes("analisis data") || norm.includes("business intelligence") || norm.includes("analyst") || norm.includes("bi ")) {
+    if (norm.includes("sql") || norm.includes("query") || norm.includes("database") || norm.includes("join") || norm.includes("window")) {
+      return {
+        domainName: "Data Analytics (SQL & RDBMS)",
+        frameworks: "PostgreSQL, ANSI SQL, CTE, Window Functions",
+        foundations: `Dalam analisis data relasional, penguasaan SQL tingkat lanjut memungkinkan ekstraksi wawasan bisnis langsung dari Data Warehouse tanpa membebani memori lokal. Penggunaan Window Functions dan Common Table Expressions (CTE) memisahkan tahapan logika transformasi data secara deklaratif dan modular.`,
+        mathTitle: "Relasi Logika Agregasi & Window Partition",
+        mathFormula: `$$\\text{Cohort Retention Ratio}(m, t) = \\frac{|\\mathcal{U}_m \\cap \\mathcal{A}_{m+t}|}{|\\mathcal{U}_m|} \\times 100\\%$$
+
+$$\\text{Moving Average}_k(t) = \\frac{1}{k} \\sum_{i=0}^{k-1} y(t-i)$$`,
+        mathExplanation: `Di mana $\\mathcal{U}_m$ adalah kohort pengguna yang diakuisisi pada periode $m$, dan $\\mathcal{A}_{m+t}$ merepresentasikan pengguna yang tetap aktif bertransaksi pada $t$ periode setelahnya.`,
+        defaultCode: (sub, chap) => `-- Query Analisis Praktikum: ${sub}
+WITH transaksi_agregat AS (
+    SELECT
+        customer_id,
+        DATE_TRUNC('month', order_date) AS bulan_transaksi,
+        total_amount,
+        ROW_NUMBER() OVER (
+            PARTITION BY customer_id
+            ORDER BY order_date ASC
+        ) AS transaksi_ke,
+        LAG(total_amount, 1) OVER (
+            PARTITION BY customer_id
+            ORDER BY order_date ASC
+        ) AS nominal_sebelumnya
+    FROM sales.orders
+    WHERE order_status = 'completed'
+)
+SELECT
+    bulan_transaksi,
+    COUNT(DISTINCT customer_id) AS pelanggan_aktif,
+    ROUND(AVG(total_amount), 2) AS rata_rata_pembelian,
+    ROUND(SUM(total_amount), 2) AS total_omset
+FROM transaksi_agregat
+GROUP BY 1
+ORDER BY 1;`,
+        parameterRows: [
+          { param: "PARTITION BY", type: "Klausa Window", defaultValue: "customer_id", desc: "Membagi himpunan baris menjadi partisi terpisah sebelum operasi agregasi berjalan." },
+          { param: "ROWS BETWEEN", type: "Window Frame", defaultValue: "2 PRECEDING AND CURRENT ROW", desc: "Membatasi jendela baris fisik untuk kalkulasi metrik bergerak (rolling average)." },
+          { param: "COALESCE", type: "Fungsi Null", defaultValue: "0 atau default", desc: "Menggantikan nilai NULL yang dihasilkan oleh operasi OUTER JOIN agar integritas kalkulasi terjaga." },
+        ],
+        bestPractices: [
+          "Hindari penggunaan SELECT * pada tabel produksi skala besar guna mengurangi overhead I/O dan transfer jaringan.",
+          "Gunakan Common Table Expressions (CTE) untuk memecah logika query bersarang yang kompleks agar mudah dibaca dan di-debug.",
+          "Verifikasi rencana eksekusi menggunakan EXPLAIN ANALYZE guna memastikan pemanfaatan indeks berjalan optimal.",
+        ],
+      };
+    }
+
+    if (norm.includes("pandas") || norm.includes("wrangling") || norm.includes("cleaning") || norm.includes("rfm")) {
+      return {
+        domainName: "Data Analytics (Pandas & Wrangling)",
+        frameworks: "Pandas 2.0+, NumPy, PyArrow Backend",
+        foundations: `Manipulasi data terstruktur dengan Pandas berfokus pada efisiensi memori, operasi berbasis vektor (*vectorized operations*), dan transformasi data relasional. Transformasi yang tepat menghindari loop Python murni yang lambat dan mengoptimalkan representasi tipe data kolom (*downcasting* numerik dan tipe *category*).`,
+        mathTitle: "Formulasi Segmentasi RFM & Agregasi",
+        mathFormula: `$$\\text{RFM Score} = w_R \\cdot R_{\\text{rank}} + w_F \\cdot F_{\\text{rank}} + w_M \\cdot M_{\\text{rank}}$$
+
+$$\\text{IQR} = Q_3 - Q_1, \\quad \\text{Batas Outlier} = [Q_1 - 1.5 \\cdot \\text{IQR}, \\; Q_3 + 1.5 \\cdot \\text{IQR}]$$`,
+        mathExplanation: `Di mana $R$ (Recency) mengukur kebaruan transaksi terakhir, $F$ (Frequency) menghitung intensitas transaksi, $M$ (Monetary) mengukur total kontribusi pengeluaran, dan $Q_1, Q_3$ melambangkan kuartil data untuk deteksi data pencilan (outlier).`,
+        defaultCode: (sub, chap) => `# Praktikum Analisis Data: ${sub}
+import pandas as pd
+import numpy as np
+
+# Inisialisasi dataset transaksi sintetis
+np.random.seed(42)
+n_records = 200
+data = {
+    "customer_id": np.random.randint(1001, 1050, n_records),
+    "total_amount": np.random.exponential(scale=250000, size=n_records).round(-3),
+    "category": np.random.choice(["Elektronik", "Fashion", "Kebutuhan Rumah", "Makanan"], size=n_records)
+}
+df = pd.DataFrame(data)
+
+# Pipeline transformasi: Agregasi RFM dan Ringkasan Kategori
+summary = (
+    df.groupby("category", observed=True)
+    .agg(
+        total_omset=("total_amount", "sum"),
+        rata_rata_transaksi=("total_amount", "mean"),
+        jumlah_transaksi=("customer_id", "count")
+    )
+    .sort_values("total_omset", ascending=False)
+    .reset_index()
+)
+
+print("Ringkasan Metrik Transaksi:")
+print(summary.to_string(index=False))`,
+        parameterRows: [
+          { param: "observed", type: "Boolean", defaultValue: "True", desc: "Mencegah alokasi memori kosong untuk kombinasi kategori yang tidak memiliki data riil." },
+          { param: "aggfunc", type: "String / Dict", defaultValue: "'sum' / 'mean'", desc: "Fungsi agregasi deterministik untuk meringkas distribusi baris per partisi." },
+          { param: "dtype='category'", type: "Tipe Data", defaultValue: "Object -> Category", desc: "Mengurangi konsumsi RAM hingga 80% pada kolom string dengan nilai berulang." },
+        ],
+        bestPractices: [
+          "Terapkan Method Chaining yang terstruktur dengan tanda kurung buka-tutup untuk meningkatkan keterbacaan kode pipa analisis.",
+          "Gunakan tipe data numerik terkecil yang memadai (misal int32 atau float32) saat memproses dataset berukuran di atas 100 ribu baris.",
+          "Lakukan validasi tipe data dan deteksi nilai kosong di awal pipa transformasi sebelum operasi agregasi dieksekusi.",
+        ],
+      };
+    }
+
+    if (norm.includes("visualisasi") || norm.includes("matplotlib") || norm.includes("seaborn") || norm.includes("dashboard") || norm.includes("chart")) {
+      return {
+        domainName: "Data Analytics (Visualisasi Data)",
+        frameworks: "Matplotlib (OOP Architecture), Seaborn, Plotly",
+        foundations: `Visualisasi data efektif dibangun di atas hierarki visual yang jelas (*Visual Hierarchy*) dan teori persepsi grafis Bertin. Pendekatan berorientasi objek (*Object-Oriented API*) pada Matplotlib memberikan kendali penuh terhadap setiap elemen kanvas, sumbu, anotasi, dan palet warna yang ramah aksesibilitas (*color-blind friendly*).`,
+        mathTitle: "Prinsip Data-to-Ink Ratio & Skala Visual",
+        mathFormula: `$$\\text{Data-Ink Ratio} = \\frac{\\text{Tinta yang mewakili data riil}}{\\text{Total tinta yang digunakan pada grafik}} \\approx 1.0$$
+
+$$z_i = \\frac{x_i - \\min(X)}{\\max(X) - \\min(X)}$$`,
+        mathExplanation: `Prinsip Edward Tufte menyatakan bahwa setiap elemen grafis (garis grid, bingkai, label) yang tidak menyampaikan informasi data baru harus diminimalkan guna memusatkan atensi kognitif audiens pada pola inti.`,
+        defaultCode: (sub, chap) => `# Praktikum Visualisasi Data Berbasis Objek (OOP): ${sub}
+import matplotlib.pyplot as plt
+import numpy as np
+
+kategori = ["Elektronik", "Fashion", "Otomotif", "Makanan", "Buku"]
+pendapatan = [145.2, 98.4, 76.8, 64.0, 42.1]
+pertumbuhan = [12.4, 8.1, -3.2, 15.6, 2.0]
+
+fig, ax1 = plt.subplots(figsize=(9, 5), dpi=100)
+
+# Bar plot pendapatan utama
+warna_bar = ["#0284C7" if p >= 0 else "#EF4444" for p in pertumbuhan]
+bars = ax1.bar(kategori, pendapatan, color=warna_bar, width=0.55, edgecolor="none")
+
+# Anotasi langsung di atas batang
+for bar in bars:
+    tinggi = bar.get_height()
+    ax1.annotate(f"Rp {tinggi:.1f}M",
+                 xy=(bar.get_x() + bar.get_width() / 2, tinggi),
+                 xytext=(0, 4), textcoords="offset points",
+                 ha="center", va="bottom", fontsize=9, fontweight="semibold")
+
+ax1.set_title("Distribusi Pendapatan & Pertumbuhan Tahunan per Kategori", fontsize=12, pad=15)
+ax1.set_ylabel("Pendapatan (Miliar IDR)", fontsize=10)
+ax1.spines["top"].set_visible(False)
+ax1.spines["right"].set_visible(False)
+plt.tight_layout()
+print("Grafik profesional berhasil dibangun.")`,
+        parameterRows: [
+          { param: "figsize", type: "Tuple (w, h)", defaultValue: "(9, 5)", desc: "Rasio dimensi kanvas gambar dalam satuan inci standar penerbitan." },
+          { param: "dpi", type: "Integer", defaultValue: "100", desc: "Kerapatan piksel per inci untuk ketajaman visual di layar maupun dokumen cetak." },
+          { param: "tight_layout", type: "Fungsi", defaultValue: "Aktif", desc: "Menyesuaikan bantalan tepi secara otomatis agar label sumbu tidak terpotong." },
+        ],
+        bestPractices: [
+          "Gunakan palet warna yang memiliki kontras teruji dan hindari penggunaan kombinasi merah-hijau murni untuk memastikan keterbacaan universal.",
+          "Hapus garis bingkai atas dan kanan (*spines*) untuk mengurangi distorsi visual yang tidak informatif.",
+          "Berikan judul grafik yang menyatakan kesimpulan utama (*actionable title*), bukan sekadar menyebutkan nama variabel pada sumbu.",
+        ],
+      };
+    }
+
+    if (norm.includes("statistik") || norm.includes("hipotesis") || norm.includes("t-test") || norm.includes("anova") || norm.includes("chi-square") || norm.includes("distribusi")) {
+      return {
+        domainName: "Data Analytics (Statistika Bisnis & Inferensial)",
+        frameworks: "SciPy Stats, Statsmodels, NumPy",
+        foundations: `Statistika bisnis menyediakan kerangka kerja kuantitatif untuk mengambil keputusan berbasis bukti di tengah ketidakpastian. Analisis memadukan statistika deskriptif (pemusatan dan dispersi yang kokoh terhadap outlier) serta statistika inferensial (uji hipotesis, penaksiran interval kepercayaan, dan pemodelan hubungan bivariat).`,
+        mathTitle: "Formulasi Uji Hipotesis & Interval Kepercayaan",
+        mathFormula: `$$\\text{CI}_{95\\%} = \\bar{x} \\pm t_{\\alpha/2, \\; df} \\cdot \\frac{s}{\\sqrt{n}}$$
+
+$$t_{\\text{Welch}} = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}}, \\quad \\chi^2 = \\sum_{i=1}^k \\frac{(O_i - E_i)^2}{E_i}$$`,
+        mathExplanation: `Di mana $\\bar{x}$ adalah rata-rata sampel, $s$ adalah standar deviasi sampel, $n$ melambangkan ukuran sampel, $O_i$ adalah frekuensi teramati, dan $E_i$ merupakan frekuensi teoritis yang diharapkan jika hipotesis nol ($H_0$) benar.`,
+        defaultCode: (sub, chap) => `# Pengujian Hipotesis Statistik Inferensial: ${sub}
+from scipy import stats
+import numpy as np
+
+# Data eksperimen A/B Testing tingkat konversi
+np.random.seed(42)
+grup_kontrol = np.random.normal(loc=12.5, scale=2.8, size=150)
+grup_variasi = np.random.normal(loc=13.4, scale=3.1, size=150)
+
+# Uji Welch's t-test (tidak mengasumsikan varians kedua populasi sama)
+t_stat, p_val = stats.ttest_ind(grup_variasi, grup_kontrol, equal_var=False)
+
+print(f"Rata-rata Grup Kontrol : {np.mean(grup_kontrol):.2f}%")
+print(f"Rata-rata Grup Variasi : {np.mean(grup_variasi):.2f}%")
+print(f"Nilai t-hitung         : {t_stat:.3f}")
+print(f"Nilai p-value          : {p_val:.4f}")
+
+alpha = 0.05
+if p_val < alpha:
+    print("Keputusan: Tolak H0. Terdapat perbedaan performa yang signifikan secara statistik.")
+else:
+    print("Keputusan: Gagal tolak H0. Belum cukup bukti statistik untuk menyatakan ada perbedaan.")`,
+        parameterRows: [
+          { param: "equal_var", type: "Boolean", defaultValue: "False", desc: "Menerapkan uji Welch's t-test yang lebih kokoh ketika varians kedua sampel tidak identik." },
+          { param: "alpha (α)", type: "Float", defaultValue: "0.05", desc: "Tingkat signifikansi batas toleransi kesalahan Tipe I (False Positive)." },
+          { param: "confidence", type: "Float", defaultValue: "0.95", desc: "Tingkat keyakinan probabilitas bahwa parameter populasi berada dalam rentang estimasi." },
+        ],
+        bestPractices: [
+          "Selalu uji asumsi normalitas (misal via Shapiro-Wilk) sebelum memilih antara uji parametrik (t-test/ANOVA) atau non-parametrik (Mann-Whitney U).",
+          "Jangan mengandalkan p-value semata; selalu sertakan ukuran efek (*Effect Size* seperti Cohen's d) dan estimasi interval kepercayaan.",
+          "Laporkan median dan Interquartile Range (IQR) sebagai alternatif mean dan standar deviasi apabila distribusi data condong miring (*skewed*).",
+        ],
+      };
+    }
+
+    // Default umum Data Analyst
+    return {
+      domainName: "Data Analytics & Business Intelligence",
+      frameworks: "Python (Pandas, NumPy, Matplotlib, Seaborn), SQL, SciPy",
+      foundations: `Kurikulum Data Analyst membekali praktisi dengan kemampuan end-to-end dalam mengubah data mentah menjadi wawasan strategis. Alur kerja mencakup siklus CRISP-DM: pemahaman bisnis, eksplorasi data mendalam, pembersihan anomali, agregasi metrik kunci, dan penyampaian rekomendasi berbasis data.`,
+      mathTitle: "Ukuran Pemusatan, Variabilitas, & Korelasi",
+      mathFormula: `$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^n x_i, \\quad s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^n (x_i - \\bar{x})^2}$$
+
+$$r_{xy} = \\frac{\\sum_{i=1}^n (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum_{i=1}^n (x_i - \\bar{x})^2 \\cdot \\sum_{i=1}^n (y_i - \\bar{y})^2}}$$`,
+      mathExplanation: `Di mana $\\bar{x}$ melambangkan mean sampel, $s$ merupakan deviasi standar untuk mengukur dispersi data dari titik pusat, dan $r_{xy}$ merepresentasikan koefisien korelasi Pearson antara dua variabel kuantitatif pada rentang $[-1, 1]$.`,
+      defaultCode: (sub, chap) => `# Praktikum Komputasi Analisis Data: ${sub}
+import pandas as pd
+import numpy as np
+
+# Simulasi metrik bisnis 12 bulan
+np.random.seed(42)
+bulan = [f"2026-{m:02d}" for m in range(1, 13)]
+pengunjung = np.random.randint(15000, 30000, size=12)
+konversi = np.random.uniform(2.1, 4.5, size=12)
+pendapatan = pengunjung * (konversi / 100) * 150000
+
+df_tren = pd.DataFrame({
+    "Bulan": bulan,
+    "Pengunjung": pengunjung,
+    "Conversion_Rate": konversi.round(2),
+    "Estimasi_Revenue": pendapatan.round(-3)
+})
+
+print("Tabel Tren Kinerja Bisnis:")
+print(df_tren.head(6).to_string(index=False))`,
+      parameterRows: [
+        { param: "aggfunc", type: "String / List", defaultValue: "['mean', 'median']", desc: "Menghitung nilai pemusatan ganda untuk membandingkan simetri distribusi data." },
+        { param: "subset", type: "List Kolom", defaultValue: "Kunci Unik", desc: "Membatasi cakupan verifikasi data duplikat pada kolom identitas utama." },
+        { param: "inplace", type: "Boolean", defaultValue: "False", desc: "Menghindari mutasi objek asli secara langsung untuk menjaga kemurnian pipeline fungsional." },
+      ],
+      bestPractices: [
+        "Awali setiap sesi analisis dengan perumusan pertanyaan bisnis yang spesifik, terukur, dan dapat ditindaklanjuti.",
+        "Dokumentasikan asumsi dan batasan data secara transparan sebelum menarik kesimpulan strategis.",
+        "Padukan tabel data ringkas dengan grafik visual yang memiliki hierarki fokus yang tegas.",
+      ],
+    };
+  }
+
   // 1. Deep Learning & Neural Networks
   if (norm.includes("deep learning") || norm.includes("pembelajaran mendalam") || norm.includes("neural network") || norm.includes("perceptron") || norm.includes("backprop")) {
     return {

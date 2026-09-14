@@ -199,7 +199,7 @@ Python adalah bahasa pemrograman nomor 1 di dunia untuk Data Science, Machine Le
 > **Rekomendasi untuk pemula:** Gunakan Google Colab di [colab.research.google.com](https://colab.research.google.com) — tidak perlu instalasi, langsung bisa coding dari browser, gratis GPU!
 
 ```python
-# 🖥 Google Colab — Zero Installation
+# Google Colab — Zero Installation
 # Tidak perlu instalasi! Cukup buka browser dan kunjungi:
 # https://colab.research.google.com
 # Di Colab, semua library sudah terinstall. Langsung import:
@@ -213,9 +213,9 @@ print('Siap digunakan!')
 
 ### Opsi 2: Anaconda Distribution (Direkomendasikan untuk Lokal)
 ```bash
-# 🖥 Anaconda Installation
+# Anaconda Installation
 # 1. Download dari: https://www.anaconda.com/download
-#    Pilih versi sesuai OS: Windows / macOS / Linux
+# Pilih versi sesuai OS: Windows / macOS / Linux
 # 2. Setelah install, buka 'Anaconda Prompt' (Windows) atau Terminal (macOS/Linux)
 # 3. Update conda ke versi terbaru
 conda update conda
@@ -234,13 +234,13 @@ python -c "import pandas; print(pandas.__version__)"
 
 ### Opsi 3: pip + venv (untuk yang sudah berpengalaman)
 ```bash
-# 🖥 pip + venv Installation
+# pip + venv Installation
 # 1. Download Python dari: https://www.python.org/downloads/
-#    Centang 'Add Python to PATH' saat instalasi
+# Centang 'Add Python to PATH' saat instalasi
 # 2. Buat virtual environment
 python -m venv venv_analytics
 source venv_analytics/bin/activate # macOS/Linux
-venv_analytics\Scripts\activate    # Windows
+venv_analytics\\Scripts\\activate    # Windows
 
 # 3. Install library
 pip install pandas numpy matplotlib seaborn jupyter scipy scikit-learn openpyxl
@@ -259,7 +259,7 @@ pip install -r requirements.txt
 Jupyter Notebook adalah aplikasi web interaktif yang memungkinkan Anda menulis kode, menjalankannya secara langsung, dan melihat output (teks, grafik, tabel) tepat di bawah kode. Sangat ideal untuk eksplorasi dan presentasi analisis data.
 
 ```bash
-# 🖥 Jupyter Notebook Usage
+# Jupyter Notebook Usage
 # Jalankan Jupyter Notebook
 jupyter notebook
 
@@ -280,17 +280,17 @@ jupyter lab
 ```
 
 ### Shortcut Keyboard Penting
-* `Shift + Enter` : Jalankan cell, pindah ke cell berikutnya
-* `Ctrl + Enter` : Jalankan cell, tetap di cell
-* `Alt + Enter` : Jalankan cell, buat cell baru di bawah
-* `A` : Insert cell di atas (command mode)
-* `B` : Insert cell di bawah (command mode)
-* `DD` : Hapus cell (tekan D dua kali)
-* `M` : Ubah cell ke Markdown
-* `Y` : Ubah cell ke Code
-* `Ctrl + Z` : Undo
-* `Tab` : Auto-complete
-* `Shift + Tab` : Tampilkan docstring/help
+1. `Shift + Enter` : Jalankan cell, pindah ke cell berikutnya
+2. `Ctrl + Enter` : Jalankan cell, tetap di cell
+3. `Alt + Enter` : Jalankan cell, buat cell baru di bawah
+4. `A` : Insert cell di atas (command mode)
+5. `B` : Insert cell di bawah (command mode)
+6. `DD` : Hapus cell (tekan D dua kali)
+7. `M` : Ubah cell ke Markdown
+8. `Y` : Ubah cell ke Code
+9. `Ctrl + Z` : Undo
+10. `Tab` : Auto-complete
+11. `Shift + Tab` : Tampilkan docstring/help
 
 ---
 
@@ -298,15 +298,15 @@ jupyter lab
 
 ### Tipe Data & Struktur Data Python
 ```python
-# 🖥 Tipe Data Python
-# ── Tipe data dasar ──────────────────────────────
+# Tipe Data Python
+# Tipe data dasar 
 x = 42              # int
 y = 3.14            # float
 s = 'Hello Python'  # str
 b = True            # bool
 n = None            # NoneType
 
-# ── List — urut, bisa duplikat, mutable ──────────
+# List — urut, bisa duplikat, mutable 
 angka = [1, 2, 3, 4, 5]
 angka.append(6)       # tambah ke belakang
 angka.insert(0, 0)     # tambah ke posisi 0
@@ -316,7 +316,7 @@ angka[1:4]            # slicing
 len(angka)            # panjang list
 [x**2 for x in angka] # list comprehension
 
-# ── Dictionary — pasangan key-value ─────────────
+# Dictionary — pasangan key-value 
 mahasiswa = {'nama': 'Budi', 'nim': '12345', 'nilai': 85}
 mahasiswa['nama']               # akses value
 mahasiswa['kota'] = 'Jakarta'   # tambah key baru
@@ -325,19 +325,19 @@ mahasiswa.keys()                # semua key
 mahasiswa.values()              # semua value
 mahasiswa.items()               # pasangan key-value
 
-# ── Set — unik, tidak urut ───────────────────────
+# Set — unik, tidak urut 
 buah = {'apel', 'jeruk', 'mangga', 'apel'}  # {'apel', 'jeruk', 'mangga'}
 buah.add('pisang')
 buah.discard('apel')
 
-# ── Tuple — urut, immutable ──────────────────────
+# Tuple — urut, immutable 
 koordinat = (10.5, -7.3)  # tidak bisa diubah
 ```
 
 ### Kontrol Alur & Fungsi
 ```python
-# 🖥 Kontrol Alur & Fungsi
-# ── Kondisi ──────────────────────────────────────
+# Kontrol Alur & Fungsi
+# Kondisi 
 nilai = 85
 if nilai >= 90:
     print('A')
@@ -351,7 +351,7 @@ else:
 # Ternary (satu baris)
 grade = 'Lulus' if nilai >= 70 else 'Gagal'
 
-# ── Loop ─────────────────────────────────────────
+# Loop 
 for i in range(5):  # 0, 1, 2, 3, 4
     print(i)
 
@@ -366,16 +366,16 @@ total = 0
 while total < 100:
     total += 10
 
-# ── Fungsi ───────────────────────────────────────
+# Fungsi 
 def hitung_statistik(data, ddof=1):
-    """
+    \"\"\"
     Hitung statistik deskriptif dari list angka.
     Args:
         data: list atau iterable berisi angka
         ddof: degrees of freedom untuk std (default=1 untuk sampel)
     Returns:
         dict berisi mean, median, std, min, max
-    """
+    \"\"\"
     n = len(data)
     mean = sum(data) / n
     sorted_data = sorted(data)
@@ -390,7 +390,7 @@ def hitung_statistik(data, ddof=1):
 hasil = hitung_statistik([75, 85, 90, 78, 92, 88])
 print(hasil)
 
-# ── Lambda & Higher-order functions ──────────────
+# Lambda & Higher-order functions 
 kuadrat = lambda x: x ** 2
 ganda = lambda x: x * 2
 
@@ -407,12 +407,9 @@ total = reduce(lambda a, b: a + b, angka)  # 21
 ## 0.5 Template Standar Data Analytics
 
 ```python
-# 🖥 Template Standar Project
-# ══════════════════════════════════════════════════
-# TEMPLATE STANDAR DATA ANALYTICS PROJECT
-# ══════════════════════════════════════════════════
-
-# ── 1. Import Library ─────────────────────────────
+# Template Standar Project
+# # TEMPLATE STANDAR DATA ANALYTICS PROJECT
+# # 1. Import Library 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -423,7 +420,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-# ── 2. Konfigurasi Tampilan ───────────────────────
+# 2. Konfigurasi Tampilan 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.float_format', '{:,.2f}'.format)
@@ -445,18 +442,18 @@ plt.rcParams.update({
 
 sns.set_theme(style='whitegrid', palette='deep', font_scale=1.1)
 
-# ── 3. Konstanta Proyek ───────────────────────────
+# 3. Konstanta Proyek 
 DATA_PATH = 'data/'
 OUTPUT_PATH = 'output/'
 RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
 
-print('✅ Setup selesai — siap analisis!')
+print(' Setup selesai — siap analisis!')
 ```
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 
 1. Apa perbedaan antara Anaconda dan pip? Kapan sebaiknya menggunakan masing-masing?
 2. Jelaskan perbedaan antara list, tuple, set, dan dictionary di Python!
@@ -467,16 +464,16 @@ print('✅ Setup selesai — siap analisis!')
 
 ---
 
-## ✅ KUNCI JAWABAN / PETUNJUK
+## KUNCI JAWABAN / PETUNJUK
 
 1. **Anaconda vs pip**:
    * **Anaconda** = distribusi Python lengkap dengan GUI (Navigator) & conda package manager yang mengelola dependensi non-Python (C/C++ binaries). Sangat cocok untuk pemula dan data science environment.
    * **pip** = package manager bawaan resmi Python (lebih ringan, cepat, cocok untuk developer berpengalaman dan container Docker).
 2. **Koleksi Python**:
-   * **List**: urut, mutable (dapat diubah), mengizinkan duplikat `[1, 2, 2]`.
-   * **Tuple**: urut, immutable (tidak dapat diubah setelah dibuat) `(10, 20)`.
-   * **Set**: tidak berurutan, unik (tanpa duplikat), mutable `{1, 2, 3}`.
-   * **Dict**: pasangan key-value, key bersifat unik, mutable `{'a': 1}`.
+1. **List**: urut, mutable (dapat diubah), mengizinkan duplikat `[1, 2, 2]`.
+2. **Tuple**: urut, immutable (tidak dapat diubah setelah dibuat) `(10, 20)`.
+3. **Set**: tidak berurutan, unik (tanpa duplikat), mutable `{1, 2, 3}`.
+4. **Dict**: pasangan key-value, key bersifat unik, mutable `{'a': 1}`.
 3. **Virtual Environment**: Isolasi dependensi per proyek sehingga proyek A yang membutuhkan Pandas 1.5 tidak bentrok dengan proyek B yang membutuhkan Pandas 2.2.
 4. **Fungsi Faktorial**:
    ```python
@@ -549,7 +546,7 @@ Halaman 10–24 dari 148 | Pandas · NumPy · Matplotlib · Seaborn · NLP · Se
 ## 1.3 Eksplorasi Data Awal (EDA)
 
 ```python
-# 🖥 EDA Komprehensif
+# EDA Komprehensif
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -557,26 +554,26 @@ import seaborn as sns
 
 df = pd.read_csv('data.csv')
 
-# ── STEP 1: Gambaran Umum ─────────────────────────
+# STEP 1: Gambaran Umum 
 print(f'Shape: {df.shape}')  # (baris, kolom)
 print(f'Columns: {df.columns.tolist()}')
 print(f'Memory: {df.memory_usage(deep=True).sum()/1024:.1f} KB')
 df.head(10)                    # 10 baris pertama
 df.sample(5, random_state=42)  # 5 baris acak
 
-# ── STEP 2: Info & Tipe Data ──────────────────────
+# STEP 2: Info & Tipe Data 
 df.info(verbose=True, show_counts=True)
 print(df.dtypes)
 
-# ── STEP 3: Statistik Deskriptif ─────────────────
+# STEP 3: Statistik Deskriptif 
 df.describe(include='all').T  # transpose agar mudah dibaca
 
-# ── STEP 4: Nilai Unik & Frekuensi ───────────────
+# STEP 4: Nilai Unik & Frekuensi 
 for col in df.select_dtypes('object').columns:
-    print(f'\n{col} ({df[col].nunique()} unique):')
+    print(f'\\n{col} ({df[col].nunique()} unique):')
     print(df[col].value_counts().head(10))
 
-# ── STEP 5: Missing Values ────────────────────────
+# STEP 5: Missing Values 
 missing = pd.DataFrame({
     'Jumlah_NaN': df.isnull().sum(),
     'Persen_NaN': (df.isnull().sum() / len(df) * 100).round(2),
@@ -584,7 +581,7 @@ missing = pd.DataFrame({
 }).sort_values('Persen_NaN', ascending=False)
 print(missing[missing['Jumlah_NaN'] > 0])
 
-# ── STEP 6: Korelasi Numerik ──────────────────────
+# STEP 6: Korelasi Numerik 
 corr = df.select_dtypes('number').corr()
 plt.figure(figsize=(10, 8))
 sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm',
@@ -593,14 +590,14 @@ plt.title('Matriks Korelasi')
 plt.tight_layout()
 plt.show()
 
-# ── STEP 7: Distribusi Kolom Numerik ─────────────
+# STEP 7: Distribusi Kolom Numerik 
 num_cols = df.select_dtypes('number').columns
 n = len(num_cols)
 fig, axes = plt.subplots(nrows=(n+2)//3, ncols=3, figsize=(15, 4*((n+2)//3)))
 axes = axes.flatten()
 for i, col in enumerate(num_cols):
     sns.histplot(df[col].dropna(), kde=True, ax=axes[i])
-    axes[i].set_title(f'{col}\nSkew: {df[col].skew():.2f}')
+    axes[i].set_title(f'{col}\\nSkew: {df[col].skew():.2f}')
 for j in range(i+1, len(axes)):
     axes[j].set_visible(False)
 plt.suptitle('Distribusi Kolom Numerik', fontsize=14, fontweight='bold')
@@ -613,10 +610,10 @@ plt.show()
 ## 1.4 Data Cleaning Sistematis
 
 ```python
-# 🖥 Data Cleaning Pipeline
-# ── Fungsi Audit Data ────────────────────────────
+# Data Cleaning Pipeline
+# Fungsi Audit Data 
 def audit_dataframe(df):
-    """Audit komprehensif DataFrame."""
+    \"\"\"Audit komprehensif DataFrame.\"\"\"
     print('='*60)
     print('DATA AUDIT REPORT')
     print('='*60)
@@ -637,9 +634,9 @@ def audit_dataframe(df):
 
 audit_dataframe(df)
 
-# ── Pipeline Cleaning ─────────────────────────────
+# Pipeline Cleaning 
 def clean_dataframe(df, copy=True):
-    """Pipeline pembersihan data standar."""
+    \"\"\"Pipeline pembersihan data standar.\"\"\"
     if copy: 
         df = df.copy()
     
@@ -678,8 +675,8 @@ df = clean_dataframe(df)
 ## 1.5 Penanganan Outlier
 
 ```python
-# 🖥 Deteksi & Penanganan Outlier
-# ── Deteksi Outlier dengan IQR ───────────────────
+# Deteksi & Penanganan Outlier
+# Deteksi Outlier dengan IQR 
 def detect_outliers_iqr(df, column):
     Q1 = df[column].quantile(0.25)
     Q3 = df[column].quantile(0.75)
@@ -690,7 +687,7 @@ def detect_outliers_iqr(df, column):
     print(f'{column}: {len(outliers)} outlier | batas [{lower:.2f}, {upper:.2f}]')
     return lower, upper, outliers
 
-# ── Deteksi Outlier dengan Z-Score ───────────────
+# Deteksi Outlier dengan Z-Score 
 from scipy import stats
 
 def detect_outliers_zscore(df, column, threshold=3):
@@ -699,7 +696,7 @@ def detect_outliers_zscore(df, column, threshold=3):
     print(f'{column}: {outlier_mask.sum()} outlier (|z| > {threshold})')
     return outlier_mask
 
-# ── Visualisasi Outlier ───────────────────────────
+# Visualisasi Outlier 
 def visualize_outliers(df, columns):
     fig, axes = plt.subplots(2, len(columns), figsize=(5*len(columns), 8))
     for i, col in enumerate(columns):
@@ -713,7 +710,7 @@ def visualize_outliers(df, columns):
     plt.tight_layout()
     plt.show()
 
-# ── Strategi Penanganan Outlier ──────────────────
+# Strategi Penanganan Outlier 
 # Opsi 1: Hapus outlier
 lower, upper, _ = detect_outliers_iqr(df, 'harga')
 df_clean = df[(df['harga'] >= lower) & (df['harga'] <= upper)]
@@ -730,8 +727,8 @@ df['harga_log'] = np.log1p(df['harga'])  # log(1+x) aman untuk nilai nol
 ## 1.6 Feature Engineering
 
 ```python
-# 🖥 Feature Engineering
-# ── Buat fitur baru dari kolom yang ada ──────────
+# Feature Engineering
+# Buat fitur baru dari kolom yang ada 
 # 1. Fitur dari operasi matematika
 df['profit_margin'] = (df['profit'] / df['revenue'] * 100).round(2)
 df['revenue_per_unit'] = df['revenue'] / df['qty'].replace(0, np.nan)
@@ -773,10 +770,10 @@ df['status_encoded'] = le.fit_transform(df['status'])
 
 ## 1.7 Studi Kasus: Analisis Penjualan E-Commerce
 
-🏢 **Skenario:** Anda adalah Data Analyst di startup e-commerce. CEO meminta analisis kinerja penjualan Q1-Q4 2024, identifikasi tren, dan rekomendasi strategi tahun depan.
+ **Skenario:** Anda adalah Data Analyst di startup e-commerce. CEO meminta analisis kinerja penjualan Q1-Q4 2024, identifikasi tren, dan rekomendasi strategi tahun depan.
 
 ```python
-# 🖥 STUDI KASUS: E-Commerce Analytics Dashboard
+# STUDI KASUS: E-Commerce Analytics Dashboard
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -787,7 +784,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-# ══ Simulasi Data ════════════════════════════════
+# Simulasi Data 
 np.random.seed(42)
 n = 5000
 tanggal = pd.date_range('2024-01-01', '2024-12-31', periods=n)
@@ -805,7 +802,7 @@ df = pd.DataFrame({
                                     p=[0.4, 0.1, 0.15, 0.15, 0.1, 0.05, 0.05]),
 })
 
-# ══ Feature Engineering ══════════════════════════
+# Feature Engineering 
 df['revenue'] = df['qty'] * df['harga']
 df['diskon_rp'] = df['revenue'] * df['diskon_pct'] / 100
 df['net_revenue'] = df['revenue'] - df['diskon_rp']
@@ -816,7 +813,7 @@ df['kuartal'] = df['tanggal'].dt.quarter
 df['hari_minggu'] = df['tanggal'].dt.day_name()
 df['is_weekend'] = df['tanggal'].dt.dayofweek.isin([5, 6])
 
-# ══ Summary KPI ══════════════════════════════════
+# Summary KPI 
 total_rev = df['net_revenue'].sum()
 total_order = df['order_id'].nunique()
 aov = total_rev / total_order  # Average Order Value
@@ -833,7 +830,7 @@ print(f'Total Profit     : Rp {total_profit:>15,.0f}')
 print(f'Profit Margin    : {profit_margin:>14.1f}%')
 print('='*50)
 
-# ══ Dashboard Visualisasi ════════════════════════
+# Dashboard Visualisasi 
 fig = plt.figure(figsize=(18, 14))
 fig.suptitle('DASHBOARD KINERJA E-COMMERCE 2024', fontsize=18, fontweight='bold', y=0.98)
 gs = gridspec.GridSpec(3, 3, figure=fig, hspace=0.45, wspace=0.35)
@@ -904,21 +901,21 @@ pivot = df.pivot_table(values='net_revenue', index='kota',
                        columns='kategori', aggfunc='sum') / 1e9
 sns.heatmap(pivot, annot=True, fmt='.0f', cmap='YlOrRd',
             ax=ax7, cbar_kws={'shrink': 0.8})
-ax7.set_title('Heatmap Revenue (Miliar)\nKota × Kategori')
+ax7.set_title('Heatmap Revenue (Miliar)\\nKota × Kategori')
 plt.savefig('dashboard_ecommerce.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-# ══ Rekomendasi Otomatis ═════════════════════════
+# Rekomendasi Otomatis 
 best_bulan = monthly.loc[monthly['revenue'].idxmax(), 'bulan_nama']
 best_kategori = kat_rev.idxmax()
 best_kota = kota_rev.idxmax()
 
-print('\n=== REKOMENDASI STRATEGI 2025 ===')
-print(f'▶ Fokus promosi di bulan {best_bulan} (peak season)')
-print(f'▶ Perbesar investasi kategori {best_kategori} (revenue tertinggi)')
-print(f'▶ Ekspansi operasional di {best_kota} (kota terkuat)')
-print(f'▶ Tingkatkan diskon 10-15% (sweet spot berdasarkan data)')
-print(f'▶ Aktifkan kampanye Weekend khusus untuk meningkatkan conversion')
+print('\\n=== REKOMENDASI STRATEGI 2025 ===')
+print(f' Fokus promosi di bulan {best_bulan} (peak season)')
+print(f' Perbesar investasi kategori {best_kategori} (revenue tertinggi)')
+print(f' Ekspansi operasional di {best_kota} (kota terkuat)')
+print(f' Tingkatkan diskon 10-15% (sweet spot berdasarkan data)')
+print(f' Aktifkan kampanye Weekend khusus untuk meningkatkan conversion')
 ```
 
 ---
@@ -941,22 +938,22 @@ Pola pikir ini biasanya mengikuti empat tahap berulang:
 ## 1.9 Business Analytics, Problem Solving, dan Decision Making
 
 Business Analytics adalah penerapan *analytical thinking* dalam konteks organisasi — menghubungkan data dengan keputusan operasional maupun strategis. Empat level analisis saling melengkapi:
-* **Descriptive Analytics** — *Apa yang terjadi?* Contoh output: dashboard penjualan bulanan.
-* **Diagnostic Analytics** — *Mengapa itu terjadi?* Contoh output: root cause analysis churn pelanggan.
-* **Predictive Analytics** — *Apa yang mungkin terjadi?* Contoh output: forecast demand 3 bulan ke depan.
-* **Prescriptive Analytics** — *Apa yang sebaiknya dilakukan?* Contoh output: rekomendasi alokasi budget marketing.
+1. **Descriptive Analytics** — *Apa yang terjadi?* Contoh output: dashboard penjualan bulanan.
+2. **Diagnostic Analytics** — *Mengapa itu terjadi?* Contoh output: root cause analysis churn pelanggan.
+3. **Predictive Analytics** — *Apa yang mungkin terjadi?* Contoh output: forecast demand 3 bulan ke depan.
+4. **Prescriptive Analytics** — *Apa yang sebaiknya dilakukan?* Contoh output: rekomendasi alokasi budget marketing.
 
 Alur pengambilan keputusan berbasis data (*data-driven decision making*):
-$$\text{Data} \longrightarrow \text{Informasi} \longrightarrow \text{Insight} \longrightarrow \text{Keputusan} \longrightarrow \text{Aksi} \longrightarrow \text{Dampak}$$
+$$\\text{Data} \\longrightarrow \\text{Informasi} \\longrightarrow \\text{Insight} \\longrightarrow \\text{Keputusan} \\longrightarrow \\text{Aksi} \\longrightarrow \\text{Dampak}$$
 
 ---
 
 ## 1.10 Business Metrics, KPI, OKR, dan North Star Metric
 
-* **Metric**: Angka pengukuran mentah, contoh: jumlah transaksi harian.
-* **KPI (Key Performance Indicator)**: Metric yang dipilih secara sadar karena berkaitan langsung dengan tujuan bisnis, memiliki target dan periode evaluasi. Contoh: *"Conversion rate ≥ 3% per bulan"*.
-* **OKR (Objective and Key Results)**: Kerangka penetapan tujuan yang terdiri dari satu Objective kualitatif dan beberapa Key Result kuantitatif. Contoh: Objective *"Meningkatkan loyalitas pelanggan e-commerce"*, dengan Key Result *"Repeat purchase rate naik dari 22% ke 30%"*.
-* **North Star Metric**: Satu metric tunggal yang paling merepresentasikan nilai inti yang diberikan produk ke pelanggan sekaligus memprediksi kesuksesan bisnis jangka panjang. Contoh: Spotify menggunakan *time spent listening*, Airbnb menggunakan *nights booked*.
+1. **Metric**: Angka pengukuran mentah, contoh: jumlah transaksi harian.
+2. **KPI (Key Performance Indicator)**: Metric yang dipilih secara sadar karena berkaitan langsung dengan tujuan bisnis, memiliki target dan periode evaluasi. Contoh: *"Conversion rate ≥ 3% per bulan"*.
+3. **OKR (Objective and Key Results)**: Kerangka penetapan tujuan yang terdiri dari satu Objective kualitatif dan beberapa Key Result kuantitatif. Contoh: Objective *"Meningkatkan loyalitas pelanggan e-commerce"*, dengan Key Result *"Repeat purchase rate naik dari 22% ke 30%"*.
+4. **North Star Metric**: Satu metric tunggal yang paling merepresentasikan nilai inti yang diberikan produk ke pelanggan sekaligus memprediksi kesuksesan bisnis jangka panjang. Contoh: Spotify menggunakan *time spent listening*, Airbnb menggunakan *nights booked*.
 
 ---
 
@@ -973,20 +970,20 @@ Lima tingkat kematangan analitik organisasi:
 
 ## 1.12 OSEMN Framework sebagai Pelengkap CRISP-DM
 
-* **O — Obtain**: Mengumpulkan data dari database, API, file, atau web scraping.
-* **S — Scrub**: Membersihkan data (setara "Data Preparation" pada CRISP-DM).
-* **E — Explore**: EDA, visualisasi awal, mencari pola dan korelasi.
-* **M — Model**: Membangun model statistik atau machine learning bila diperlukan.
-* **N — iNterpret**: Menerjemahkan hasil model menjadi insight dan narasi bisnis.
+1. **O — Obtain**: Mengumpulkan data dari database, API, file, atau web scraping.
+2. **S — Scrub**: Membersihkan data (setara "Data Preparation" pada CRISP-DM).
+3. **E — Explore**: EDA, visualisasi awal, mencari pola dan korelasi.
+4. **M — Model**: Membangun model statistik atau machine learning bila diperlukan.
+5. **N — iNterpret**: Menerjemahkan hasil model menjadi insight dan narasi bisnis.
 
 ---
 
 ## 1.13 Data Governance, Privacy, Ethics, dan Security
 
-* **Data Governance**: Kebijakan yang mengatur siapa yang boleh mengakses data apa, data dictionary, master data, dan data ownership.
-* **Data Privacy**: Perlindungan data pribadi (PII — *Personally Identifiable Information*). Di Indonesia diatur dalam **UU Perlindungan Data Pribadi (UU PDP)**.
-* **Data Ethics**: Penggunaan data secara bertanggung jawab dan menghindari bias diskriminatif.
-* **Data Security**: Enkripsi, Role-Based Access Control (RBAC), dan anonimisasi/masking data sensitif.
+1. **Data Governance**: Kebijakan yang mengatur siapa yang boleh mengakses data apa, data dictionary, master data, dan data ownership.
+2. **Data Privacy**: Perlindungan data pribadi (PII — *Personally Identifiable Information*). Di Indonesia diatur dalam **UU Perlindungan Data Pribadi (UU PDP)**.
+3. **Data Ethics**: Penggunaan data secara bertanggung jawab dan menghindari bias diskriminatif.
+4. **Data Security**: Enkripsi, Role-Based Access Control (RBAC), dan anonimisasi/masking data sensitif.
 
 ---
 
@@ -1020,7 +1017,7 @@ Struktur narasi klasik:
 * **Pareto Analysis (Prinsip 80/20)**: Kurang lebih 80% dampak berasal dari 20% penyebab (misalnya 20% pelanggan menyumbang 80% revenue).
 
 ```python
-# 🖥 Pareto Analysis — Kontribusi Customer terhadap Revenue
+# Pareto Analysis — Kontribusi Customer terhadap Revenue
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -1049,18 +1046,18 @@ print(f'{n_customer_80pct} dari {len(revenue_per_customer)} customer '
 ## 1.17 SWOT dan SMART Goal dalam Konteks Data
 
 Target analisis harus mengikuti kriteria **SMART**:
-* **Specific**: Target jelas, tidak ambigu.
-* **Measurable**: Ada angka/metrik yang bisa diukur.
-* **Achievable**: Realistis berdasarkan tren historis data.
-* **Relevant**: Selaras dengan sasaran strategis bisnis.
-* **Time-bound**: Memiliki tenggat waktu evaluasi yang pasti.
+1. **Specific**: Target jelas, tidak ambigu.
+2. **Measurable**: Ada angka/metrik yang bisa diukur.
+3. **Achievable**: Realistis berdasarkan tren historis data.
+4. **Relevant**: Selaras dengan sasaran strategis bisnis.
+5. **Time-bound**: Memiliki tenggat waktu evaluasi yang pasti.
 
 ---
 
 ## 1.18 Business Value dan ROI Analytics
 
 Rumus ROI inisiatif analytics:
-$$\text{ROI (\%)} = \frac{\text{Manfaat Finansial} - \text{Biaya Inisiatif}}{\text{Biaya Inisiatif}} \times 100\%$$
+$$\\text{ROI (\\%)} = \\frac{\\text{Manfaat Finansial} - \\text{Biaya Inisiatif}}{\\text{Biaya Inisiatif}} \\times 100\\%$$
 
 > [!TIP]
 > **Best Practice:** Setiap laporan analisis wajib ditutup dengan 3 komponen:
@@ -1080,7 +1077,7 @@ $$\text{ROI (\%)} = \frac{\text{Manfaat Finansial} - \text{Biaya Inisiatif}}{\te
 
 ---
 
-## 📝 QUIZ TAMBAHAN — FUNDAMENTAL DATA ANALYTICS
+## QUIZ TAMBAHAN — FUNDAMENTAL DATA ANALYTICS
 
 1. Jelaskan perbedaan antara Metric, KPI, dan OKR, lalu berikan satu contoh masing-masing dari industri e-commerce!
    * **Jawaban:** Metric = angka mentah (contoh: jumlah kunjungan harian). KPI = metric terpilih dengan target jelas (contoh: Conversion Rate ≥ 3%). OKR = kerangka tujuan kualitatif + hasil kuantitatif (contoh Objective "Meningkatkan pengalaman checkout", Key Result "Cart abandonment turun ke 55%").
@@ -1093,11 +1090,11 @@ $$\text{ROI (\%)} = \frac{\text{Manfaat Finansial} - \text{Biaya Inisiatif}}{\te
 5. Sebuah dataset menunjukkan korelasi tinggi antara jumlah es krim yang terjual dan jumlah kasus tenggelam. Jelaskan mengapa ini bukan hubungan sebab-akibat, dan variabel apa yang mungkin menjadi penyebab sebenarnya!
    * **Jawaban:** Korelasi ini disebabkan oleh variabel ketiga yaitu cuaca panas/musim panas — saat cuaca panas, orang lebih banyak membeli es krim sekaligus lebih banyak berenang, sehingga risiko tenggelam ikut naik. Tidak ada hubungan sebab-akibat langsung.
 6. Hitung ROI sebuah inisiatif data quality yang menghabiskan biaya Rp30 juta, dan berhasil mencegah kerugian akibat kesalahan pengiriman senilai Rp95 juta dalam 6 bulan!
-   * **Jawaban:** $\text{ROI} = \frac{95\text{jt} - 30\text{jt}}{30\text{jt}} \times 100\% = 216{,}7\%$.
+   * **Jawaban:** $\\text{ROI} = \\frac{95\\text{jt} - 30\\text{jt}}{30\\text{jt}} \\times 100\\% = 216{,}7\\%$.
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Jelaskan 4 jenis Data Analytics dengan contoh nyata dari industri yang berbeda!
 2. Apa yang dimaksud dengan CRISP-DM? Mengapa tahap 'Data Preparation' membutuhkan 80% waktu?
 3. Tulis fungsi Python untuk mendeteksi outlier menggunakan metode IQR dan Z-Score sekaligus!
@@ -1132,29 +1129,29 @@ Halaman 25–43 dari 148 | Pandas · NumPy · Matplotlib · Seaborn · NLP · Se
 ## 2.1 Series — Data Satu Dimensi
 
 ```python
-# 🖥 Series Lengkap
+# Series Lengkap
 import pandas as pd
 import numpy as np
 
-# ── Membuat Series ────────────────────────────────
+# Membuat Series 
 s1 = pd.Series([10, 20, 30, 40, 50])  # index default 0-4
 s2 = pd.Series([85, 90, 78, 92], index=['Mat', 'IPA', 'IPS', 'Ing'])  # custom index
 s3 = pd.Series({'Jakarta': 4500, 'Surabaya': 2800, 'Bandung': 2400})  # dari dict
 s4 = pd.Series(np.random.randn(5), name='nilai_acak')  # dari numpy
 
-# ── Akses Data Series ────────────────────────────
+# Akses Data Series 
 s2['Mat']            # 85 — by label
 s2[0]                # 85 — by posisi
 s2[['Mat', 'IPA']]   # Series subset
 s2[:3]               # slicing
 s2[s2 > 80]          # boolean filter
 
-# ── Operasi Series ───────────────────────────────
+# Operasi Series 
 s2 + 10                                       # tambah semua elemen
 s2 * 1.1                                      # kali semua elemen
 s2.apply(lambda x: 'A' if x >= 90 else 'B')  # apply fungsi
 
-# ── Statistik Series ─────────────────────────────
+# Statistik Series 
 s2.mean()        # rata-rata: 86.25
 s2.std()         # standar deviasi
 s2.median()      # median: 87.5
@@ -1167,7 +1164,7 @@ s2.rank()        # ranking
 s2.cumsum()      # kumulatif
 s2.pct_change()  # persentase perubahan
 
-# ── Info Series ──────────────────────────────────
+# Info Series 
 s2.dtype         # float64
 s2.index         # Index(['Mat', 'IPA', 'IPS', 'Ing'])
 s2.values        # array([85, 90, 78, 92])
@@ -1181,8 +1178,8 @@ s2.name          # None (bisa di-set)
 ## 2.2 DataFrame — Data Dua Dimensi
 
 ```python
-# 🖥 DataFrame Dasar
-# ── Membuat DataFrame ────────────────────────────
+# DataFrame Dasar
+# Membuat DataFrame 
 data = {
     'nama' : ['Budi', 'Ani', 'Citra', 'Dodi', 'Eka'],
     'umur' : [25, 30, 22, 35, 28],
@@ -1193,7 +1190,7 @@ data = {
 }
 df = pd.DataFrame(data)
 
-# ── Info DataFrame ───────────────────────────────
+# Info DataFrame 
 df.shape                    # (5, 6)
 df.ndim                     # 2
 df.size                     # 30
@@ -1202,14 +1199,14 @@ df.columns.tolist()         # nama kolom
 df.index.tolist()           # [0, 1, 2, 3, 4]
 df.memory_usage(deep=True)  # memory per kolom
 
-# ── Tampilkan Data ───────────────────────────────
+# Tampilkan Data 
 df.head(3)                  # 3 baris pertama
 df.tail(2)                  # 2 baris terakhir
 df.sample(3)                # 3 baris acak
 df.describe()               # statistik numerik
 df.describe(include='object') # statistik string
 
-# ── Set Custom Index ─────────────────────────────
+# Set Custom Index 
 df2 = df.set_index('nama')  # nama jadi index
 df2.loc['Budi']             # akses by nama
 df.reset_index(inplace=True) # kembali ke numerik
@@ -1220,15 +1217,15 @@ df.reset_index(inplace=True) # kembali ke numerik
 ## 2.3 Seleksi Data — .loc, .iloc, .at
 
 ```python
-# 🖥 Seleksi & Indexing Lengkap
-# ── Pilih Kolom ──────────────────────────────────
+# Seleksi & Indexing Lengkap
+# Pilih Kolom 
 df['gaji']                  # satu kolom → Series
 df[['nama', 'gaji', 'kota']] # beberapa kolom → DataFrame
 df.filter(like='a')         # kolom yang mengandung 'a'
 df.select_dtypes('number')  # hanya kolom numerik
 df.select_dtypes('object')  # hanya kolom string
 
-# ── .loc[ ] — Label Based ────────────────────────
+# .loc[ ] — Label Based 
 df.loc[0]                                   # baris index 0
 df.loc[0:3]                                 # baris 0 s.d 3 (INKLUSIF)
 df.loc[0, 'nama']                           # sel tunggal
@@ -1237,19 +1234,19 @@ df.loc[0:2, 'nama':'kota']                  # baris & kolom range
 df.loc[df['gaji'] > 10e6]                   # filter kondisi
 df.loc[df['gaji'] > 10e6, ['nama', 'gaji']] # filter + pilih kolom
 
-# ── .iloc[ ] — Integer Position Based ───────────
+# .iloc[ ] — Integer Position Based 
 df.iloc[0]                                  # baris pertama
 df.iloc[-1]                                 # baris terakhir
 df.iloc[0:3]                                # baris 0,1,2 (EKSKLUSIF end)
 df.iloc[:, 0:3]                             # semua baris, kolom 0-2
 df.iloc[[0, 2, 4], [1, 3]]                  # baris dan kolom spesifik
 
-# ── .at dan .iat — Akses Sel Tunggal (Cepat) ────
+# .at dan .iat — Akses Sel Tunggal (Cepat) 
 df.at[0, 'nama']                            # label-based
 df.iat[0, 0]                                # position-based
 df.at[0, 'gaji'] = 9e6                      # update satu nilai
 
-# ── .query() — Filter Ekspresif ──────────────────
+# .query() — Filter Ekspresif 
 df.query('gaji > 10_000_000 and kota == "Jakarta"')
 df.query('umur.between(25, 35) and aktif == True')
 batas = 10e6
@@ -1261,18 +1258,18 @@ df.query('gaji > @batas')                   # gunakan variabel Python dengan @
 ## 2.4 Filtering & Kondisi Kompleks
 
 ```python
-# 🖥 Filtering Kompleks
-# ── Filter Dasar ──────────────────────────────────
+# Filtering Kompleks
+# Filter Dasar 
 df[df['umur'] > 25]
 df[df['kota'] == 'Jakarta']
 df[df['nama'].str.startswith('B')]
 
-# ── AND, OR, NOT ──────────────────────────────────
+# AND, OR, NOT 
 df[(df['umur'] > 25) & (df['gaji'] > 10e6)]          # AND
 df[(df['kota'] == 'Jakarta') | (df['kota'] == 'Bandung')] # OR
 df[~df['aktif']]                                    # NOT
 
-# ── isin, between, isna ───────────────────────────
+# isin, between, isna 
 kota_target = ['Jakarta', 'Surabaya']
 df[df['kota'].isin(kota_target)]
 df[~df['kota'].isin(kota_target)]
@@ -1280,15 +1277,15 @@ df[df['umur'].between(25, 32, inclusive='both')]
 df[df['gaji'].isna()]
 df[df['gaji'].notna()]
 
-# ── Filter String ────────────────────────────────
+# Filter String 
 df[df['nama'].str.contains('i', case=False)]
 df[df['nama'].str.len() > 4]
 df[df['nama'].str.match(r'^[A-C]')]                 # regex
 
-# ── np.where — Kondisi dengan Nilai Pengganti ────
+# np.where — Kondisi dengan Nilai Pengganti 
 df['kategori_gaji'] = np.where(df['gaji'] > 10e6, 'Tinggi', 'Standar')
 
-# ── np.select — Multiple Conditions ──────────────
+# np.select — Multiple Conditions 
 conditions = [
     df['gaji'] >= 15e6,
     (df['gaji'] >= 10e6) & (df['gaji'] < 15e6),
@@ -1303,16 +1300,16 @@ df['level'] = np.select(conditions, choices, default='Magang')
 ## 2.5 GroupBy & Agregasi Mendalam
 
 ```python
-# 🖥 GroupBy & Agregasi Lengkap
-# ── GroupBy Dasar ────────────────────────────────
+# GroupBy & Agregasi Lengkap
+# GroupBy Dasar 
 df.groupby('dept')['gaji'].sum()
 df.groupby('dept')['gaji'].mean()
 df.groupby('dept')['gaji'].agg(['sum', 'mean', 'count', 'min', 'max'])
 
-# ── GroupBy Multi-Key ─────────────────────────────
+# GroupBy Multi-Key 
 df.groupby(['kota', 'dept'])['gaji'].sum().unstack(fill_value=0)
 
-# ── .agg() dengan Fungsi Berbeda per Kolom ───────
+# .agg() dengan Fungsi Berbeda per Kolom 
 result = df.groupby('dept').agg(
     total_gaji = ('gaji', 'sum'),
     rata_gaji = ('gaji', 'mean'),
@@ -1323,7 +1320,7 @@ result = df.groupby('dept').agg(
 ).round(2).reset_index()
 print(result)
 
-# ── .transform() — Kembalikan Ukuran Sama ─────────
+# .transform() — Kembalikan Ukuran Sama 
 df['gaji_mean_dept'] = df.groupby('dept')['gaji'].transform('mean')
 df['gaji_rank_dept'] = df.groupby('dept')['gaji'].rank(ascending=False)
 df['gaji_pct_dept'] = df['gaji'] / df.groupby('dept')['gaji'].transform('sum')
@@ -1331,17 +1328,17 @@ df['gaji_zscore_dept'] = df.groupby('dept')['gaji'].transform(
     lambda x: (x - x.mean()) / x.std()
 )
 
-# ── .filter() — Filter Grup ───────────────────────
+# .filter() — Filter Grup 
 # Dept dengan rata-rata gaji > 10 juta
 df.groupby('dept').filter(lambda x: x['gaji'].mean() > 10e6)
 
-# ── apply() pada GroupBy ──────────────────────────
+# apply() pada GroupBy 
 def top2_by_gaji(group):
     return group.nlargest(2, 'gaji')
 
 top2_per_dept = df.groupby('dept').apply(top2_by_gaji).reset_index(drop=True)
 
-# ── Resample (untuk time series) ──────────────────
+# Resample (untuk time series) 
 df_ts = df.set_index('tanggal')                     # asumsi ada kolom tanggal
 df_ts.resample('M')['revenue'].sum()                 # bulanan
 df_ts.resample('Q')['revenue'].sum()                 # kuartilan
@@ -1354,8 +1351,8 @@ df_ts.resample('D').agg({'revenue': 'sum', 'qty': 'sum'})  # harian, multi kolom
 ## 2.6 Merge, Join & Concat
 
 ```python
-# 🖥 Merge, Join & Concat Lengkap
-# ── Contoh Data ──────────────────────────────────
+# Merge, Join & Concat Lengkap
+# Contoh Data 
 orders = pd.DataFrame({
     'order_id': [1, 2, 3, 4, 5],
     'cust_id' : [101, 102, 101, 103, 104],
@@ -1368,7 +1365,7 @@ customers = pd.DataFrame({
     'kota'   : ['Jakarta', 'Surabaya', 'Bandung', 'Medan']
 })
 
-# ── pd.merge ─────────────────────────────────────
+# pd.merge 
 # INNER JOIN (hanya yang cocok di kedua sisi)
 inner = pd.merge(orders, customers, on='cust_id', how='inner')
 
@@ -1390,7 +1387,7 @@ pd.merge(df1, df2, on=['tahun', 'bulan', 'kota'])
 # Validasi relasi (m:1)
 pd.merge(orders, customers, on='cust_id', how='left', validate='m:1')
 
-# ── pd.concat ────────────────────────────────────
+# pd.concat 
 # Vertikal (tambah baris)
 df_all = pd.concat([df_jan, df_feb, df_mar], ignore_index=True)
 df_all = pd.concat([df_jan, df_feb], keys=['Jan', 'Feb'])  # dengan label
@@ -1398,7 +1395,7 @@ df_all = pd.concat([df_jan, df_feb], keys=['Jan', 'Feb'])  # dengan label
 # Horizontal (tambah kolom)
 df_wide = pd.concat([df_info, df_scores], axis=1)
 
-# ── Cross Join (semua kombinasi) ──────────────────
+# Cross Join (semua kombinasi) 
 produk = pd.DataFrame({'produk': ['A', 'B', 'C']})
 toko = pd.DataFrame({'toko': ['X', 'Y']})
 cross = produk.merge(toko, how='cross')
@@ -1410,39 +1407,39 @@ cross = produk.merge(toko, how='cross')
 ## 2.7 String Operations
 
 ```python
-# 🖥 String Operations
+# String Operations
 df = pd.DataFrame({
     'nama' : [' Budi Santoso ', 'ani WIJAYA', 'CITRA sari'],
     'email': ['budi@gmail.com', 'ani@yahoo.co.id', 'citra@company.com'],
     'kode' : ['PRD-001', 'SVC-002', 'PRD-003']
 })
 
-# ── Transformasi ──────────────────────────────────
+# Transformasi 
 df['nama'].str.strip()        # hapus spasi di ujung
 df['nama'].str.lower()        # lowercase
 df['nama'].str.upper()        # UPPERCASE
 df['nama'].str.title()        # Title Case
 df['nama'].str.capitalize()   # Capitalize first only
 
-# ── Pencarian & Penggantian ───────────────────────
+# Pencarian & Penggantian 
 df['nama'].str.contains('Budi', case=False)  # boolean
 df['nama'].str.startswith('B')               # awalan
 df['nama'].str.endswith('o')                 # akhiran
 df['nama'].str.replace('Budi', 'Ahmad')      # ganti teks
-df['nama'].str.replace(r'\s+', ' ', regex=True) # normalize spasi
+df['nama'].str.replace(r'\\s+', ' ', regex=True) # normalize spasi
 
-# ── Ekstraksi ─────────────────────────────────────
+# Ekstraksi 
 df['domain'] = df['email'].str.split('@').str[1]
-df['tld'] = df['email'].str.extract(r'\.(\w+)$')
+df['tld'] = df['email'].str.extract(r'\\.(\\w+)$')
 df['jenis_kode'] = df['kode'].str[:3]   # 3 karakter pertama
 df['nomor_kode'] = df['kode'].str[-3:]  # 3 karakter terakhir
 df['nama_depan'] = df['nama'].str.split().str[0]
 
-# ── Informasi String ─────────────────────────────
+# Informasi String 
 df['nama'].str.len()          # panjang string
 df['nama'].str.count('a')     # hitung karakter 'a'
 
-# ── Padding & Alignment ──────────────────────────
+# Padding & Alignment 
 df['nama'].str.ljust(20, '.') # rata kiri
 df['nama'].str.rjust(20, '.') # rata kanan
 df['nama'].str.center(20, '-')# tengah
@@ -1454,8 +1451,8 @@ df['kode'].str.zfill(8)       # padding nol di kiri
 ## 2.8 DateTime Operations
 
 ```python
-# 🖥 DateTime Operations
-# ── Parse & Buat DateTime ────────────────────────
+# DateTime Operations
+# Parse & Buat DateTime 
 df['tanggal'] = pd.to_datetime(df['tanggal'])
 df['tanggal'] = pd.to_datetime(df['tanggal'], format='%d/%m/%Y')
 df['tanggal'] = pd.to_datetime(df['tanggal'], errors='coerce')  # NaT jika gagal
@@ -1463,7 +1460,7 @@ df['tanggal'] = pd.to_datetime(df['tanggal'], errors='coerce')  # NaT jika gagal
 today = pd.Timestamp.today()
 specific = pd.Timestamp('2024-08-17 08:00:00')
 
-# ── .dt Accessor ─────────────────────────────────
+# .dt Accessor 
 df['tahun'] = df['tanggal'].dt.year
 df['bulan'] = df['tanggal'].dt.month
 df['hari'] = df['tanggal'].dt.day
@@ -1478,17 +1475,17 @@ df['hari_dalam_tahun'] = df['tanggal'].dt.dayofyear
 df['minggu_dalam_tahun'] = df['tanggal'].dt.isocalendar().week
 df['is_leap_year'] = df['tanggal'].dt.is_leap_year
 
-# ── Selisih Waktu (Timedelta) ────────────────────
+# Selisih Waktu (Timedelta) 
 df['umur_hari'] = (today - df['tgl_lahir']).dt.days
 df['umur_tahun'] = df['umur_hari'] // 365
 df['bulan_aktif'] = ((today - df['tgl_daftar']) / pd.Timedelta(days=30)).astype(int)
 
-# ── Period & Offset ───────────────────────────────
+# Period & Offset 
 df['tanggal'] + pd.DateOffset(months=1)  # tambah 1 bulan
 df['tanggal'] + pd.Timedelta(days=7)     # tambah 7 hari
 df['tanggal'].dt.to_period('M')          # konversi ke period bulan
 
-# ── Resample Time Series ─────────────────────────
+# Resample Time Series 
 ts = df.set_index('tanggal').sort_index()
 ts['revenue'].resample('D').sum()         # agregasi harian
 ts['revenue'].resample('W').mean()        # mingguan
@@ -1501,8 +1498,8 @@ ts.resample('Q').ffill()                  # forward fill per kuartal
 ## 2.9 Pivot Table & Reshaping
 
 ```python
-# 🖥 Pivot & Reshaping
-# ── Pivot Table ──────────────────────────────────
+# Pivot & Reshaping
+# Pivot Table 
 pivot = pd.pivot_table(
     df,
     values=['revenue', 'profit'],
@@ -1515,7 +1512,7 @@ pivot = pd.pivot_table(
 )
 print(pivot.round(0))
 
-# ── pd.crosstab ───────────────────────────────────
+# pd.crosstab 
 ct = pd.crosstab(
     index=df['kota'],
     columns=df['kategori'],
@@ -1525,7 +1522,7 @@ ct = pd.crosstab(
     normalize='index'   # proporsi per baris
 )
 
-# ── Wide to Long: pd.melt ─────────────────────────
+# Wide to Long: pd.melt 
 df_wide = pd.DataFrame({
     'nama': ['Budi', 'Ani'],
     'Jan' : [100, 200],
@@ -1541,11 +1538,11 @@ df_long = pd.melt(
     value_name='penjualan'
 )
 
-# ── Long to Wide: pivot / unstack ─────────────────
+# Long to Wide: pivot / unstack 
 df_wide2 = df_long.pivot(index='nama', columns='bulan', values='penjualan')
 df_wide3 = df_long.set_index(['nama', 'bulan']).unstack('bulan')
 
-# ── stack & unstack ───────────────────────────────
+# stack & unstack 
 df_stacked = pivot.stack()      # wide → long (multi-level index)
 df_unstacked = df_stacked.unstack() # long → wide
 ```
@@ -1555,10 +1552,10 @@ df_unstacked = df_stacked.unstack() # long → wide
 ## 2.10 Membaca & Menulis Data — Format Lengkap
 
 ```python
-# 🖥 I/O Data — Format Lengkap
-# ── Membaca CSV ──────────────────────────────────
+# I/O Data — Format Lengkap
+# Membaca CSV 
 df = pd.read_csv('file.csv',
-    sep=',',                   # pemisah (bisa ';' atau '\t')
+    sep=',',                   # pemisah (bisa ';' atau '\\t')
     encoding='utf-8',          # encoding file
     header=0,                  # baris ke-0 jadi header
     index_col=None,            # kolom sebagai index
@@ -1577,21 +1574,21 @@ df = pd.read_csv('file.csv',
 chunk_iter = pd.read_csv('bigfile.csv', chunksize=10000)
 df = pd.concat([chunk for chunk in chunk_iter], ignore_index=True)
 
-# ── Membaca Excel ─────────────────────────────────
+# Membaca Excel 
 df = pd.read_excel('file.xlsx', sheet_name='Sheet1')
 all_sheets = pd.read_excel('file.xlsx', sheet_name=None)  # dict semua sheet
 
-# ── Membaca dari Database ─────────────────────────
+# Membaca dari Database 
 import sqlite3
 conn = sqlite3.connect('database.db')
 df = pd.read_sql('SELECT * FROM penjualan WHERE tahun = 2024', conn)
 df = pd.read_sql_query('SELECT k.nama, SUM(p.revenue) FROM ...', conn)
 
-# ── Membaca dari URL ──────────────────────────────
+# Membaca dari URL 
 url = 'https://raw.githubusercontent.com/datasets/...'
 df = pd.read_csv(url)
 
-# ── Menulis Data ─────────────────────────────────
+# Menulis Data 
 df.to_csv('output.csv', index=False, encoding='utf-8-sig') # utf-8-sig untuk Excel
 df.to_excel('output.xlsx', sheet_name='Data', index=False)
 df.to_json('output.json', orient='records', force_ascii=False)
@@ -1610,16 +1607,16 @@ with pd.ExcelWriter('multi_sheet.xlsx', engine='openpyxl') as writer:
 
 ## 2.11 Studi Kasus: Analisis RFM Pelanggan
 
-🎯 **RFM Analysis:** Segmentasi pelanggan berdasarkan Recency (kapan terakhir beli), Frequency (seberapa sering), dan Monetary (seberapa besar nilai transaksi).
+ **RFM Analysis:** Segmentasi pelanggan berdasarkan Recency (kapan terakhir beli), Frequency (seberapa sering), dan Monetary (seberapa besar nilai transaksi).
 
 ```python
-# 🖥 STUDI KASUS: RFM Customer Segmentation
+# STUDI KASUS: RFM Customer Segmentation
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ══ Simulasi Data Transaksi ═══════════════════════
+# Simulasi Data Transaksi 
 np.random.seed(42)
 n = 3000
 today = pd.Timestamp('2024-12-31')
@@ -1630,7 +1627,7 @@ transactions = pd.DataFrame({
     'revenue'   : np.random.lognormal(13.5, 1.2, n).round(-3)
 })
 
-# ══ Hitung Metrik RFM ════════════════════════════
+# Hitung Metrik RFM 
 rfm = transactions.groupby('cust_id').agg(
     recency=('order_date', lambda x: (today - x.max()).days),
     frequency=('order_id', 'nunique'),
@@ -1640,7 +1637,7 @@ rfm = transactions.groupby('cust_id').agg(
 print('Statistik RFM:')
 print(rfm[['recency', 'frequency', 'monetary']].describe().round(0))
 
-# ══ Scoring RFM (1-5) ════════════════════════════
+# Scoring RFM (1-5) 
 # Recency: semakin kecil semakin baik (score 5 = paling baru)
 rfm['R'] = pd.qcut(rfm['recency'], 5, labels=[5, 4, 3, 2, 1]).astype(int)
 
@@ -1653,7 +1650,7 @@ rfm['M'] = pd.qcut(rfm['monetary'], 5, labels=[1, 2, 3, 4, 5]).astype(int)
 rfm['RFM_Score'] = rfm['R'] + rfm['F'] + rfm['M']
 rfm['RFM_String'] = rfm['R'].astype(str) + rfm['F'].astype(str) + rfm['M'].astype(str)
 
-# ══ Segmentasi Pelanggan ═════════════════════════
+# Segmentasi Pelanggan 
 def segment_customer(row):
     r, f, m = row['R'], row['F'], row['M']
     if r >= 4 and f >= 4 and m >= 4: return 'Champions'
@@ -1665,7 +1662,7 @@ def segment_customer(row):
 
 rfm['Segment'] = rfm.apply(segment_customer, axis=1)
 
-# ══ Summary per Segmen ═══════════════════════════
+# Summary per Segmen 
 summary = rfm.groupby('Segment').agg(
     jumlah_pelanggan=('cust_id', 'count'),
     avg_recency=('recency', 'mean'),
@@ -1674,10 +1671,10 @@ summary = rfm.groupby('Segment').agg(
     avg_revenue=('monetary', 'mean'),
 ).round(0).sort_values('total_revenue', ascending=False)
 
-print('\nSummary per Segmen:')
+print('\\nSummary per Segmen:')
 print(summary)
 
-# ══ Visualisasi RFM ══════════════════════════════
+# Visualisasi RFM 
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 fig.suptitle('Analisis RFM Pelanggan', fontsize=15, fontweight='bold')
 for ax, col, color in zip(axes, ['recency', 'frequency', 'monetary'],
@@ -1711,7 +1708,7 @@ plt.show()
 Salah satu gaya penulisan Pandas yang dianggap paling profesional di industri adalah **method chaining** --- merangkai beberapa operasi transformasi data dalam satu alur tanpa membuat variabel perantara yang berlebihan. Gaya ini membuat kode lebih mudah dibaca sebagai sebuah "resep" berurutan.
 
 ```python
-# 🖥 Method Chaining vs Gaya Prosedural
+# Method Chaining vs Gaya Prosedural
 # Gaya prosedural (banyak variabel perantara)
 df1 = df.dropna(subset=['revenue'])
 df2 = df1[df1['revenue'] > 0]
@@ -1730,7 +1727,7 @@ hasil = (
 
 Method `.pipe()` memungkinkan kita menyisipkan fungsi kustom ke dalam rantai method:
 ```python
-# 🖥 Menggunakan .pipe() untuk Fungsi Kustom
+# Menggunakan .pipe() untuk Fungsi Kustom
 def hapus_outlier_iqr(data, kolom):
     q1, q3 = data[kolom].quantile([0.25, 0.75])
     iqr = q3 - q1
@@ -1753,7 +1750,7 @@ hasil = (
 ## 2.13 .assign(), .query(), dan .eval() untuk Kode yang Lebih Bersih
 
 ```python
-# 🖥 assign, query, dan eval
+# assign, query, dan eval
 # .assign() -- membuat kolom baru secara chainable
 df_baru = df.assign(
     margin=lambda d: d['revenue'] - d['cost'],
@@ -1773,7 +1770,7 @@ df_baru.eval('margin_per_unit = margin / kuantitas', inplace=True)
 ## 2.14 .explode() untuk Data Bertipe List
 
 ```python
-# 🖥 Contoh .explode()
+# Contoh .explode()
 df_produk = pd.DataFrame({
     'produk': ['Sepatu A', 'Tas B'],
     'tags'  : [['diskon', 'flash-sale'], ['baru', 'diskon', 'limited']]
@@ -1781,7 +1778,7 @@ df_produk = pd.DataFrame({
 
 df_exploded = df_produk.explode('tags')
 print(df_exploded)
-#        produk        tags
+# produk        tags
 # 0    Sepatu A      diskon
 # 0    Sepatu A  flash-sale
 # 1       Tas B        baru
@@ -1797,7 +1794,7 @@ print(df_exploded['tags'].value_counts())
 ## 2.15 Categorical Data Type untuk Efisiensi Memori
 
 ```python
-# 🖥 Konversi ke Categorical
+# Konversi ke Categorical
 print(df['kategori'].memory_usage(deep=True))  # sebelum, misal: 8_000_000 bytes
 df['kategori'] = df['kategori'].astype('category')
 print(df['kategori'].memory_usage(deep=True))  # sesudah, bisa turun > 90%
@@ -1816,7 +1813,7 @@ df[df['tingkat_kepuasan'] >= 'Baik']  # perbandingan langsung berdasarkan urutan
 ## 2.16 Nullable Data Type dan Sparse Data
 
 ```python
-# 🖥 Nullable Integer Type
+# Nullable Integer Type
 # Tanpa nullable type -- terpaksa jadi float karena ada NaN
 s = pd.Series([1, 2, None, 4])
 print(s.dtype)  # float64
@@ -1830,7 +1827,7 @@ print(s_nullable)
 # 3       4
 # dtype: Int64
 
-# ── Sparse Data untuk Kolom Dominan Nol ──────────
+# Sparse Data untuk Kolom Dominan Nol 
 from pandas.arrays import SparseArray
 kolom_onehot = [0]*9995 + [1]*5  # 10.000 baris, hanya 5 yang bernilai 1
 s_normal = pd.Series(kolom_onehot)
@@ -1844,11 +1841,11 @@ print(s_sparse.memory_usage(deep=True))  # jauh lebih kecil, hanya simpan nilai 
 ## 2.17 Optimasi Memori DataFrame Secara Menyeluruh
 
 ```python
-# 🖥 Fungsi Reduksi Memori Otomatis
+# Fungsi Reduksi Memori Otomatis
 import numpy as np
 
 def reduce_memory_usage(df: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
-    """Downcast tipe numerik dan konversi object ke category bila layak."""
+    \"\"\"Downcast tipe numerik dan konversi object ke category bila layak.\"\"\"
     memori_awal = df.memory_usage(deep=True).sum() / 1024**2
     for kolom in df.columns:
         tipe = df[kolom].dtype
@@ -1874,7 +1871,7 @@ df = reduce_memory_usage(df)
 ## 2.18 Vectorization vs .apply() vs Perulangan --- Perbandingan Performa
 
 ```python
-# 🖥 Benchmark: Vectorization vs apply vs Loop
+# Benchmark: Vectorization vs apply vs Loop
 import time
 
 n = 1_000_000
@@ -1909,7 +1906,7 @@ print(f'Vectorization: {time.time() - start:.3f} detik')
 ## 2.19 Chunk Processing dan Parallel Processing
 
 ```python
-# 🖥 Chunk Processing untuk Dataset Besar
+# Chunk Processing untuk Dataset Besar
 ukuran_chunk = 100_000
 total_per_kategori = pd.Series(dtype='float64')
 
@@ -1920,7 +1917,7 @@ for chunk in pd.read_csv('transaksi_besar.csv', chunksize=ukuran_chunk):
 
 print(total_per_kategori.sort_values(ascending=False))
 
-# ── Parallel Processing dengan pandarallel ────────
+# Parallel Processing dengan pandarallel 
 # pip install pandarallel
 from pandarallel import pandarallel
 pandarallel.initialize(progress_bar=True)
@@ -1931,7 +1928,7 @@ df['skor_kompleks'] = df.parallel_apply(hitung_skor_kompleks, axis=1)
 
 ---
 
-## 📝 QUIZ TAMBAHAN — PANDAS ADVANCED
+## QUIZ TAMBAHAN — PANDAS ADVANCED
 
 1. Ubah kode prosedural berikut menjadi satu rangkaian method chaining: filter revenue > 0, lalu groupby kategori, lalu hitung rata-rata, lalu urutkan dari terbesar.
    * **Jawaban:**
@@ -1954,7 +1951,7 @@ df['skor_kompleks'] = df.parallel_apply(hitung_skor_kompleks, axis=1)
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Jelaskan perbedaan `.loc[]`, `.iloc[]`, `.at[]`, dan `.iat[]` dengan contoh kode!
 2. Apa perbedaan `groupby().agg()` vs `groupby().transform()`? Berikan contoh nyata!
 3. Jelaskan 4 jenis JOIN (inner, left, right, outer) dengan contoh kasus bisnis!
@@ -1965,7 +1962,7 @@ df['skor_kompleks'] = df.parallel_apply(hitung_skor_kompleks, axis=1)
 
 ---
 
-## ✅ KUNCI JAWABAN / PETUNJUK
+## KUNCI JAWABAN / PETUNJUK
 1. `.loc[label]` untuk akses by label/kondisi; `.iloc[pos]` untuk akses by integer position; `.at[row, col]` & `.iat[r, c]` untuk akses satu sel tunggal (jauh lebih cepat).
 2. `agg()` mengembalikan satu baris per grup (meringkas). `transform()` mengembalikan ukuran sama dengan input (berguna untuk menambahkan kolom agregat ke DataFrame asli).
 3. `INNER` = irisan, `LEFT` = semua kiri + match kanan, `RIGHT` = semua kanan + match kiri, `OUTER` = union keduanya.
@@ -2001,15 +1998,15 @@ Halaman 44–56 dari 148 | Pandas · NumPy · Matplotlib · Seaborn · NLP · Se
 ## 3.1 Array — Fondasi NumPy
 
 ```python
-# 🖥 Membuat Array Lengkap
+# Membuat Array Lengkap
 import numpy as np
 
-# ── Membuat Array ────────────────────────────────
+# Membuat Array 
 a1 = np.array([1, 2, 3, 4, 5])                          # 1D, dtype auto
 a2 = np.array([[1, 2, 3], [4, 5, 6]], dtype=float)     # 2D, dtype float
 a3 = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])    # 3D
 
-# ── Array Generator ──────────────────────────────
+# Array Generator 
 np.zeros((3, 4))               # 3×4 semua nol
 np.ones((2, 3), dtype=int)     # 2×3 semua satu
 np.full((3, 3), 7.5)           # 3×3 semua 7.5
@@ -2019,7 +2016,7 @@ np.empty((3, 3))               # 3×3 uninitialized (cepat)
 np.empty_like(a2)              # kosong, ukuran seperti a2
 np.zeros_like(a2)              # nol, ukuran seperti a2
 
-# ── Sequence Array ───────────────────────────────
+# Sequence Array 
 np.arange(0, 20, 2)            # [0, 2, 4, ..., 18] step=2
 np.arange(10)                  # [0, 1, ..., 9]
 np.linspace(0, 1, 11)          # 11 titik merata 0→1
@@ -2027,7 +2024,7 @@ np.linspace(0, 2*np.pi, 100)   # 100 titik 0→2π
 np.logspace(0, 4, 5)           # [1, 10, 100, 1000, 10000]
 np.geomspace(1, 256, 9)        # geometric spacing
 
-# ── Random ───────────────────────────────────────
+# Random 
 rng = np.random.default_rng(seed=42)  # modern API (reproducible)
 rng.random((3, 4))                    # uniform [0, 1)
 rng.standard_normal((3, 4))           # standard normal N(0, 1)
@@ -2053,17 +2050,17 @@ np.random.poisson(lam=5, size=1000)
 ## 3.2 Indexing, Slicing & Boolean Masking
 
 ```python
-# 🖥 Indexing & Slicing Lengkap
+# Indexing & Slicing Lengkap
 arr = np.array([[10, 20, 30, 40],
                 [50, 60, 70, 80],
                 [90, 100, 110, 120]])
 
-# ── Basic Indexing ───────────────────────────────
+# Basic Indexing 
 arr[0]          # [10, 20, 30, 40] — baris pertama
 arr[0, 2]       # 30 — baris 0, kolom 2
 arr[-1, -1]     # 120 — kanan bawah
 
-# ── Slicing ──────────────────────────────────────
+# Slicing 
 arr[0:2]        # baris 0 dan 1
 arr[:, 1:3]     # semua baris, kolom 1 dan 2
 arr[0:2, 1:3]   # sub-matrix 2×2
@@ -2071,24 +2068,24 @@ arr[::2]        # setiap 2 baris
 arr[:, ::-1]    # balik urutan kolom
 arr[::-1, ::-1] # balik rows dan columns
 
-# ── Fancy Indexing ───────────────────────────────
+# Fancy Indexing 
 arr[[0, 2]]              # baris 0 dan 2
 arr[:, [1, 3]]           # kolom 1 dan 3
 arr[[0, 2], [1, 3]]      # elemen (0,1) dan (2,3)
 
-# ── Boolean Masking ──────────────────────────────
+# Boolean Masking 
 mask = arr > 50
 arr[mask]                # elemen > 50
 arr[arr % 20 == 0]       # habis dibagi 20
 np.where(arr > 60, arr, 0)          # ganti <60 dengan 0
 np.where(arr > 60, 'tinggi', 'rendah')
 
-# ── np.ix_ — Outer Indexing ──────────────────────
+# np.ix_ — Outer Indexing 
 rows = np.array([0, 2])
 cols = np.array([1, 3])
 arr[np.ix_(rows, cols)]  # sub-matrix dari rows×cols
 
-# ── View vs Copy ──────────────────────────────────
+# View vs Copy 
 view = arr[0:2]          # ini adalah VIEW (perubahan memengaruhi asli)
 copy = arr[0:2].copy()   # ini adalah COPY (aman dari modifikasi)
 view[0, 0] = 999         # arr[0,0] ikut berubah!
@@ -2099,28 +2096,28 @@ view[0, 0] = 999         # arr[0,0] ikut berubah!
 ## 3.3 Shape Manipulation
 
 ```python
-# 🖥 Shape Manipulation
+# Shape Manipulation
 arr = np.arange(24)
 
-# ── reshape ──────────────────────────────────────
+# reshape 
 arr.reshape(4, 6)        # 4×6
 arr.reshape(2, 3, 4)     # 3D: 2×3×4
 arr.reshape(4, -1)       # 4 baris, kolom auto-hitung = 6
 arr.reshape(-1, 4)       # baris auto, 4 kolom
 
-# ── flatten vs ravel ─────────────────────────────
+# flatten vs ravel 
 mat = arr.reshape(4, 6)
 mat.flatten()            # COPY 1D array
 mat.ravel()              # VIEW 1D (lebih cepat)
 mat.ravel(order='F')     # Fortran order (column-major)
 
-# ── Transpose ────────────────────────────────────
+# Transpose 
 mat.T                    # (4,6) → (6,4)
 np.transpose(mat)        # sama
 mat3d = arr.reshape(2, 3, 4)
 mat3d.transpose(2, 0, 1) # custom axes permutation → (4,2,3)
 
-# ── expand_dims & squeeze ─────────────────────────
+# expand_dims & squeeze 
 v = np.array([1, 2, 3])
 v.shape                  # (3,)
 np.expand_dims(v, axis=0) # (1,3) — row vector
@@ -2132,7 +2129,7 @@ a = np.zeros((1, 3, 1, 4))
 np.squeeze(a)            # (3,4) — hapus dims=1
 np.squeeze(a, axis=0)    # (3,1,4) — hapus dim 0 saja
 
-# ── resize (bisa ubah total elemen) ─────────────
+# resize (bisa ubah total elemen) 
 arr2 = np.resize(arr, (5, 5))  # 25 elemen, ulangi jika perlu
 ```
 
@@ -2141,10 +2138,10 @@ arr2 = np.resize(arr, (5, 5))  # 25 elemen, ulangi jika perlu
 ## 3.4 Mathematical & Statistical Operations
 
 ```python
-# 🖥 Mathematical Operations
+# Mathematical Operations
 a = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]], dtype=float)
 
-# ── Operasi Element-wise ─────────────────────────
+# Operasi Element-wise 
 a + 10; a - 5; a * 2; a / 3; a ** 2; a % 3
 np.sqrt(a); np.cbrt(a)   # akar kuadrat, kubik
 np.abs(a); np.sign(a)    # absolut, tanda (+/-/0)
@@ -2153,13 +2150,13 @@ np.exp(a); np.log(a); np.log2(a); np.log10(a); np.log1p(a)
 np.sin(a); np.cos(a); np.tan(a)
 np.degrees(a); np.radians(a)
 
-# ── Operasi Dua Array ────────────────────────────
+# Operasi Dua Array 
 b = np.full_like(a, 2.0)
 np.add(a, b); np.subtract(a, b); np.multiply(a, b); np.divide(a, b)
 np.power(a, b); np.mod(a, b); np.floor_divide(a, b)
 np.maximum(a, b); np.minimum(a, b)  # element-wise max/min
 
-# ── Agregasi Global ──────────────────────────────
+# Agregasi Global 
 np.sum(a)                # 45.0
 np.mean(a)               # 5.0
 np.median(a)             # 5.0
@@ -2171,27 +2168,27 @@ np.ptp(a)                # range = max - min = 8.0
 np.percentile(a, [25, 50, 75])  # Q1, Q2, Q3
 np.quantile(a, 0.9)      # P90
 
-# ── Agregasi per Axis ────────────────────────────
+# Agregasi per Axis 
 np.sum(a, axis=0)        # [12, 15, 18] per kolom
 np.sum(a, axis=1)        # [6, 15, 24] per baris
 np.cumsum(a, axis=1)     # kumulatif per baris
 np.cumprod(a, axis=0)    # kumulatif produk per kolom
 np.diff(a, axis=1)       # selisih berurutan per baris
 
-# ── Index Nilai Extremal ─────────────────────────
+# Index Nilai Extremal 
 np.argmin(a)             # 0 (global index)
 np.argmax(a)             # 8
 np.argmin(a, axis=1)     # [0, 0, 0] (index per baris)
 np.unravel_index(np.argmax(a), a.shape)  # (2, 2) = row, col
 
-# ── Sorting ──────────────────────────────────────
+# Sorting 
 np.sort(a, axis=1)       # sort per baris (ascending)
 np.sort(a, axis=0)       # sort per kolom
 np.sort(a)[:, ::-1]      # sort descending
 np.argsort(a, axis=1)    # index hasil sort
 a[np.argsort(a[:, 0])]   # sort baris berdasarkan kolom 0
 
-# ── Unique & Set Operations ───────────────────────
+# Unique & Set Operations 
 arr = np.array([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5])
 np.unique(arr)                       # [1, 2, 3, 4, 5, 6, 9]
 np.unique(arr, return_counts=True)   # dengan frekuensi
@@ -2205,38 +2202,38 @@ np.setdiff1d(arr, [1, 3, 5])         # selisih
 ## 3.5 Broadcasting
 
 ```python
-# 🖥 Broadcasting
+# Broadcasting
 # Broadcasting Rule: dimensi kompatibel jika sama atau salah satunya = 1
 # NumPy auto-expand dimensi yang = 1
 
-# ── Contoh 1: Array + Scalar ─────────────────────
+# Contoh 1: Array + Scalar 
 a = np.array([[1, 2, 3], [4, 5, 6]])  # shape (2,3)
 a + 100                                # scalar di-broadcast → (2,3)
 
-# ── Contoh 2: 2D + 1D ────────────────────────────
+# Contoh 2: 2D + 1D 
 row_vec = np.array([1, 2, 3])          # shape (3,) → di-broadcast ke (2,3)
 a + row_vec                            # [[2, 4, 6], [5, 7, 9]]
 
-# ── Contoh 3: Column + Row Vector ───────────────
+# Contoh 3: Column + Row Vector 
 col = np.array([[1], [2], [3]])        # shape (3, 1)
 row = np.array([10, 20, 30, 40])       # shape (4,)
 col + row
 # → [[11, 21, 31, 41],
-#    [12, 22, 32, 42],
-#    [13, 23, 33, 43]] shape (3,4)
+# [12, 22, 32, 42],
+# [13, 23, 33, 43]] shape (3,4)
 
-# ── Aplikasi Nyata: Normalisasi Z-Score ──────────
+# Aplikasi Nyata: Normalisasi Z-Score 
 data = np.random.randn(100, 5)         # 100 sampel, 5 fitur
 mean = data.mean(axis=0)               # shape (5,)
 std = data.std(axis=0)                 # shape (5,)
 normalized = (data - mean) / std       # broadcasting (100,5) - (5,) / (5,)
 
-# ── Aplikasi: Jarak Euclidean semua pasangan ─────
+# Aplikasi: Jarak Euclidean semua pasangan 
 points = np.random.rand(5, 2)          # 5 titik 2D
 diff = points[:, np.newaxis, :] - points[np.newaxis, :, :]  # (5, 5, 2)
 dist_matrix = np.sqrt((diff**2).sum(axis=-1))               # (5, 5)
 
-# ── Aplikasi: Outer Product ──────────────────────
+# Aplikasi: Outer Product 
 prices = np.array([100, 200, 300])     # shape (3,)
 qty = np.array([1, 2, 3, 4])           # shape (4,)
 revenue_table = prices[:, np.newaxis] * qty[np.newaxis, :]  # (3, 4)
@@ -2247,12 +2244,12 @@ revenue_table = prices[:, np.newaxis] * qty[np.newaxis, :]  # (3, 4)
 ## 3.6 Linear Algebra
 
 ```python
-# 🖥 Linear Algebra
+# Linear Algebra
 A = np.array([[2, 1, -1],
               [1, 3, 2],
               [3, 2, 4]], dtype=float)
 
-# ── Operasi Matriks Dasar ────────────────────────
+# Operasi Matriks Dasar 
 A @ A                   # perkalian matriks
 np.dot(A, A)            # sama dengan @
 np.matmul(A, A)         # sama, tapi tidak mendukung scalar
@@ -2260,13 +2257,13 @@ A.T                     # transpose
 np.trace(A)             # jumlah diagonal = 9.0
 np.linalg.matrix_rank(A)# rank matriks
 
-# ── Determinan & Inverse ─────────────────────────
+# Determinan & Inverse 
 np.linalg.det(A)        # determinan
 np.linalg.inv(A)        # inverse
 A_inv = np.linalg.inv(A)
 np.allclose(A @ A_inv, np.eye(3))  # True (verifikasi A × A⁻¹ = I)
 
-# ── Sistem Persamaan Linear: Ax = b ─────────────
+# Sistem Persamaan Linear: Ax = b 
 b = np.array([1, 8, 10], dtype=float)
 x = np.linalg.solve(A, b)
 print('Solusi x:', x)
@@ -2277,7 +2274,7 @@ A_rect = np.random.randn(10, 3)
 b_rect = np.random.randn(10)
 x_ls, residuals, rank, sv = np.linalg.lstsq(A_rect, b_rect, rcond=None)
 
-# ── Eigenvalue & Eigenvector ─────────────────────
+# Eigenvalue & Eigenvector 
 eigenvalues, eigenvectors = np.linalg.eig(A)
 print('Eigenvalues:', eigenvalues)
 # Verifikasi: A @ v = λ × v
@@ -2286,12 +2283,12 @@ for i in range(len(eigenvalues)):
     rhs = eigenvalues[i] * eigenvectors[:, i]
     assert np.allclose(lhs, rhs)
 
-# ── SVD (Singular Value Decomposition) ───────────
+# SVD (Singular Value Decomposition) 
 U, sigma, Vt = np.linalg.svd(A)
 A_reconstructed = U @ np.diag(sigma) @ Vt
 np.allclose(A, A_reconstructed)  # True
 
-# ── Norm ─────────────────────────────────────────
+# Norm 
 np.linalg.norm(A)             # Frobenius norm
 np.linalg.norm(A, ord=1)      # L1 norm
 np.linalg.norm(A, ord=np.inf) # L∞ norm
@@ -2303,14 +2300,14 @@ np.linalg.norm(v)             # 5.0 (L2 = Euclidean)
 
 ## 3.7 Studi Kasus: Image Processing dengan NumPy
 
-🖼 **Studi kasus:** Mendemonstrasikan bagaimana NumPy digunakan dalam pemrosesan gambar — merepresentasikan gambar sebagai array 3D $(H \times W \times C)$.
+ **Studi kasus:** Mendemonstrasikan bagaimana NumPy digunakan dalam pemrosesan gambar — merepresentasikan gambar sebagai array 3D $(H \\times W \\times C)$.
 
 ```python
-# 🖥 STUDI KASUS: Image Processing
+# STUDI KASUS: Image Processing
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ══ Gambar = Array 3D (H × W × C) ═══════════════
+# Gambar = Array 3D (H × W × C) 
 # C = 3 channel: Red, Green, Blue, nilai 0-255
 np.random.seed(42)
 H, W = 100, 100
@@ -2327,7 +2324,7 @@ print(f'Shape gambar: {img.shape}')       # (100, 100, 3)
 print(f'Dtype       : {img.dtype}')       # uint8
 print(f'Min/Max     : {img.min()}/{img.max()}') # 0/255
 
-# ══ Operasi Gambar ═══════════════════════════════
+# Operasi Gambar 
 # 1. Grayscale: rata-rata 3 channel
 gray = img.mean(axis=2).astype(np.uint8)
 
@@ -2355,7 +2352,7 @@ rng = np.random.default_rng(42)
 noise = rng.integers(-30, 30, img.shape)
 noisy = np.clip(img.astype(int) + noise, 0, 255).astype(np.uint8)
 
-# ══ Visualisasi ══════════════════════════════════
+# Visualisasi 
 fig, axes = plt.subplots(2, 4, figsize=(16, 8))
 titles = ['Original', 'Grayscale', 'Cropped', 'Flipped H',
           'Flipped V', 'Brighter', 'Darker', 'Noisy']
@@ -2373,7 +2370,7 @@ plt.suptitle('Image Processing dengan NumPy', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.show()
 
-# ══ Statistik Gambar ═════════════════════════════
+# Statistik Gambar 
 print('Statistik per Channel:')
 for i, ch in enumerate(['Red', 'Green', 'Blue']):
     ch_data = img[:, :, i]
@@ -2385,7 +2382,7 @@ for i, ch in enumerate(['Red', 'Green', 'Blue']):
 ## 3.8 Advanced Indexing: Fancy Indexing, np.where, dan np.select
 
 ```python
-# 🖥 Fancy Indexing
+# Fancy Indexing
 harga = np.array([15000, 25000, 8000, 42000, 12000])
 
 # Fancy indexing -- ambil beberapa indeks sekaligus dalam urutan bebas
@@ -2398,7 +2395,7 @@ baris = [0, 1, 2, 3]
 kolom = [0, 1, 2, 3]
 print(matriks[baris, kolom])  # elemen diagonal utama
 
-# 🖥 np.where dan np.select untuk Kondisional Vectorized
+# np.where dan np.select untuk Kondisional Vectorized
 revenue = np.array([120000, 45000, 300000, 8000, 75000])
 
 # np.where -- setara if-else vectorized
@@ -2425,7 +2422,7 @@ print(label_bertingkat)
 ## 3.9 Random Number Generation Modern: Generator API
 
 ```python
-# 🖥 Legacy API vs Generator API
+# Legacy API vs Generator API
 # Cara lama (legacy, tidak direkomendasikan untuk kode baru)
 np.random.seed(42)
 data_lama = np.random.rand(5)
@@ -2446,7 +2443,7 @@ rng.shuffle(data_baru)                       # acak in-place
 ## 3.10 Views vs Copies dan Optimasi Memory Layout
 
 ```python
-# 🖥 View vs Copy
+# View vs Copy
 arr_asli = np.array([1, 2, 3, 4, 5])
 
 # Slicing menghasilkan VIEW, bukan copy -- berbagi memori dengan arr_asli
@@ -2465,7 +2462,7 @@ potongan_eksplisit = arr_asli[1:4].copy()
 # Mengecek apakah sebuah array adalah view dari array lain
 print(potongan.base is arr_asli)  # True jika view
 
-# 🖥 Dampak Memory Layout terhadap Performa
+# Dampak Memory Layout terhadap Performa
 import time
 
 matriks_besar = np.random.rand(5000, 5000)
@@ -2484,7 +2481,7 @@ print(f'Sum per kolom: {time.time() - start:.4f} detik')
 ## 3.11 Universal Functions (ufunc) dan Vectorization Mendalam
 
 ```python
-# 🖥 ufunc Bawaan vs np.vectorize
+# ufunc Bawaan vs np.vectorize
 arr = np.array([1, 4, 9, 16, 25])
 
 # ufunc bawaan -- cepat, dijalankan penuh dalam kode C
@@ -2505,7 +2502,7 @@ print(np.greater.outer(arr, arr))       # perbandingan setiap pasangan elemen
 ## 3.12 Benchmark Performa: NumPy vs Python Murni vs Numba
 
 ```python
-# 🖥 Benchmark Perhitungan Jarak Euclidean (1 Juta Titik)
+# Benchmark Perhitungan Jarak Euclidean (1 Juta Titik)
 import time
 import numpy as np
 
@@ -2546,7 +2543,7 @@ print(f'Numba (JIT) : {time.time() - start:.3f} detik')
 
 ---
 
-## 📝 QUIZ TAMBAHAN — NUMPY ADVANCED
+## QUIZ TAMBAHAN — NUMPY ADVANCED
 
 1. Jelaskan perbedaan antara `np.where` dan `np.select`, lalu berikan contoh kasus di mana `np.select` lebih tepat digunakan!
    * **Jawaban:** `np.where` setara if-else vectorized (hanya 2 cabang hasil). `np.select` setara if-elif-elif-else untuk banyak kondisi sekaligus. `np.select` lebih tepat ketika ada 3 kategori atau lebih, misalnya melabeli revenue menjadi Sangat Tinggi/Tinggi/Sedang/Rendah.
@@ -2561,7 +2558,7 @@ print(f'Numba (JIT) : {time.time() - start:.3f} detik')
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Apa perbedaan antara `arr.flatten()` dan `arr.ravel()`? Kapan view vs copy penting?
 2. Jelaskan aturan broadcasting dengan contoh array shape `(3, 1, 4) + (2, 1) = ?`
 3. Bagaimana menyelesaikan sistem persamaan linear 3 variabel menggunakan `np.linalg.solve()`?
@@ -2596,15 +2593,15 @@ Halaman 57–68 dari 148 | Pandas · NumPy · Matplotlib · Seaborn · NLP · Se
 
 ## 4.1 Arsitektur Matplotlib
 
-🎨 **Hierarki Matplotlib:** Figure (kanvas) → Axes (area plot) → Artists (Line, Bar, Text, Patch, dll). Memahami ini kunci untuk kustomisasi penuh.
+ **Hierarki Matplotlib:** Figure (kanvas) → Axes (area plot) → Artists (Line, Bar, Text, Patch, dll). Memahami ini kunci untuk kustomisasi penuh.
 
 ```python
-# 🖥 Setup Matplotlib
+# Setup Matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
 
-# ── Dua Gaya Penggunaan ──────────────────────────
+# Dua Gaya Penggunaan 
 # 1. PYPLOT style (cepat, cocok untuk eksplorasi)
 plt.plot([1, 2, 3], [4, 5, 6])
 plt.title('Quick Plot')
@@ -2618,7 +2615,7 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 plt.show()
 
-# ── Konfigurasi Global ────────────────────────────
+# Konfigurasi Global 
 plt.rcParams.update({
     'figure.figsize'   : (12, 6),
     'figure.dpi'       : 100,
@@ -2643,12 +2640,12 @@ plt.rcParams.update({
 ## 4.2 Line Plot — Tren & Time Series
 
 ```python
-# 🖥 Line Plot & Time Series
+# Line Plot & Time Series
 x = np.linspace(0, 4*np.pi, 300)
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# ── Plot 1: Multiple Lines ────────────────────────
+# Plot 1: Multiple Lines 
 ax = axes[0]
 ax.plot(x, np.sin(x), color='#2196F3', lw=2, label='sin(x)')
 ax.plot(x, np.cos(x), color='#F44336', lw=2, ls='--', label='cos(x)')
@@ -2661,7 +2658,7 @@ ax.set_title('Fungsi Trigonometri')
 ax.legend(loc='upper right')
 ax.set_xlabel('x')
 
-# ── Plot 2: Time Series dengan Anotasi ───────────
+# Plot 2: Time Series dengan Anotasi 
 import pandas as pd
 dates = pd.date_range('2024-01-01', periods=52, freq='W')
 sales = 100 + np.cumsum(np.random.randn(52)*5)
@@ -2693,7 +2690,7 @@ plt.show()
 ## 4.3 Bar Plot — Perbandingan Kategori
 
 ```python
-# 🖥 Bar Plot Lengkap
+# Bar Plot Lengkap
 kategori = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']
 nilai_23 = [120, 135, 110, 158, 145, 170]
 nilai_24 = [145, 162, 138, 185, 172, 210]
@@ -2701,7 +2698,7 @@ target = [150, 155, 140, 170, 165, 190]
 
 fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
-# ── 1. Simple Bar dengan label ────────────────────
+# 1. Simple Bar dengan label 
 ax1 = axes[0]
 bars = ax1.bar(kategori, nilai_24, color='steelblue',
                width=0.6, edgecolor='white', linewidth=1.5)
@@ -2713,7 +2710,7 @@ for bar in bars:
 ax1.set_title('Penjualan Bulanan 2024')
 ax1.legend()
 
-# ── 2. Grouped Bar ───────────────────────────────
+# 2. Grouped Bar 
 ax2 = axes[1]
 x = np.arange(len(kategori))
 w = 0.35
@@ -2724,7 +2721,7 @@ ax2.set_xticklabels(kategori)
 ax2.legend()
 ax2.set_title('Perbandingan 2023 vs 2024')
 
-# ── 3. Horizontal Stacked Bar ─────────────────────
+# 3. Horizontal Stacked Bar 
 ax3 = axes[2]
 produk = ['Laptop', 'HP', 'TV', 'Kulkas', 'AC']
 online = [45, 60, 30, 25, 35]
@@ -2743,7 +2740,7 @@ plt.show()
 ## 4.4 Scatter Plot & Bubble Chart
 
 ```python
-# 🖥 Scatter & Bubble Chart
+# Scatter & Bubble Chart
 np.random.seed(42)
 n = 200
 x = np.random.randn(n)
@@ -2753,7 +2750,7 @@ color = np.random.rand(n)
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# ── Bubble Chart ──────────────────────────────────
+# Bubble Chart 
 sc = axes[0].scatter(x, y, s=size, c=color, cmap='plasma', alpha=0.7,
                      edgecolors='gray', linewidths=0.5)
 plt.colorbar(sc, ax=axes[0], label='Nilai')
@@ -2766,7 +2763,7 @@ axes[0].plot(x_line, m*x_line + b, 'r-', lw=2,
 axes[0].legend()
 axes[0].set_title('Scatter + Regression')
 
-# ── Scatter per Grup ──────────────────────────────
+# Scatter per Grup 
 grupA = np.random.multivariate_normal([2, 2], [[1, 0.5], [0.5, 1]], 80)
 grupB = np.random.multivariate_normal([5, 5], [[1, -0.3], [-0.3, 1]], 80)
 grupC = np.random.multivariate_normal([2, 6], [[0.5, 0], [0.5, 0.5]], 80)
@@ -2790,7 +2787,7 @@ plt.show()
 ## 4.5 Histogram, KDE & Distribusi
 
 ```python
-# 🖥 Histogram & Distribusi
+# Histogram & Distribusi
 from scipy import stats
 np.random.seed(42)
 
@@ -2800,7 +2797,7 @@ data_skewed = np.random.lognormal(4, 0.5, 1000)
 
 fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
-# ── 1. Normal + KDE + Statistik ──────────────────
+# 1. Normal + KDE + Statistik 
 ax = axes[0]
 ax.hist(data_normal, bins=30, density=True, color='steelblue',
         alpha=0.7, edgecolor='white', label='Data')
@@ -2817,17 +2814,17 @@ ax.axvspan(m-s, m+s, alpha=0.1, color='orange', label='±1σ (68%)')
 ax.legend(fontsize=8)
 ax.set_title('Distribusi Normal')
 
-# ── 2. Bimodal ────────────────────────────────────
+# 2. Bimodal 
 ax2 = axes[1]
 ax2.hist(data_bimodal, bins=40, density=True, color='mediumpurple',
          alpha=0.7, edgecolor='white')
 kde = stats.gaussian_kde(data_bimodal)
 x_kde = np.linspace(data_bimodal.min(), data_bimodal.max(), 200)
 ax2.plot(x_kde, kde(x_kde), 'r-', lw=2.5, label='KDE')
-ax2.set_title(f'Distribusi Bimodal\nSkewness={stats.skew(data_bimodal):.2f}')
+ax2.set_title(f'Distribusi Bimodal\\nSkewness={stats.skew(data_bimodal):.2f}')
 ax2.legend()
 
-# ── 3. Skewed + Log Transform ─────────────────────
+# 3. Skewed + Log Transform 
 ax3 = axes[2]
 ax3.hist(data_skewed, bins=50, density=True, color='coral',
          alpha=0.7, edgecolor='white', label='Original')
@@ -2835,7 +2832,7 @@ log_data = np.log(data_skewed)
 ax3b = ax3.twinx()
 ax3b.hist(log_data, bins=30, density=True, color='green',
           alpha=0.4, label='Log Transform')
-ax3.set_title(f'Skewed (skew={stats.skew(data_skewed):.2f})\nvs Log Transform')
+ax3.set_title(f'Skewed (skew={stats.skew(data_skewed):.2f})\\nvs Log Transform')
 ax3.set_xlabel('Nilai')
 plt.tight_layout()
 plt.show()
@@ -2846,8 +2843,8 @@ plt.show()
 ## 4.6 Pie, Donut & Waterfall Chart
 
 ```python
-# 🖥 Pie, Donut & Waterfall
-# ── Waterfall Chart ──────────────────────────────
+# Pie, Donut & Waterfall
+# Waterfall Chart 
 items = ['Revenue', 'COGS', 'Gross Profit', 'Opex', 'Marketing', 'Net Profit']
 values = [1000, -400, 600, -150, -80, 370]
 cumulative = [0] + list(np.cumsum(values[:-1]))
@@ -2875,21 +2872,21 @@ ax1.set_title('Waterfall Chart — P&L')
 ax1.set_ylabel('Nilai (Juta Rp)')
 ax1.tick_params(axis='x', rotation=30)
 
-# ── Donut dengan statistik tengah ────────────────
+# Donut dengan statistik tengah 
 ax2 = axes[1]
 labels = ['Elektronik', 'Fashion', 'Makanan', 'Olahraga', 'Lainnya']
 sizes = [35, 25, 20, 12, 8]
 colors_d = ['#2196F3', '#4CAF50', '#FF9800', '#9C27B0', '#607D8B']
 wedges, texts, autotexts = ax2.pie(
     sizes, labels=labels, colors=colors_d,
-    autopct=lambda p: f'{p:.1f}%\n({p*sum(sizes)/100:.0f})',
+    autopct=lambda p: f'{p:.1f}%\\n({p*sum(sizes)/100:.0f})',
     startangle=90,
     wedgeprops=dict(width=0.6, edgecolor='white', linewidth=2),
     pctdistance=0.75
 )
 
 # Teks di tengah donut
-ax2.text(0, 0, f'Total\n{sum(sizes)}%', ha='center', va='center',
+ax2.text(0, 0, f'Total\\n{sum(sizes)}%', ha='center', va='center',
          fontsize=14, fontweight='bold', color='#333333')
 ax2.set_title('Donut Chart — Kategori Penjualan')
 plt.tight_layout()
@@ -2901,7 +2898,7 @@ plt.show()
 ## 4.7 Subplots Lanjutan & GridSpec
 
 ```python
-# 🖥 GridSpec Layout Kompleks
+# GridSpec Layout Kompleks
 import matplotlib.gridspec as gridspec
 np.random.seed(42)
 
@@ -2948,7 +2945,7 @@ plt.show()
 ## 4.8 Kustomisasi & Anotasi Lanjutan
 
 ```python
-# 🖥 Kustomisasi & Anotasi Lanjutan
+# Kustomisasi & Anotasi Lanjutan
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import matplotlib.ticker as mticker
@@ -2960,31 +2957,31 @@ y2 = np.cos(x)
 ax.plot(x, y1, 'b-', lw=2.5, label='sin(x)')
 ax.plot(x, y2, 'r--', lw=2.5, label='cos(x)')
 
-# ── Anotasi dengan Panah ──────────────────────────
-ax.annotate('Maximum\nsin(x) = 1',
+# Anotasi dengan Panah 
+ax.annotate('Maximum\\nsin(x) = 1',
             xy=(np.pi/2, 1.0),
             xytext=(np.pi/2 + 0.8, 1.3),
             arrowprops=dict(arrowstyle='fancy', color='navy', connectionstyle='arc3,rad=0.2'),
             fontsize=11, color='navy',
             bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', edgecolor='navy'))
 
-# ── Shaded Region ────────────────────────────────
+# Shaded Region 
 ax.fill_between(x, y1, y2, where=(y1 > y2), alpha=0.2, color='blue', label='sin > cos')
 ax.fill_between(x, y1, y2, where=(y1 < y2), alpha=0.2, color='red', label='cos > sin')
 
-# ── Garis Referensi ──────────────────────────────
+# Garis Referensi 
 ax.axhline(y=0, color='black', lw=1, alpha=0.5, ls='-')
 ax.axvline(x=np.pi, color='gray', lw=1, ls=':', alpha=0.7)
 ax.text(np.pi+0.05, -1.4, 'x = π', color='gray', fontsize=10)
 
-# ── Patch (Rectangle, Circle, dll) ──────────────
+# Patch (Rectangle, Circle, dll) 
 rect = mpatches.Rectangle((np.pi, -0.3), 0.5, 0.6,
                           linewidth=1.5, edgecolor='green',
                           facecolor='lightgreen', alpha=0.4)
 ax.add_patch(rect)
-ax.text(np.pi+0.25, 0.1, 'Region\nInterest', ha='center', fontsize=8, color='green')
+ax.text(np.pi+0.25, 0.1, 'Region\\nInterest', ha='center', fontsize=8, color='green')
 
-# ── Custom Legend ────────────────────────────────
+# Custom Legend 
 custom_handles = [
     mlines.Line2D([], [], color='blue', lw=2, label='sin(x)'),
     mlines.Line2D([], [], color='red', lw=2, ls='--', label='cos(x)'),
@@ -2993,7 +2990,7 @@ custom_handles = [
 ]
 ax.legend(handles=custom_handles, loc='upper right', fontsize=10, framealpha=0.9)
 
-# ── Axis Formatting ──────────────────────────────
+# Axis Formatting 
 ax.xaxis.set_major_locator(mticker.MultipleLocator(np.pi/2))
 ax.xaxis.set_major_formatter(mticker.FuncFormatter(
     lambda val, _: {0: '0', np.pi/2: 'π/2', np.pi: 'π',
@@ -3017,7 +3014,7 @@ plt.show()
 3. **Qualitative**: Untuk data kategorikal tanpa urutan (misalnya kategori produk). Contoh: `Set2`, `tab10`.
 
 ```python
-# 🖥 Menerapkan Colormap yang Tepat Sesuai Jenis Data
+# Menerapkan Colormap yang Tepat Sesuai Jenis Data
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
@@ -3049,18 +3046,18 @@ plt.show()
 
 ## 4.10 Prinsip Dashboard Design
 
-* **Visual Hierarchy (Z-Pattern/F-Pattern)**: Tempatkan KPI Card utama di kiri atas.
-* **Aturan 5 Detik**: Dashboard harus dapat dipahami dalam 5 detik pertama.
-* **KPI Card**: Angka tebal dengan label singkat dan indikator naik/turun perbandingan.
-* **Grid Alignment**: Gunakan grid terstruktur konsisten (misalnya `GridSpec`).
-* **Progressive Disclosure**: Sajikan ringkasan di atas dan rincian drill-down di bawah.
+1. **Visual Hierarchy (Z-Pattern/F-Pattern)**: Tempatkan KPI Card utama di kiri atas.
+2. **Aturan 5 Detik**: Dashboard harus dapat dipahami dalam 5 detik pertama.
+3. **KPI Card**: Angka tebal dengan label singkat dan indikator naik/turun perbandingan.
+4. **Grid Alignment**: Gunakan grid terstruktur konsisten (misalnya `GridSpec`).
+5. **Progressive Disclosure**: Sajikan ringkasan di atas dan rincian drill-down di bawah.
 
 ---
 
 ## 4.11 Membangun Dashboard dengan GridSpec: Contoh Praktis
 
 ```python
-# 🖥 Kerangka Dashboard dengan GridSpec
+# Kerangka Dashboard dengan GridSpec
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import pandas as pd
@@ -3097,7 +3094,7 @@ plt.show()
 
 ---
 
-## 📝 QUIZ TAMBAHAN — COLOR THEORY & DASHBOARD DESIGN
+## QUIZ TAMBAHAN — COLOR THEORY & DASHBOARD DESIGN
 
 1. Sebuah dashboard menampilkan data profit dan rugi per divisi menggunakan colormap "jet" (rainbow). Apa masalah dari pilihan ini dan colormap jenis apa yang seharusnya digunakan?
    * **Jawaban:** Colormap jet/rainbow tidak dipersepsikan linear oleh mata manusia dan tidak memiliki titik tengah bermakna, padahal data profit/rugi memiliki titik nol yang penting. Seharusnya menggunakan diverging colormap seperti `RdBu` dengan titik tengah (`vcenter`) di nol.
@@ -3110,7 +3107,7 @@ plt.show()
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Jelaskan perbedaan pyplot style dan OOP style di Matplotlib! Kapan sebaiknya menggunakan OOP?
 2. Tulis kode untuk membuat dual-axis plot (twinx) yang menampilkan bar chart revenue dan line plot growth rate!
 3. Apa itu GridSpec? Bagaimana cara membuat layout dengan plot yang berbeda ukuran?
@@ -3145,13 +3142,13 @@ Halaman 69–81 dari 148 | Pandas · NumPy · Matplotlib · Seaborn · NLP · Se
 ## 5.1 Filosofi & Setup Seaborn
 
 ```python
-# 🖥 Setup Seaborn
+# Setup Seaborn
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-# ── Setup Global ──────────────────────────────────
+# Setup Global 
 sns.set_theme(
     style='whitegrid',       # whitegrid, darkgrid, white, dark, ticks
     palette='deep',          # deep, muted, pastel, bright, dark, colorblind
@@ -3164,7 +3161,7 @@ sns.set_theme(
     }
 )
 
-# ── Palet Warna ───────────────────────────────────
+# Palet Warna 
 sns.color_palette('deep')      # 10 warna tegas
 sns.color_palette('pastel')    # soft/pastel
 sns.color_palette('husl', 8)   # 8 warna berbeda hue
@@ -3172,7 +3169,7 @@ sns.color_palette('Blues', 8)  # gradient biru
 sns.color_palette('RdYlGn', 10)# diverging merah-kuning-hijau
 sns.color_palette('Set1')      # 9 warna cerah
 
-# ── Dataset Built-in untuk Latihan ───────────────
+# Dataset Built-in untuk Latihan 
 tips = sns.load_dataset('tips')        # restoran tips (244 rows)
 iris = sns.load_dataset('iris')        # bunga iris (150 rows)
 titanic = sns.load_dataset('titanic')  # titanic (891 rows)
@@ -3186,17 +3183,17 @@ diamonds = sns.load_dataset('diamonds')# berlian (53940 rows)
 ## 5.2 Distribution Plots — Lengkap
 
 ```python
-# 🖥 Distribution Plots
+# Distribution Plots
 tips = sns.load_dataset('tips')
 fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 
-# ── 1. histplot ───────────────────────────────────
+# 1. histplot 
 sns.histplot(data=tips, x='total_bill', hue='time',
              kde=True, bins=25, ax=axes[0, 0],
              palette='Set2', alpha=0.6)
 axes[0, 0].set_title('Histplot dengan KDE per Waktu')
 
-# ── 2. kdeplot ────────────────────────────────────
+# 2. kdeplot 
 for day in tips['day'].unique():
     subset = tips[tips['day'] == day]
     sns.kdeplot(data=subset, x='total_bill', fill=True,
@@ -3204,28 +3201,28 @@ for day in tips['day'].unique():
 axes[0, 1].set_title('KDE per Hari')
 axes[0, 1].legend()
 
-# ── 3. 2D KDE (bivariate) ────────────────────────
+# 3. 2D KDE (bivariate) 
 sns.kdeplot(data=tips, x='total_bill', y='tip',
             fill=True, cmap='Blues', ax=axes[0, 2])
 sns.scatterplot(data=tips, x='total_bill', y='tip',
                 s=15, alpha=0.5, color='red', ax=axes[0, 2])
 axes[0, 2].set_title('2D KDE + Scatter')
 
-# ── 4. ecdfplot ───────────────────────────────────
+# 4. ecdfplot 
 sns.ecdfplot(data=tips, x='total_bill', hue='sex',
              ax=axes[1, 0], palette=['steelblue', 'coral'])
 axes[1, 0].set_title('ECDF per Jenis Kelamin')
 axes[1, 0].axvline(tips['total_bill'].median(), color='gray', ls='--')
 
-# ── 5. rugplot overlay ────────────────────────────
+# 5. rugplot overlay 
 sns.histplot(data=tips, x='tip', bins=20, ax=axes[1, 1],
              color='mediumpurple', alpha=0.7, kde=True)
 sns.rugplot(data=tips, x='tip', ax=axes[1, 1], color='red', height=0.06)
 axes[1, 1].set_title('Histogram + Rug Plot')
 
-# ── 6. Histogram + Statistik ─────────────────────
+# 6. Histogram + Statistik 
 m, s = tips['total_bill'].mean(), tips['total_bill'].std()
-axes[1, 2].text(0.05, 0.95, f'Mean: {m:.1f}\nStd: {s:.1f}\nN: {len(tips)}',
+axes[1, 2].text(0.05, 0.95, f'Mean: {m:.1f}\\nStd: {s:.1f}\\nN: {len(tips)}',
                 transform=axes[1, 2].transAxes, va='top',
                 bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 sns.histplot(data=tips, x='total_bill', ax=axes[1, 2], kde=True)
@@ -3241,17 +3238,17 @@ plt.show()
 ## 5.3 Categorical Plots
 
 ```python
-# 🖥 Categorical Plots
+# Categorical Plots
 tips = sns.load_dataset('tips')
 fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 
-# ── 1. barplot (mean + CI) ────────────────────────
+# 1. barplot (mean + CI) 
 sns.barplot(data=tips, x='day', y='tip', hue='sex',
             errorbar='sd', capsize=0.08,
             palette='Set2', ax=axes[0, 0])
 axes[0, 0].set_title('Bar Plot — Rata-rata Tip per Hari')
 
-# ── 2. boxplot ────────────────────────────────────
+# 2. boxplot 
 sns.boxplot(data=tips, x='day', y='total_bill', hue='time',
             notch=True, palette='pastel', ax=axes[0, 1])
 sns.stripplot(data=tips, x='day', y='total_bill', hue='time',
@@ -3259,25 +3256,25 @@ sns.stripplot(data=tips, x='day', y='total_bill', hue='time',
               palette='dark:gray', legend=False)
 axes[0, 1].set_title('Box + Strip Plot')
 
-# ── 3. violinplot ────────────────────────────────
+# 3. violinplot 
 sns.violinplot(data=tips, x='day', y='tip', hue='sex',
                split=True, inner='quartile',
                palette=['steelblue', 'salmon'], ax=axes[0, 2])
 axes[0, 2].set_title('Violin Plot — Split by Sex')
 
-# ── 4. countplot ─────────────────────────────────
+# 4. countplot 
 order = tips['day'].value_counts().index
 sns.countplot(data=tips, x='day', hue='sex',
               order=order, palette='husl', ax=axes[1, 0])
 axes[1, 0].set_title('Count Plot — Jumlah per Hari')
 
-# ── 5. pointplot ─────────────────────────────────
+# 5. pointplot 
 sns.pointplot(data=tips, x='day', y='tip', hue='sex',
               markers=['^', 'o'], linestyles=['--', '-'],
               errorbar='ci', dodge=0.2, ax=axes[1, 1])
 axes[1, 1].set_title('Point Plot dengan CI')
 
-# ── 6. boxenplot (Letter-Value Plot) ─────────────
+# 6. boxenplot (Letter-Value Plot) 
 sns.boxenplot(data=tips, x='day', y='total_bill',
               hue='time', palette='muted', ax=axes[1, 2])
 axes[1, 2].set_title('Boxen Plot — Letter-Value')
@@ -3292,14 +3289,14 @@ plt.show()
 ## 5.4 Relational Plots
 
 ```python
-# 🖥 Relational Plots
+# Relational Plots
 tips = sns.load_dataset('tips')
 penguins = sns.load_dataset('penguins').dropna()
 flights = sns.load_dataset('flights')
 
 fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
-# ── 1. scatterplot dengan hue+size+style ─────────
+# 1. scatterplot dengan hue+size+style 
 sns.scatterplot(data=penguins,
                 x='bill_length_mm', y='body_mass_g',
                 hue='species',
@@ -3309,7 +3306,7 @@ sns.scatterplot(data=penguins,
                 alpha=0.8, ax=axes[0])
 axes[0].set_title('Scatter — Penguin Species')
 
-# ── 2. lineplot dengan confidence band ───────────
+# 2. lineplot dengan confidence band 
 flights_pivot = flights.pivot(index='year', columns='month', values='passengers')
 for month in ['January', 'July']:
     data = flights[flights['month'] == month]
@@ -3318,21 +3315,21 @@ for month in ['January', 'July']:
 axes[1].set_title('Penumpang Pesawat — Jan vs Jul')
 axes[1].legend()
 
-# ── 3. regplot ────────────────────────────────────
+# 3. regplot 
 from scipy import stats
 sns.regplot(data=tips, x='total_bill', y='tip',
             scatter_kws={'alpha': 0.5, 's': 40},
             line_kws={'color': 'red', 'lw': 2},
             ax=axes[2])
 r, p = stats.pearsonr(tips['total_bill'], tips['tip'])
-axes[2].text(0.05, 0.95, f'r = {r:.3f}\np = {p:.4f}',
+axes[2].text(0.05, 0.95, f'r = {r:.3f}\\np = {p:.4f}',
              transform=axes[2].transAxes, va='top',
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7))
 axes[2].set_title('Regression Plot + Statistik')
 plt.tight_layout()
 plt.show()
 
-# ── relplot (figure-level, multi-panel) ──────────
+# relplot (figure-level, multi-panel) 
 g = sns.relplot(
     data=tips, x='total_bill', y='tip',
     col='time', row='sex', hue='smoker',
@@ -3350,22 +3347,22 @@ plt.show()
 ## 5.5 Matrix Plots & Pairplot
 
 ```python
-# 🖥 Matrix Plots & Pairplot
+# Matrix Plots & Pairplot
 penguins = sns.load_dataset('penguins').dropna()
 numeric_cols = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-# ── 1. Heatmap Korelasi ───────────────────────────
+# 1. Heatmap Korelasi 
 corr = penguins[numeric_cols].corr()
 mask = np.triu(np.ones_like(corr), k=1)  # sembunyikan segitiga atas
 sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm',
             center=0, vmin=-1, vmax=1, square=True,
             mask=mask, linewidths=0.5, cbar_kws={'shrink': 0.8},
             ax=axes[0])
-axes[0].set_title('Heatmap Korelasi Penguin\n(Lower Triangle Only)')
+axes[0].set_title('Heatmap Korelasi Penguin\\n(Lower Triangle Only)')
 
-# ── 2. Heatmap Pivot ─────────────────────────────
+# 2. Heatmap Pivot 
 flights = sns.load_dataset('flights')
 flights_pivot = flights.pivot(index='month', columns='year', values='passengers')
 sns.heatmap(flights_pivot, annot=True, fmt='d', cmap='YlOrRd',
@@ -3374,7 +3371,7 @@ axes[1].set_title('Heatmap: Penumpang Pesawat per Bulan & Tahun')
 plt.tight_layout()
 plt.show()
 
-# ── 3. Pairplot ───────────────────────────────────
+# 3. Pairplot 
 g = sns.pairplot(
     penguins[numeric_cols + ['species']],
     hue='species',
@@ -3393,7 +3390,7 @@ plt.show()
 ## 5.6 FacetGrid — Multi-panel Plots
 
 ```python
-# 🖥 FacetGrid Lanjutan
+# FacetGrid Lanjutan
 tips = sns.load_dataset('tips')
 
 g = sns.FacetGrid(
@@ -3415,7 +3412,7 @@ g.set_titles(col_template='{col_name}', row_template='{row_name}')
 g.figure.suptitle('FacetGrid: Tips per Waktu, Sex, & Smoker', fontsize=13, y=1.02)
 plt.show()
 
-# ── catplot (figure-level categorical) ───────────
+# catplot (figure-level categorical) 
 g2 = sns.catplot(
     data=tips,
     x='day',
@@ -3438,17 +3435,17 @@ plt.show()
 
 ## 5.7 Studi Kasus: Dashboard Analitik HR
 
-👥 **Skenario:** Analisis komprehensif data karyawan untuk memahami distribusi gaji, performa, dan faktor-faktor yang mempengaruhi *attrition* (turnover) karyawan.
+ **Skenario:** Analisis komprehensif data karyawan untuk memahami distribusi gaji, performa, dan faktor-faktor yang mempengaruhi *attrition* (turnover) karyawan.
 
 ```python
-# 🖥 STUDI KASUS: HR Analytics Dashboard
+# STUDI KASUS: HR Analytics Dashboard
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from scipy import stats
 
-# ══ Simulasi Dataset HR ══════════════════════════
+# Simulasi Dataset HR 
 np.random.seed(42)
 n = 500
 dept_list = ['Engineering', 'Marketing', 'Sales', 'Finance', 'HR', 'Operations']
@@ -3468,7 +3465,7 @@ hr = pd.DataFrame({
 
 hr['salary'] = hr['salary'] * (1 + hr['performance']*0.1) * (1 + hr['experience']*0.02)
 
-# ══ Dashboard 6-Panel ════════════════════════════
+# Dashboard 6-Panel 
 fig, axes = plt.subplots(2, 3, figsize=(18, 12))
 fig.suptitle('DASHBOARD ANALITIK HR — 2024', fontsize=18, fontweight='bold', y=0.98)
 sns.set_theme(style='whitegrid', palette='deep')
@@ -3499,7 +3496,7 @@ sns.scatterplot(data=hr, x='satisfaction', y='performance',
                 hue='attrition', style='gender',
                 palette={0: 'steelblue', 1: 'red'},
                 alpha=0.6, s=60, ax=axes[0, 2])
-axes[0, 2].set_title('Performance vs Kepuasan Kerja\n(Merah = Resign)')
+axes[0, 2].set_title('Performance vs Kepuasan Kerja\\n(Merah = Resign)')
 
 # Panel 4: Heatmap Korelasi
 num_cols = ['age', 'experience', 'salary', 'performance', 'satisfaction', 'attrition']
@@ -3521,7 +3518,7 @@ sns.regplot(data=hr, x='experience', y='salary',
             line_kws={'color': 'red', 'lw': 2},
             ax=axes[1, 2])
 r, p = stats.pearsonr(hr['experience'], hr['salary'])
-axes[1, 2].text(0.05, 0.95, f'r = {r:.3f}\np = {p:.4f}',
+axes[1, 2].text(0.05, 0.95, f'r = {r:.3f}\\np = {p:.4f}',
                 transform=axes[1, 2].transAxes, va='top',
                 bbox=dict(boxstyle='round', fc='wheat', alpha=0.8))
 axes[1, 2].set_title('Gaji vs Pengalaman Kerja')
@@ -3531,7 +3528,7 @@ plt.tight_layout(rect=[0, 0, 1, 0.97])
 plt.savefig('hr_dashboard.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-# ══ Insight Otomatis ═════════════════════════════
+# Insight Otomatis 
 print('=== INSIGHT HR ANALYTICS ===')
 print(f'Total Karyawan           : {len(hr):,}')
 print(f'Attrition Rate           : {hr["attrition"].mean()*100:.1f}%')
@@ -3547,7 +3544,7 @@ print(f'Karyawan Resign (satisfaction<5): {(hr[hr["satisfaction"]<5]["attrition"
 ## 5.8 Executive Dashboard --- Ringkasan untuk Level Manajemen
 
 ```python
-# 🖥 Studi Kasus: Executive Dashboard Ringkasan Bulanan
+# Studi Kasus: Executive Dashboard Ringkasan Bulanan
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -3593,7 +3590,7 @@ print(f"Insight: Revenue Desember {df_exec['revenue'].iloc[-1]}jt, "
 ## 5.9 Financial Dashboard --- Revenue, Cost, dan Margin
 
 ```python
-# 🖥 Studi Kasus: Waterfall Chart Laporan Laba Rugi
+# Studi Kasus: Waterfall Chart Laporan Laba Rugi
 kategori = ['Revenue', 'COGS', 'Opex', 'Marketing', 'Pajak', 'Net Profit']
 nilai = [1000, -400, -200, -150, -60, 190]  # dalam Rp juta
 
@@ -3620,7 +3617,7 @@ plt.show()
 ## 5.10 Sales & Marketing Dashboard --- Funnel dan Performa Campaign
 
 ```python
-# 🖥 Studi Kasus: Funnel Konversi dan Perbandingan Campaign
+# Studi Kasus: Funnel Konversi dan Perbandingan Campaign
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 # Chart 1: Funnel konversi
@@ -3661,7 +3658,7 @@ print(f"Insight Campaign: {df_campaign.iloc[0]['campaign']} memiliki ROI terting
 
 ---
 
-## 📝 QUIZ TAMBAHAN — BUSINESS DASHBOARDS
+## QUIZ TAMBAHAN — BUSINESS DASHBOARDS
 
 1. Mengapa Executive Dashboard sebaiknya dibatasi maksimal 5-7 metrik dan disertai kalimat insight tertulis, bukan hanya chart?
    * **Jawaban:** Karena audiens level eksekutif memiliki waktu terbatas dan sering hanya membaca ringkasan tertulis, bukan menginterpretasi grafik secara mendalam. Terlalu banyak metrik justru mengaburkan pesan utama yang ingin disampaikan.
@@ -3672,7 +3669,7 @@ print(f"Insight Campaign: {df_campaign.iloc[0]['campaign']} memiliki ROI terting
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Jelaskan perbedaan antara axes-level functions (`sns.barplot`) dan figure-level functions (`sns.catplot`)!
 2. Kapan menggunakan violinplot vs boxplot vs boxenplot? Apa kelebihan masing-masing?
 3. Tulis kode untuk membuat FacetGrid dengan 3 baris (low/mid/high income) dan 2 kolom (male/female)!
@@ -3683,7 +3680,7 @@ print(f"Insight Campaign: {df_campaign.iloc[0]['campaign']} memiliki ROI terting
 
 ---
 
-## ✅ KUNCI JAWABAN / PETUNJUK
+## KUNCI JAWABAN / PETUNJUK
 1. **Axes-level**: menggambar pada Axes yang sudah ada (bisa dikombinasikan), memiliki parameter `ax=`. **Figure-level**: membuat Figure baru secara mandiri, mendukung faceting baris/kolom otomatis, tidak menerima parameter `ax=`.
 2. **Boxplot**: ringkas & cepat, efektif menampilkan outlier. **Violin**: menampilkan estimasi densitas distribusi secara penuh. **Boxenplot**: lebih detail untuk dataset besar karena menampilkan lebih banyak kuantil.
 3. `g = sns.FacetGrid(data, row='income_group', col='gender'); g.map(sns.histplot, 'kolom_target')`.
@@ -3724,14 +3721,14 @@ SQL (*Structured Query Language*) adalah bahasa standar industri untuk mengakses
 * **Kapan menggunakan Pandas:** Ketika data sudah berhasil diringkas/diambil (biasanya lewat query SQL) dan perlu diolah lebih lanjut dengan logika kompleks, digabung dengan visualisasi interaktif, atau dipakai untuk pemodelan Machine Learning.
 
 Alur ideal:
-$$\text{Database SQL} \xrightarrow{\text{Query & Agregasi}} \text{Data Terfilter} \xrightarrow{\text{Pandas}} \text{Visualisasi & Insight}$$
+$$\\text{Database SQL} \\xrightarrow{\\text{Query & Agregasi}} \\text{Data Terfilter} \\xrightarrow{\\text{Pandas}} \\text{Visualisasi & Insight}$$
 
 ---
 
 ## 8.2 SELECT, WHERE, ORDER BY, LIMIT, dan DISTINCT
 
 ```sql
--- 🖥 Query Dasar: SELECT, WHERE, ORDER BY, LIMIT
+--  Query Dasar: SELECT, WHERE, ORDER BY, LIMIT
 -- Mengambil 10 transaksi dengan revenue tertinggi dari kategori Elektronik
 SELECT
     transaction_id,
@@ -3754,7 +3751,7 @@ ORDER BY kategori;
 
 > [!IMPORTANT]
 > **Urutan Eksekusi SQL secara Konseptual:**
-> $$	ext{FROM} \longrightarrow 	ext{WHERE} \longrightarrow 	ext{GROUP BY} \longrightarrow 	ext{HAVING} \longrightarrow 	ext{SELECT} \longrightarrow 	ext{ORDER BY} \longrightarrow 	ext{LIMIT}$$
+> $$\text{FROM} \longrightarrow \text{WHERE} \longrightarrow \text{GROUP BY} \longrightarrow \text{HAVING} \longrightarrow \text{SELECT} \longrightarrow \text{ORDER BY} \longrightarrow \text{LIMIT}$$
 > Memahami urutan ini membantu memahami mengapa alias kolom yang didefinisikan di `SELECT` tidak bisa langsung digunakan di klausa `WHERE`.
 
 ---
@@ -3762,7 +3759,7 @@ ORDER BY kategori;
 ## 8.3 GROUP BY, HAVING, dan Fungsi Agregasi
 
 ```sql
--- 🖥 GROUP BY dan HAVING untuk Analisis KPI Penjualan
+--  GROUP BY dan HAVING untuk Analisis KPI Penjualan
 -- Kategori dengan total revenue di atas 100 juta, diurutkan dari terbesar
 SELECT
     kategori,
@@ -3784,7 +3781,7 @@ ORDER BY total_revenue DESC;
 ## 8.4 CASE WHEN: Logika Kondisional dalam SQL
 
 ```sql
--- 🖥 CASE WHEN untuk Segmentasi Pelanggan
+--  CASE WHEN untuk Segmentasi Pelanggan
 SELECT
     customer_id,
     SUM(revenue) AS total_belanja,
@@ -3803,14 +3800,14 @@ ORDER BY total_belanja DESC;
 
 ## 8.5 JOIN: Menggabungkan Data dari Beberapa Tabel
 
-* **INNER JOIN**: Hanya menghasilkan baris yang memiliki kecocokan di KEDUA tabel.
-* **LEFT JOIN**: Menghasilkan SEMUA baris dari tabel kiri, dilengkapi data dari tabel kanan jika ada kecocokan (NULL jika tidak ada).
-* **RIGHT JOIN**: Semua baris dari tabel kanan dipertahankan.
-* **FULL OUTER JOIN**: Menghasilkan semua baris dari kedua tabel.
-* **SELF JOIN**: Menggabungkan tabel dengan dirinya sendiri (misalnya hierarki karyawan-atasan).
+1. **INNER JOIN**: Hanya menghasilkan baris yang memiliki kecocokan di KEDUA tabel.
+2. **LEFT JOIN**: Menghasilkan SEMUA baris dari tabel kiri, dilengkapi data dari tabel kanan jika ada kecocokan (NULL jika tidak ada).
+3. **RIGHT JOIN**: Semua baris dari tabel kanan dipertahankan.
+4. **FULL OUTER JOIN**: Menghasilkan semua baris dari kedua tabel.
+5. **SELF JOIN**: Menggabungkan tabel dengan dirinya sendiri (misalnya hierarki karyawan-atasan).
 
 ```sql
--- 🖥 Contoh LEFT JOIN: Transaksi dengan Data Pelanggan
+--  Contoh LEFT JOIN: Transaksi dengan Data Pelanggan
 SELECT
     t.transaction_id,
     t.revenue,
@@ -3829,7 +3826,7 @@ WHERE t.tanggal_transaksi >= '2024-01-01';
 CTE (menggunakan klausa `WITH`) adalah cara modern dan jauh lebih terbaca untuk mendefinisikan hasil query sementara:
 
 ```sql
--- 🖥 CTE untuk Analisis Pelanggan Bernilai Tinggi
+--  CTE untuk Analisis Pelanggan Bernilai Tinggi
 WITH revenue_per_pelanggan AS (
     SELECT
         customer_id,
@@ -3856,7 +3853,7 @@ ORDER BY r.total_revenue DESC;
 ## 8.7 Window Functions: RANK, ROW_NUMBER, LAG/LEAD, dan Rolling Average
 
 ```sql
--- 🖥 RANK dan ROW_NUMBER: Peringkat Produk Terlaris per Kategori
+--  RANK dan ROW_NUMBER: Peringkat Produk Terlaris per Kategori
 SELECT
     kategori,
     nama_produk,
@@ -3869,7 +3866,7 @@ SELECT
     ) AS urutan_unik
 FROM ringkasan_produk;
 
--- 🖥 LAG/LEAD dan Rolling Average: Analisis Tren Bulanan
+--  LAG/LEAD dan Rolling Average: Analisis Tren Bulanan
 SELECT
     bulan,
     revenue,
@@ -3888,7 +3885,7 @@ ORDER BY bulan;
 ## 8.8 Index dan Dasar Query Optimization
 
 ```sql
--- 🖥 Membuat Index dan Memeriksa Query Plan
+--  Membuat Index dan Memeriksa Query Plan
 CREATE INDEX idx_transaksi_customer ON transaksi (customer_id);
 CREATE INDEX idx_transaksi_tanggal ON transaksi (tanggal_transaksi);
 
@@ -3906,7 +3903,7 @@ WHERE customer_id = 12345
 ## 8.9 Studi Kasus Bisnis: Cohort Analysis dan Customer Retention dengan SQL
 
 ```sql
--- 🖥 Cohort Analysis: Retensi Pelanggan per Bulan Akuisisi
+--  Cohort Analysis: Retensi Pelanggan per Bulan Akuisisi
 WITH cohort_pelanggan AS (
     -- Tentukan cohort setiap pelanggan berdasarkan bulan transaksi pertama
     SELECT
@@ -3936,7 +3933,7 @@ ORDER BY bulan_cohort, bulan_aktivitas;
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Jelaskan perbedaan `WHERE` dan `HAVING`, lalu berikan contoh kasus yang mengharuskan penggunaan `HAVING`!
 2. Tulis query dengan `LEFT JOIN` untuk menampilkan semua pelanggan beserta total transaksinya, termasuk pelanggan yang belum pernah bertransaksi sama sekali!
 3. Apa perbedaan `RANK()` dan `ROW_NUMBER()`? Berikan contoh kasus nyata di mana hasil keduanya berbeda!
@@ -3946,7 +3943,7 @@ ORDER BY bulan_cohort, bulan_aktivitas;
 
 ---
 
-## ✅ KUNCI JAWABAN / PETUNJUK
+## KUNCI JAWABAN / PETUNJUK
 1. `WHERE` memfilter baris SEBELUM agregasi (`GROUP BY`), `HAVING` memfilter SETELAH agregasi. Contoh: `HAVING SUM(revenue) > 100000000`.
 2. `SELECT c.customer_id, c.nama_pelanggan, COALESCE(SUM(t.revenue), 0) AS total_revenue FROM pelanggan c LEFT JOIN transaksi t ON c.customer_id = t.customer_id GROUP BY c.customer_id, c.nama_pelanggan;`
 3. `RANK()` memberi peringkat sama jika nilainya kembar lalu melompati urutan berikutnya (1, 1, 3); `ROW_NUMBER()` selalu menghasilkan nomor urut unik berurutan (1, 2, 3).
@@ -3981,7 +3978,7 @@ Halaman 129–137 dari 148 | Scipy · Statsmodels · Hipotesis · ANOVA · Regre
 ## 9.1 Ukuran Pemusatan: Mean, Median, dan Mode
 
 ```python
-# 🖥 Mean vs Median: Dampak Outlier terhadap Interpretasi Gaji
+# Mean vs Median: Dampak Outlier terhadap Interpretasi Gaji
 import numpy as np
 
 gaji_karyawan = [5, 5.5, 6, 6, 6.5, 7, 7.5, 8, 45]  # dalam juta rupiah, 1 outlier (direktur)
@@ -3998,7 +3995,7 @@ print(f'Median : Rp {np.median(gaji_karyawan):.2f} juta')  # 6.5 juta -- lebih r
 ## 9.2 Ukuran Sebaran: Variance, Standard Deviation, Percentile, Quartile, dan IQR
 
 ```python
-# 🖥 Menghitung dan Menginterpretasikan Ukuran Sebaran
+# Menghitung dan Menginterpretasikan Ukuran Sebaran
 import numpy as np
 
 revenue_toko_a = np.array([95, 98, 102, 100, 97, 103, 99])   # stabil
@@ -4014,7 +4011,7 @@ for nama, data in [('Toko A', revenue_toko_a), ('Toko B', revenue_toko_b)]:
 ## 9.3 Distribusi Data: Normal Distribution, Skewness, dan Kurtosis
 
 ```python
-# 🖥 Menguji Normalitas dan Mengukur Skewness/Kurtosis
+# Menguji Normalitas dan Mengukur Skewness/Kurtosis
 from scipy import stats
 
 # Uji Shapiro-Wilk untuk memeriksa apakah data mengikuti distribusi normal
@@ -4035,7 +4032,7 @@ print(f"Kurtosis: {df['revenue'].kurt():.2f}")
 ## 9.4 Sampling dan Probability Dasar
 
 ```python
-# 🖥 Stratified Sampling dengan Pandas
+# Stratified Sampling dengan Pandas
 # Mengambil sampel 20% dari setiap kategori produk secara proporsional
 sampel_stratified = df.groupby('kategori', group_keys=False).apply(
     lambda x: x.sample(frac=0.2, random_state=42)
@@ -4053,7 +4050,7 @@ print('Proporsi sampel :', (sampel_stratified['kategori'].value_counts(normalize
 ## 9.5 Confidence Interval (Interval Kepercayaan)
 
 ```python
-# 🖥 Menghitung 95% Confidence Interval untuk Rata-Rata Revenue
+# Menghitung 95% Confidence Interval untuk Rata-Rata Revenue
 from scipy import stats
 import numpy as np
 
@@ -4085,7 +4082,7 @@ print(f'95% Confidence Interval : Rp {ci_bawah:,.0f} -- Rp {ci_atas:,.0f}')
 ## 9.7 T-Test: Membandingkan Rata-Rata Dua Kelompok
 
 ```python
-# 🖥 Independent T-Test: A/B Testing Desain Halaman Checkout
+# Independent T-Test: A/B Testing Desain Halaman Checkout
 from scipy import stats
 
 waktu_checkout_desain_a = df[df['desain'] == 'A']['waktu_checkout_detik']
@@ -4111,7 +4108,7 @@ else:
 ## 9.8 Chi-Square Test: Hubungan Antar Variabel Kategorikal
 
 ```python
-# 🖥 Chi-Square Test: Hubungan Channel Marketing dan Konversi
+# Chi-Square Test: Hubungan Channel Marketing dan Konversi
 from scipy import stats
 import pandas as pd
 
@@ -4131,7 +4128,7 @@ if p_value < 0.05:
 ## 9.9 ANOVA: Membandingkan Rata-Rata Lebih dari Dua Kelompok
 
 ```python
-# 🖥 One-Way ANOVA: Revenue di Empat Wilayah Penjualan
+# One-Way ANOVA: Revenue di Empat Wilayah Penjualan
 from scipy import stats
 
 revenue_jakarta = df[df['wilayah'] == 'Jakarta']['revenue']
@@ -4150,7 +4147,7 @@ print(f'F-Statistic: {f_statistik:.2f}, p-value: {p_value:.4f}')
 ## 9.10 Correlation & Linear Regression: Interpretasi Bisnis
 
 ```python
-# 🖥 Pearson vs Spearman Correlation & Simple Linear Regression
+# Pearson vs Spearman Correlation & Simple Linear Regression
 from scipy import stats
 import statsmodels.api as sm
 
@@ -4169,14 +4166,14 @@ print(model.summary())
 
 koefisien = model.params['biaya_iklan']
 r_squared = model.rsquared
-print(f'\nInterpretasi Bisnis:')
+print(f'\\nInterpretasi Bisnis:')
 print(f'Setiap tambahan Rp1 juta biaya iklan diasosiasikan dengan kenaikan revenue sebesar Rp{koefisien:,.0f}')
 print(f'Model ini menjelaskan {r_squared*100:.1f}% variasi revenue (R-squared)')
 ```
 
 ---
 
-## 📝 LATIHAN SOAL & TANTANGAN
+## LATIHAN SOAL & TANTANGAN
 1. Sebuah perusahaan melaporkan 'rata-rata gaji karyawan Rp15 juta'. Pertanyaan apa yang harus diajukan sebelum mempercayai angka ini sepenuhnya, dan ukuran statistik apa yang sebaiknya diminta sebagai pembanding?
 2. Jelaskan perbedaan Type I Error dan mengapa menjalankan banyak T-Test berpasangan lebih berisiko dibanding ANOVA!
 3. Sebuah A/B test menghasilkan p-value = 0.03 dengan perbedaan conversion rate hanya 0.05%. Apakah layak dijadikan dasar keputusan bisnis?
@@ -4186,9 +4183,9 @@ print(f'Model ini menjelaskan {r_squared*100:.1f}% variasi revenue (R-squared)')
 
 ---
 
-## ✅ KUNCI JAWABAN / PETUNJUK
+## KUNCI JAWABAN / PETUNJUK
 1. Tanyakan apakah distribusi gaji simetris atau miring (*skewed*). Minta **median** sebagai pembanding karena kebal terhadap outlier gaji eksekutif.
-2. Type I Error adalah menolak H0 padahal benar (*false positive*). Menjalankan banyak T-Test meningkatkan risiko kumulatif (*family-wise error rate*). ANOVA menguji seluruh kelompok sekaligus dalam satu uji dengan $\alpha$ terkendali.
+2. Type I Error adalah menolak H0 padahal benar (*false positive*). Menjalankan banyak T-Test meningkatkan risiko kumulatif (*family-wise error rate*). ANOVA menguji seluruh kelompok sekaligus dalam satu uji dengan $\\alpha$ terkendali.
 3. Signifikan secara statistik belum tentu signifikan secara praktis/bisnis (*practical significance*). Kenaikan 0.05% mungkin tidak menutup biaya pengembangan sistem baru.
 4. Gunakan Spearman ketika data tidak normal, terdapat outlier, atau hubungan bersifat monotonik non-linear / berskala ordinal.
 5. Tidak. $R^2 = 0.85$ berarti model menjelaskan 85% variasi secara agregat, bukan jaminan akurasi untuk tiap titik prediksi individual.
@@ -4323,28 +4320,28 @@ Halaman 138–148 dari 148 | Pandas · NumPy · Matplotlib · Seaborn · Perform
 ## APPENDIX B — TROUBLESHOOTING & ERROR UMUM
 
 ```python
-# 🖥 Pandas Troubleshooting
-# ── KeyError: 'nama_kolom' ───────────────────────
+# Pandas Troubleshooting
+# KeyError: 'nama_kolom' 
 print(df.columns.tolist())
 df.columns = df.columns.str.strip().str.lower()
 
-# ── SettingWithCopyWarning ────────────────────────
+# SettingWithCopyWarning 
 # SALAH: df_sub = df[df['nilai'] > 80]; df_sub['grade'] = 'A'
 # BENAR:
 df_sub = df[df['nilai'] > 80].copy()
 df_sub['grade'] = 'A'
 # ATAU: df.loc[df['nilai'] > 80, 'grade'] = 'A'
 
-# ── ValueError: Cannot merge a Series ───────────
+# ValueError: Cannot merge a Series 
 result = df.groupby('kota')['rev'].sum().reset_index()
 
-# ── TypeError: cannot convert float NaN to int ──
+# TypeError: cannot convert float NaN to int 
 df['col'] = df['col'].astype('Int64') # kapital I, mendukung NaN
 
-# ── ParserError: Error tokenizing data ──────────
+# ParserError: Error tokenizing data 
 df = pd.read_csv('file.csv', on_bad_lines='skip')
 
-# ── Matplotlib & Seaborn Troubleshooting ────────
+# Matplotlib & Seaborn Troubleshooting 
 # Plot tidak muncul:
 %matplotlib inline
 plt.show()
@@ -4359,19 +4356,19 @@ matplotlib.font_manager._rebuild()
 ## APPENDIX C — TIPS PERFORMA & OPTIMASI KODE
 
 ```python
-# 🖥 Pandas Performance Tips
-# ══ TIP 1: Vectorized vs Loop ════════════════════
+# Pandas Performance Tips
+# TIP 1: Vectorized vs Loop 
 # CEPAT (hindari iterrows!):
 df['margin'] = df['profit'] / df['revenue']
 
-# ══ TIP 2: ufunc vs apply ════════════════════════
+# TIP 2: ufunc vs apply 
 # Cepat: langsung pakai NumPy ufunc
 df['log_rev'] = np.log1p(df['revenue'])
 
-# ══ TIP 3: Gunakan .eval() untuk formula kompleks
+# TIP 3: Gunakan .eval() untuk formula kompleks
 df['result'] = df.eval('a + b * c')
 
-# ══ TIP 4: Simpan dengan format efisien ══════════
+# TIP 4: Simpan dengan format efisien 
 df.to_parquet('data.parquet', compression='snappy')  # 5-10x lebih hemat dari CSV!
 ```
 
@@ -4380,11 +4377,11 @@ df.to_parquet('data.parquet', compression='snappy')  # 5-10x lebih hemat dari CS
 ## APPENDIX D — REFERENSI & PANDUAN KARIR DATA ANALYTICS
 
 ### D.1 Dokumentasi Resmi
-* Pandas: [pandas.pydata.org/docs](https://pandas.pydata.org/docs)
-* NumPy: [numpy.org/doc](https://numpy.org/doc)
-* Matplotlib: [matplotlib.org/stable/contents](https://matplotlib.org/stable/contents)
-* Seaborn: [seaborn.pydata.org](https://seaborn.pydata.org)
-* Scikit-Learn: [scikit-learn.org/stable](https://scikit-learn.org/stable)
+1. Pandas: [pandas.pydata.org/docs](https://pandas.pydata.org/docs)
+2. NumPy: [numpy.org/doc](https://numpy.org/doc)
+3. Matplotlib: [matplotlib.org/stable/contents](https://matplotlib.org/stable/contents)
+4. Seaborn: [seaborn.pydata.org](https://seaborn.pydata.org)
+5. Scikit-Learn: [scikit-learn.org/stable](https://scikit-learn.org/stable)
 
 ### D.5 Panduan Karir Data Analytics
 | Posisi | Keterampilan Kunci | Pengalaman |
@@ -4431,7 +4428,7 @@ Halaman 82–90 & 94–95, 97–98 dari 148 | Scikit-Learn · Pandas · NumPy ·
 
 ## 6.1 Proyek: Analisis Prediktif Churn Pelanggan Telekomunikasi
 
-📱 **Skenario Bisnis:** Perusahaan telekomunikasi mengalami churn (kehilangan pelanggan) sebesar 26%. CEO meminta tim Data Analytics untuk:
+ **Skenario Bisnis:** Perusahaan telekomunikasi mengalami churn (kehilangan pelanggan) sebesar 26%. CEO meminta tim Data Analytics untuk:
 1. Memahami profil pelanggan yang churn.
 2. Mengidentifikasi faktor utama penyebab churn.
 3. Membuat model prediksi machine learning.
@@ -4439,12 +4436,10 @@ Halaman 82–90 & 94–95, 97–98 dari 148 | Scikit-Learn · Pandas · NumPy ·
 
 ### STEP 1: Setup & Data Generation
 ```python
-# 🖥 STEP 1: Setup & Data Generation
-# ══════════════════════════════════════════════════════
-# PROYEK: TELCO CUSTOMER CHURN ANALYSIS
+# STEP 1: Setup & Data Generation
+# # PROYEK: TELCO CUSTOMER CHURN ANALYSIS
 # Tools: Pandas, NumPy, Matplotlib, Seaborn, Scikit-Learn
-# ══════════════════════════════════════════════════════
-import pandas as pd
+# import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -4459,7 +4454,7 @@ sns.set_theme(style='whitegrid', palette='deep')
 plt.rcParams['figure.dpi'] = 100
 np.random.seed(42)
 
-# ══ STEP 1: GENERATE DATA ══════════════════════════
+# STEP 1: GENERATE DATA 
 n = 7043
 df = pd.DataFrame({
     'customer_id'       : [f'CUST-{i:05d}' for i in range(n)],
@@ -4497,17 +4492,17 @@ missing_idx = np.random.choice(df.index, 11, replace=False)
 df.loc[missing_idx, 'total_charges'] = np.nan
 
 print('Shape:', df.shape)
-print('Churn Rate:\n', df['churn'].value_counts(normalize=True).round(3))
+print('Churn Rate:\\n', df['churn'].value_counts(normalize=True).round(3))
 ```
 
 ### STEP 2: Data Cleaning & Feature Engineering
 ```python
-# 🖥 STEP 2: Data Cleaning & Feature Engineering
-# ══ STEP 2: DATA AUDIT & CLEANING ═════════════════
+# STEP 2: Data Cleaning & Feature Engineering
+# STEP 2: DATA AUDIT & CLEANING 
 print('=== DATA AUDIT ===')
 print(f'Total rows     : {len(df):,}')
 print(f'Total columns  : {df.shape[1]}')
-print(f'Missing values:\n{df.isnull().sum()[df.isnull().sum() > 0]}')
+print(f'Missing values:\\n{df.isnull().sum()[df.isnull().sum() > 0]}')
 print(f'Duplicate rows : {df.duplicated().sum()}')
 
 # Cleaning
@@ -4529,18 +4524,18 @@ df_clean['has_multiple_services'] = (
     (df_clean['streaming_tv'] == 'Yes').astype(int)
 )
 
-print('\nData setelah cleaning & feature engineering:')
+print('\\nData setelah cleaning & feature engineering:')
 print(df_clean[['tenure', 'monthly_charges', 'total_charges', 'tenure_group', 'charge_tier', 'churn']].head(8))
 ```
 
 ### STEP 3: EDA Dashboard (9 Panel Komprehensif)
 ```python
-# 🖥 STEP 3: EDA Dashboard
+# STEP 3: EDA Dashboard
 fig = plt.figure(figsize=(20, 14))
 fig.suptitle('EXPLORATORY DATA ANALYSIS — TELCO CHURN', fontsize=17, fontweight='bold', y=0.99)
 gs = gridspec.GridSpec(3, 4, figure=fig, hspace=0.45, wspace=0.38)
 
-# ─ Panel 1: Churn Distribution (Pie) ─────────────
+# Panel 1: Churn Distribution (Pie) 
 ax1 = fig.add_subplot(gs[0, 0])
 churn_cnt = df_clean['churn'].value_counts()
 colors_pie = ['#E53935', '#43A047']
@@ -4552,7 +4547,7 @@ wedges, texts, autotexts = ax1.pie(
 ax1.text(0, 0, f'N={len(df_clean):,}', ha='center', va='center', fontsize=11, fontweight='bold')
 ax1.set_title('Distribusi Churn')
 
-# ─ Panel 2: Tenure vs Churn ───────────────────────
+# Panel 2: Tenure vs Churn 
 ax2 = fig.add_subplot(gs[0, 1])
 sns.histplot(data=df_clean, x='tenure', hue='churn',
              bins=24, ax=ax2, palette={'Yes': '#E53935', 'No': '#43A047'},
@@ -4560,7 +4555,7 @@ sns.histplot(data=df_clean, x='tenure', hue='churn',
 ax2.set_title('Distribusi Tenure per Churn')
 ax2.set_xlabel('Tenure (Bulan)')
 
-# ─ Panel 3: Monthly Charges Box ──────────────────
+# Panel 3: Monthly Charges Box 
 ax3 = fig.add_subplot(gs[0, 2])
 sns.boxplot(data=df_clean, x='churn', y='monthly_charges',
             palette={'Yes': '#E53935', 'No': '#43A047'},
@@ -4568,9 +4563,9 @@ sns.boxplot(data=df_clean, x='churn', y='monthly_charges',
 t, p = stats.ttest_ind(
     df_clean[df_clean['churn'] == 'Yes']['monthly_charges'],
     df_clean[df_clean['churn'] == 'No']['monthly_charges'])
-ax3.set_title(f'Monthly Charges vs Churn\nt={t:.2f}, p={p:.4f}')
+ax3.set_title(f'Monthly Charges vs Churn\\nt={t:.2f}, p={p:.4f}')
 
-# ─ Panel 4: Contract vs Churn Rate ───────────────
+# Panel 4: Contract vs Churn Rate 
 ax4 = fig.add_subplot(gs[0, 3])
 contract_churn = df_clean.groupby('contract')['churn_binary'].agg(['mean', 'count']).reset_index()
 contract_churn.columns = ['contract', 'churn_rate', 'count']
@@ -4584,7 +4579,7 @@ ax4.set_title('Churn Rate per Tipe Kontrak')
 ax4.set_ylabel('Churn Rate (%)')
 ax4.tick_params(axis='x', rotation=15)
 
-# ─ Panel 5: Heatmap Churn rate per Tenure × Contract
+# Panel 5: Heatmap Churn rate per Tenure × Contract
 ax5 = fig.add_subplot(gs[1, :2])
 pivot_heat = df_clean.pivot_table(values='churn_binary', index='tenure_group',
                                   columns='contract', aggfunc='mean') * 100
@@ -4593,7 +4588,7 @@ sns.heatmap(pivot_heat, annot=True, fmt='.1f', cmap='RdYlGn_r',
             cbar_kws={'label': 'Churn Rate (%)', 'shrink': 0.8})
 ax5.set_title('Heatmap Churn Rate: Tenure × Kontrak')
 
-# ─ Panel 6: Internet Service vs Churn ────────────
+# Panel 6: Internet Service vs Churn 
 ax6 = fig.add_subplot(gs[1, 2])
 inet_churn = df_clean.groupby('internet_service')['churn_binary'].mean() * 100
 colors_bar = ['#2196F3', '#E53935', '#9E9E9E']
@@ -4604,7 +4599,7 @@ for bar in bars6:
 ax6.set_title('Churn Rate per Layanan Internet')
 ax6.set_ylabel('Churn Rate (%)')
 
-# ─ Panel 7: Senior vs Non-Senior ─────────────────
+# Panel 7: Senior vs Non-Senior 
 ax7 = fig.add_subplot(gs[1, 3])
 senior_churn = df_clean.groupby('senior_citizen')['churn_binary'].mean() * 100
 ax7.bar(['Non-Senior', 'Senior'], senior_churn.values,
@@ -4614,7 +4609,7 @@ for i, v in enumerate(senior_churn.values):
 ax7.set_title('Churn Rate: Senior vs Non-Senior')
 ax7.set_ylabel('Churn Rate (%)')
 
-# ─ Panel 8: Korelasi Numerik ──────────────────────
+# Panel 8: Korelasi Numerik 
 ax8 = fig.add_subplot(gs[2, :2])
 num_corr = df_clean[['tenure', 'monthly_charges', 'total_charges',
                      'has_multiple_services', 'senior_citizen', 'churn_binary']].corr()
@@ -4624,7 +4619,7 @@ sns.heatmap(num_corr, annot=True, fmt='.2f', cmap='coolwarm',
             linewidths=0.5, square=True, cbar_kws={'shrink': 0.7})
 ax8.set_title('Matriks Korelasi (Lower Triangle)')
 
-# ─ Panel 9: Monthly Charges × Tenure scatter ────
+# Panel 9: Monthly Charges × Tenure scatter 
 ax9 = fig.add_subplot(gs[2, 2:])
 scatter_data = df_clean.sample(1000, random_state=42)
 sc = ax9.scatter(scatter_data['tenure'], scatter_data['monthly_charges'],
@@ -4633,7 +4628,7 @@ sc = ax9.scatter(scatter_data['tenure'], scatter_data['monthly_charges'],
 plt.colorbar(sc, ax=ax9, label='Churn (1=Ya)')
 ax9.set_xlabel('Tenure (Bulan)')
 ax9.set_ylabel('Monthly Charges ($)')
-ax9.set_title('Scatter: Tenure × Monthly Charges\n(Warna = Churn)')
+ax9.set_title('Scatter: Tenure × Monthly Charges\\n(Warna = Churn)')
 
 plt.savefig('eda_churn.png', dpi=150, bbox_inches='tight')
 plt.show()
@@ -4641,19 +4636,19 @@ plt.show()
 
 ### STEP 4: Statistical Analysis
 ```python
-# 🖥 STEP 4: STATISTICAL ANALYSIS
+# STEP 4: STATISTICAL ANALYSIS
 print('=== ANALISIS STATISTIK ===')
 # 1. Churn Rate per Segmen Utama
-print('\n1. Churn Rate per Faktor:')
+print('\\n1. Churn Rate per Faktor:')
 for col in ['gender', 'senior_citizen', 'partner', 'contract', 'internet_service']:
     churn_by = df_clean.groupby(col)['churn_binary'].agg(['mean', 'count'])
     churn_by.columns = ['churn_rate', 'n']
     churn_by['churn_pct'] = (churn_by['churn_rate'] * 100).round(1)
-    print(f'\n  {col.upper()}:')
+    print(f'\\n  {col.upper()}:')
     print(churn_by[['n', 'churn_pct']].to_string())
 
 # 2. T-test: Apakah monthly_charges signifikan berbeda?
-print('\n2. T-Test Monthly Charges (Churn vs Tidak):')
+print('\\n2. T-Test Monthly Charges (Churn vs Tidak):')
 churned = df_clean[df_clean['churn'] == 'Yes']['monthly_charges']
 not_churned = df_clean[df_clean['churn'] == 'No']['monthly_charges']
 t, p = stats.ttest_ind(churned, not_churned)
@@ -4663,13 +4658,13 @@ print(f'  t-statistic    : {t:.4f}')
 print(f'  p-value        : {p:.6f} → {"SIGNIFIKAN" if p < 0.05 else "tidak signifikan"}')
 
 # 3. Chi-square test: Contract vs Churn
-print('\n3. Chi-Square Test: Contract vs Churn:')
+print('\\n3. Chi-Square Test: Contract vs Churn:')
 ct = pd.crosstab(df_clean['contract'], df_clean['churn'])
 chi2, p_chi, dof, expected = stats.chi2_contingency(ct)
 print(f'  chi2 = {chi2:.2f}, p = {p_chi:.6f}, df = {dof}')
 print(f'  Kesimpulan: Kontrak {"sangat" if p_chi < 0.001 else ""} berhubungan dengan churn!')
 
-# 4. Cramér's V (effect size untuk chi-square)
+# 4. Cramér\'s V (effect size untuk chi-square)
 n_val = ct.sum().sum()
 min_dim = min(ct.shape) - 1
 cramers_v = np.sqrt(chi2 / (n_val * min_dim))
@@ -4677,12 +4672,12 @@ print(f"  Cramér's V = {cramers_v:.3f} (effect size: {'weak' if cramers_v < 0.1
 
 # 5. Pearson correlation: tenure vs churn
 r, p = stats.pearsonr(df_clean['tenure'], df_clean['churn_binary'])
-print(f'\n4. Korelasi Pearson (tenure vs churn_binary): r={r:.3f}, p={p:.6f}')
+print(f'\\n4. Korelasi Pearson (tenure vs churn_binary): r={r:.3f}, p={p:.6f}')
 ```
 
 ### STEP 5: Predictive Model (Logistic Regression vs Random Forest)
 ```python
-# 🖥 STEP 5: SIMPLE PREDICTIVE MODEL (Logistic Regression)
+# STEP 5: SIMPLE PREDICTIVE MODEL (Logistic Regression)
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
@@ -4690,7 +4685,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (classification_report, confusion_matrix,
                              roc_auc_score, roc_curve, ConfusionMatrixDisplay)
 
-# ─ Prepare Features ───────────────────────────────
+# Prepare Features 
 features = ['tenure', 'monthly_charges', 'total_charges',
             'senior_citizen', 'has_multiple_services']
 
@@ -4713,14 +4708,14 @@ scaler = StandardScaler()
 X_train_sc = scaler.fit_transform(X_train)
 X_test_sc = scaler.transform(X_test)
 
-# ─ Model 1: Logistic Regression ──────────────────
+# Model 1: Logistic Regression 
 lr = LogisticRegression(max_iter=500, class_weight='balanced', random_state=42)
 lr.fit(X_train_sc, y_train)
 y_pred_lr = lr.predict(X_test_sc)
 y_prob_lr = lr.predict_proba(X_test_sc)[:, 1]
 auc_lr = roc_auc_score(y_test, y_prob_lr)
 
-# ─ Model 2: Random Forest ────────────────────────
+# Model 2: Random Forest 
 rf = RandomForestClassifier(n_estimators=100, class_weight='balanced',
                             random_state=42, n_jobs=-1)
 rf.fit(X_train, y_train)
@@ -4731,10 +4726,10 @@ auc_rf = roc_auc_score(y_test, y_prob_rf)
 print('=== MODEL PERFORMANCE ===')
 print(f'Logistic Regression AUC : {auc_lr:.4f}')
 print(f'Random Forest AUC       : {auc_rf:.4f}')
-print('\nClassification Report (Random Forest):')
+print('\\nClassification Report (Random Forest):')
 print(classification_report(y_test, y_pred_rf, target_names=['No Churn', 'Churn']))
 
-# ─ Visualisasi Model ─────────────────────────────
+# Visualisasi Model 
 fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 fig.suptitle('Model Evaluation — Churn Prediction', fontsize=14, fontweight='bold')
 
@@ -4742,7 +4737,7 @@ fig.suptitle('Model Evaluation — Churn Prediction', fontsize=14, fontweight='b
 ConfusionMatrixDisplay.from_predictions(
     y_test, y_pred_rf, display_labels=['No Churn', 'Churn'],
     cmap='Blues', ax=axes[0], colorbar=False)
-axes[0].set_title('Confusion Matrix\n(Random Forest)')
+axes[0].set_title('Confusion Matrix\\n(Random Forest)')
 
 # ROC Curve
 for model_name, y_prob, auc in [('Logistic Reg', y_prob_lr, auc_lr),
@@ -4759,7 +4754,7 @@ axes[1].legend()
 feat_imp = pd.Series(rf.feature_importances_, index=features)
 feat_imp = feat_imp.sort_values(ascending=True).tail(12)
 axes[2].barh(feat_imp.index, feat_imp.values, color='steelblue')
-axes[2].set_title('Feature Importance\n(Random Forest)')
+axes[2].set_title('Feature Importance\\n(Random Forest)')
 axes[2].set_xlabel('Importance Score')
 plt.tight_layout()
 plt.show()
@@ -4767,17 +4762,17 @@ plt.show()
 
 ### STEP 6: Insight & Rekomendasi Bisnis
 ```python
-# 🖥 STEP 6: REKOMENDASI BISNIS
+# STEP 6: REKOMENDASI BISNIS
 print('='*60)
 print('          LAPORAN AKHIR & REKOMENDASI BISNIS')
 print('='*60)
 overall_churn = df_clean['churn_binary'].mean()
-print(f'\n📊 RINGKASAN EKSEKUTIF:')
+print(f'\\n RINGKASAN EKSEKUTIF:')
 print(f'  Total Pelanggan        : {len(df_clean):,}')
 print(f'  Churn Rate Overall     : {overall_churn*100:.1f}%')
 print(f'  Estimated Revenue Lost : Rp {df_clean[df_clean["churn"]=="Yes"]["monthly_charges"].sum()*12:,.0f}/tahun')
 
-print('\n🔍 TEMUAN UTAMA:')
+print('\\n TEMUAN UTAMA:')
 mtm_churn = df_clean[df_clean['contract'] == 'Month-to-month']['churn_binary'].mean() * 100
 fiber_churn = df_clean[df_clean['internet_service'] == 'Fiber optic']['churn_binary'].mean() * 100
 new_cust_churn = df_clean[df_clean['tenure'] <= 12]['churn_binary'].mean() * 100
@@ -4788,7 +4783,7 @@ print(f'  3. Pelanggan baru (<12 bln) : churn {new_cust_churn:.1f}% (kritis!)')
 print(f'  4. Monthly charges tinggi   : korelasi positif dengan churn')
 print(f'  5. Senior citizen           : churn rate lebih tinggi')
 
-print('\n🎯 REKOMENDASI STRATEGI RETENSI:')
+print('\\n REKOMENDASI STRATEGI RETENSI:')
 print(f'  R1. Tawarkan insentif upgrade ke kontrak 1-2 tahun')
 print(f'      → Target: {len(df_clean[df_clean["contract"]=="Month-to-month"]):,} pelanggan MTM')
 print(f'  R2. Program onboarding 90 hari untuk pelanggan baru')
@@ -4804,14 +4799,14 @@ at_risk = df_clean[
     (df_clean['churn'] == 'No')  # belum churn tapi berisiko tinggi
 ].copy()
 
-print(f'\n⚠ Pelanggan at-risk (prob>70%, belum churn): {len(at_risk):,}')
+print(f'\\n Pelanggan at-risk (prob>70%, belum churn): {len(at_risk):,}')
 print('  → Prioritaskan program retensi untuk segmen ini!')
 
 # Export daftar at-risk
 at_risk_export = at_risk[['customer_id', 'contract', 'tenure',
                           'monthly_charges', 'churn_probability']].sort_values(
     'churn_probability', ascending=False).head(50)
-print('\nTop 10 At-Risk Pelanggan:')
+print('\\nTop 10 At-Risk Pelanggan:')
 print(at_risk_export.head(10).to_string(index=False))
 print('='*60)
 print('Model AUC:', f'{auc_rf:.4f}', '— Siap untuk deployment!')
@@ -4829,7 +4824,7 @@ Seorang praktisi data perlu memahami fondasi konseptual Machine Learning secara 
 
 ### Alur Kerja ML: Train-Test Split, Cross-Validation, dan Overfitting
 ```python
-# 🖥 Train-Test Split dan Cross-Validation yang Benar
+# Train-Test Split dan Cross-Validation yang Benar
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 
@@ -4858,15 +4853,15 @@ print(f'Akurasi cross-validation: {skor_cv.mean():.2%} (+/- {skor_cv.std():.2%})
 * **`stratify=y`**: Memastikan proporsi kelas positif tetap seimbang antara data training dan test, sangat krusial pada kasus *imbalanced* seperti churn dan fraud detection.
 
 ### Metrik Evaluasi: Kapan Menggunakan Apa
-* **Accuracy**: Proporsi prediksi benar dari keseluruhan data. Hanya layak jika proporsi kelas seimbang.
-* **Precision**: Dari semua yang diprediksi positif, berapa persen yang benar-benar positif. Diprioritaskan jika biaya *False Positive* tinggi.
-* **Recall**: Dari semua yang sebenarnya positif, berapa persen yang berhasil terdeteksi model. Diprioritaskan jika biaya *False Negative* tinggi (misalnya pasien sakit atau nasabah churn yang lolos).
-* **F1-Score**: Rata-rata harmonik dari Precision dan Recall.
-* **MAE (Mean Absolute Error)**: Untuk regresi, rata-rata selisih absolut antara prediksi dan nilai aktual dalam satuan asli target.
+1. **Accuracy**: Proporsi prediksi benar dari keseluruhan data. Hanya layak jika proporsi kelas seimbang.
+2. **Precision**: Dari semua yang diprediksi positif, berapa persen yang benar-benar positif. Diprioritaskan jika biaya *False Positive* tinggi.
+3. **Recall**: Dari semua yang sebenarnya positif, berapa persen yang berhasil terdeteksi model. Diprioritaskan jika biaya *False Negative* tinggi (misalnya pasien sakit atau nasabah churn yang lolos).
+4. **F1-Score**: Rata-rata harmonik dari Precision dan Recall.
+5. **MAE (Mean Absolute Error)**: Untuk regresi, rata-rata selisih absolut antara prediksi dan nilai aktual dalam satuan asli target.
 
 ---
 
-## 📝 QUIZ TAMBAHAN — MACHINE LEARNING
+## QUIZ TAMBAHAN — MACHINE LEARNING
 
 1. Sebuah model fraud detection mendapat akurasi 98% pada dataset dengan hanya 2% kasus fraud. Mengapa angka ini bisa menyesatkan, dan metrik apa yang lebih tepat digunakan?
    * **Jawaban:** Karena model yang selalu memprediksi "bukan fraud" otomatis mendapat akurasi 98% tanpa benar-benar mendeteksi fraud apa pun (kelas tidak seimbang). Metrik yang lebih tepat adalah Precision, Recall, dan F1-Score yang secara spesifik mengukur kemampuan mendeteksi kelas minoritas (fraud).
@@ -4905,11 +4900,9 @@ Halaman 90–93 & 95–98 dari 148 | Statsmodels · Scipy · Pandas · Matplotli
 ## 6.2 Proyek: Time Series — Forecasting Penjualan
 
 ```python
-# 🖥 PROYEK 2: Time Series Analysis & Forecasting
-# ══════════════════════════════════════════════════
-# PROYEK 2: TIME SERIES ANALYSIS & FORECASTING
-# ══════════════════════════════════════════════════
-import pandas as pd
+# PROYEK 2: Time Series Analysis & Forecasting
+# # PROYEK 2: TIME SERIES ANALYSIS & FORECASTING
+# import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -4917,7 +4910,7 @@ from scipy import stats
 
 np.random.seed(42)
 
-# ══ Generate Time Series Data ════════════════════
+# Generate Time Series Data 
 # Data 3 tahun harian
 dates = pd.date_range('2022-01-01', '2024-12-31', freq='D')
 n = len(dates)  # 1096 hari
@@ -4940,7 +4933,7 @@ sales = np.maximum(sales, 10)     # tidak boleh negatif
 ts = pd.DataFrame({'tanggal': dates, 'penjualan': sales.round(1)})
 ts = ts.set_index('tanggal')
 
-# ══ Resample & Agregasi ══════════════════════════
+# Resample & Agregasi 
 daily = ts['penjualan']
 weekly_s = ts['penjualan'].resample('W').mean().rename('weekly_avg')
 monthly = ts['penjualan'].resample('M').agg(
@@ -4948,7 +4941,7 @@ monthly = ts['penjualan'].resample('M').agg(
 ).round(2)
 monthly.columns = ['total', 'average', 'std']
 
-# ══ Analisis Tren & Komponen ═════════════════════
+# Analisis Tren & Komponen 
 print('=== STATISTIK TIME SERIES ===')
 print(f'Periode     : {ts.index[0].date()} s.d. {ts.index[-1].date()}')
 print(f'Total Hari  : {len(ts):,}')
@@ -4959,9 +4952,9 @@ print(f'Min / Max   : {daily.min():.1f} / {daily.max():.1f}')
 # Linear trend
 x_trend = np.arange(len(ts))
 slope, intercept, r, p, se = stats.linregress(x_trend, daily.values)
-print(f'\nTrend: slope={slope:.3f} unit/hari, R²={r**2:.3f}')
+print(f'\\nTrend: slope={slope:.3f} unit/hari, R²={r**2:.3f}')
 
-# ══ Moving Average & Forecasting Sederhana ═══════
+# Moving Average & Forecasting Sederhana 
 ma7 = daily.rolling(window=7, center=True).mean()
 ma30 = daily.rolling(window=30, center=True).mean()
 ma90 = daily.rolling(window=90, center=True).mean()
@@ -4981,7 +4974,7 @@ ci = 1.96 * daily.std()
 forecast_upper = forecast + ci
 forecast_lower = forecast - ci
 
-# ══ Visualisasi Time Series 6-Panel ══════════════
+# Visualisasi Time Series 6-Panel 
 fig, axes = plt.subplots(3, 2, figsize=(18, 14))
 fig.suptitle('TIME SERIES ANALYSIS — PENJUALAN HARIAN 2022-2024',
              fontsize=15, fontweight='bold', y=0.99)
@@ -5027,7 +5020,7 @@ pivot_heat = ts.pivot_table(values='penjualan', index='year', columns='month',
                             aggfunc='mean')[month_order]
 sns.heatmap(pivot_heat, annot=True, fmt='.0f', cmap='YlOrRd',
             ax=ax4, linewidths=0.5, cbar_kws={'shrink': 0.8})
-ax4.set_title('Heatmap Rata-rata Penjualan\nper Bulan × Tahun')
+ax4.set_title('Heatmap Rata-rata Penjualan\\nper Bulan × Tahun')
 
 # Panel 5: Revenue Bulanan (Bar)
 ax5 = axes[2, 0]
@@ -5052,14 +5045,14 @@ mu, sigma = stats.norm.fit(residuals)
 x_pdf = np.linspace(residuals.min(), residuals.max(), 200)
 ax6.plot(x_pdf, stats.norm.pdf(x_pdf, mu, sigma), 'r-', lw=2.5, label='Normal Fit')
 _, p_norm = stats.normaltest(residuals)
-ax6.set_title(f'Distribusi Residual\n(normtest p={p_norm:.4f})')
+ax6.set_title(f'Distribusi Residual\\n(normtest p={p_norm:.4f})')
 ax6.legend()
 
 plt.tight_layout(rect=[0, 0, 1, 0.97])
 plt.savefig('timeseries_analysis.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-print('\n=== INSIGHT TIME SERIES ===')
+print('\\n=== INSIGHT TIME SERIES ===')
 print(f'Growth Rate 2022→2024 : {(daily[-365:].mean()/daily[:365].mean()-1)*100:.1f}%')
 print(f'Bulan terbaik (avg)   : {pivot_heat.mean().idxmax()}')
 print(f'Hari terbaik (avg)    : {day_avg.idxmax()}')
@@ -5071,7 +5064,7 @@ print(f'Forecast 30 hari (mean): {forecast[:30].mean():.1f}')
 ## 6.4 Time Series Lanjutan: Decomposition, Stationarity, dan Evaluasi Forecast
 
 ```python
-# 🖥 Seasonal Decomposition: Memisahkan Trend, Seasonality, dan Residual
+# Seasonal Decomposition: Memisahkan Trend, Seasonality, dan Residual
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 # Dekomposisi memisahkan data time series menjadi 3 komponen:
@@ -5091,7 +5084,7 @@ plt.show()
 
 ### Uji Stasioneritas dengan Augmented Dickey-Fuller (ADF)
 ```python
-# 🖥 Uji Stasioneritas dengan Augmented Dickey-Fuller (ADF)
+# Uji Stasioneritas dengan Augmented Dickey-Fuller (ADF)
 from statsmodels.tsa.stattools import adfuller
 
 hasil_adf = adfuller(daily)
@@ -5112,7 +5105,7 @@ else:
 > **Kesalahan Fatal:** Menggunakan `train_test_split(shuffle=True)` pada data time series akan menyebabkan *data leakage* (model melihat masa depan untuk memprediksi masa lalu). Gunakan **Walk-Forward Validation**.
 
 ```python
-# 🖥 Walk-Forward Validation untuk Time Series
+# Walk-Forward Validation untuk Time Series
 from sklearn.metrics import mean_absolute_error
 
 ukuran_awal_training = int(len(daily) * 0.8)
@@ -5137,12 +5130,12 @@ print('Metrik ini mencerminkan performa forecast senyatanya di produksi, '
 
 ---
 
-## 📝 QUIZ TAMBAHAN — TIME SERIES LANJUTAN
+## QUIZ TAMBAHAN — TIME SERIES LANJUTAN
 
 1. Mengapa `train_test_split(shuffle=True)` tidak boleh digunakan untuk data time series?
    * **Jawaban:** Karena akan mengacak urutan waktu sehingga model bisa "melihat" data dari masa depan saat training untuk memprediksi data di masa lalu (data leakage), menghasilkan evaluasi yang sangat bias dan tidak realistis dibanding penggunaan nyata di produksi.
 2. Apa fungsi uji Augmented Dickey-Fuller (ADF) dalam analisis time series, dan apa yang dilakukan jika data terbukti tidak stasioner?
-   * **Jawaban:** ADF menguji apakah data time series bersifat stasioner (rata-rata dan varians konstan terhadap waktu) secara statistik. Jika tidak stasioner ($p\text{-value} \ge 0.05$), teknik differencing (menghitung selisih antar periode berurutan) umumnya diterapkan untuk menghilangkan komponen trend.
+   * **Jawaban:** ADF menguji apakah data time series bersifat stasioner (rata-rata dan varians konstan terhadap waktu) secara statistik. Jika tidak stasioner ($p\\text{-value} \\ge 0.05$), teknik differencing (menghitung selisih antar periode berurutan) umumnya diterapkan untuk menghilangkan komponen trend.
 3. Jelaskan 3 komponen dalam dekomposisi time series klasik!
    * **Jawaban:** Trend (pergerakan arah data jangka panjang yang naik atau turun), Seasonality (fluktuasi periodik yang berulang dalam interval waktu tertentu seperti mingguan atau tahunan), dan Residual (komponen acak/noise yang tersisa setelah tren dan musiman dikeluarkan).
 $NOTE_TS_FORECAST$,
@@ -5175,7 +5168,7 @@ Halaman 99–121 dari 148 | N-gram · Lexicon · TF-IDF · Word2Vec · FastText 
 
 ## 7.1 Gambaran Dataset & Business Context
 
-📂 **Dataset:** `Indonesian_Sentiment_Tweet_Dataset_Unlabeled.csv` (453.390 tweet berbahasa Indonesia & Melayu — **Unlabeled**).
+ **Dataset:** `Indonesian_Sentiment_Tweet_Dataset_Unlabeled.csv` (453.390 tweet berbahasa Indonesia & Melayu — **Unlabeled**).
 
 | Karakteristik | Nilai / Keterangan |
 | :--- | :--- |
@@ -5188,18 +5181,18 @@ Halaman 99–121 dari 148 | N-gram · Lexicon · TF-IDF · Word2Vec · FastText 
 | **Jumlah kata rata-rata**| 12.7 kata per tweet |
 
 ### Aplikasi Bisnis Analisis Sentimen:
-* **Brand Monitoring**: Memantau persepsi publik terhadap merek/produk secara realtime.
-* **Customer Feedback**: Memahami keluhan dan apresiasi pelanggan dalam skala jutaan percakapan.
-* **Competitor Analysis**: Membandingkan sentimen pasar terhadap kompetitor.
-* **Crisis Detection**: Mendeteksi krisis reputasi sedini mungkin sebelum viral.
-* **Product Development**: Menemukan *pain points* dan kebutuhan fitur dari percakapan organik.
+1. **Brand Monitoring**: Memantau persepsi publik terhadap merek/produk secara realtime.
+2. **Customer Feedback**: Memahami keluhan dan apresiasi pelanggan dalam skala jutaan percakapan.
+3. **Competitor Analysis**: Membandingkan sentimen pasar terhadap kompetitor.
+4. **Crisis Detection**: Mendeteksi krisis reputasi sedini mungkin sebelum viral.
+5. **Product Development**: Menemukan *pain points* dan kebutuhan fitur dari percakapan organik.
 
 ---
 
 ## 7.2 Import Library & Konfigurasi
 
 ```python
-# 🖥 STEP 0: Setup & Import
+# STEP 0: Setup & Import
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5227,7 +5220,7 @@ plt.rcParams.update({
     'figure.facecolor' : 'white',
 })
 
-print('✅ Library berhasil diimport!')
+print(' Library berhasil diimport!')
 ```
 
 ---
@@ -5235,7 +5228,7 @@ print('✅ Library berhasil diimport!')
 ## 7.3 Load & Inspeksi Data Awal
 
 ```python
-# 🖥 STEP 1: Load & Inspeksi Awal
+# STEP 1: Load & Inspeksi Awal
 df = pd.read_csv('Indonesian_Sentiment_Tweet_Dataset_Unlabeled.csv',
                  header=None,
                  names=['tweet'],
@@ -5249,16 +5242,16 @@ print(f'Kolom       : {df.columns.tolist()}')
 print(f'Tipe data   : {df.dtypes["tweet"]}')
 print(f'Null values : {df["tweet"].isnull().sum()}')
 
-print('\n--- 5 TWEET PERTAMA ---')
+print('\\n--- 5 TWEET PERTAMA ---')
 for i, tweet in enumerate(df['tweet'].head(5), 1):
     print(f'{i}. {tweet[:90]}...' if len(str(tweet)) > 90 else f'{i}. {tweet}')
 
-# ── Statistik Panjang Tweet ───────────────────────────────
+# Statistik Panjang Tweet 
 df['tweet'] = df['tweet'].astype(str)
 df['panjang_char'] = df['tweet'].str.len()
 df['jumlah_kata'] = df['tweet'].str.split().str.len()
 
-print('\n--- STATISTIK PANJANG ---')
+print('\\n--- STATISTIK PANJANG ---')
 stats_df = pd.DataFrame({
     'Karakter': df['panjang_char'].describe(),
     'Kata'    : df['jumlah_kata'].describe()
@@ -5271,49 +5264,49 @@ print(stats_df)
 ## 7.4 Data Cleaning & Preprocessing (Termasuk Slang Normalization)
 
 ```python
-# 🖥 STEP 2: Preprocessing & Cleaning
-# ══ Definisi Fungsi Preprocessing ════════════════════════
+# STEP 2: Preprocessing & Cleaning
+# Definisi Fungsi Preprocessing 
 def clean_tweet(text):
-    """Membersihkan satu tweet dari noise."""
+    \"\"\"Membersihkan satu tweet dari noise.\"\"\"
     text = str(text).lower()
     text = re.sub(r'http\S+|www\.\S+', '', text)   # hapus URL
     text = re.sub(r'@\w+', '', text)               # hapus mention
     text = re.sub(r'#\w+', '', text)               # hapus hashtag
     text = re.sub(r'\d+', '', text)                # hapus angka
     text = re.sub(r'[^\w\s]', ' ', text)           # hapus tanda baca
-    text = re.sub(r'(.){3,}', r'', text)     # 'huhuhuhu' → 'huhu'
+    text = re.sub(r'(.)\1{3,}', r'\1\1', text)     # 'huhuhuhu' → 'huhu'
     text = re.sub(r'\s+', ' ', text).strip()       # normalisasi spasi
     return text
 
 def normalize_slang(text):
-    """Normalisasi kata gaul/tidak baku ke kata baku Indonesia & Melayu."""
+    \"\"\"Normalisasi kata gaul/tidak baku ke kata baku Indonesia & Melayu.\"\"\"
     slang_dict = {
         # Bahasa Indonesia
-        r'gak'    : 'tidak', r'ga'     : 'tidak', r'nggak'  : 'tidak',
-        r'ngga'   : 'tidak', r'enggak' : 'tidak', r'udah'   : 'sudah',
-        r'udeh'   : 'sudah', r'banget' : 'sekali', r'bngt'  : 'sekali',
-        r'kyk'    : 'seperti', r'kayak' : 'seperti', r'kmrn'  : 'kemarin',
-        r'skrg'   : 'sekarang', r'skrang': 'sekarang', r'yg'   : 'yang',
-        r'dgn'    : 'dengan', r'bgt'   : 'sekali', r'gt'    : 'itu',
-        r'sih'    : '', r'deh'    : '', r'nih'   : 'ini',
-        r'sama aja': 'sama saja', r'gimana': 'bagaimana', r'kenapa': 'mengapa',
-        r'kapan'  : 'kapan', r'jgn'    : 'jangan', r'btw'   : 'ngomong-ngomong',
-        r'wkwk'   : '', r'hehe'   : '', r'haha'  : '', r'hihi'  : '',
+        r'\bgak\b'    : 'tidak', r'\bga\b'     : 'tidak', r'\bnggak\b'  : 'tidak',
+        r'\bngga\b'   : 'tidak', r'\benggak\b' : 'tidak', r'\budah\b'   : 'sudah',
+        r'\budeh\b'   : 'sudah', r'\bbanget\b' : 'sekali', r'\bbngt\b'  : 'sekali',
+        r'\bkyk\b'    : 'seperti', r'\bkayak\b' : 'seperti', r'\bkmrn\b'  : 'kemarin',
+        r'\bskrg\b'   : 'sekarang', r'\bskrang\b': 'sekarang', r'\byg\b'   : 'yang',
+        r'\bdgn\b'    : 'dengan', r'\bbgt\b'   : 'sekali', r'\bgt\b'    : 'itu',
+        r'\bsih\b'    : '', r'\bdeh\b'    : '', r'\bnih\b'   : 'ini',
+        r'\bsama aja\b': 'sama saja', r'\bgimana\b': 'bagaimana', r'\bkenapa\b': 'mengapa',
+        r'\bkapan\b'  : 'kapan', r'\bjgn\b'    : 'jangan', r'\bbtw\b'   : 'ngomong-ngomong',
+        r'\bwkwk\b'   : '', r'\bhehe\b'   : '', r'\bhaha\b'  : '', r'\bhihi\b'  : '',
         # Bahasa Melayu
-        r'tak'    : 'tidak', r'takde'  : 'tidak ada', r'je'    : 'saja',
-        r'la'     : '', r'pun'    : 'juga', r'dah'   : 'sudah',
-        r'nak'    : 'mau', r'boleh'  : 'bisa', r'macam' : 'seperti',
+        r'\btak\b'    : 'tidak', r'\btakde\b'  : 'tidak ada', r'\bje\b'    : 'saja',
+        r'\bla\b'     : '', r'\bpun\b'    : 'juga', r'\bdah\b'   : 'sudah',
+        r'\bnak\b'    : 'mau', r'\bboleh\b'  : 'bisa', r'\bmacam\b' : 'seperti',
     }
     for pattern, replacement in slang_dict.items():
         text = re.sub(pattern, replacement, text)
     return re.sub(r'\s+', ' ', text).strip()
 
-# ── Terapkan Preprocessing ────────────────────────────────
+# Terapkan Preprocessing 
 print('Membersihkan 453.390 tweet...')
 df['tweet_clean'] = df['tweet'].apply(clean_tweet)
 df['tweet_norm'] = df['tweet_clean'].apply(normalize_slang)
 
-# ── Hapus tweet terlalu pendek & duplikat ────────────────
+# Hapus tweet terlalu pendek & duplikat 
 n_before = len(df)
 df = df[df['tweet_clean'].str.len() >= 5]       # min 5 karakter
 df = df.drop_duplicates(subset='tweet_clean')    # hapus duplikat
@@ -5330,7 +5323,7 @@ print(f'Dihapus          : {n_before - n_after:,} baris')
 ## 7.5 Lexicon-Based Sentiment Analysis
 
 ```python
-# 🖥 STEP 3: Lexicon-Based Sentiment Labeling
+# STEP 3: Lexicon-Based Sentiment Labeling
 KATA_POSITIF = {
     # Perasaan positif
     'senang','bahagia','gembira','suka','cinta','sayang','bangga',
@@ -5372,10 +5365,10 @@ KATA_NEGASI = {'tidak','tak','bukan','jangan','belum','tanpa',
                'ga','gak','nggak','ngga','enggak','tiada','non'}
 
 def hitung_skor_sentimen(text):
-    """
+    \"\"\"
     Menghitung skor sentimen berbasis lexicon dengan negasi kontekstual.
     'tidak baik' = negatif; 'tidak buruk' = sedikit positif (+0.5).
-    """
+    \"\"\"
     words = text.lower().split()
     skor_pos = 0
     skor_neg = 0
@@ -5417,9 +5410,9 @@ df['skor_neg'] = hasil.apply(lambda x: x[2])
 df['sentimen'] = df.apply(lambda r: label_sentimen(r['skor_bersih'], r['skor_pos'], r['skor_neg']), axis=1)
 
 dist = df['sentimen'].value_counts()
-print('\n=== DISTRIBUSI SENTIMEN HASIL LABELING ===')
+print('\\n=== DISTRIBUSI SENTIMEN HASIL LABELING ===')
 for sent, cnt in dist.items():
-    bar = '█' * int(cnt/dist.max()*30)
+    bar = '' * int(cnt/dist.max()*30)
     print(f'  {sent:10}: {cnt:6,} ({cnt/len(df)*100:5.1f}%) {bar}')
 ```
 
@@ -5428,7 +5421,7 @@ for sent, cnt in dist.items():
 ## 7.6 Analisis Emosi 8 Kategori (Plutchik's Wheel)
 
 ```python
-# 🖥 STEP 4: Emotion Detection
+# STEP 4: Emotion Detection
 EMOSI_DICT = {
     'Kebahagiaan': ['bahagia','senang','gembira','happy','syukur','sukacita',
                     'alhamdulillah','beruntung','suka','gembira','riang'],
@@ -5452,7 +5445,7 @@ def deteksi_emosi(text):
     text_lower = text.lower()
     skor_emosi = {}
     for emosi, keywords in EMOSI_DICT.items():
-        skor = sum(1 for kw in keywords if re.search(r'\b'+re.escape(kw)+r'\b', text_lower))
+        skor = sum(1 for kw in keywords if re.search(r'\\b'+re.escape(kw)+r'\\b', text_lower))
         if skor > 0:
             skor_emosi[emosi] = skor
     if not skor_emosi:
@@ -5460,7 +5453,7 @@ def deteksi_emosi(text):
     return max(skor_emosi, key=skor_emosi.get)
 
 df['emosi'] = df['tweet_norm'].apply(deteksi_emosi)
-print('\n=== DISTRIBUSI EMOSI ===')
+print('\\n=== DISTRIBUSI EMOSI ===')
 for emosi, cnt in df['emosi'].value_counts().items():
     print(f'  {emosi:22}: {cnt:6,} ({cnt/len(df)*100:4.1f}%)')
 ```
@@ -5470,7 +5463,7 @@ for emosi, cnt in df['emosi'].value_counts().items():
 ## 7.7 Analisis Frekuensi Kata, Stopwords & N-gram
 
 ```python
-# 🖥 STEP 5: Word & N-gram Frequency Analysis
+# STEP 5: Word & N-gram Frequency Analysis
 STOPWORDS = {
     'yang','dengan','aku','kamu','dia','ini','itu','ada','tapi','tak',
     'tidak','untuk','dari','kita','dan','juga','jadi','saya','aja',
@@ -5486,7 +5479,7 @@ STOPWORDS = {
 }
 
 def get_clean_words(text):
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+    words = re.findall(r'\\b[a-zA-Z]{3,}\\b', text.lower())
     return [w for w in words if w not in STOPWORDS]
 
 def get_bigrams(words):
@@ -5514,9 +5507,9 @@ for sent in ['Positif', 'Negatif', 'Netral', 'Campuran']:
 ## 7.8 Dashboard Visualisasi Komprehensif (9 Panel)
 
 ```python
-# 🖥 STEP 6: Dashboard Visualisasi Utama (9 Panel)
+# STEP 6: Dashboard Visualisasi Utama (9 Panel)
 fig = plt.figure(figsize=(20, 15))
-fig.suptitle('DASHBOARD ANALISIS SENTIMEN TWEET INDONESIA\n453.390 Tweets',
+fig.suptitle('DASHBOARD ANALISIS SENTIMEN TWEET INDONESIA\\n453.390 Tweets',
              fontsize=18, fontweight='bold', y=0.99)
 gs = gridspec.GridSpec(3, 3, figure=fig, hspace=0.45, wspace=0.38)
 
@@ -5528,7 +5521,7 @@ ax1.pie(sent_dist.values, labels=sent_dist.index, autopct='%1.1f%%',
         colors=[colors_sent.get(s, '#BBBBBB') for s in sent_dist.index],
         wedgeprops=dict(width=0.55, edgecolor='white', linewidth=2),
         startangle=90, pctdistance=0.75)
-ax1.text(0, 0, f'{len(df):,}\ntweet', ha='center', va='center', fontsize=10, fontweight='bold')
+ax1.text(0, 0, f'{len(df):,}\\ntweet', ha='center', va='center', fontsize=10, fontweight='bold')
 ax1.set_title('Distribusi Sentimen')
 
 # Panel 2: Bar Chart Emosi
@@ -5550,7 +5543,7 @@ for sent, color in [('Positif', '#4CAF50'), ('Negatif', '#F44336'), ('Netral', '
     subset_len = df[df['sentimen'] == sent]['panjang_char']
     ax3.hist(subset_len, bins=30, alpha=0.6, color=color,
              label=f'{sent} (n={len(subset_len):,})', density=True, edgecolor='white')
-ax3.set_title('Distribusi Panjang Tweet\nper Sentimen')
+ax3.set_title('Distribusi Panjang Tweet\\nper Sentimen')
 ax3.set_xlabel('Panjang (karakter)')
 ax3.legend(fontsize=8)
 
@@ -5606,10 +5599,10 @@ stats_text = [
     ('Kata Negatif #1', word_freq['Negatif'][0][0]),
 ]
 y_pos = 0.95
-ax9.text(0.5, 1.0, '📊 RINGKASAN STATISTIK', ha='center', va='top',
+ax9.text(0.5, 1.0, ' RINGKASAN STATISTIK', ha='center', va='top',
          fontsize=12, fontweight='bold', transform=ax9.transAxes, color='#1F4E79')
 for label, value in stats_text:
-    ax9.text(0.05, y_pos, f'▸ {label}', ha='left', va='top', fontsize=9, color='#444444', transform=ax9.transAxes)
+    ax9.text(0.05, y_pos, f' {label}', ha='left', va='top', fontsize=9, color='#444444', transform=ax9.transAxes)
     ax9.text(0.95, y_pos, value, ha='right', va='top', fontsize=9, fontweight='bold', color='#1F4E79', transform=ax9.transAxes)
     y_pos -= 0.09
 
@@ -5622,7 +5615,7 @@ plt.show()
 ## 7.10 Analisis Statistik Lanjutan
 
 ```python
-# 🖥 STEP 8: Statistical Testing
+# STEP 8: Statistical Testing
 from scipy import stats as scipy_stats
 
 # 1. Uji Kruskal-Wallis (perbedaan panjang tweet antar sentimen)
@@ -5638,7 +5631,7 @@ print(f'  Kesimpulan  : {"Panjang tweet BERBEDA signifikan" if p < 0.05 else "Ti
 
 # 2. Mann-Whitney U: Positif vs Negatif
 u, p_mw = scipy_stats.mannwhitneyu(positif_len, negatif_len, alternative='two-sided')
-print(f'\nMann-Whitney (Positif vs Negatif): U={u:.0f}, p={p_mw:.6e}')
+print(f'\\nMann-Whitney (Positif vs Negatif): U={u:.0f}, p={p_mw:.6e}')
 print(f'  → Tweet Negatif rata-rata lebih panjang: {negatif_len.mean():.1f} vs {positif_len.mean():.1f} karakter')
 ```
 
@@ -5647,7 +5640,7 @@ print(f'  → Tweet Negatif rata-rata lebih panjang: {negatif_len.mean():.1f} vs
 ## 7.14 Bag of Words dan TF-IDF: Mengubah Teks Menjadi Angka
 
 ```python
-# 🖥 Bag of Words & TF-IDF
+# Bag of Words & TF-IDF
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 # Bag of Words
@@ -5659,7 +5652,7 @@ tweets_contoh = [
 vectorizer = CountVectorizer()
 bow_matrix = vectorizer.fit_transform(tweets_contoh)
 df_bow = pd.DataFrame(bow_matrix.toarray(), columns=vectorizer.get_feature_names_out())
-print('Bag of Words Matrix:\n', df_bow)
+print('Bag of Words Matrix:\\n', df_bow)
 
 # TF-IDF dan Kata Paling Representatif per Sentimen
 tfidf_vectorizer = TfidfVectorizer(max_features=1000, min_df=2)
@@ -5672,7 +5665,7 @@ kata_teratas = pd.Series(
     skor_rata_rata, index=tfidf_vectorizer.get_feature_names_out()
 ).sort_values(ascending=False).head(10)
 
-print('\nKata paling representatif untuk sentimen Negatif:')
+print('\\nKata paling representatif untuk sentimen Negatif:')
 print(kata_teratas)
 ```
 
@@ -5681,7 +5674,7 @@ print(kata_teratas)
 ## 7.15 Word Embedding: Word2Vec dan FastText
 
 ```python
-# 🖥 Melatih Word2Vec Sederhana dengan Gensim
+# Melatih Word2Vec Sederhana dengan Gensim
 # pip install gensim
 from gensim.models import Word2Vec
 
@@ -5694,7 +5687,7 @@ model_w2v = Word2Vec(
     workers=4,
 )
 
-print('Kata paling mirip dengan "bagus":')
+print('Kata paling mirip dengan \"bagus\":')
 print(model_w2v.wv.most_similar('bagus', topn=5))
 
 # FastText memecah kata menjadi character n-gram, sehingga kebal terhadap Out-of-Vocabulary (OOV)
@@ -5706,7 +5699,7 @@ print(model_w2v.wv.most_similar('bagus', topn=5))
 ## 7.16 Topic Modeling dengan LDA (Latent Dirichlet Allocation)
 
 ```python
-# 🖥 Topic Modeling dengan LDA pada Tweet Negatif
+# Topic Modeling dengan LDA pada Tweet Negatif
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -5727,7 +5720,7 @@ for idx_topik, bobot in enumerate(lda_model.components_):
 
 ---
 
-## 📝 QUIZ TAMBAHAN — NLP & TOPIC MODELING
+## QUIZ TAMBAHAN — NLP & TOPIC MODELING
 
 1. Jelaskan kelemahan utama Bag of Words dibanding TF-IDF, dan bagaimana TF-IDF mengatasinya!
    * **Jawaban:** Bag of Words memberi bobot sama untuk semua kata berdasarkan frekuensi mentah, sehingga kata umum yang kurang informatif (seperti "yang", "di") bisa mendominasi. TF-IDF mengatasinya dengan menurunkan bobot kata yang muncul di banyak dokumen (IDF rendah) dan menaikkan bobot kata yang distingtif untuk dokumen tertentu.

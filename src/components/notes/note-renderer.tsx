@@ -35,13 +35,13 @@ function preprocessObsidianMarkdown(
       ? raw.replace(/\\n/g, "\n")
       : raw;
 
-  // Split content by code fences (``` ... ```)
-  const codeBlockRegex = /(```[\s\S]*?```|`[^`\n]+`)/g;
-  const parts = normalizedRaw.split(codeBlockRegex);
+  // Split content by code fences (``` ... ```), inline code (`...`), display math ($$ ... $$), and inline math ($...$)
+  const safeBlockRegex = /(```[\s\S]*?```|`[^`\n]+`|\$\$[\s\S]*?\$\$|\$(?!\s)[^\$\n]+(?<!\s)\$)/g;
+  const parts = normalizedRaw.split(safeBlockRegex);
 
   return parts
     .map((part, index) => {
-      // If odd index, it was matched by codeBlockRegex -> do not touch
+      // If odd index, it was matched by safeBlockRegex -> do not touch (code or math)
       if (index % 2 === 1) {
         return part;
       }
@@ -125,8 +125,8 @@ export function NoteRenderer({
   return (
     <div className={`prose-academic text-text-primary ${className}`}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeKatex]}
+        remarkPlugins={[remarkMath, remarkGfm]}
+        rehypePlugins={[[rehypeKatex, { output: "htmlAndMathml", strict: false, throwOnError: false }]]}
         components={{
           // Custom Code Block rendering using existing CodeBlock component
           code({ className: codeClass, children, ...props }) {

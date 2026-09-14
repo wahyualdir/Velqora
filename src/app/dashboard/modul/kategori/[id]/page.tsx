@@ -271,6 +271,46 @@ export default function DedicatedCategoryModulesPage({
     }));
   }, [vaultNotes, category, categoryId]);
 
+  // Ekstraksi subbab nyata langsung dari markdown catatan kurikulum
+  const extractSubsectionsFromNote = useCallback((markdown: string, parentId: string, parentTitle: string, chapterNum: number): DocSectionItem[] => {
+    if (!markdown) return [];
+    const lines = markdown.split("\n");
+    const subItems: DocSectionItem[] = [];
+    const seenAnchors = new Set<string>();
+
+    for (const line of lines) {
+      const match = line.match(/^##\s+(.+)$/);
+      if (match) {
+        let rawText = match[1].trim();
+        rawText = rawText.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+        rawText = rawText.replace(/[*_`]/g, "").trim();
+
+        // Abaikan heading latihan soal atau kunci jawaban di sidebar agar hierarki tetap rapi
+        const lower = rawText.toLowerCase();
+        if (
+          rawText.length > 2 &&
+          !lower.includes("latihan soal") &&
+          !lower.includes("kunci jawaban") &&
+          !lower.includes("tantangan")
+        ) {
+          const anchor = slugify(rawText);
+          if (!seenAnchors.has(anchor)) {
+            seenAnchors.add(anchor);
+            subItems.push({
+              id: `${parentId}#${anchor}`,
+              slug: anchor,
+              title: rawText,
+              parentTitle,
+              chapterNumber: chapterNum,
+              content_markdown: markdown,
+            });
+          }
+        }
+      }
+    }
+    return subItems;
+  }, []);
+
   // Daftar Seksi untuk Documentation Reader View ala Scikit-Learn (Lengkap dengan Subbab)
   const docSections = useMemo<DocSectionItem[]>(() => {
     const catName = category?.name || decodeURIComponent(categoryId);
@@ -281,29 +321,34 @@ export default function DedicatedCategoryModulesPage({
       return SCIKIT_LEARN_USER_GUIDE_SECTIONS;
     }
 
-    const defaults = getDefaultAiSections(catName);
-
+    // Jika kategori memiliki catatan kurikulum autentik di database (seperti Data Analyst, NLP, dll.)
+    // Sajikan catatan asli tersebut secara langsung tanpa penyeragaman template sintetis
     if (vaultNotes && vaultNotes.length > 0) {
-      const enrichedDefaults = enrichCurriculumToDocSections(defaults, catName);
       return vaultNotes.map((n, idx) => {
-        const defMatch = enrichedDefaults.find(
-          (d) => slugify(d.title) === n.slug || d.orderIndex === n.order_index
+        const orderIndex = n.order_index ?? idx + 1;
+        const realSubsections = extractSubsectionsFromNote(
+          n.content_markdown || "",
+          n.id,
+          n.title,
+          orderIndex
         );
+
         return {
           id: n.id,
           slug: n.slug,
           title: n.title,
-          orderIndex: n.order_index || idx + 1,
+          orderIndex,
           description: cleanMarkdownExcerpt(n.content_markdown, n.title, 160),
           content_markdown: n.content_markdown,
-          subsections: defMatch?.subsections || [],
-          codeSnippets: defMatch?.codeSnippets || [],
+          subsections: realSubsections,
+          codeSnippets: [],
         };
       });
     }
 
+    const defaults = getDefaultAiSections(catName);
     return enrichCurriculumToDocSections(defaults, catName);
-  }, [vaultNotes, category, categoryId]);
+  }, [vaultNotes, category, categoryId, extractSubsectionsFromNote]);
 
   // Filtered topics based on search & contentMode
   const filteredTopicNotes = useMemo(() => {
