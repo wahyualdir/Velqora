@@ -22,7 +22,7 @@ export interface ProjectFormData {
  * 0. CURATED STARTER AI PROJECTS
  * Memberikan contoh proyek nyata terintegrasi kurikulum AI saat database masih kosong.
  */
-export const CURATED_AI_PROJECTS: Project[] = [
+const CURATED_AI_PROJECTS: Project[] = [
   {
     id: "proj_weather_ml",
     user_id: "system",

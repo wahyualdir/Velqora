@@ -328,7 +328,7 @@ export function DocReaderLayout({
       className={`flex flex-col border border-border rounded-xl bg-white dark:bg-[#111113] overflow-hidden shadow-sm transition-all duration-300 font-sans ${
         isFullscreen
           ? "fixed inset-0 z-50 rounded-none shadow-2xl h-screen"
-          : "h-[calc(100vh-140px)] min-h-[680px]"
+          : "flex-1 h-full min-h-[calc(100vh-3.5rem)]"
       }`}
     >
       {/* ─── 1. TOP DOCUMENTATION NAVBAR (Scikit-Learn Sphinx Style) ─── */}
@@ -505,6 +505,19 @@ export function DocReaderLayout({
               </div>
             )}
           </div>
+
+          {/* Toggle view mode to Grid Kartu */}
+          {onToggleViewMode && (
+            <button
+              type="button"
+              onClick={onToggleViewMode}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-surface hover:bg-surface-secondary text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+              title="Ganti ke Tampilan Ringkasan Grid Kartu"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Tampilan Kartu</span>
+            </button>
+          )}
 
           {/* Fullscreen focus reading mode toggle */}
           <button

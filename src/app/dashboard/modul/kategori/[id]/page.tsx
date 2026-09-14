@@ -359,6 +359,40 @@ export default function DedicatedCategoryModulesPage({
   const themeColor = category?.color || "#8B5CF6";
   const CategoryIcon = getCategoryIconComponent(category?.icon);
 
+  // ─── Tampilan 1: Mode Dokumentasi Resmi ala Scikit-Learn (Full-Height Immersive) ───
+  if (viewLayout === "doc") {
+    return (
+      <div className="-mx-3 sm:-mx-5 lg:-mx-8 xl:-mx-10 -my-3.5 sm:-my-5 lg:-my-7 flex flex-col h-screen overflow-hidden">
+        <DocReaderLayout
+          categoryName={category?.name || decodeURIComponent(categoryId)}
+          categoryId={categoryId}
+          themeColor={themeColor}
+          categoryIcon={category?.icon || "machine_learning"}
+          sections={docSections}
+          activeSectionId={activeSectionId}
+          onSelectSection={(id) => setActiveSectionId(id)}
+          onToggleViewMode={() => setViewLayout("grid")}
+          viewMode="doc"
+        />
+
+        {previewFile && (
+          <ModuleFilePreviewerModal
+            isOpen={Boolean(previewFile)}
+            onClose={() => setPreviewFile(null)}
+            file={previewFile}
+          />
+        )}
+
+        <BulkImportModal
+          isOpen={showImportModal}
+          onClose={() => setShowImportModal(false)}
+          onSuccess={() => loadData()}
+        />
+      </div>
+    );
+  }
+
+  // ─── Tampilan 2: Mode Ringkasan Kartu (Grid View) ───
   return (
     <PageContainer className="space-y-6 pb-14">
       {/* ─── 1. Breadcrumb Navigasi ─── */}
@@ -415,16 +449,12 @@ export default function DedicatedCategoryModulesPage({
 
           {/* Action buttons with view mode switcher */}
           <div className="flex items-center gap-2 shrink-0 self-start flex-wrap">
-            {/* View Mode Switcher: Doc Reader (Scikit-Learn style) vs Grid */}
+            {/* View Mode Switcher: Doc Reader vs Grid */}
             <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border">
               <button
                 type="button"
                 onClick={() => setViewLayout("doc")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
-                  viewLayout === "doc"
-                    ? "bg-brand-600 text-white shadow-2xs font-bold"
-                    : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-                }`}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer text-text-secondary hover:text-text-primary hover:bg-surface/50"
                 title="Tampilan Pembaca Dokumentasi ala Scikit-Learn"
               >
                 <BookOpen className="w-3.5 h-3.5" />
@@ -434,11 +464,7 @@ export default function DedicatedCategoryModulesPage({
               <button
                 type="button"
                 onClick={() => setViewLayout("grid")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
-                  viewLayout === "grid"
-                    ? "bg-brand-600 text-white shadow-2xs font-bold"
-                    : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-                }`}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer bg-brand-600 text-white shadow-2xs font-bold"
                 title="Tampilan Ringkasan Grid Kartu"
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
@@ -503,39 +529,25 @@ export default function DedicatedCategoryModulesPage({
         </div>
       )}
 
-      {/* ─── 3. Main Content View: Documentation Reader vs Notebook Outline ─── */}
-      {viewLayout === "doc" ? (
-        <DocReaderLayout
-          categoryName={category?.name || decodeURIComponent(categoryId)}
-          categoryId={categoryId}
-          themeColor={themeColor}
-          categoryIcon={category?.icon || "machine_learning"}
-          sections={docSections}
-          activeSectionId={activeSectionId}
-          onSelectSection={(id) => setActiveSectionId(id)}
-          onToggleViewMode={() => setViewLayout("grid")}
-          viewMode="doc"
-        />
-      ) : (
-        <NotebookOutline
-          topics={filteredTopicNotes}
-          modules={filteredModules}
-          categoryId={categoryId}
-          categoryName={category?.name || decodeURIComponent(categoryId)}
-          isAdmin={isAdmin}
-          currentUserId={currentUserId}
-          bookmarkMap={bookmarkMap}
-          onToggleBookmark={handleToggleBookmark}
-          onEditModule={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
-          onDeleteModule={handleDeleteModule}
-          onFilePreview={(file) => setPreviewFile(file)}
-          search={search}
-          onSearchChange={setSearch}
-          filterTag={filterTag}
-          onFilterTagChange={handleFilterTagChange}
-          loading={loading}
-        />
-      )}
+      {/* ─── 3. Grid View Content ─── */}
+      <NotebookOutline
+        topics={filteredTopicNotes}
+        modules={filteredModules}
+        categoryId={categoryId}
+        categoryName={category?.name || decodeURIComponent(categoryId)}
+        isAdmin={isAdmin}
+        currentUserId={currentUserId}
+        bookmarkMap={bookmarkMap}
+        onToggleBookmark={handleToggleBookmark}
+        onEditModule={(item) => router.push(`/dashboard/modul/edit/${item.id}`)}
+        onDeleteModule={handleDeleteModule}
+        onFilePreview={(file) => setPreviewFile(file)}
+        search={search}
+        onSearchChange={setSearch}
+        filterTag={filterTag}
+        onFilterTagChange={handleFilterTagChange}
+        loading={loading}
+      />
 
       {/* ─── 4. File Previewer Modal ─── */}
       {previewFile && (
