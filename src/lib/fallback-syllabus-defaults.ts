@@ -1,4 +1,6 @@
 import { ModuleSection } from "@/types/module-drive";
+import { getAcademicCurriculum } from "./curriculum/registry";
+import { curriculumToModuleSections } from "./curriculum/types";
 import {
   getAiAgentSections,
   getAiEthicsSections,
@@ -6,6 +8,7 @@ import {
   getAiSecuritySections,
   getAiFundamentalsSections,
 } from "./curriculum-batch1-defaults";
+import { getAiFundamentalsModuleSections } from "./ai-fundamentals-curriculum";
 import {
   getAutoMlSections,
   getComputationalIntelligenceSections,
@@ -190,6 +193,12 @@ function getGeneralComputerScienceSections(topicName: string): ModuleSection[] {
  * agar tidak terjadi penyeragaman kurikulum yang tidak relevan.
  */
 export function getDefaultSectionsForCategory(categoryName: string): ModuleSection[] {
+  // 0. Prioritas Utama: Single Source of Truth Registri Kurikulum Akademik 28 Topik
+  const academicCurr = getAcademicCurriculum(categoryName);
+  if (academicCurr) {
+    return curriculumToModuleSections(academicCurr);
+  }
+
   const norm = categoryName.toLowerCase().trim();
 
   // 1. Machine Learning (16 Bab)
@@ -435,14 +444,23 @@ export function getDefaultSectionsForCategory(categoryName: string): ModuleSecti
     return getCyberSecuritySections(categoryName);
   }
 
-  // 33. Kecerdasan Buatan Umum
+  // 33. Artificial Intelligence Fundamentals (Pilot Kurikulum Akademik Russell & Norvig / MIT OCW)
+  if (
+    norm.includes("artificial intelligence fundamentals") ||
+    norm.includes("ai fundamentals") ||
+    norm.includes("dasar kecerdasan buatan") ||
+    norm.includes("fundamentals")
+  ) {
+    return getAiFundamentalsModuleSections();
+  }
+
+  // 34. Kecerdasan Buatan Umum
   if (
     norm.includes("ai") ||
     norm.includes("artificial intelligence") ||
-    norm.includes("kecerdasan buatan") ||
-    norm.includes("fundamentals")
+    norm.includes("kecerdasan buatan")
   ) {
-    return getAiFundamentalsSections();
+    return getAiFundamentalsModuleSections();
   }
 
   // 34. Fallback Universal untuk Kategori Lainnya (Ilmu Komputer Umum)

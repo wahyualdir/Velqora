@@ -26,8 +26,8 @@ export function RunDialogCTA() {
           </h2>
 
           <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 font-sans max-w-2xl leading-relaxed">
-            Akses 12 modul lengkap, uji kemampuan dengan 84 soal kuis terarah, dan bangun 
-            pemahaman rekayasa web modern tingkat lanjut bersama Velqora.
+            Akses kurikulum akademik komprehensif, uji kemampuan dengan latihan &amp; kuis interaktif AI, 
+            dan kuasai materi AI, Data Analytics, Algoritma, hingga Rekayasa Web bersama Velqora.
           </p>
         </div>
 

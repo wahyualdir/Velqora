@@ -28,10 +28,11 @@ import { ModuleDriveFile } from "@/types/module-drive";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
 import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
+import { getAcademicCurriculum } from "@/lib/curriculum/registry";
 import {
-  SCIKIT_LEARN_USER_GUIDE_SECTIONS,
-  getAllFlatScikitLearnSections,
-} from "@/lib/scikit-learn-curriculum";
+  curriculumToDocSectionItems,
+  curriculumToFlatDocSectionItems,
+} from "@/lib/curriculum/types";
 import { enrichCurriculumToDocSections } from "@/lib/universal-curriculum-enricher";
 import { toast } from "sonner";
 
@@ -144,21 +145,45 @@ export default function DedicatedCategoryModulesPage({
           }
         }
 
+        const academicMatch = getAcademicCurriculum(decodedId);
         if (foundPreset) {
           resolvedCat = {
-            id: foundPreset.name,
-            name: foundPreset.name,
+            id: academicMatch?.id || foundPreset.name,
+            name: academicMatch?.title || foundPreset.name,
             color: foundPreset.color || "#8B5CF6",
             icon: foundPreset.icon || "code",
-            description: `Kurikulum komprehensif materi ${foundPreset.name} dalam bidang ${foundPreset.primaryCategory} berbasis teori dan implementasi praktikum kode.`,
+            description: academicMatch?.description || `Kurikulum komprehensif materi ${foundPreset.name} dalam bidang ${foundPreset.primaryCategory} berbasis teori dan implementasi praktikum kode.`,
+          };
+        } else if (academicMatch) {
+          resolvedCat = {
+            id: academicMatch.id,
+            name: academicMatch.title,
+            color: "#8B5CF6",
+            icon: "code",
+            description: academicMatch.description,
           };
         } else {
+          // Sanitasi: Jangan biarkan format UUID mentah menjadi judul kategori di UI atau Breadcrumbs
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedId);
+          const friendlyName = isUuid ? "Modul & Kurikulum" : decodedId;
           resolvedCat = {
             id: decodedId,
-            name: decodedId,
+            name: friendlyName,
             color: "#6366F1",
             icon: "code",
-            description: `Kumpulan modul kurikulum dan repositori proyek pembelajaran ${decodedId}.`,
+            description: `Kumpulan modul kurikulum dan repositori proyek pembelajaran ${friendlyName}.`,
+          };
+        }
+      }
+
+      // Selalu periksa apakah nama kategori memiliki representasi di kurikulum akademik 28 topik
+      if (resolvedCat) {
+        const academicMatch = getAcademicCurriculum(resolvedCat.name) || getAcademicCurriculum(decodedId);
+        if (academicMatch) {
+          resolvedCat = {
+            ...resolvedCat,
+            name: academicMatch.title,
+            description: academicMatch.description,
           };
         }
       }
@@ -260,18 +285,20 @@ export default function DedicatedCategoryModulesPage({
   // Kumpulan Topik Materi (Notes Kurikulum Obsidian)
   const allTopicNotes = useMemo(() => {
     const catName = category?.name || decodeURIComponent(categoryId);
-    const norm = catName.toLowerCase().trim();
 
-    // Khusus Machine Learning: gunakan materi Scikit-Learn 1.9 lengkap
-    if (norm.includes("machine learning") || norm.includes("pembelajaran mesin") || norm.includes("scikit")) {
-      const scikitFlat = getAllFlatScikitLearnSections();
-      return scikitFlat.map((sec) => ({
+    // 1. Prioritas Utama: Registri Kurikulum Akademik 28 Topik Terstandarisasi
+    const academicCurriculum = getAcademicCurriculum(catName) || getAcademicCurriculum(decodeURIComponent(categoryId));
+    if (academicCurriculum) {
+      const flatCurriculum = curriculumToFlatDocSectionItems(academicCurriculum);
+      return flatCurriculum.map((sec) => ({
         id: sec.id,
         slug: sec.slug || slugify(sec.title),
         title: sec.title,
         description: sec.description || cleanMarkdownExcerpt(sec.content_markdown || "", sec.title, 160),
         isPlaceholder: false,
         content_markdown: sec.content_markdown || null,
+        parentTitle: sec.parentTitle,
+        chapterNumber: sec.chapterNumber,
       }));
     }
 
@@ -340,11 +367,11 @@ export default function DedicatedCategoryModulesPage({
   // Daftar Seksi untuk Documentation Reader View ala Scikit-Learn (Lengkap dengan Subbab)
   const docSections = useMemo<DocSectionItem[]>(() => {
     const catName = category?.name || decodeURIComponent(categoryId);
-    const norm = catName.toLowerCase().trim();
 
-    // Khusus Machine Learning: sajikan seluruh Bab dan Subbab hierarkis resmi Scikit-Learn 1.9
-    if (norm.includes("machine learning") || norm.includes("pembelajaran mesin") || norm.includes("scikit")) {
-      return SCIKIT_LEARN_USER_GUIDE_SECTIONS;
+    // 1. Prioritas Utama: Registri Kurikulum Akademik 28 Topik Terstandarisasi
+    const academicCurriculum = getAcademicCurriculum(catName) || getAcademicCurriculum(decodeURIComponent(categoryId));
+    if (academicCurriculum) {
+      return curriculumToDocSectionItems(academicCurriculum);
     }
 
     // Jika kategori memiliki catatan kurikulum autentik di database (seperti Data Analyst, NLP, dll.)

@@ -10,23 +10,29 @@ import {
   MarqueeTicker, 
   RunDialogCTA 
 } from "@/components/os";
+import { getLandingCurriculumData } from "@/actions/study/landing";
 
 export const metadata: Metadata = {
-  title: "Velqora — Sistem Operasi Belajar Mahasiswa & Kurikulum Web Modern",
+  title: "Velqora — Sistem Operasi Belajar Mahasiswa & Kurikulum Akademik Modern",
   description:
-    "Platform workspace pembelajaran web modern berstandar industri: 12 Modul Kurikulum Terstandarisasi, 84 Soal Kuis, Interactive Terminal, dan AI Tutor.",
+    "Platform workspace pembelajaran akademik berstandar industri: Kurikulum Kecerdasan Buatan (AI), Data Analytics, Algoritma Lanjutan, dan Rekayasa Web Modern dengan AI Tutor interaktif.",
   keywords: [
     "Velqora",
-    "Vintec Learn",
-    "Pengembangan Aplikasi Web Modern",
-    "Learning OS",
+    "Kecerdasan Buatan",
+    "Data Analytics",
+    "Machine Learning",
+    "Algoritma dan Struktur Data",
+    "Pengembangan Web Modern",
     "Next.js 15",
     "React 19",
-    "Kurikulum Web",
+    "Learning OS",
   ],
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // Ambil data kurikulum dinamis dan metrik terkini dari backend/Supabase
+  const curriculumData = await getLandingCurriculumData();
+
   return (
     <div className="min-h-screen vt-desktop-bg text-[#1C1917] font-sans antialiased relative selection:bg-[#C2553A] selection:text-white pb-16">
       {/* CRT Scanlines Warm Overlay */}
@@ -38,16 +44,20 @@ export default function LandingPage() {
       {/* Main Workspace Area */}
       <main className="relative z-10 space-y-4 pt-2">
         {/* Section Hero: 3-Column Layout (Left Window + Center Shortcuts + Right MONITOR.EXE with 3D Canvas) */}
-        <OSHeroWindow />
+        <OSHeroWindow stats={curriculumData.stats} />
 
         {/* Section 01: MANIFESTO (README.TXT — NOTEPAD) */}
         <NotepadManifesto />
 
         {/* Section 02: KURIKULUM (C:\VELQORA\CURRICULUM_EXPLORER) */}
-        <CurriculumExplorer />
+        <CurriculumExplorer 
+          collections={curriculumData.collections}
+          allModules={curriculumData.allModules}
+          activeDisciplines={curriculumData.activeDisciplines}
+        />
 
         {/* Section 03: ANGKA & COMPANION (SYSTEM_MONITOR.EXE, SYSTEM_FEATURES.DLL, & VELQORA_COMPANION.EXE) */}
-        <SystemMonitorWindow />
+        <SystemMonitorWindow stats={curriculumData.stats} />
 
         {/* Marquee Ticker Ribbon */}
         <MarqueeTicker />

@@ -24,6 +24,11 @@ import {
   Home,
   Sliders,
   Sparkles,
+  Bot,
+  BrainCircuit,
+  Code2,
+  GraduationCap,
+  Share2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { NoteRenderer } from "@/components/notes/note-renderer";
@@ -727,6 +732,70 @@ export function DocReaderLayout({
           {/* Main Article Content */}
           {currentSection ? (
             <article className="space-y-6">
+              {/* Academic Action & Context Toolbar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-surface/50 backdrop-blur-xs shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/40">
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>Kurikulum Akademik & Praktikum</span>
+                  </span>
+                  <span className="text-[11px] font-sans text-text-tertiary hidden sm:inline">
+                    {categoryName}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {/* Tanya AI Tutor */}
+                  <Link
+                    href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(
+                      `Halo AI Tutor, saya sedang mempelajari materi "${currentSection.title}" pada kurikulum ${categoryName}. Bisakah Anda menjelaskan konsep fundamentalnya, membimbing penurunan matematisnya, dan memberikan contoh kode interaktif untuk memperkuat pemahaman saya?`
+                    )}`}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors cursor-pointer"
+                    title="Tanyakan materi ini kepada AI Tutor cerdas"
+                  >
+                    <Bot className="w-3.5 h-3.5" />
+                    <span>Tanya AI Tutor</span>
+                  </Link>
+
+                  {/* Uji Kuis AI */}
+                  <Link
+                    href={`/dashboard/kuis-ai?topic=${encodeURIComponent(
+                      `${categoryName} - ${currentSection.title}`
+                    )}`}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors cursor-pointer"
+                    title="Uji pemahaman Anda dengan kuis adaptif"
+                  >
+                    <BrainCircuit className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Uji Kuis</span>
+                  </Link>
+
+                  {/* Playground Kode */}
+                  <Link
+                    href="/dashboard/playground"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors cursor-pointer"
+                    title="Buka ruang simulasi dan eksekusi kode"
+                  >
+                    <Code2 className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>Playground</span>
+                  </Link>
+
+                  {/* Salin Tautan */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        navigator.clipboard.writeText(window.location.href);
+                        toast.success("Tautan materi berhasil disalin ke clipboard.");
+                      }
+                    }}
+                    className="p-1 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
+                    title="Salin tautan materi ini"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
               {/* Document Markdown Content with LaTeX math equations & code blocks */}
               <div className="py-2">
                 <NoteRenderer content={currentMarkdown} />

@@ -5,7 +5,17 @@ import { OSWindow } from "./os-window";
 import { Cpu, CheckCircle, ArrowRight, ShieldCheck, Download, Layers } from "lucide-react";
 import Link from "next/link";
 
-export function SystemMonitorWindow() {
+import { LandingStats } from "@/actions/study/landing";
+
+interface SystemMonitorWindowProps {
+  stats?: LandingStats;
+}
+
+export function SystemMonitorWindow({ stats }: SystemMonitorWindowProps) {
+  const totalModules = stats?.totalModules || 24;
+  const totalQuizzes = stats?.totalQuizzes || 120;
+  const totalProjects = stats?.totalProjects || 12;
+
   return (
     <div id="stats-section" className="w-full max-w-7xl mx-auto px-2 sm:px-4 my-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -22,7 +32,7 @@ export function SystemMonitorWindow() {
             <div className="space-y-4">
               {/* Tag: 03 — ANGKA (Exact Vintec Learn) */}
               <div className="text-xs font-mono text-[#C2553A] dark:text-brand-400 font-bold tracking-wider uppercase">
-                03 — ANGKA
+                03 — ANGKA &amp; TELEMETRI SISTEM
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
@@ -39,42 +49,42 @@ export function SystemMonitorWindow() {
                 {/* Stat 1 */}
                 <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">12 MODUL TERSTANDARISASI</span>
-                    <span className="text-[#C2553A] dark:text-brand-400 font-bold">12 / 12 (100%)</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">{totalModules}+ MATERI &amp; MODUL TERSTANDARISASI</span>
+                    <span className="text-[#C2553A] dark:text-brand-400 font-bold">100% LENGKAP</span>
                   </div>
                   <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#C2553A] w-full" />
                   </div>
                   <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
-                    Dari Client-Server HTTP hingga Containerization Docker &amp; CI/CD.
+                    Mencakup AI, Machine Learning, Data Analytics, Algoritma, &amp; Rekayasa Web.
                   </div>
                 </div>
 
                 {/* Stat 2 */}
                 <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">84 SOAL KUIS SIAP DIJALANKAN</span>
-                    <span className="text-[#10B981] font-bold">84 / 84 (100%)</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">{totalQuizzes}+ SOAL KUIS &amp; LATIHAN AI</span>
+                    <span className="text-[#10B981] font-bold">TERINTEGRASI</span>
                   </div>
                   <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#10B981] w-full" />
                   </div>
                   <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
-                    7 soal skenario analitis lengkap dengan kunci jawaban &amp; pembahasan rasional per modul.
+                    Latihan analitis berbasis skenario nyata lengkap dengan evaluasi cerdas AI Tutor.
                   </div>
                 </div>
 
                 {/* Stat 3 */}
                 <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">100% AKSES SEUMUR HIDUP</span>
-                    <span className="text-[#F59E0B] font-bold">LIFETIME</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">{totalProjects}+ REPOSITORI PROYEK &amp; PRAKTIK</span>
+                    <span className="text-[#F59E0B] font-bold">SOURCE CODE</span>
                   </div>
                   <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#F59E0B] w-full" />
                   </div>
                   <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
-                    Bebas diakses kapan pun untuk bahan referensi skripsi, magang, dan proyek industri.
+                    Dilengkapi repositori kode, dataset analisis bisnis, dan panduan deployment.
                   </div>
                 </div>
               </div>

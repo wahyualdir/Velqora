@@ -178,7 +178,7 @@ export function OSTopBar() {
                     onClick={() => scrollToSection("curriculum-section")}
                     className="w-full text-left px-3 py-1.5 hover:bg-[#C2553A] hover:text-white font-bold"
                   >
-                    → 12 Modul Web
+                    → Kurikulum &amp; Modul
                   </button>
                   <button 
                     type="button"

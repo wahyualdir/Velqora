@@ -16,8 +16,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export function OSHeroWindow() {
+import { LandingStats } from "@/actions/study/landing";
+
+interface OSHeroWindowProps {
+  stats?: LandingStats;
+}
+
+export function OSHeroWindow({ stats }: OSHeroWindowProps) {
   const [selectedIcon, setSelectedIcon] = useState<string>("koleksi");
+
+  const totalModulesCount = stats?.totalModules || 24;
+  const totalQuizzesCount = stats?.totalQuizzes || 120;
+  const totalProjectsCount = stats?.totalProjects || 12;
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -44,7 +54,7 @@ export function OSHeroWindow() {
         <div className="lg:col-span-6 flex flex-col">
           <OSWindow
             title="NEURALQUEST — VELQORA LEARNING PLATFORM.EXE"
-            statusText="READY · 12 MODUL TERSEDIA"
+            statusText={`READY · ${totalModulesCount}+ MATERI TERSEDIA`}
             className="flex-1 shadow-md"
             bodyClassName="p-5 sm:p-7 flex flex-col justify-between"
           >
@@ -52,7 +62,7 @@ export function OSHeroWindow() {
               {/* Status Pill */}
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#FAF3EF] border border-[#C2553A]/30 rounded-full text-xs font-mono text-[#C2553A] font-bold">
                 <span className="w-2 h-2 rounded-full bg-[#C2553A] animate-pulse" />
-                <span>• SYSTEM ONLINE · 12 MODUL TERSTANDARISASI</span>
+                <span>• SYSTEM ONLINE · {totalModulesCount}+ MATERI &amp; PROYEK TERSTANDARISASI</span>
               </div>
 
               {/* Big Vintec-Style Headline */}
@@ -67,9 +77,9 @@ export function OSHeroWindow() {
 
               {/* Description */}
               <p className="text-xs sm:text-sm text-[#524B42] leading-relaxed font-sans max-w-lg">
-                Workspace perkuliahan dan kurikulum rekayasa web modern berstandar industri: 
-                Next.js 15 App Router, React 19 Server Components, arsitektur database relasional, 
-                dan pipeline CI/CD produksi tanpa tutorial klise.
+                Workspace perkuliahan &amp; kurikulum akademik berstandar industri: 
+                Kecerdasan Buatan (AI), Machine Learning, Data Analytics Python, 
+                Algoritma, hingga Rekayasa Web Modern tanpa tutorial klise.
               </p>
 
               {/* CTA Buttons */}
@@ -96,16 +106,16 @@ export function OSHeroWindow() {
             {/* Stats Row (3 Columns Separated by Bevel Border) */}
             <div className="grid grid-cols-3 gap-2 pt-6 mt-6 border-t-2 border-[#E5DDD5] font-mono text-center">
               <div className="p-2 bg-[#F9F7F4] border border-[#E5DDD5] rounded-xs">
-                <div className="text-lg font-black text-[#C2553A]">12</div>
-                <div className="text-[11px] text-[#6B6560]">modul</div>
+                <div className="text-lg font-black text-[#C2553A]">{totalModulesCount}+</div>
+                <div className="text-[11px] text-[#6B6560]">materi &amp; modul</div>
               </div>
               <div className="p-2 bg-[#F9F7F4] border border-[#E5DDD5] rounded-xs">
-                <div className="text-lg font-black text-[#1C1917]">84</div>
-                <div className="text-[11px] text-[#6B6560]">kuis evaluasi</div>
+                <div className="text-lg font-black text-[#1C1917]">{totalQuizzesCount}+</div>
+                <div className="text-[11px] text-[#6B6560]">soal evaluasi</div>
               </div>
               <div className="p-2 bg-[#F9F7F4] border border-[#E5DDD5] rounded-xs">
-                <div className="text-lg font-black text-[#10B981]">100%</div>
-                <div className="text-[11px] text-[#6B6560]">lifetime access</div>
+                <div className="text-lg font-black text-[#10B981]">{totalProjectsCount}+</div>
+                <div className="text-[11px] text-[#6B6560]">studi kasus/proyek</div>
               </div>
             </div>
           </OSWindow>

@@ -11,6 +11,7 @@ const testDirs = [
   path.join(__dirname, "../src/lib/schedule-outcomes/__tests__"),
   path.join(__dirname, "../src/lib/schedule-validation/__tests__"),
   path.join(__dirname, "../src/lib/import/__tests__"),
+  path.join(__dirname, "../src/lib/curriculum/__tests__"),
 ];
 
 const testFiles: string[] = [];
