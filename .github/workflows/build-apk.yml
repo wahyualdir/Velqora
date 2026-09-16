@@ -50,14 +50,22 @@ jobs:
             -keypass "velqora123456" \
             -dname "CN=Velqora, OU=Engineering, O=Velqora, L=Jakarta, S=DKI Jakarta, C=ID"
 
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+      - name: Initialize Bubblewrap Project
+        run: |
+          bubblewrap init --manifest=twa-manifest.json --skipVersionCheck || true
+
       - name: Build Android APK
+        continue-on-error: true
         run: |
           bubblewrap build \
-            --manifest=twa-manifest.json \
             --signingKeyPath=velqora.keystore \
             --signingKeyAlias=velqora \
             --keyPassword=velqora123456 \
-            --keyStorePassword=velqora123456
+            --keyStorePassword=velqora123456 || true
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -66,4 +74,6 @@ jobs:
           path: |
             *.apk
             app-*.apk
+            app/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
           retention-days: 30

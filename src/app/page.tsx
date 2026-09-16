@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   ],
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function LandingPage() {
   // Ambil data kurikulum dinamis dan metrik terkini dari backend/Supabase
   const curriculumData = await getLandingCurriculumData();
