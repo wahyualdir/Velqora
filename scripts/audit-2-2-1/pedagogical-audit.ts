@@ -67,14 +67,14 @@ async function runPedagogicalAudit() {
 
       // 2. Prasyarat
       if (ch.prerequisites && ch.prerequisites.length >= 2) {
-        scores.prerequisites = 2;
-        notes.prerequisites = "Daftar prasyarat konseptual dan teknis tercantum.";
+        scores.prasyarat = 2;
+        notes.prasyarat = "Daftar prasyarat konseptual dan teknis tercantum.";
       } else if (firstSub?.prerequisites && firstSub.prerequisites.length > 0) {
-        scores.prerequisites = 1;
-        notes.prerequisites = "Prasyarat umum (dasar Python/NumPy) berulang.";
+        scores.prasyarat = 1;
+        notes.prasyarat = "Prasyarat umum (dasar Python/NumPy) berulang.";
       } else {
-        scores.prerequisites = 0;
-        notes.prerequisites = "Prasyarat tidak didefinisikan.";
+        scores.prasyarat = 0;
+        notes.prasyarat = "Prasyarat tidak didefinisikan.";
       }
 
       // 3. Definisi Formal

@@ -1,9 +1,19 @@
 import { DocSectionItem } from "@/components/modul/doc-reader-layout";
 import { ModuleSection } from "@/types/module-drive";
 
-/**
- * Metadata sitasi dan rujukan akademik resmi yang dapat diverifikasi (DOI, URL, buku teks, paper)
- */
+// ============================================================================
+// LAYER 1: SOURCE & CITATION METADATA
+// ============================================================================
+
+export type SourceRelevanceClassification =
+  | "VERIFIED_RELEVANT"
+  | "VERIFIED_GENERAL"
+  | "NEEDS_MANUAL_REVIEW"
+  | "PAYWALL"
+  | "BROKEN"
+  | "METADATA_MISMATCH"
+  | "DUPLICATE_SOURCE";
+
 export interface AcademicCitation {
   id?: string;
   title: string;
@@ -22,11 +32,48 @@ export interface AcademicCitation {
   verified?: boolean;
   lastChecked?: string;
   verificationStatus?: "verified" | "needs-manual-verification" | "needs-source-verification";
+  relevanceClassification?: SourceRelevanceClassification;
+  isPrimarySource?: boolean;
 }
 
-/**
- * Metadata dataset resmi dan benchmark riil yang digunakan dalam pembelajaran
- */
+// ============================================================================
+// LAYER 2: CODE EXECUTION METADATA
+// ============================================================================
+
+export type CodeExecutionClassification =
+  | "VERIFIED_RUNNABLE"
+  | "VERIFIED_WITH_ENVIRONMENT_NOTES"
+  | "FAILED_RUNTIME"
+  | "FAILED_DEPENDENCY"
+  | "OUTPUT_MISMATCH"
+  | "PSEUDOCODE"
+  | "NOT_EXECUTED";
+
+export interface AcademicCodeExample {
+  id: string;
+  title: string;
+  language: "python" | "sql" | "bash";
+  filename: string;
+  code: string;
+  expectedOutput: string;
+  explanation: string;
+  prerequisites?: string[];
+  inputDataDescription?: string;
+  executionSteps?: string[];
+  troubleshooting?: string[];
+  level?: "pemula" | "menengah" | "lanjutan";
+  hardwareRequirement?: "cpu" | "gpu-optional" | "gpu-recommended";
+  dependencies?: string[];
+  verificationStatus?: CodeExecutionClassification;
+  actualOutput?: string;
+  isVerifiedOutput?: boolean;
+  runtimeMs?: number;
+}
+
+// ============================================================================
+// LAYER 3: DATASET PROVENANCE METADATA
+// ============================================================================
+
 export interface AcademicDatasetMetadata {
   id: string;
   name: string;
@@ -42,30 +89,13 @@ export interface AcademicDatasetMetadata {
   downloadInstructions: string;
   inspectionSnippet: string;
   verified: boolean;
+  provenanceNotes?: string;
 }
 
-/**
- * Contoh kode praktikum Python yang dapat dieksekusi mandiri
- */
-export interface AcademicCodeExample {
-  id: string;
-  title: string;
-  language: "python" | "sql" | "bash";
-  filename: string;
-  code: string;
-  expectedOutput: string;
-  explanation: string;
-  prerequisites?: string[];
-  inputDataDescription?: string;
-  executionSteps?: string[];
-  troubleshooting?: string[];
-  level?: "pemula" | "menengah" | "lanjutan";
-  hardwareRequirement?: "cpu" | "gpu-optional" | "gpu-recommended";
-}
+// ============================================================================
+// LAYER 4: PEDAGOGICAL & CONTENT UNITS
+// ============================================================================
 
-/**
- * Unit pembahasan mendalam atau sub-subbab (Level 3 Hierarchy)
- */
 export interface AcademicDiscussionUnit {
   id: string;
   slug: string;
@@ -74,11 +104,10 @@ export interface AcademicDiscussionUnit {
   content_markdown: string;
   codeExamples?: AcademicCodeExample[];
   references?: AcademicCitation[];
+  purpose?: string;
+  isSubstantive?: boolean;
 }
 
-/**
- * Struktur subbab materi akademik mendalam
- */
 export interface AcademicSubchapter {
   id: string;
   slug: string;
@@ -95,11 +124,9 @@ export interface AcademicSubchapter {
   dataset?: AcademicDatasetMetadata;
   commonPitfalls?: string[];
   caseStudy?: string;
+  contentStatus?: "legacy-synthetic" | "substantive-verified" | "migrated";
 }
 
-/**
- * Struktur bab kurikulum
- */
 export interface AcademicChapter {
   id: string;
   slug: string;
@@ -119,20 +146,18 @@ export interface AcademicChapter {
   limitations?: string;
   ethicsAndSecurity?: string;
   summary?: string;
+  transitionToNextChapter?: string;
   checklist?: string[];
   evaluationQuestions?: string[];
   miniProject?: string;
   dataset?: AcademicDatasetMetadata;
 }
 
-/**
- * Entitas kurikulum lengkap untuk suatu bidang topik
- */
 export interface AcademicCurriculum {
   id: string;
   slug: string;
   title: string;
-  category: string; // Kategori induk (misal: "Kecerdasan Buatan", "Data Science")
+  category: string;
   level: "pemula" | "menengah" | "lanjutan";
   description: string;
   primaryReferences: AcademicCitation[];
@@ -147,6 +172,7 @@ export interface AcademicCurriculum {
     rubrics: string[];
   };
   verifiedSourcesCount?: number;
+  auditStatus?: "FAILED_VALIDATION" | "VERIFIED_WITH_LIMITATIONS" | "VERIFIED";
 }
 
 /**

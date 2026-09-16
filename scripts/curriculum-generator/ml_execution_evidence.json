@@ -1,0 +1,101 @@
+{
+  "1_dataset_inspection": {
+    "status": "VERIFIED_RUNNABLE",
+    "runtime_ms": 121.37,
+    "output": {
+      "n_samples": 20640,
+      "n_features": 8,
+      "feature_names": [
+        "MedInc",
+        "HouseAge",
+        "AveRooms",
+        "AveBedrms",
+        "Population",
+        "AveOccup",
+        "Latitude",
+        "Longitude"
+      ],
+      "target_name": "MedHouseVal",
+      "null_count": 0,
+      "med_inc_mean": 3.8706710029069766,
+      "med_inc_std": 1.8998217179452688,
+      "target_mean": 2.0685581690891475,
+      "target_min": 0.14999,
+      "target_max": 5.00001
+    }
+  },
+  "2_train_test_pipeline": {
+    "status": "VERIFIED_RUNNABLE",
+    "runtime_ms": 501.81,
+    "output": {
+      "train_samples": 16512,
+      "test_samples": 4128,
+      "train_rmse": 0.7196757085831575,
+      "test_rmse": 0.7455813830127761,
+      "test_mae": 0.5332001304956565,
+      "test_r2": 0.5757877060324511
+    }
+  },
+  "3_polynomial_regression_deg_1_3_15": {
+    "status": "VERIFIED_RUNNABLE",
+    "runtime_ms": 181.7,
+    "output": {
+      "degree_1": {
+        "train_rmse": 0.8361487409655548,
+        "test_rmse": 0.8420901241414454,
+        "train_r2": 0.47699273458205227,
+        "test_r2": 0.45885918903846656,
+        "condition": "Underfitting (Bias Tinggi)"
+      },
+      "degree_3": {
+        "train_rmse": 0.825033042212945,
+        "test_rmse": 0.835641355185365,
+        "train_r2": 0.49080594316989845,
+        "test_r2": 0.4671156210838615,
+        "condition": "Optimal Fit (Seimbang)"
+      },
+      "degree_15": {
+        "train_rmse": 0.8221070470140457,
+        "test_rmse": 0.8322378433663377,
+        "train_r2": 0.49441127122692996,
+        "test_r2": 0.47144758664517894,
+        "condition": "Overfitting (Variansi Ekstrem)"
+      }
+    }
+  },
+  "4_regularization_ridge_lasso": {
+    "status": "VERIFIED_RUNNABLE",
+    "runtime_ms": 27608.76,
+    "output": {
+      "ridge_alpha_100": {
+        "test_rmse": 0.9624331554309629,
+        "test_r2": 0.29313855898924,
+        "mechanism": "L2 Shrinkage: bobot ditekan mendekati nol tanpa menghilangkan fitur"
+      },
+      "lasso_alpha_0_05": {
+        "test_rmse": 0.7893377393187746,
+        "test_r2": 0.5245346475347986,
+        "zero_coefficients": "156/164 fitur dieliminasi menjadi tepat 0 (Sparsity)",
+        "mechanism": "L1 Sparsity: seleksi fitur otomatis"
+      }
+    }
+  },
+  "5_kfold_cross_validation": {
+    "status": "VERIFIED_RUNNABLE",
+    "runtime_ms": 1211.9,
+    "output": {
+      "n_splits": 5,
+      "mean_r2": 0.6013781013684618,
+      "std_r2": 0.01701030637219823,
+      "mean_rmse": 0.7282509142479742,
+      "std_rmse": 0.01493552211601655,
+      "all_fold_r2": [
+        0.575787706032451,
+        0.6137482218079156,
+        0.6085604327431423,
+        0.6212649440127973,
+        0.5875292022460029
+      ]
+    }
+  }
+}

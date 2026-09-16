@@ -27,6 +27,30 @@ import { roboticsEmbodiedAiCurriculum } from "./topics/25-robotics-embodied-ai";
 import { speechAudioAiCurriculum } from "./topics/26-speech-audio-ai";
 import { timeSeriesForecastingCurriculum } from "./topics/27-time-series-forecasting";
 import { vectorDatabaseRetrievalCurriculum } from "./topics/28-vector-database-retrieval";
+import {
+  substantiveAiFundamentalsChapter1,
+  substantiveMachineLearningChapter1,
+  substantiveMachineLearningChapter6,
+} from "./pilot-content";
+
+// Integrasikan konten pilot substantif hasil remediasi Phase 2.3-F
+export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = {
+  ...aiFundamentalsCurriculum,
+  chapters: [
+    substantiveAiFundamentalsChapter1,
+    ...aiFundamentalsCurriculum.chapters.slice(1),
+  ],
+};
+
+export const enrichedMachineLearningCurriculum: AcademicCurriculum = {
+  ...machineLearningCurriculum,
+  chapters: [
+    substantiveMachineLearningChapter1,
+    ...machineLearningCurriculum.chapters.slice(1, 5),
+    substantiveMachineLearningChapter6,
+    ...machineLearningCurriculum.chapters.slice(6),
+  ],
+};
 
 /**
  * Registri Terpusat Seluruh 28 Kurikulum Akademik Kecerdasan Buatan Velqora.
@@ -38,7 +62,7 @@ export const ALL_ACADEMIC_CURRICULA: readonly AcademicCurriculum[] = [
   aiEthicsCurriculum,
   aiGovernanceCurriculum,
   aiSecurityCurriculum,
-  aiFundamentalsCurriculum,
+  enrichedAiFundamentalsCurriculum,
   autoMlNasCurriculum,
   computationalIntelligenceCurriculum,
   computerVisionCurriculum,
@@ -52,7 +76,7 @@ export const ALL_ACADEMIC_CURRICULA: readonly AcademicCurriculum[] = [
   graphNeuralNetworkCurriculum,
   knowledgeRepresentationCurriculum,
   largeLanguageModelCurriculum,
-  machineLearningCurriculum,
+  enrichedMachineLearningCurriculum,
   mlopsDeploymentCurriculum,
   multimodalAiCurriculum,
   naturalLanguageProcessingCurriculum,
@@ -111,10 +135,10 @@ const topicAliases: Record<string, AcademicCurriculum> = {
   "keamanan ai": aiSecurityCurriculum,
   
   // 5. Artificial Intelligence Fundamentals
-  "artificial intelligence fundamentals": aiFundamentalsCurriculum,
-  "ai fundamentals": aiFundamentalsCurriculum,
-  "dasar kecerdasan buatan": aiFundamentalsCurriculum,
-  "fondasi kecerdasan buatan": aiFundamentalsCurriculum,
+  "artificial intelligence fundamentals": enrichedAiFundamentalsCurriculum,
+  "ai fundamentals": enrichedAiFundamentalsCurriculum,
+  "dasar kecerdasan buatan": enrichedAiFundamentalsCurriculum,
+  "fondasi kecerdasan buatan": enrichedAiFundamentalsCurriculum,
   
   // 6. AutoML & Neural Architecture Search
   "automl & neural architecture search": autoMlNasCurriculum,
@@ -181,9 +205,9 @@ const topicAliases: Record<string, AcademicCurriculum> = {
   "model bahasa besar": largeLanguageModelCurriculum,
   
   // 19. Machine Learning
-  "machine learning": machineLearningCurriculum,
-  "pembelajaran mesin": machineLearningCurriculum,
-  "scikit learn": machineLearningCurriculum,
+  "machine learning": enrichedMachineLearningCurriculum,
+  "pembelajaran mesin": enrichedMachineLearningCurriculum,
+  "scikit learn": enrichedMachineLearningCurriculum,
   
   // 20. MLOps & AI Deployment
   "mlops & ai deployment": mlopsDeploymentCurriculum,

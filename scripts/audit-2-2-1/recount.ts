@@ -155,7 +155,7 @@ async function runRecount() {
 
     topicResults.push({
       id: topic.id,
-      name: topic.name,
+      name: topic.title,
       chaptersCount: tChapters,
       subchaptersCount: tSubchapters,
       subSubchaptersCount: tSubSubchapters,

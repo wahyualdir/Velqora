@@ -115,6 +115,7 @@ function extractTocFromMarkdown(markdown: string): TocItem[] {
 
 /**
  * Flattens hierarchical sections into a linear list for sequential prev/next navigation
+ * Supports all 3 levels: Chapters -> Subchapters -> Learning Units (Sub-subchapters)
  */
 function flattenDocSections(sections: DocSectionItem[]): DocSectionItem[] {
   const flat: DocSectionItem[] = [];
@@ -130,6 +131,17 @@ function flattenDocSections(sections: DocSectionItem[]): DocSectionItem[] {
           parentTitle: sec.title,
           chapterNumber: sec.orderIndex,
         });
+
+        // Level 3: Sub-subchapters / Learning Units
+        if (sub.subsections && sub.subsections.length > 0) {
+          for (const unit of sub.subsections) {
+            flat.push({
+              ...unit,
+              parentTitle: `${sec.title} > ${sub.title}`,
+              chapterNumber: sec.orderIndex,
+            });
+          }
+        }
       }
     } else if (!sec.content_markdown || sec.content_markdown.trim().length === 0) {
       flat.push(sec);
@@ -169,23 +181,42 @@ export function DocReaderLayout({
   // Flatten sections to find active item and handle prev/next
   const flatSections = useMemo(() => flattenDocSections(sections), [sections]);
 
-  // Selected section ID (defaults to first leaf section or passed active ID)
+  // Selected section ID (defaults to URL param, active ID, or first leaf section)
   const [selectedId, setSelectedId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromUrl = urlParams.get("section");
+      if (fromUrl) return fromUrl;
+    }
     if (activeSectionId) return activeSectionId;
     return flatSections[0]?.id || sections[0]?.id || "";
   });
 
-  // Track expanded accordion chapters
+  // Track expanded accordion chapters (Lazy: only expand active or first chapter)
   const [expandedChapters, setExpandedChapters] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     sections.forEach((sec, idx) => {
-      // Default expand all or first few
-      init[sec.id] = true;
+      init[sec.id] = Boolean(
+        idx === 0 ||
+        sec.id === activeSectionId ||
+        sec.subsections?.some((sub) => sub.id === activeSectionId || sub.subsections?.some((u) => u.id === activeSectionId))
+      );
     });
     return init;
   });
 
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Synchronize initial selection with URL query parameter ?section=...
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sectionFromUrl = urlParams.get("section");
+      if (sectionFromUrl && sectionFromUrl !== selectedId) {
+        setSelectedId(sectionFromUrl);
+      }
+    }
+  }, [selectedId]);
 
   // Sync selectedId with activeSectionId prop
   useEffect(() => {
@@ -194,14 +225,18 @@ export function DocReaderLayout({
     }
   }, [activeSectionId, selectedId]);
 
-  // Automatically expand parent chapter of selected section
+  // Automatically expand parent chapter and subchapter of selected section
   useEffect(() => {
     for (const sec of sections) {
       if (sec.id === selectedId) {
         setExpandedChapters((prev) => ({ ...prev, [sec.id]: true }));
         break;
       }
-      if (sec.subsections?.some((sub) => sub.id === selectedId)) {
+      if (
+        sec.subsections?.some(
+          (sub) => sub.id === selectedId || sub.subsections?.some((u) => u.id === selectedId)
+        )
+      ) {
         setExpandedChapters((prev) => ({ ...prev, [sec.id]: true }));
         break;
       }
@@ -310,11 +345,16 @@ export function DocReaderLayout({
     }
   }, []);
 
-  // Handle section click
+  // Handle section click with URL query sync
   const handleSelect = (sectionId: string) => {
     setSelectedId(sectionId);
     if (onSelectSection) {
       onSelectSection(sectionId);
+    }
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("section", sectionId);
+      window.history.replaceState({}, "", url.toString());
     }
   };
 
@@ -602,43 +642,84 @@ export function DocReaderLayout({
                     <div className="pl-3.5 ml-2 border-l border-border/80 space-y-0.5 my-0.5">
                       {chapter.subsections!.map((sub) => {
                         const isSubActive = sub.id === selectedId;
+                        const hasUnits = sub.subsections && sub.subsections.length > 0;
+                        const isUnitChildActive = hasUnits && sub.subsections!.some((u) => u.id === selectedId);
 
                         return (
-                          <button
-                            key={sub.id}
-                            type="button"
-                            onClick={() => {
-                              if (sub.id.includes("#")) {
-                                const [parentId, anchor] = sub.id.split("#");
-                                handleSelect(parentId);
-                                setTimeout(() => {
-                                  scrollToHeading(anchor);
-                                }, 120);
-                              } else {
-                                handleSelect(sub.id);
+                          <div key={sub.id} className="space-y-0.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (sub.id.includes("#")) {
+                                  const [parentId, anchor] = sub.id.split("#");
+                                  handleSelect(parentId);
+                                  setTimeout(() => {
+                                    scrollToHeading(anchor);
+                                  }, 120);
+                                } else {
+                                  handleSelect(sub.id);
+                                }
+                              }}
+                              className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer relative ${
+                                isSubActive
+                                  ? "bg-white dark:bg-[#1c1c20] font-bold -ml-[15px] pl-[18px] shadow-2xs"
+                                  : isUnitChildActive
+                                  ? "bg-surface/80 text-text-primary font-medium"
+                                  : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+                              }`}
+                              style={
+                                isSubActive
+                                  ? {
+                                      color: themeColor,
+                                      borderLeft: `3px solid ${themeColor}`,
+                                    }
+                                  : undefined
                               }
-                            }}
-                            className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer relative ${
-                              isSubActive
-                                ? "bg-white dark:bg-[#1c1c20] font-bold -ml-[15px] pl-[18px] shadow-2xs"
-                                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-                            }`}
-                            style={
-                              isSubActive
-                                ? {
-                                    color: themeColor,
-                                    borderLeft: `3px solid ${themeColor}`,
-                                  }
-                                : undefined
-                            }
-                          >
-                            <span className="leading-snug line-clamp-2">
-                              {sub.title}
-                            </span>
-                            {isSubActive && (
-                              <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
+                            >
+                              <span className="leading-snug line-clamp-2">
+                                {sub.title}
+                              </span>
+                              {isSubActive && (
+                                <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
+                              )}
+                            </button>
+
+                            {/* Level 3: Sub-subchapters / Learning Units */}
+                            {hasUnits && (isSubActive || isUnitChildActive || searchQuery.trim().length > 0) && (
+                              <div className="pl-3 ml-2 border-l border-border/60 space-y-0.5 my-0.5">
+                                {sub.subsections!.map((unit) => {
+                                  const isUnitActive = unit.id === selectedId;
+                                  return (
+                                    <button
+                                      key={unit.id}
+                                      type="button"
+                                      onClick={() => handleSelect(unit.id)}
+                                      className={`w-full text-left px-2 py-1 rounded text-[10px] font-sans transition-all flex items-start justify-between gap-1 cursor-pointer ${
+                                        isUnitActive
+                                          ? "bg-white dark:bg-[#202024] font-bold shadow-2xs"
+                                          : "text-text-tertiary hover:text-text-primary hover:bg-surface/40"
+                                      }`}
+                                      style={
+                                        isUnitActive
+                                          ? {
+                                              color: themeColor,
+                                              borderLeft: `2px solid ${themeColor}`,
+                                            }
+                                          : undefined
+                                      }
+                                    >
+                                      <span className="leading-tight line-clamp-1">
+                                        {unit.title}
+                                      </span>
+                                      {isUnitActive && (
+                                        <ChevronRight className="w-2.5 h-2.5 shrink-0 mt-0.5" style={{ color: themeColor }} />
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
                             )}
-                          </button>
+                          </div>
                         );
                       })}
                     </div>

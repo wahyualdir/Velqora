@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-09-16T07:45:03.956Z",
+  "totalCurricula": 28,
+  "totalChapters": 405,
+  "totalSubchapters": 4050,
+  "totalSubSubchapters": 40500,
+  "totalCodeBlocks": 4050,
+  "totalCitations": 4151,
+  "legacySyntheticUnitsTagged": 28182,
+  "substantiveUnitsTagged": 12318,
+  "codeBlocksTaggedUnverified": 4050,
+  "codeBlocksTaggedPseudocode": 0,
+  "citationsTaggedDuplicate": 4111,
+  "citationsTaggedGeneral": 35,
+  "citationsTaggedVerifiedRelevant": 5,
+  "chaptersMissingSummary": 405,
+  "chaptersMissingTransition": 405,
+  "nonDestructiveIntegrityVerified": true
+}
