@@ -26,6 +26,9 @@ export interface DocSectionItem {
   learningObjectives?: string[];
   sourceRefIds?: string[];
   reviewStatus?: "legacy_synthetic" | "verified_with_limitations" | "verified";
+  flow?: LessonFlow;
+  lesson?: AcademicLesson;
+  executionGroups?: NotebookExecutionGroup[];
 }
 
 // ============================================================================
@@ -150,18 +153,74 @@ export interface AcademicDatasetMetadata {
 }
 
 // ============================================================================
-// LAYER 4: NOTEBOOK-STYLE PEDAGOGICAL & CONTENT UNITS
+// LAYER 4: LESSON FLOW & EXECUTION RELATION MODEL
 // ============================================================================
 
-export interface NotebookMarkdownUnit {
-  type: "markdown";
+export type LessonFlow =
+  | "conceptual"
+  | "mathematical"
+  | "algorithmic"
+  | "computational"
+  | "project"
+  | "mixed";
+
+export interface NotebookExecutionGroup {
   id: string;
+  title?: string;
+  codeUnitId: string;
+  outputUnitId?: string;
+  interpretationUnitId?: string;
+  executionEvidence?: ExecutionEvidence;
+  sourceReferences?: SourceReference[];
+  status:
+    | "not-run"
+    | "executed"
+    | "output-matched"
+    | "reviewed"
+    | "accepted";
+}
+
+export interface AcademicLesson {
+  id: string;
+  topicId: string;
+  chapterId: string;
+  subchapterId: string;
+  number: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  flow: LessonFlow;
+  learningObjectives: string[];
+  prerequisites: string[];
+  keyQuestions: string[];
+  estimatedMinutes?: number;
+  units: NotebookUnit[];
+  executionGroups?: NotebookExecutionGroup[];
+  summary?: string[];
+  commonMistakes?: string[];
+  furtherReading?: SourceReference[];
+  status: "legacy" | "pilot" | "migrated" | "reviewed" | "accepted";
+}
+
+// ============================================================================
+// LAYER 5: NOTEBOOK-STYLE PEDAGOGICAL & CONTENT UNITS
+// ============================================================================
+
+export interface BaseNotebookUnit {
+  id: string;
+  title?: string;
+  order?: number;
+  sourceReferences?: SourceReference[];
+  qualityStatus?: "draft" | "reviewed" | "verified" | "accepted";
+}
+
+export interface NotebookMarkdownUnit extends BaseNotebookUnit {
+  type: "markdown";
   content: string;
 }
 
-export interface NotebookDefinitionUnit {
+export interface NotebookDefinitionUnit extends BaseNotebookUnit {
   type: "definition";
-  id: string;
   term: string;
   formalDefinition: string;
   intuitiveExplanation: string;
@@ -170,9 +229,8 @@ export interface NotebookDefinitionUnit {
   commonMisconceptions?: string[];
 }
 
-export interface NotebookFormulaUnit {
+export interface NotebookFormulaUnit extends BaseNotebookUnit {
   type: "formula";
-  id: string;
   latex: string;
   name: string;
   derivationNotes?: string;
@@ -188,9 +246,8 @@ export interface NotebookFormulaUnit {
   };
 }
 
-export interface NotebookExampleUnit {
+export interface NotebookExampleUnit extends BaseNotebookUnit {
   type: "example";
-  id: string;
   scenario: string;
   rawInput: string | Record<string, unknown>;
   transformationSteps: string[];
@@ -198,9 +255,8 @@ export interface NotebookExampleUnit {
   analysis: string;
 }
 
-export interface NotebookCodeUnit {
+export interface NotebookCodeUnit extends BaseNotebookUnit {
   type: "code";
-  id: string;
   language: string;
   filename?: string;
   executionStatus: ExecutionStatus;
@@ -214,9 +270,8 @@ export interface NotebookCodeUnit {
   postAnalysis?: string;
 }
 
-export interface NotebookOutputUnit {
+export interface NotebookOutputUnit extends BaseNotebookUnit {
   type: "output";
-  id: string;
   relatedCodeUnitId: string;
   cellIndex?: number;
   format: "text" | "table" | "json" | "image" | "error";
@@ -224,9 +279,8 @@ export interface NotebookOutputUnit {
   executionEvidence?: ExecutionEvidence;
 }
 
-export interface NotebookInterpretationUnit {
+export interface NotebookInterpretationUnit extends BaseNotebookUnit {
   type: "interpretation";
-  id: string;
   relatedCodeUnitId?: string;
   headline: string;
   observations: string[];
@@ -234,18 +288,16 @@ export interface NotebookInterpretationUnit {
   statisticalCaveats?: string[];
 }
 
-export interface NotebookWarningUnit {
+export interface NotebookWarningUnit extends BaseNotebookUnit {
   type: "warning";
-  id: string;
   severity: "tip" | "info" | "warning" | "danger";
   title: string;
   description: string;
   countermeasure: string;
 }
 
-export interface NotebookExerciseUnit {
+export interface NotebookExerciseUnit extends BaseNotebookUnit {
   type: "exercise";
-  id: string;
   level: 1 | 2 | 3 | 4 | 5;
   title: string;
   scenario: string;
@@ -260,9 +312,8 @@ export interface NotebookExerciseUnit {
   }>;
 }
 
-export interface NotebookProjectUnit {
+export interface NotebookProjectUnit extends BaseNotebookUnit {
   type: "project";
-  id: string;
   title: string;
   industryContext: string;
   businessProblem: string;
@@ -280,18 +331,16 @@ export interface NotebookProjectUnit {
   acceptanceCriteria: string[];
 }
 
-export interface NotebookTableUnit {
+export interface NotebookTableUnit extends BaseNotebookUnit {
   type: "table";
-  id: string;
   caption: string;
   headers: string[];
   rows: (string | number)[][];
   markdownFallback?: string;
 }
 
-export interface NotebookImageUnit {
+export interface NotebookImageUnit extends BaseNotebookUnit {
   type: "image";
-  id: string;
   src: string;
   alt: string;
   caption: string;
@@ -524,6 +573,9 @@ export interface AcademicSubchapter {
   sourceRefIds?: string[];
   units?: NotebookUnit[];
   reviewStatus?: "legacy_synthetic" | "verified_with_limitations" | "verified";
+  flow?: LessonFlow;
+  lesson?: AcademicLesson;
+  executionGroups?: NotebookExecutionGroup[];
   codeExamples?: AcademicCodeExample[];
   exercises?: Array<{ level: number; task: string; hint?: string; solution?: string } | string>;
   references?: AcademicCitation[];
@@ -612,6 +664,9 @@ export function curriculumToDocSectionItems(curriculum: AcademicCurriculum): Doc
         parentTitle: chapter.title,
         chapterNumber: chapter.orderIndex,
         units: sub.units,
+        lesson: sub.lesson,
+        flow: sub.flow || sub.lesson?.flow,
+        executionGroups: sub.executionGroups || sub.lesson?.executionGroups,
         summary: sub.summary,
         learningObjectives: sub.learningObjectives,
         sourceRefIds: sub.sourceRefIds,

@@ -158,6 +158,17 @@ export const dataScienceCurriculum: AcademicCurriculum = {
           ],
           sourceRefIds: ["src-hastie-esl"],
           reviewStatus: "verified",
+          flow: "conceptual",
+          executionGroups: [
+            {
+              id: "grp-ds-1-1",
+              title: "Simulasi Matriks Keahlian & Kesenjangan Peran",
+              codeUnitId: "u-ds-1-1-code",
+              outputUnitId: "u-ds-1-1-out",
+              interpretationUnitId: "u-ds-1-1-interp",
+              status: "output-matched",
+            },
+          ],
           content_markdown: "",
           units: [
             {
@@ -362,6 +373,17 @@ allocations = {
           ],
           sourceRefIds: ["src-hastie-esl", "src-kaufman-leakage-2012"],
           reviewStatus: "verified",
+          flow: "conceptual",
+          executionGroups: [
+            {
+              id: "grp-ds-1-2",
+              title: "Optimasi Ambang Batas Klasifikasi Berbobot Biaya (Cost-Sensitive)",
+              codeUnitId: "u-ds-1-2-code",
+              outputUnitId: "u-ds-1-2-out",
+              interpretationUnitId: "u-ds-1-2-interp",
+              status: "output-matched",
+            },
+          ],
           content_markdown: "",
           units: [
             {
@@ -609,6 +631,17 @@ else:
           ],
           sourceRefIds: ["src-hastie-esl"],
           reviewStatus: "verified",
+          flow: "algorithmic",
+          executionGroups: [
+            {
+              id: "grp-ds-1-3",
+              title: "Simulasi State Machine CRISP-DM dengan Quality Gates",
+              codeUnitId: "u-ds-1-3-code",
+              outputUnitId: "u-ds-1-3-out",
+              interpretationUnitId: "u-ds-1-3-interp",
+              status: "output-matched",
+            },
+          ],
           content_markdown: "",
           units: [
             {
@@ -818,6 +851,17 @@ action_required = "Hapus fitur 'status_pembayaran_terakhir' dari matriks X dan t
           ],
           sourceRefIds: ["src-scikit-learn-pipeline"],
           reviewStatus: "verified",
+          flow: "mixed",
+          executionGroups: [
+            {
+              id: "grp-ds-1-4",
+              title: "Implementasi Pipeline OSEMN & Pemeringkatan Metrik",
+              codeUnitId: "u-ds-1-4-code",
+              outputUnitId: "u-ds-1-4-out",
+              interpretationUnitId: "u-ds-1-4-interp",
+              status: "output-matched",
+            },
+          ],
           content_markdown: "",
           units: [
             {
@@ -1036,6 +1080,17 @@ core_technical_components = [
           ],
           sourceRefIds: ["src-hastie-esl"],
           reviewStatus: "verified",
+          flow: "mixed",
+          executionGroups: [
+            {
+              id: "grp-ds-1-5",
+              title: "Pembuktian Empiris Simpson's Paradox pada Data Observasional",
+              codeUnitId: "u-ds-1-5-code",
+              outputUnitId: "u-ds-1-5-out",
+              interpretationUnitId: "u-ds-1-5-interp",
+              status: "output-matched",
+            },
+          ],
           content_markdown: "",
           units: [
             {
@@ -1243,6 +1298,25 @@ def audit_discount_causality(df):
           ],
           sourceRefIds: ["src-california-housing", "src-hastie-esl", "src-scikit-learn-pipeline"],
           reviewStatus: "verified",
+          flow: "computational",
+          executionGroups: [
+            {
+              id: "grp-ds-1-6-audit",
+              title: "Audit Skema, Kelengkapan & Batas Sensorik Target",
+              codeUnitId: "u-ds-1-6-code-audit",
+              outputUnitId: "u-ds-1-6-out-audit",
+              interpretationUnitId: "u-ds-1-6-interp-audit",
+              status: "output-matched",
+            },
+            {
+              id: "grp-ds-1-6-tukey",
+              title: "Deteksi Outlier Tukey's IQR Fences & Estimasi Baseline OLS",
+              codeUnitId: "u-ds-1-6-code-tukey",
+              outputUnitId: "u-ds-1-6-out-tukey",
+              interpretationUnitId: "u-ds-1-6-interp-tukey",
+              status: "output-matched",
+            },
+          ],
           content_markdown: "",
           units: [
             {

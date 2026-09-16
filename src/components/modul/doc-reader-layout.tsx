@@ -9,12 +9,6 @@ import {
   PanelLeftOpen,
   Search,
   BookOpen,
-  Copy,
-  Maximize2,
-  Minimize2,
-  ExternalLink,
-  LayoutGrid,
-  FileText,
   ArrowLeft,
   ArrowRight,
   Sun,
@@ -22,19 +16,35 @@ import {
   ListFilter,
   Check,
   Home,
-  Sliders,
-  Sparkles,
+  Menu,
+  X,
+  Maximize2,
+  Minimize2,
+  Share2,
+  LayoutGrid,
   Bot,
   BrainCircuit,
   Code2,
   GraduationCap,
-  Share2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { NoteRenderer } from "@/components/notes/note-renderer";
 import { toast } from "sonner";
-import { NotebookUnitRenderer } from "./notebook/notebook-unit-renderer";
-import { notebookUnitsToMarkdown, type DocSectionItem } from "@/lib/curriculum/types";
+import {
+  NotebookUnitRenderer,
+  NotebookLessonHeader,
+  NotebookObjectives,
+  NotebookPrerequisites,
+  NotebookSummary,
+  NotebookSourceList,
+  NotebookNavigation,
+} from "./notebook";
+import {
+  notebookUnitsToMarkdown,
+  type DocSectionItem,
+  type AcademicLesson,
+  type LessonFlow,
+} from "@/lib/curriculum/types";
 
 export type { DocSectionItem };
 
@@ -56,9 +66,6 @@ interface TocItem {
   level: number;
 }
 
-/**
- * Generate anchor ID from heading text matching NoteRenderer's generateHeadingId
- */
 function slugifyHeading(text: string): string {
   return text
     .toLowerCase()
@@ -68,9 +75,6 @@ function slugifyHeading(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/**
- * Parses markdown to extract in-page Table of Contents (H2 and H3)
- */
 function extractTocFromMarkdown(markdown: string): TocItem[] {
   if (!markdown) return [];
   const lines = markdown.split("\n");
@@ -81,7 +85,6 @@ function extractTocFromMarkdown(markdown: string): TocItem[] {
     if (match) {
       const level = match[1].length;
       let rawText = match[2].trim();
-      // Remove inline links and formatting
       rawText = rawText.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
       rawText = rawText.replace(/[*_`]/g, "");
 
@@ -98,14 +101,9 @@ function extractTocFromMarkdown(markdown: string): TocItem[] {
   return items;
 }
 
-/**
- * Flattens hierarchical sections into a linear list for sequential prev/next navigation
- * Supports all 3 levels: Chapters -> Subchapters -> Learning Units (Sub-subchapters)
- */
 function flattenDocSections(sections: DocSectionItem[]): DocSectionItem[] {
   const flat: DocSectionItem[] = [];
   for (const sec of sections) {
-    // Sertakan bab utama jika memiliki konten mandiri (seperti catatan kurikulum)
     if (sec.content_markdown && sec.content_markdown.trim().length > 0) {
       flat.push(sec);
     }
@@ -117,7 +115,6 @@ function flattenDocSections(sections: DocSectionItem[]): DocSectionItem[] {
           chapterNumber: sec.orderIndex,
         });
 
-        // Level 3: Sub-subchapters / Learning Units
         if (sub.subsections && sub.subsections.length > 0) {
           for (const unit of sub.subsections) {
             flat.push({
@@ -148,25 +145,21 @@ export function DocReaderLayout({
 }: DocReaderLayoutProps) {
   const { resolvedTheme, setTheme } = useTheme();
 
-  // Sidebar collapsed states
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [tocCollapsed, setTocCollapsed] = useState(false);
+  // Sidebar & Outline Adaptive State
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [outlineOpen, setOutlineOpen] = useState(false); // Collapsed by default for spacious reading
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Search filter inside section navigation
+  // Search filter inside navigation
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Version switcher dropdown
-  const [showVersionDropdown, setShowVersionDropdown] = useState(false);
-  const [showMoreDropdown, setShowMoreDropdown] = useState(false);
-
-  // Active heading for ScrollSpy
+  // ScrollSpy active heading ID
   const [activeHeadingId, setActiveHeadingId] = useState<string>("");
 
-  // Flatten sections to find active item and handle prev/next
   const flatSections = useMemo(() => flattenDocSections(sections), [sections]);
 
-  // Selected section ID (defaults to URL param, active ID, or first leaf section)
+  // Selected section ID (URL query sync priority)
   const [selectedId, setSelectedId] = useState<string>(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -177,14 +170,16 @@ export function DocReaderLayout({
     return flatSections[0]?.id || sections[0]?.id || "";
   });
 
-  // Track expanded accordion chapters (Lazy: only expand active or first chapter)
+  // Track expanded accordion chapters
   const [expandedChapters, setExpandedChapters] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     sections.forEach((sec, idx) => {
       init[sec.id] = Boolean(
         idx === 0 ||
-        sec.id === activeSectionId ||
-        sec.subsections?.some((sub) => sub.id === activeSectionId || sub.subsections?.some((u) => u.id === activeSectionId))
+          sec.id === activeSectionId ||
+          sec.subsections?.some(
+            (sub) => sub.id === activeSectionId || sub.subsections?.some((u) => u.id === activeSectionId)
+          )
       );
     });
     return init;
@@ -192,7 +187,7 @@ export function DocReaderLayout({
 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Synchronize initial selection with URL query parameter ?section=...
+  // Synchronize URL query parameter ?section=...
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -203,14 +198,13 @@ export function DocReaderLayout({
     }
   }, [selectedId]);
 
-  // Sync selectedId with activeSectionId prop
   useEffect(() => {
     if (activeSectionId && activeSectionId !== selectedId) {
       setSelectedId(activeSectionId);
     }
   }, [activeSectionId, selectedId]);
 
-  // Automatically expand parent chapter and subchapter of selected section
+  // Expand parent chapter automatically
   useEffect(() => {
     for (const sec of sections) {
       if (sec.id === selectedId) {
@@ -228,7 +222,7 @@ export function DocReaderLayout({
     }
   }, [selectedId, sections]);
 
-  // Scroll reader pane to top when selected section changes
+  // Scroll to top on section change
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTo({ top: 0, behavior: "smooth" });
@@ -236,12 +230,17 @@ export function DocReaderLayout({
     setActiveHeadingId("");
   }, [selectedId]);
 
-  // Find currently active section object
+  // Active section item
   const currentSection = useMemo(() => {
-    return flatSections.find((s) => s.id === selectedId) || sections.find((s) => s.id === selectedId) || flatSections[0] || null;
+    return (
+      flatSections.find((s) => s.id === selectedId) ||
+      sections.find((s) => s.id === selectedId) ||
+      flatSections[0] ||
+      null
+    );
   }, [flatSections, sections, selectedId]);
 
-  // Find parent chapter for breadcrumbs
+  // Parent chapter for breadcrumbs
   const parentChapter = useMemo(() => {
     if (!currentSection) return null;
     return sections.find(
@@ -251,10 +250,13 @@ export function DocReaderLayout({
     );
   }, [sections, currentSection]);
 
-  // Previous & Next navigation
+  // Previous & Next navigation targets
   const currentIndex = flatSections.findIndex((s) => s.id === currentSection?.id);
   const prevSection = currentIndex > 0 ? flatSections[currentIndex - 1] : null;
-  const nextSection = currentIndex >= 0 && currentIndex < flatSections.length - 1 ? flatSections[currentIndex + 1] : null;
+  const nextSection =
+    currentIndex >= 0 && currentIndex < flatSections.length - 1
+      ? flatSections[currentIndex + 1]
+      : null;
 
   // Markdown content
   const currentMarkdown = useMemo(() => {
@@ -266,7 +268,6 @@ export function DocReaderLayout({
       return notebookUnitsToMarkdown(currentSection.units);
     }
 
-    // Construct rich markdown from description and codeSnippets for all modules
     let md = `# ${currentSection.title}\n\n`;
     if (currentSection.description) {
       md += `> ${currentSection.description}\n\n`;
@@ -283,17 +284,17 @@ export function DocReaderLayout({
       }
     }
 
-    md += `## Ringkasan & Poin Penting\n\n1. Pemahaman mendalam mengenai **${currentSection.title}** merupakan pilar penting dalam spesialisasi ${categoryName}.\n2. Terapkan kode praktikum di atas ke dalam alur kerja analisis data atau pelatihan model mandiri.\n3. Gunakan panel daftar isi di sebelah kanan (*Pada Halaman Ini*) untuk menelusuri sub-bagian materi secara instan.`;
+    md += `## Ringkasan & Poin Penting\n\n1. Pemahaman mendalam mengenai **${currentSection.title}** merupakan pilar penting dalam spesialisasi ${categoryName}.\n2. Terapkan kode praktikum di atas ke dalam alur kerja analisis data atau pelatihan model mandiri.\n3. Gunakan panel daftar isi (*Outline*) untuk menelusuri sub-bagian materi secara instan.`;
 
     return md;
   }, [currentSection, categoryName]);
 
-  // In-Page Table of Contents (On this page)
+  // In-Page TOC items
   const tocItems = useMemo(() => {
     return extractTocFromMarkdown(currentMarkdown);
   }, [currentMarkdown]);
 
-  // ScrollSpy: observe headings when scrolling inside contentRef
+  // ScrollSpy listener
   useEffect(() => {
     const container = contentRef.current;
     if (!container || tocItems.length === 0) return;
@@ -310,7 +311,7 @@ export function DocReaderLayout({
 
       for (const el of headingElements) {
         const rect = el.getBoundingClientRect();
-        if (rect.top - containerTop <= 100) {
+        if (rect.top - containerTop <= 110) {
           currentActive = el.id;
         } else {
           break;
@@ -324,7 +325,6 @@ export function DocReaderLayout({
     return () => container.removeEventListener("scroll", handleScroll);
   }, [tocItems]);
 
-  // Smooth scroll to an in-page heading
   const scrollToHeading = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (el && contentRef.current) {
@@ -333,7 +333,6 @@ export function DocReaderLayout({
     }
   }, []);
 
-  // Handle section click with URL query sync
   const handleSelect = (sectionId: string) => {
     setSelectedId(sectionId);
     if (onSelectSection) {
@@ -344,9 +343,9 @@ export function DocReaderLayout({
       url.searchParams.set("section", sectionId);
       window.history.replaceState({}, "", url.toString());
     }
+    setMobileDrawerOpen(false);
   };
 
-  // Toggle chapter accordion expand/collapse
   const toggleChapter = (chapterId: string) => {
     setExpandedChapters((prev) => ({
       ...prev,
@@ -384,16 +383,39 @@ export function DocReaderLayout({
   return (
     <div
       className={`flex flex-col bg-white dark:bg-[#111113] overflow-hidden transition-all duration-300 font-sans w-full h-screen ${
-        isFullscreen
-          ? "fixed inset-0 z-50 rounded-none shadow-2xl"
-          : "border-0 rounded-none flex-1"
+        isFullscreen ? "fixed inset-0 z-50 shadow-2xl" : "flex-1"
       }`}
     >
-      {/* ─── 1. TOP DOCUMENTATION NAVBAR (Velqora Modern Docs Header) ─── */}
-      <header className="flex items-center justify-between px-3 sm:px-5 py-2.5 border-b border-border bg-[#FFFFFF] dark:bg-[#18181B] select-none shrink-0 gap-3 z-20">
-        {/* Left: Velqora Brand + Category Identity */}
+      {/* ─── 1. MINIMAL ACADEMIC TOOLBAR ─── */}
+      <header className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-border/80 bg-white/90 dark:bg-[#161619]/90 backdrop-blur-md select-none shrink-0 gap-3 z-30">
+        {/* Left: Mobile Drawer Trigger + Brand + Navigation Toggle */}
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          {/* Back to Module Catalog */}
+          {/* Mobile Navigation Drawer Button */}
+          <button
+            type="button"
+            onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+            className="md:hidden p-2 rounded-lg border border-border bg-surface text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            aria-label="Buka navigasi materi"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+
+          {/* Desktop Sidebar Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="hidden md:flex items-center gap-1.5 p-1.5 px-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            title={sidebarOpen ? "Sembunyikan panel bab" : "Buka panel bab"}
+          >
+            {sidebarOpen ? (
+              <PanelLeftClose className="w-3.5 h-3.5" style={{ color: themeColor }} />
+            ) : (
+              <PanelLeftOpen className="w-3.5 h-3.5" style={{ color: themeColor }} />
+            )}
+            <span className="hidden lg:inline">{sidebarOpen ? "Tutup" : "Materi"}</span>
+          </button>
+
+          {/* Back to Catalog */}
           <Link
             href="/dashboard/modul"
             className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors shrink-0"
@@ -402,110 +424,66 @@ export function DocReaderLayout({
             <ArrowLeft className="w-4 h-4" />
           </Link>
 
-          {/* Velqora Docs Brand */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          {/* Academic Topic Identity */}
+          <div className="flex items-center gap-2.5 min-w-0">
             <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white shadow-xs shrink-0"
-              style={{
-                backgroundColor: themeColor,
-              }}
+              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white shadow-2xs shrink-0"
+              style={{ backgroundColor: themeColor }}
             >
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-3.5 h-3.5" />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-sm font-extrabold text-text-primary font-display tracking-tight flex items-center gap-1.5">
-                Velqora <span className="font-mono text-xs font-normal text-text-tertiary">/ Docs</span>
-              </span>
-              <span className="text-[10px] font-mono text-text-secondary mt-0.5 truncate max-w-[140px] sm:max-w-[200px]">
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs sm:text-sm font-bold text-text-primary font-display tracking-tight truncate">
                 {categoryName}
               </span>
+              <span className="text-[10px] font-mono text-text-tertiary hidden sm:inline truncate">
+                Velqora Academic Notebook Platform
+              </span>
             </div>
           </div>
-
-          {/* Category Pill */}
-          <div
-            className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border shrink-0"
-            style={{
-              backgroundColor: `${themeColor}15`,
-              borderColor: `${themeColor}35`,
-              color: themeColor,
-            }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: themeColor }} />
-            <span className="font-medium truncate max-w-[180px]">{categoryName}</span>
-          </div>
-
-          {/* Navigation Tabs (Velqora Learning Flow) */}
-          <nav className="hidden xl:flex items-center gap-1 text-xs font-medium font-sans ml-2">
-            <span
-              className="px-3 py-1.5 border-b-2 font-bold cursor-default flex items-center gap-1.5"
-              style={{
-                borderColor: themeColor,
-                color: themeColor,
-              }}
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Dokumentasi & Teori</span>
-            </span>
-            <Link
-              href="/dashboard/modul"
-              className="px-3 py-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
-            >
-              Katalog Modul
-            </Link>
-            <Link
-              href="/dashboard/catatan"
-              className="px-3 py-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
-            >
-              Catatan Vault
-            </Link>
-            <Link
-              href="/dashboard/proyek"
-              className="px-3 py-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
-            >
-              Praktikum Proyek
-            </Link>
-          </nav>
         </div>
 
-        {/* Right: Search, Switcher, Theme, Fullscreen */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Quick Search Shortcut */}
+        {/* Right: Quick Actions, TOC Toggle, Theme, Fullscreen */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* In-Page Outline Toggle (Collapsible Right Panel) */}
           <button
             type="button"
-            onClick={() => {
-              const searchInput = document.getElementById("doc-toc-search");
-              searchInput?.focus();
-            }}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-surface-secondary/60 hover:bg-surface-secondary text-xs text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
-            title="Cari bab atau materi"
+            onClick={() => setOutlineOpen(!outlineOpen)}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors cursor-pointer ${
+              outlineOpen
+                ? "bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700"
+                : "border-border bg-surface text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+            }`}
+            title="Buka / tutup panel daftar isi halaman"
           >
-            <Search className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Cari</span>
-            <kbd className="hidden lg:inline text-[10px] font-mono px-1 py-0.2 rounded border border-border bg-surface text-text-tertiary">
-              Ctrl K
-            </kbd>
+            <ListFilter className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Outline</span>
+            {tocItems.length > 0 && (
+              <span className="text-[10px] px-1 py-0.2 rounded-full bg-surface-secondary text-text-tertiary">
+                {tocItems.length}
+              </span>
+            )}
           </button>
 
-          {/* Toggle view mode to Grid Kartu */}
+          {/* Toggle Grid View Mode */}
           {onToggleViewMode && (
             <button
               type="button"
               onClick={onToggleViewMode}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-              title="Ganti ke Tampilan Ringkasan Grid Kartu"
+              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+              title="Ganti ke Tampilan Kartu Grid"
             >
-              <LayoutGrid className="w-3.5 h-3.5 text-text-secondary" />
-              <span className="hidden sm:inline">Tampilan Kartu</span>
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Kartu</span>
             </button>
           )}
 
-          {/* Theme Switcher Toggle */}
+          {/* Theme Switcher */}
           <button
             type="button"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
             className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-            title={resolvedTheme === "dark" ? "Ganti ke Light Mode" : "Ganti ke Dark Mode"}
+            aria-label="Ubah tema warna"
           >
             {resolvedTheme === "dark" ? (
               <Sun className="w-4 h-4 text-amber-400" />
@@ -514,12 +492,12 @@ export function DocReaderLayout({
             )}
           </button>
 
-          {/* Fullscreen focus reading mode toggle */}
+          {/* Fullscreen Reading Mode */}
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-            title={isFullscreen ? "Keluar dari Layar Penuh" : "Mode Baca Layar Penuh"}
+            title={isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
           >
             {isFullscreen ? (
               <Minimize2 className="w-4 h-4 text-brand-600" />
@@ -530,56 +508,61 @@ export function DocReaderLayout({
         </div>
       </header>
 
-      {/* ─── 2. MAIN 3-COLUMN DOCUMENTATION AREA ─── */}
-      <div className="flex flex-1 min-h-0 relative overflow-hidden bg-white dark:bg-[#121214]">
+      {/* ─── 2. ADAPTIVE MAIN WORKSPACE CANVAS ─── */}
+      <div className="flex flex-1 min-h-0 relative overflow-hidden bg-white dark:bg-[#111113]">
+        {/* Mobile Backdrop Overlay */}
+        {mobileDrawerOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
+            onClick={() => setMobileDrawerOpen(false)}
+          />
+        )}
+
         {/* ─────────────────────────────────────────────────────────────
-            COLUMN 1: LEFT SIDEBAR (Section Navigation Tree with Subbab)
+            LEFT NAVIGATION SIDEBAR (Collapsible Desktop & Mobile Drawer)
            ───────────────────────────────────────────────────────────── */}
         <aside
-          className={`flex flex-col border-r border-border bg-[#FAF8F5] dark:bg-[#161619] transition-all duration-300 select-none shrink-0 ${
-            sidebarCollapsed
-              ? "w-0 -translate-x-full opacity-0 pointer-events-none border-r-0"
-              : "w-72 sm:w-80 lg:w-84 translate-x-0 opacity-100"
+          className={`flex flex-col border-r border-border bg-[#FAF9F6] dark:bg-[#161619] transition-all duration-200 select-none shrink-0 z-40 md:z-10 ${
+            // Mobile Drawer
+            mobileDrawerOpen
+              ? "fixed inset-y-0 left-0 w-80 shadow-2xl flex"
+              : "hidden md:flex"
+          } ${
+            // Desktop Collapse State
+            sidebarOpen
+              ? "md:w-64 lg:w-72 md:translate-x-0 md:opacity-100"
+              : "md:w-0 md:-translate-x-full md:opacity-0 md:pointer-events-none md:border-r-0"
           }`}
         >
-          {/* Top Collapse Button & Section Navigation Title */}
-          <div className="p-3 border-b border-border/80 space-y-2">
-            <div className="flex items-center justify-between">
-              {/* Collapse Sidebar Button */}
-              <button
-                type="button"
-                onClick={() => setSidebarCollapsed(true)}
-                className="flex items-center gap-1.5 px-2 py-1 rounded border border-border bg-surface hover:bg-surface-secondary text-[11px] font-mono font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-                title="Sembunyikan panel navigasi"
-              >
-                <PanelLeftClose className="w-3.5 h-3.5" style={{ color: themeColor }} />
-                <span>Collapse Sidebar</span>
-              </button>
+          {/* Mobile Header in Drawer */}
+          <div className="p-3 border-b border-border/80 flex items-center justify-between md:hidden">
+            <span className="font-bold text-xs font-display text-text-primary">
+              Daftar Bab & Materi
+            </span>
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen(false)}
+              className="p-1 rounded text-text-tertiary hover:text-text-primary"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface border border-border text-text-tertiary">
-                {flatSections.length} Materi
-              </span>
-            </div>
-
-            <h3 className="text-xs font-bold font-mono tracking-wider text-text-primary uppercase pt-1">
-              Navigasi Materi & Bab
-            </h3>
-
-            {/* Quick search input */}
+          {/* Quick Search */}
+          <div className="p-2.5 border-b border-border/70">
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-text-tertiary pointer-events-none" />
               <input
-                id="doc-toc-search"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari bab atau subbab..."
-                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-md border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-brand-500"
+                placeholder="Cari materi atau bab..."
+                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-md border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-brand-500 font-sans"
               />
             </div>
           </div>
 
-          {/* Section Tree Accordion (Bab & Subbab) */}
+          {/* Tree Navigation */}
           <nav className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin text-xs">
             {filteredSections.map((chapter) => {
               const hasSubsections = chapter.subsections && chapter.subsections.length > 0;
@@ -588,7 +571,6 @@ export function DocReaderLayout({
 
               return (
                 <div key={chapter.id} className="space-y-0.5">
-                  {/* Top-Level Chapter Header */}
                   <div
                     className={`flex items-center justify-between px-2.5 py-1.5 rounded-md font-sans transition-colors group cursor-pointer ${
                       isChapterActive
@@ -614,7 +596,8 @@ export function DocReaderLayout({
                           e.stopPropagation();
                           toggleChapter(chapter.id);
                         }}
-                        className="p-0.5 text-text-tertiary hover:text-text-primary transition-transform"
+                        className="p-0.5 text-text-tertiary hover:text-text-primary"
+                        aria-label="Perluas atau ciutkan bab"
                       >
                         <ChevronDown
                           className={`w-3.5 h-3.5 transition-transform duration-200 ${
@@ -625,89 +608,37 @@ export function DocReaderLayout({
                     )}
                   </div>
 
-                  {/* Subbab Tree (Subsections with left guideline and active indicator) */}
+                  {/* Subchapters */}
                   {hasSubsections && isExpanded && (
-                    <div className="pl-3.5 ml-2 border-l border-border/80 space-y-0.5 my-0.5">
+                    <div className="pl-3 ml-2 border-l border-border/80 space-y-0.5 my-0.5">
                       {chapter.subsections!.map((sub) => {
                         const isSubActive = sub.id === selectedId;
-                        const hasUnits = sub.subsections && sub.subsections.length > 0;
-                        const isUnitChildActive = hasUnits && sub.subsections!.some((u) => u.id === selectedId);
 
                         return (
-                          <div key={sub.id} className="space-y-0.5">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (sub.id.includes("#")) {
-                                  const [parentId, anchor] = sub.id.split("#");
-                                  handleSelect(parentId);
-                                  setTimeout(() => {
-                                    scrollToHeading(anchor);
-                                  }, 120);
-                                } else {
-                                  handleSelect(sub.id);
-                                }
-                              }}
-                              className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer relative ${
-                                isSubActive
-                                  ? "bg-white dark:bg-[#1c1c20] font-bold -ml-[15px] pl-[18px] shadow-2xs"
-                                  : isUnitChildActive
-                                  ? "bg-surface/80 text-text-primary font-medium"
-                                  : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-                              }`}
-                              style={
-                                isSubActive
-                                  ? {
-                                      color: themeColor,
-                                      borderLeft: `3px solid ${themeColor}`,
-                                    }
-                                  : undefined
+                          <button
+                            key={sub.id}
+                            type="button"
+                            onClick={() => {
+                              if (sub.id.includes("#")) {
+                                const [parentId, anchor] = sub.id.split("#");
+                                handleSelect(parentId);
+                                setTimeout(() => scrollToHeading(anchor), 120);
+                              } else {
+                                handleSelect(sub.id);
                               }
-                            >
-                              <span className="leading-snug line-clamp-2">
-                                {sub.title}
-                              </span>
-                              {isSubActive && (
-                                <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
-                              )}
-                            </button>
-
-                            {/* Level 3: Sub-subchapters / Learning Units */}
-                            {hasUnits && (isSubActive || isUnitChildActive || searchQuery.trim().length > 0) && (
-                              <div className="pl-3 ml-2 border-l border-border/60 space-y-0.5 my-0.5">
-                                {sub.subsections!.map((unit) => {
-                                  const isUnitActive = unit.id === selectedId;
-                                  return (
-                                    <button
-                                      key={unit.id}
-                                      type="button"
-                                      onClick={() => handleSelect(unit.id)}
-                                      className={`w-full text-left px-2 py-1 rounded text-[10px] font-sans transition-all flex items-start justify-between gap-1 cursor-pointer ${
-                                        isUnitActive
-                                          ? "bg-white dark:bg-[#202024] font-bold shadow-2xs"
-                                          : "text-text-tertiary hover:text-text-primary hover:bg-surface/40"
-                                      }`}
-                                      style={
-                                        isUnitActive
-                                          ? {
-                                              color: themeColor,
-                                              borderLeft: `2px solid ${themeColor}`,
-                                            }
-                                          : undefined
-                                      }
-                                    >
-                                      <span className="leading-tight line-clamp-1">
-                                        {unit.title}
-                                      </span>
-                                      {isUnitActive && (
-                                        <ChevronRight className="w-2.5 h-2.5 shrink-0 mt-0.5" style={{ color: themeColor }} />
-                                      )}
-                                    </button>
-                                  );
-                                })}
-                              </div>
+                            }}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer ${
+                              isSubActive
+                                ? "bg-white dark:bg-[#1e1e22] font-bold shadow-2xs"
+                                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+                            }`}
+                            style={isSubActive ? { color: themeColor } : undefined}
+                          >
+                            <span className="leading-snug line-clamp-2">{sub.title}</span>
+                            {isSubActive && (
+                              <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
                             )}
-                          </div>
+                          </button>
                         );
                       })}
                     </div>
@@ -715,284 +646,213 @@ export function DocReaderLayout({
                 </div>
               );
             })}
-
-            {filteredSections.length === 0 && (
-              <div className="p-4 text-center text-xs text-text-tertiary font-mono">
-                Tidak ada materi yang cocok dengan &quot;{searchQuery}&quot;
-              </div>
-            )}
           </nav>
 
-          {/* Bottom Sidebar Footer */}
-          <div className="p-2.5 border-t border-border/80 bg-surface/50 flex items-center justify-between text-[10px] font-mono text-text-tertiary">
-            <span className="truncate">{categoryName}</span>
-            <span className="font-semibold shrink-0" style={{ color: themeColor }}>
+          {/* Sidebar Footer */}
+          <div className="p-2.5 border-t border-border/80 bg-surface/40 flex items-center justify-between text-[10px] font-mono text-text-tertiary">
+            <span className="truncate">{flatSections.length} Materi</span>
+            <span className="font-semibold" style={{ color: themeColor }}>
               Velqora Learning
             </span>
           </div>
         </aside>
 
         {/* ─────────────────────────────────────────────────────────────
-            COLUMN 2: CENTER MAIN CONTENT (Reader Pane with Math & Code)
+            CENTER MAIN ACADEMIC CANVAS (Comfortable 720–900px Width)
            ───────────────────────────────────────────────────────────── */}
         <main
           ref={contentRef}
-          className="flex-1 overflow-y-auto px-4 py-5 sm:px-8 sm:py-8 lg:px-12 lg:py-10 max-w-4xl mx-auto scrollbar-thin space-y-6"
+          className="flex-1 overflow-y-auto min-w-0 scrollbar-thin px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 lg:py-10"
         >
-          {/* Top Bar for Collapsed Sidebar Re-opening */}
-          {sidebarCollapsed && (
-            <div className="flex items-center gap-2 mb-3">
-              <button
-                type="button"
-                onClick={() => setSidebarCollapsed(false)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+          <div className="mx-auto w-full max-w-3xl xl:max-w-4xl space-y-8">
+            {/* Breadcrumb Navigation */}
+            <nav
+              aria-label="Breadcrumb"
+              className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary flex-wrap"
+            >
+              <Link
+                href="/dashboard"
+                className="hover:text-text-primary transition-colors flex items-center gap-1 shrink-0"
               >
-                <PanelLeftOpen className="w-3.5 h-3.5" style={{ color: themeColor }} />
-                <span>Buka Navigasi Materi</span>
-              </button>
-            </div>
-          )}
+                <Home className="w-3.5 h-3.5 opacity-80" />
+              </Link>
+              <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+              <Link href="/dashboard/modul" className="hover:text-text-primary transition-colors shrink-0">
+                Modul AI
+              </Link>
+              <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+              <span className="hover:text-text-primary transition-colors shrink-0 font-medium" style={{ color: themeColor }}>
+                {categoryName}
+              </span>
+              {parentChapter && (
+                <>
+                  <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+                  <span className="truncate max-w-[200px]">{parentChapter.title}</span>
+                </>
+              )}
+            </nav>
 
-          {/* Breadcrumbs Styled Elegantly (Dashboard > Modul AI > Category > Chapter > Section) */}
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary flex-wrap"
-          >
-            <Link
-              href="/dashboard"
-              className="hover:text-text-primary transition-colors flex items-center gap-1 shrink-0"
-              title="Dashboard"
-            >
-              <Home className="w-3.5 h-3.5 opacity-80" />
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
-            <Link
-              href="/dashboard/modul"
-              className="hover:text-text-primary transition-colors shrink-0"
-            >
-              Modul AI
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
-            <span className="hover:text-text-primary transition-colors shrink-0 font-medium" style={{ color: themeColor }}>
-              {categoryName}
-            </span>
-            {parentChapter && (
-              <>
-                <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
-                <button
-                  type="button"
-                  onClick={() => toggleChapter(parentChapter.id)}
-                  className="hover:text-text-primary transition-colors truncate max-w-[200px]"
-                >
-                  {parentChapter.title}
-                </button>
-              </>
-            )}
-            {currentSection && (
-              <>
-                <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
-                <span className="text-text-primary font-bold truncate max-w-[280px]">
-                  {currentSection.title}
-                </span>
-              </>
-            )}
-          </nav>
+            {/* Current Section / Lesson Article */}
+            {currentSection ? (
+              <article className="space-y-8">
+                {/* 1. Lesson Header */}
+                <NotebookLessonHeader
+                  number={currentSection.orderIndex ? `${currentSection.chapterNumber || 1}.${currentSection.orderIndex}` : undefined}
+                  title={currentSection.title}
+                  subtitle={currentSection.parentTitle}
+                  description={currentSection.description}
+                  flow={currentSection.flow || (currentSection.units?.some((u) => u.type === "code") ? "computational" : "conceptual")}
+                  estimatedMinutes={currentSection.units ? Math.max(10, currentSection.units.length * 2) : 15}
+                  categoryName={categoryName}
+                  chapterTitle={parentChapter?.title}
+                />
 
-          {/* Main Article Content */}
-          {currentSection ? (
-            <article className="space-y-6">
-              {/* Academic Action & Context Toolbar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-surface/50 backdrop-blur-xs shadow-2xs">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/40">
-                    <GraduationCap className="w-3.5 h-3.5" />
-                    <span>Kurikulum Akademik & Praktikum</span>
-                  </span>
-                  <span className="text-[11px] font-sans text-text-tertiary hidden sm:inline">
-                    {categoryName}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {/* Tanya AI Tutor */}
-                  <Link
-                    href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(
-                      `Halo AI Tutor, saya sedang mempelajari materi "${currentSection.title}" pada kurikulum ${categoryName}. Bisakah Anda menjelaskan konsep fundamentalnya, membimbing penurunan matematisnya, dan memberikan contoh kode interaktif untuk memperkuat pemahaman saya?`
-                    )}`}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors cursor-pointer"
-                    title="Tanyakan materi ini kepada AI Tutor cerdas"
-                  >
-                    <Bot className="w-3.5 h-3.5" />
-                    <span>Tanya AI Tutor</span>
-                  </Link>
-
-                  {/* Uji Kuis AI */}
-                  <Link
-                    href={`/dashboard/kuis-ai?topic=${encodeURIComponent(
-                      `${categoryName} - ${currentSection.title}`
-                    )}`}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors cursor-pointer"
-                    title="Uji pemahaman Anda dengan kuis adaptif"
-                  >
-                    <BrainCircuit className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Uji Kuis</span>
-                  </Link>
-
-                  {/* Playground Kode */}
-                  <Link
-                    href="/dashboard/playground"
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors cursor-pointer"
-                    title="Buka ruang simulasi dan eksekusi kode"
-                  >
-                    <Code2 className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Playground</span>
-                  </Link>
-
-                  {/* Salin Tautan */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (typeof window !== "undefined") {
-                        navigator.clipboard.writeText(window.location.href);
-                        toast.success("Tautan materi berhasil disalin ke clipboard.");
-                      }
-                    }}
-                    className="p-1 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
-                    title="Salin tautan materi ini"
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Subchapter Learning Objectives Banner */}
-              {currentSection.learningObjectives && currentSection.learningObjectives.length > 0 && (
-                <div className="p-4 rounded-xl border border-brand-500/20 bg-brand-500/[0.03] dark:bg-brand-500/[0.04]">
-                  <div className="flex items-center gap-2 font-semibold text-xs text-brand-700 dark:text-brand-300 mb-2">
-                    <GraduationCap className="w-4 h-4" />
-                    <span>Capaian Pembelajaran (Learning Objectives):</span>
+                {/* 2. Contextual Quick Actions (Unobtrusive) */}
+                <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-surface/40 backdrop-blur-xs text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/40">
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>Standar Kurikulum Akademik</span>
+                    </span>
                   </div>
-                  <ul className="list-disc list-inside space-y-1 text-xs text-text-secondary">
-                    {currentSection.learningObjectives.map((obj, i) => (
-                      <li key={i}>{obj}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
-              {/* Document Content: Notebook Units or Traditional Markdown */}
-              {currentSection.units && currentSection.units.length > 0 ? (
-                <NotebookUnitRenderer units={currentSection.units} />
-              ) : (
-                <div className="py-2">
-                  <NoteRenderer content={currentMarkdown} />
-                </div>
-              )}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <Link
+                      href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(
+                        `Halo AI Tutor, saya sedang mempelajari "${currentSection.title}" pada kurikulum ${categoryName}. Bisakah Anda menjelaskan konsep intinya, membimbing penurunan matematisnya, dan memberikan contoh kode interaktif?`
+                      )}`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white shadow-2xs transition-colors"
+                    >
+                      <Bot className="w-3.5 h-3.5" />
+                      <span>Tanya Tutor</span>
+                    </Link>
 
-              {/* Bottom Pagination Buttons (Prev / Next Section) */}
-              <nav
-                aria-label="Navigasi Halaman"
-                className="mt-14 pt-6 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-3"
-              >
-                {prevSection ? (
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(prevSection.id)}
-                    className="flex flex-col items-start p-3 rounded-lg border border-border hover:border-[#0284c7]/50 bg-surface hover:bg-surface-secondary/50 text-left transition-all cursor-pointer group"
-                  >
-                    <span className="text-[11px] font-sans text-text-tertiary flex items-center gap-1 group-hover:text-[#0284c7] dark:group-hover:text-[#38bdf8]">
-                      <ArrowLeft className="w-3 h-3" />
-                      <span>Previous</span>
-                    </span>
-                    <span className="text-xs sm:text-sm font-semibold text-text-primary line-clamp-1 mt-0.5">
-                      {prevSection.title}
-                    </span>
-                  </button>
+                    <Link
+                      href={`/dashboard/kuis-ai?topic=${encodeURIComponent(`${categoryName} - ${currentSection.title}`)}`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors"
+                    >
+                      <BrainCircuit className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Kuis</span>
+                    </Link>
+
+                    <Link
+                      href="/dashboard/playground"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors"
+                    >
+                      <Code2 className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Playground</span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (typeof window !== "undefined") {
+                          navigator.clipboard.writeText(window.location.href);
+                          toast.success("Tautan materi berhasil disalin.");
+                        }
+                      }}
+                      className="p-1 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-tertiary hover:text-text-primary transition-colors"
+                      title="Salin tautan"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Learning Objectives */}
+                {currentSection.learningObjectives && currentSection.learningObjectives.length > 0 && (
+                  <NotebookObjectives objectives={currentSection.learningObjectives} />
+                )}
+
+                {/* 4. Main Lesson Units / Markdown Content */}
+                {currentSection.units && currentSection.units.length > 0 ? (
+                  <NotebookUnitRenderer units={currentSection.units} />
                 ) : (
-                  <div className="hidden sm:block" />
+                  <div className="py-2 prose dark:prose-invert max-w-none">
+                    <NoteRenderer content={currentMarkdown} />
+                  </div>
                 )}
 
-                {nextSection && (
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(nextSection.id)}
-                    className="flex flex-col items-end p-3 rounded-lg border border-border hover:border-[#0284c7]/50 bg-surface hover:bg-surface-secondary/50 text-right transition-all cursor-pointer group sm:col-start-2"
-                  >
-                    <span className="text-[11px] font-sans text-text-tertiary flex items-center gap-1 group-hover:text-[#0284c7] dark:group-hover:text-[#38bdf8]">
-                      <span>Next</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </span>
-                    <span className="text-xs sm:text-sm font-semibold text-text-primary line-clamp-1 mt-0.5">
-                      {nextSection.title}
-                    </span>
-                  </button>
+                {/* 5. Key Takeaways / Summary */}
+                {currentSection.summary && (
+                  <NotebookSummary summary={currentSection.summary} />
                 )}
-              </nav>
-            </article>
-          ) : (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-6 text-text-tertiary font-mono space-y-3">
-              <FileText className="w-10 h-10 opacity-40" />
-              <p className="text-sm">Silakan pilih bab di Section Navigation sebelah kiri.</p>
-            </div>
-          )}
+
+                {/* 6. Academic Sources / Citations */}
+                {currentSection.lesson?.furtherReading && currentSection.lesson.furtherReading.length > 0 && (
+                  <NotebookSourceList sources={currentSection.lesson.furtherReading} />
+                )}
+
+                {/* 7. Previous / Next Lesson Navigation */}
+                <NotebookNavigation
+                  prev={prevSection ? { id: prevSection.id, title: prevSection.title } : null}
+                  next={nextSection ? { id: nextSection.id, title: nextSection.title } : null}
+                  onSelect={handleSelect}
+                />
+              </article>
+            ) : (
+              <div className="py-20 text-center text-text-tertiary font-mono space-y-2">
+                <BookOpen className="w-8 h-8 mx-auto opacity-40" />
+                <p className="text-sm">Silakan pilih bab di panel navigasi materi.</p>
+              </div>
+            )}
+          </div>
         </main>
 
         {/* ─────────────────────────────────────────────────────────────
-            COLUMN 3: RIGHT SIDEBAR ("On this page" In-Page TOC)
+            RIGHT OUTLINE SIDEBAR (Collapsible / Optional "On this page")
            ───────────────────────────────────────────────────────────── */}
-        <aside
-          className={`hidden xl:flex flex-col border-l border-border bg-white dark:bg-[#141417] transition-all duration-300 shrink-0 w-64 ${
-            tocCollapsed ? "w-0 opacity-0 pointer-events-none border-l-0" : "opacity-100"
-          }`}
-        >
-          {/* TOC Header */}
-          <div className="p-3.5 border-b border-border/80 flex items-center justify-between">
-            <h4 className="text-xs font-bold font-sans text-text-primary flex items-center gap-1.5">
-              <ListFilter className="w-3.5 h-3.5 text-[#0284c7] dark:text-[#38bdf8]" />
-              <span>On this page</span>
-            </h4>
-            <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-surface border border-border text-text-tertiary">
-              {tocItems.length}
-            </span>
-          </div>
+        {outlineOpen && (
+          <aside className="hidden xl:flex flex-col border-l border-border bg-white dark:bg-[#141417] transition-all duration-200 shrink-0 w-64 z-20">
+            <div className="p-3.5 border-b border-border/80 flex items-center justify-between">
+              <h4 className="text-xs font-bold font-sans text-text-primary flex items-center gap-1.5">
+                <ListFilter className="w-3.5 h-3.5" style={{ color: themeColor }} />
+                <span>Daftar Isi Halaman</span>
+              </h4>
+              <button
+                type="button"
+                onClick={() => setOutlineOpen(false)}
+                className="p-1 rounded text-text-tertiary hover:text-text-primary text-xs"
+                title="Tutup outline"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-          {/* TOC Links List with ScrollSpy highlight */}
-          <nav className="flex-1 overflow-y-auto p-3 space-y-1 text-xs scrollbar-thin">
-            {tocItems.map((item) => {
-              const isActive = activeHeadingId === item.id;
-
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => scrollToHeading(item.id)}
-                  className={`w-full text-left transition-colors flex items-start gap-1.5 group cursor-pointer ${
-                    item.level === 3 ? "pl-3 text-[11px]" : "font-medium"
-                  } ${
-                    isActive
-                      ? "text-[#0284c7] dark:text-[#38bdf8] font-bold"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  <span
-                    className={`w-1 h-1 rounded-full mt-1.5 shrink-0 transition-colors ${
+            <nav className="flex-1 overflow-y-auto p-3 space-y-1 text-xs scrollbar-thin">
+              {tocItems.map((item) => {
+                const isActive = activeHeadingId === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => scrollToHeading(item.id)}
+                    className={`w-full text-left transition-colors flex items-start gap-1.5 cursor-pointer ${
+                      item.level === 3 ? "pl-3 text-[11px]" : "font-medium"
+                    } ${
                       isActive
-                        ? "bg-[#0284c7] dark:bg-[#38bdf8]"
-                        : "bg-transparent group-hover:bg-text-tertiary"
+                        ? "text-brand-600 dark:text-brand-400 font-bold"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
-                  />
-                  <span className="line-clamp-2 leading-snug">{item.text}</span>
-                </button>
-              );
-            })}
+                  >
+                    <span
+                      className={`w-1 h-1 rounded-full mt-1.5 shrink-0 transition-colors ${
+                        isActive ? "bg-brand-600 dark:bg-brand-400" : "bg-transparent hover:bg-text-tertiary"
+                      }`}
+                    />
+                    <span className="line-clamp-2 leading-snug">{item.text}</span>
+                  </button>
+                );
+              })}
 
-            {tocItems.length === 0 && (
-              <div className="p-4 text-center text-xs text-text-tertiary">
-                Tidak ada sub-heading pada halaman ini.
-              </div>
-            )}
-          </nav>
-        </aside>
+              {tocItems.length === 0 && (
+                <div className="p-4 text-center text-xs text-text-tertiary">
+                  Tidak ada sub-heading pada halaman ini.
+                </div>
+              )}
+            </nav>
+          </aside>
+        )}
       </div>
     </div>
   );

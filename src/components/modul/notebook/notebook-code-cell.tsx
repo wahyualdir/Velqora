@@ -132,56 +132,70 @@ export function NotebookCodeCell({ unit }: NotebookCodeCellProps) {
         </div>
       </div>
 
-      {/* 4. Dependencies & Complexity Metadata Bar */}
-      {(unit.dependencies?.length || unit.runtimeComplexity || unit.memoryComplexity) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-surface-secondary/20 dark:bg-white/[0.01] border-t border-border text-[11px] font-mono text-text-tertiary">
-          {unit.dependencies && unit.dependencies.length > 0 && (
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <Layers className="w-3 h-3 text-text-tertiary shrink-0" />
-              <span>Dependencies:</span>
-              {unit.dependencies.map((dep) => (
-                <span
-                  key={dep}
-                  className="px-1.5 py-0.5 rounded bg-surface border border-border text-text-secondary text-[10px]"
-                >
-                  {dep}
-                </span>
-              ))}
-            </div>
-          )}
+      {/* 4. Progressive Disclosure: Dependencies, Complexity & Failure Modes */}
+      {(unit.dependencies?.length || unit.runtimeComplexity || unit.memoryComplexity || unit.failureModes?.length) ? (
+        <details className="group border-t border-border/70 text-xs font-mono">
+          <summary className="px-4 py-2 bg-surface-secondary/20 hover:bg-surface-secondary/40 dark:bg-white/[0.01] cursor-pointer text-[11px] text-text-tertiary hover:text-text-secondary select-none flex items-center justify-between transition-colors">
+            <span className="flex items-center gap-1.5">
+              <Cpu className="w-3 h-3 text-brand-500" />
+              <span>Rincian Lingkungan & Analisis Kompleksitas</span>
+            </span>
+            <span className="text-[10px] text-text-tertiary group-open:rotate-180 transition-transform">
+              ▼
+            </span>
+          </summary>
 
-          {(unit.runtimeComplexity || unit.memoryComplexity) && (
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <Cpu className="w-3 h-3 text-brand-500" />
-                <span>Waktu:</span>
-                <span className="text-text-primary font-semibold">{unit.runtimeComplexity || "O(1)"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <span>Memori:</span>
-                <span className="text-text-primary font-semibold">{unit.memoryComplexity || "O(1)"}</span>
-              </span>
-            </div>
-          )}
-        </div>
-      )}
+          <div className="p-3 space-y-2 bg-surface-secondary/10 border-t border-border/40">
+            {/* Dependencies & Complexity */}
+            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+              {unit.dependencies && unit.dependencies.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Layers className="w-3 h-3 text-text-tertiary shrink-0" />
+                  <span className="text-text-tertiary">Dependencies:</span>
+                  {unit.dependencies.map((dep) => (
+                    <span
+                      key={dep}
+                      className="px-1.5 py-0.5 rounded bg-surface border border-border text-text-secondary text-[10px]"
+                    >
+                      {dep}
+                    </span>
+                  ))}
+                </div>
+              )}
 
-      {/* 5. Potential Failure Modes Callout */}
-      {unit.failureModes && unit.failureModes.length > 0 && (
-        <div className="px-4 py-2.5 bg-amber-500/5 dark:bg-amber-500/[0.03] border-t border-amber-500/20 text-xs">
-          <div className="flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-400 mb-1">
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-            <span>Potensi Kegagalan Runtime (Failure Modes):</span>
+              {(unit.runtimeComplexity || unit.memoryComplexity) && (
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1 text-text-secondary">
+                    <span>Waktu:</span>
+                    <span className="text-text-primary font-semibold">{unit.runtimeComplexity || "O(1)"}</span>
+                  </span>
+                  <span className="flex items-center gap-1 text-text-secondary">
+                    <span>Memori:</span>
+                    <span className="text-text-primary font-semibold">{unit.memoryComplexity || "O(1)"}</span>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Failure Modes */}
+            {unit.failureModes && unit.failureModes.length > 0 && (
+              <div className="pt-2 border-t border-border/40 text-[11px]">
+                <div className="flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-400 mb-1">
+                  <AlertTriangle className="w-3 h-3 shrink-0" />
+                  <span>Potensi Kegagalan Runtime (Failure Modes):</span>
+                </div>
+                <ul className="list-disc list-inside space-y-0.5 text-text-secondary">
+                  {unit.failureModes.map((failure, idx) => (
+                    <li key={idx}>{failure}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-          <ul className="list-disc list-inside space-y-0.5 text-text-secondary text-[11px]">
-            {unit.failureModes.map((failure, idx) => (
-              <li key={idx}>{failure}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+        </details>
+      ) : null}
 
-      {/* 6. Post-Analysis Commentary */}
+      {/* 5. Post-Analysis Commentary */}
       {unit.postAnalysis && (
         <div className="px-5 py-3.5 border-t border-border bg-surface dark:bg-[#121316]">
           <div className="text-xs text-text-secondary leading-relaxed prose dark:prose-invert max-w-none">
