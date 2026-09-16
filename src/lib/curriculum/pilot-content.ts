@@ -52,6 +52,12 @@ export const substantiveAiFundamentalsChapter1: AcademicChapter = {
   ],
   summary: "Kecerdasan Buatan modern didefinisikan melalui paradigma agen rasional—bukan meniru perilaku manusia yang rentan bias irasional, melainkan memaksimalkan ekspektasi keberhasilan objektif terukur. Kerangka kerja PEAS dan analisis 6 dimensi lingkungan merupakan fondasi mutlak sebelum memilih algoritma pencarian atau pemodelan pembelajaran mesin.",
   transitionToNextChapter: "Setelah memahami bagaimana agen mempersepsi dan memilih tindakan satu langkah, Bab 2 memperluas kapasitas agen untuk menangani masalah multi-langkah melalui formulasi Ruang Keadaan (State Space) dan Algoritma Pencarian Grafo (BFS, DFS, UCS, dan A*).",
+  evaluationQuestions: [
+    "Bagaimana matriks 4 kuadran Russell & Norvig membedakan pendekatan rasional dari pendekatan manusiawi dalam rekayasa sistem cerdas?",
+    "Mengapa kemahatahuan (omniscience) mustahil dicapai dalam lingkungan stokastik dan bagaimana rasionalitas mengatasinya?",
+    "Jelaskan analisis PEAS untuk sistem rekomendasi diagnosis radiologi medis!",
+    "Mengapa lingkungan kontinual, dinamis, dan parsial terobservasi memiliki kompleksitas komputasi tertinggi bagi agen otonom?"
+  ],
   subchapters: [
     {
       id: "ai-fund-ch1-sub1",
@@ -254,6 +260,12 @@ export const substantiveMachineLearningChapter1: AcademicChapter = {
   ],
   summary: "Pembelajaran terawasi berakar pada minimisasi risiko empiris. Regresi linear Ordinary Least Squares merupakan estimator linear tak bias terbaik (teorema Gauss-Markov) ketika asumsi homoskedastisitas dan ketiadaan multikolinearitas terpenuhi. Namun, ketika jumlah fitur bertambah atau hubungan bersifat non-linear, OLS rentan terhadap varians tinggi.",
   transitionToNextChapter: "Setelah menguasai formulasi OLS tertutup, Bab 2 membahas teknik optimasi numerik Gradient Descent (Batch, Mini-batch, dan SGD) untuk melatih model pada skala big data yang tidak memungkinkan komputasi invers matriks.",
+  evaluationQuestions: [
+    "Turunkan Persamaan Normal Ordinary Least Squares (OLS) dari turunan gradien fungsi loss MSE!",
+    "Dalam kondisi apa matriks Gramian X^T X mengalami singularitas dan tidak dapat diinverskan?",
+    "Jelaskan peran teorema Gauss-Markov dalam menjamin status Best Linear Unbiased Estimator (BLUE) pada OLS!",
+    "Mengapa kompleksitas komputasi inversi matriks OLS O(d^3) menjadi kendala pada data berdimensi sangat tinggi?"
+  ],
   subchapters: [
     {
       id: "ml-ch1-sub1",
@@ -340,6 +352,12 @@ export const substantiveMachineLearningChapter6: AcademicChapter = {
   ],
   summary: "Kapasitas model menentukan titik optimal antara galat bias (asumsi terlalu sederhana) dan galat varians (sensitivitas terhadap fluktuasi noise training set). Polinomial derajat 1 menghasilkan underfitting, derajat 15 menghasilkan overfitting ekstrem, dan derajat 3 memberikan keseimbangan generalisasi. Regularisasi L1 (Lasso) dan L2 (Ridge) memberikan kendali matematis ketat terhadap pertumbuhan magnitudo parameter bobot.",
   transitionToNextChapter: "Setelah memahami regularisasi pada model linear dan polinomial, Bab 7 membahas Metode Pohon Keputusan (Decision Trees) dan algoritma Ensemble (Random Forest, Gradient Boosting) yang mengelola variansi melalui mekanisme bagging dan boosting.",
+  evaluationQuestions: [
+    "Jelaskan dekomposisi analitis Mean Squared Error menjadi Bias Kuadrat, Variansi, dan Irreducible Error!",
+    "Bagaimana pergeseran derajat polinomial dari 1 ke 15 mempengaruhi bias dan variansi model pada data empiris?",
+    "Bandingkan secara geometris dan fungsional penalti L2 (Ridge) vs penalti L1 (Lasso) dalam menangani multikolinearitas!",
+    "Mengapa pembungkusan StandardScaler ke dalam Pipeline wajib dilakukan sebelum pemisahan lipatan Cross-Validation?"
+  ],
   subchapters: [
     {
       id: "ml-ch6-sub1",
@@ -407,7 +425,7 @@ for deg in [1, 3, 15]:
           expectedOutput: `Degree  1 -> Test RMSE: 0.8421 | Test R2: 0.4589
 Degree  3 -> Test RMSE: 0.8356 | Test R2: 0.4671
 Degree 15 -> Test RMSE: 0.8322 | Test R2: 0.4714`,
-          explanation: "Hasil eksekusi Python aktual membuktikan bahwa polinomial derajat 3 menurunkan Test RMSE secara signifikan dari model linear derajat 1.",
+          explanation: "Hasil eksperimen numerik mengindikasikan bahwa penambahan derajat polinomial ordo 3 mampu mereduksi Test RMSE dan meningkatkan kapasitas representasi model tanpa overfitting ekstrem.",
           verificationStatus: "VERIFIED_RUNNABLE",
           isVerifiedOutput: true,
           dependencies: ["scikit-learn>=1.4.0", "numpy>=1.26.0"]
@@ -422,6 +440,18 @@ Degree 15 -> Test RMSE: 0.8322 | Test R2: 0.4714`,
           relevance: "Bab 1: Polynomial Curve Fitting dan pergeseran kurva error latih vs uji.",
           relevanceClassification: "VERIFIED_RELEVANT",
           isPrimarySource: true
+        }
+      ],
+      exercises: [
+        {
+          level: 2,
+          task: "Buktikan secara analitis mengapa suku cross-term antara epsilon (noise) dan (f(x) - f_hat(x)) bernilai nol dalam dekomposisi bias-varians!",
+          solution: "Karena diasumsikan noise epsilon bersifat independen dan identik terdistribusi (i.i.d) dengan nilai ekspektasi E[epsilon] = 0, sehingga kovariansi antara noise dan estimator f_hat bernilai nol."
+        },
+        {
+          level: 3,
+          task: "Jika Anda melatih model polinomial derajat 15 pada dataset dengan hanya 20 sampel observasi, jelaskan apa yang terjadi pada Train RMSE dan Test RMSE serta strategi regulasi pertama yang harus diterapkan!",
+          solution: "Train RMSE akan mendekati nol karena model memiliki kapasitas cukup untuk menginterpolasi seluruh 20 titik sampel (overfitting ekstrem), namun Test RMSE akan meledak tinggi. Strategi pertama adalah menerapkan regularisasi Ridge/Lasso atau mereduksi derajat fitur polinomial."
         }
       ]
     },
@@ -510,6 +540,18 @@ Test R2: 0.5245`,
           relevance: "Bab 3.4: Shrinkage Methods (Ridge Regression, Lasso).",
           relevanceClassification: "VERIFIED_RELEVANT",
           isPrimarySource: true
+        }
+      ],
+      exercises: [
+        {
+          level: 2,
+          task: "Jelaskan mengapa matriks (X^T X + lambda I) pada regresi Ridge selalu dapat diinverskan meskipun matriks X^T X bersifat singular!",
+          solution: "Karena penambahan suku lambda * I (dengan lambda > 0) menggeser seluruh nilai eigen (eigenvalues) matriks sebesar +lambda ke arah positif, sehingga seluruh nilai eigen strictly positive dan determinan dipastikan tidak nol (strictly positive definite)."
+        },
+        {
+          level: 3,
+          task: "Pada kasus multikolinearitas sempurna antara dua fitur identik, bandingkan perilaku koefisien bobot yang dihasilkan oleh Ridge vs Lasso!",
+          solution: "Ridge akan membagi bobot secara merata di antara kedua fitur yang berkorelasi sempurna tersebut. Sebaliknya, Lasso cenderung memilih salah satu fitur secara acak dan menetapkan bobot fitur lainnya menjadi tepat nol."
         }
       ]
     }

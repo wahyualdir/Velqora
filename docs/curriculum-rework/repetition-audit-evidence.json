@@ -1,0 +1,34 @@
+{
+  "pilotMetrics": {
+    "scope": "Pilot Substantive Chapters (AI Fund Ch 1, ML Ch 1 & 6)",
+    "totalChaptersChecked": 3,
+    "totalSubchaptersChecked": 5,
+    "totalUnitsChecked": 5,
+    "unitsWithPlaceholder": 0,
+    "unitsDuplicateOrNearDuplicate": 0,
+    "unitsBelowMinLength": 0,
+    "unitsWithoutObjective": 0,
+    "unitsWithoutExercise": 2,
+    "unitsWithoutSummary": 0,
+    "unitsWithoutSource": 0,
+    "unitsWithIrrelevantSource": 0,
+    "unitsWithCodeMismatch": 0,
+    "averageWordCount": 202
+  },
+  "legacySampleMetrics": {
+    "scope": "Legacy Phase 2.2 Baseline Sample (Topic 1 Chapters)",
+    "totalChaptersChecked": 15,
+    "totalSubchaptersChecked": 150,
+    "totalUnitsChecked": 1500,
+    "unitsWithPlaceholder": 0,
+    "unitsDuplicateOrNearDuplicate": 49,
+    "unitsBelowMinLength": 1500,
+    "unitsWithoutObjective": 0,
+    "unitsWithoutExercise": 0,
+    "unitsWithoutSummary": 15,
+    "unitsWithoutSource": 0,
+    "unitsWithIrrelevantSource": 0,
+    "unitsWithCodeMismatch": 0,
+    "averageWordCount": 34
+  }
+}

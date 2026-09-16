@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-09-16T08:43:05Z",
+  "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "results": [
+    {
+      "filename": "reflex_vs_goal_agent.py",
+      "chapter": "AI Fundamentals Bab 1",
+      "status": "EXECUTED_PASS",
+      "exit_code": 0,
+      "runtime_ms": 0.0,
+      "dependencies": "python>=3.8",
+      "output_matches": true,
+      "data_leakage_detected": false,
+      "actual_output": "Step 1: Loc=A, State=Dirty -> Action=Suck\nStep 2: Loc=A, State=Clean -> Action=Right\nStep 3: Loc=B, State=Dirty -> Action=Suck\nStep 4: Loc=B, State=Clean -> Action=Left\nFinal Status: {'A': 'Clean', 'B': 'Clean'} | Cleaned All: True",
+      "expected_output": "Step 1: Loc=A, State=Dirty -> Action=Suck\nStep 2: Loc=A, State=Clean -> Action=Right\nStep 3: Loc=B, State=Dirty -> Action=Suck\nStep 4: Loc=B, State=Clean -> Action=Left\nFinal Status: {'A': 'Clean', 'B': 'Clean'} | Cleaned All: True",
+      "error": ""
+    },
+    {
+      "filename": "polynomial_bias_variance.py",
+      "chapter": "Machine Learning Bab 6.1",
+      "status": "EXECUTED_PASS",
+      "exit_code": 0,
+      "runtime_ms": 5785.6,
+      "dependencies": "scikit-learn>=1.4, numpy>=1.26",
+      "output_matches": true,
+      "data_leakage_detected": false,
+      "actual_output": "Degree  1 -> Test RMSE: 0.8421 | Test R2: 0.4589\nDegree  3 -> Test RMSE: 0.8356 | Test R2: 0.4671\nDegree 15 -> Test RMSE: 0.8322 | Test R2: 0.4714",
+      "expected_output": "Degree  1 -> Test RMSE: 0.8421 | Test R2: 0.4589\nDegree  3 -> Test RMSE: 0.8356 | Test R2: 0.4671\nDegree 15 -> Test RMSE: 0.8322 | Test R2: 0.4714",
+      "error": ""
+    },
+    {
+      "filename": "lasso_feature_sparsity.py",
+      "chapter": "Machine Learning Bab 6.2",
+      "status": "EXECUTED_PASS",
+      "exit_code": 0,
+      "runtime_ms": 18640.93,
+      "dependencies": "scikit-learn>=1.4, numpy>=1.26",
+      "output_matches": true,
+      "data_leakage_detected": false,
+      "actual_output": "Total Fitur: 164\nFitur Dieliminasi (Bobot Tepat 0): 156/164\nTest RMSE: 0.7893\nTest R2: 0.5245",
+      "expected_output": "Total Fitur: 164\nFitur Dieliminasi (Bobot Tepat 0): 156/164\nTest RMSE: 0.7893\nTest R2: 0.5245",
+      "error": ""
+    }
+  ]
+}
