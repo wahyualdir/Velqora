@@ -33,25 +33,10 @@ import {
 import { useTheme } from "next-themes";
 import { NoteRenderer } from "@/components/notes/note-renderer";
 import { toast } from "sonner";
+import { NotebookUnitRenderer } from "./notebook/notebook-unit-renderer";
+import { notebookUnitsToMarkdown, type DocSectionItem } from "@/lib/curriculum/types";
 
-export interface DocSectionItem {
-  id: string;
-  slug?: string;
-  title: string;
-  orderIndex?: number;
-  description?: string;
-  content_markdown?: string | null;
-  codeSnippets?: Array<{
-    id: string;
-    language: string;
-    code: string;
-    caption?: string;
-  }>;
-  subsections?: DocSectionItem[];
-  parentTitle?: string;
-  chapterNumber?: string | number;
-  sectionNumber?: string;
-}
+export type { DocSectionItem };
 
 interface DocReaderLayoutProps {
   categoryName: string;
@@ -276,6 +261,9 @@ export function DocReaderLayout({
     if (!currentSection) return "";
     if (currentSection.content_markdown && currentSection.content_markdown.trim().length > 30) {
       return currentSection.content_markdown;
+    }
+    if (currentSection.units && currentSection.units.length > 0) {
+      return notebookUnitsToMarkdown(currentSection.units);
     }
 
     // Construct rich markdown from description and codeSnippets for all modules
@@ -877,10 +865,29 @@ export function DocReaderLayout({
                 </div>
               </div>
 
-              {/* Document Markdown Content with LaTeX math equations & code blocks */}
-              <div className="py-2">
-                <NoteRenderer content={currentMarkdown} />
-              </div>
+              {/* Subchapter Learning Objectives Banner */}
+              {currentSection.learningObjectives && currentSection.learningObjectives.length > 0 && (
+                <div className="p-4 rounded-xl border border-brand-500/20 bg-brand-500/[0.03] dark:bg-brand-500/[0.04]">
+                  <div className="flex items-center gap-2 font-semibold text-xs text-brand-700 dark:text-brand-300 mb-2">
+                    <GraduationCap className="w-4 h-4" />
+                    <span>Capaian Pembelajaran (Learning Objectives):</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 text-xs text-text-secondary">
+                    {currentSection.learningObjectives.map((obj, i) => (
+                      <li key={i}>{obj}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Document Content: Notebook Units or Traditional Markdown */}
+              {currentSection.units && currentSection.units.length > 0 ? (
+                <NotebookUnitRenderer units={currentSection.units} />
+              ) : (
+                <div className="py-2">
+                  <NoteRenderer content={currentMarkdown} />
+                </div>
+              )}
 
               {/* Bottom Pagination Buttons (Prev / Next Section) */}
               <nav

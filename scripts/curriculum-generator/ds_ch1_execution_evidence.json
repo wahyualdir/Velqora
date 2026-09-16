@@ -1,0 +1,79 @@
+{
+  "snippet_1_1": {
+    "snippetId": "snippet_1_1",
+    "filename": "1.1-data-team-taxonomy.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== MATRIKS KOMPETENSI PERAN SAINS DATA ===\n                Inferential_Stats  Distributed_Systems  Software_Eng  ML_DeepLearning  Domain_Translation  Data_Visualization\nData Scientist                9.5                  5.0           7.0              9.0                 8.5                 7.5\nData Engineer                 4.0                  9.5           9.0              5.0                 6.0                 4.0\nML Engineer                   6.5                  8.5           9.5              9.0                 5.5                 4.5\nData Analyst                  7.0                  3.5           4.5              4.0                 9.5                 9.5\n\n=== TOTAL DEFISIT SKILL JIKA HANYA MENGANDALKAN SATU PERAN ===\n - Data Scientist  : Total Kesenjangan Kompetensi = 5.5 poin\n - Data Engineer   : Total Kesenjangan Kompetensi = 13.0 poin\n - ML Engineer     : Total Kesenjangan Kompetensi = 7.5 poin\n - Data Analyst    : Total Kesenjangan Kompetensi = 15.5 poin\n\nKapabilitas Tim Kolaboratif (Gabungan 4 Peran): Total Gap = 0.0 poin\nKesimpulan: Kolaborasi lintas disiplin mutlak diperlukan untuk arsitektur produksi.\n",
+    "stderr": "",
+    "executionTimeMs": 3535.5,
+    "timestamp": "2026-09-16T11:21:04Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  },
+  "snippet_1_2": {
+    "snippetId": "snippet_1_2",
+    "filename": "1.2-cost-weighted-problem-framing.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== EVALUASI PENGAMBILAN KEPUTUSAN BERBOBOT BIAYA BISNIS ===\nAmbang Batas Kritis Optimal Bayesian (c_fp / (c_fp + c_fn)): 0.0476\n\nPerbandingan Hasil Keuangan antar Threshold:\n Threshold   TP   FP   FN   TN  Net_Financial_Value ($)\n    0.5000   99   87 1843 7971               -2711625.0\n    0.2000 1320 3069  622 4989                -371175.0\n    0.0476 1920 7437   22  621                 561225.0\n\nPeningkatan Nilai Bisnis Menggunakan Problem Framing Berbobot Biaya: +$3,272,850.00\n",
+    "stderr": "",
+    "executionTimeMs": 17.53,
+    "timestamp": "2026-09-16T11:21:04Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  },
+  "snippet_1_3": {
+    "snippetId": "snippet_1_3",
+    "filename": "1.3-crisp-dm-state-machine.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== SIMULASI SIKLUS HIDUP ITERATIF CRISP-DM DENGAN QUALITY GATES ===\n[Iterasi 01] Business Understanding : Objektif: Prediksi harga rumah California, batas RMSE < 0.55\n[Iterasi 02] Data Understanding     : Audit integritas: 20,640 sampel, missing=0.0%\n[Iterasi 03] Data Preparation       : Rekayasa 14 fitur, standardisasi via Pipeline terisolasi\n[Iterasi 04] Modeling               : Pelatihan Estimator, Validasi RMSE = 0.7688\n[Iterasi 05] Evaluation             : Gagal batas toleransi (RMSE 0.7688 > 0.55) -> Feedback Loop ke Data Prep\n[Iterasi 06] Data Preparation       : Rekayasa 20 fitur, standardisasi via Pipeline terisolasi\n[Iterasi 07] Modeling               : Pelatihan Estimator, Validasi RMSE = 0.5837\n[Iterasi 08] Evaluation             : Gagal batas toleransi (RMSE 0.5837 > 0.55) -> Feedback Loop ke Data Prep\n[Iterasi 09] Data Preparation       : Rekayasa 26 fitur, standardisasi via Pipeline terisolasi\n[Iterasi 10] Modeling               : Pelatihan Estimator, Validasi RMSE = 0.4800\n[Iterasi 11] Evaluation             : Lolos kriteria penerimaan bisnis (RMSE 0.4800 <= 0.55)\n[Iterasi 12] Deployment             : Model dipaketkan ke format ONNX/Inference Pipeline, siap monitoring\n",
+    "stderr": "",
+    "executionTimeMs": 0.26,
+    "timestamp": "2026-09-16T11:21:04Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  },
+  "snippet_1_4": {
+    "snippetId": "snippet_1_4",
+    "filename": "1.4-osemn-pipeline-benchmark.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== BENCHMARK ALUR MODULAR KERANGKA KERJA OSEMN ===\n1. Obtain    : 30.36 ms (50,000 baris disintesis)\n2. Scrub     : 46.25 ms (Pembersihan skema & penanganan null)\n3. Explore   : 5.90 ms (Statistik deskriptif & sebaran IQR)\n4. Model     : 3.03 ms (Penskalaan z-score & scoring baseline)\n5. iNterpret : 2.67 ms (Penyusunan ringkasan keputusan)\n\nRingkasan Metrik Output:\n - Total_Input_Rows      : 50000\n - Cleaned_Rows          : 37611\n - Retention_Rate        : 75.2%\n - Income_Median         : 2.432\n - Income_IQR            : 3.886\n - Mean_Heuristic_Score  : 0.3647\n",
+    "stderr": "",
+    "executionTimeMs": 92.87,
+    "timestamp": "2026-09-16T11:21:04Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  },
+  "snippet_1_5": {
+    "snippetId": "snippet_1_5",
+    "filename": "1.5-simpsons-paradox-reversal.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== EMPIRICAL PROOF OF SIMPSON'S PARADOX ===\nKasus Ringan (Mild) : Tingkat Sembuh Obat A = 79.0% vs Obat B = 73.7%  -> Obat A MENANG (+5.3%)\nKasus Parah (Severe): Tingkat Sembuh Obat A = 47.2% vs Obat B = 30.0%  -> Obat A MENANG (+17.2%)\n---------------------------------------------------------------------------\nTingkat Agregat Total: Tingkat Sembuh Obat A = 50.4% vs Obat B = 69.3%  -> Obat B MENANG (+18.9%) [PARADOKS!]\n---------------------------------------------------------------------------\nPenyebab Confounding: Dokter mengalokasikan 90% pasien parah ke Obat A, sementara 90% pasien ringan ke Obat B.\nKesimpulan Kausal: Obat A secara obyektif lebih superior di kedua kondisi; kesimpulan agregat keliru akibat confounding bias.\n",
+    "stderr": "",
+    "executionTimeMs": 5347.78,
+    "timestamp": "2026-09-16T11:21:09Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  },
+  "snippet_1_6_cell1": {
+    "snippetId": "snippet_1_6_cell1",
+    "filename": "1.6-california-housing-audit.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== AUDIT KUALITAS & SKEMA DATASET CALIFORNIA HOUSING (1990) ===\nDimensi Data    : 20,640 baris observasi x 9 kolom atribut\nMissing Values  : 0 sel (Integritas kelengkapan = 100.0%)\nMemori Digunakan: 1.42 MB\n\nRingkasan Statistik Distribusi Fitur:\n                    Mean          Std         Min       Median           Max\nMedInc          3.870671     1.899822    0.499900     3.534800     15.000100\nHouseAge       28.639486    12.585558    1.000000    29.000000     52.000000\nAveRooms        5.429000     2.474173    0.846154     5.229129    141.909091\nAveBedrms       1.096675     0.473911    0.333333     1.048780     34.066667\nPopulation   1425.476744  1132.462122    3.000000  1166.000000  35682.000000\nAveOccup        3.070655    10.386050    0.692308     2.818116   1243.333333\nLatitude       35.631861     2.135952   32.540000    34.260000     41.950000\nLongitude    -119.569704     2.003532 -124.350000  -118.490000   -114.310000\nMedHouseVal     2.068558     1.153956    0.149990     1.797000      5.000010\n\nAudit Variabel Target (MedHouseVal in $100,000s):\n - Nilai Median Global : $179,700.00\n - Sampel Terpancung (>= $500k): 992 baris (4.81%) -> Deteksi Batas Sensorik Atas\n",
+    "stderr": "",
+    "executionTimeMs": 6776.58,
+    "timestamp": "2026-09-16T11:21:16Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  },
+  "snippet_1_6_cell2": {
+    "snippetId": "snippet_1_6_cell2",
+    "filename": "1.6-california-housing-outliers-correlation.py",
+    "runtime": "Python 3.12.10 (win32 64-bit)",
+    "exitCode": 0,
+    "stdout": "=== DETEKSI OUTLIER STATISTIK (TUKEY'S IQR FENCES) ===\n     Fitur      Q1       Q3     IQR  Batas Bawah  Batas Atas  Banyak Outlier Persentase\n  AveRooms   4.441    6.052   1.612        2.023       8.470             511      2.48%\nPopulation 787.000 1725.000 938.000     -620.000    3132.000            1196      5.79%\n    MedInc   2.563    4.743   2.180       -0.706       8.013             681      3.30%\n\n=== PERBANDINGAN KORELASI PEARSON VS SPEARMAN TERHADAP TARGET ===\n     Fitur  Pearson (r)  Spearman (rho)  Selisih |r - rho|\n    MedInc       0.6881          0.6768             0.0113\n  AveRooms       0.1519          0.2634             0.1114\n  HouseAge       0.1056          0.0749             0.0308\n  AveOccup      -0.0237         -0.2566             0.2329\nPopulation      -0.0246          0.0038             0.0285\n Longitude      -0.0460         -0.0697             0.0237\n AveBedrms      -0.0467         -0.1252             0.0785\n  Latitude      -0.1442         -0.1657             0.0216\n",
+    "stderr": "",
+    "executionTimeMs": 242.3,
+    "timestamp": "2026-09-16T11:21:16Z",
+    "machineSignature": "x86_64-win-cpython-3.12"
+  }
+}

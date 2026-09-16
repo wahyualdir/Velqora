@@ -1,5 +1,32 @@
-import { DocSectionItem } from "@/components/modul/doc-reader-layout";
 import { ModuleSection } from "@/types/module-drive";
+
+// ============================================================================
+// LAYER 0: DOC SECTION ITEM (REPRESENTASI KONSUMEN READER)
+// ============================================================================
+
+export interface DocSectionItem {
+  id: string;
+  slug?: string;
+  title: string;
+  orderIndex?: number;
+  description?: string;
+  content_markdown?: string | null;
+  codeSnippets?: Array<{
+    id: string;
+    language: string;
+    code: string;
+    caption?: string;
+  }>;
+  subsections?: DocSectionItem[];
+  parentTitle?: string;
+  chapterNumber?: string | number;
+  sectionNumber?: string;
+  units?: NotebookUnit[];
+  summary?: string;
+  learningObjectives?: string[];
+  sourceRefIds?: string[];
+  reviewStatus?: "legacy_synthetic" | "verified_with_limitations" | "verified";
+}
 
 // ============================================================================
 // LAYER 1: SOURCE & CITATION METADATA
@@ -36,9 +63,39 @@ export interface AcademicCitation {
   isPrimarySource?: boolean;
 }
 
+export interface SourceReference {
+  id: string;
+  title: string;
+  authors: string[];
+  year: number;
+  publication: string;
+  url?: string;
+  doi?: string;
+  relevanceNote?: string;
+  verified?: boolean;
+}
+
 // ============================================================================
 // LAYER 2: CODE EXECUTION METADATA
 // ============================================================================
+
+export type ExecutionStatus =
+  | "not_executed"
+  | "running"
+  | "success"
+  | "failed"
+  | "timeout"
+  | "verified";
+
+export interface ExecutionEvidence {
+  runtime: string; // e.g. "Python 3.12.10 (CPython 64-bit)"
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+  executionTimeMs: number;
+  timestamp: string; // ISO 8601
+  machineSignature?: string;
+}
 
 export type CodeExecutionClassification =
   | "VERIFIED_RUNNABLE"
@@ -93,8 +150,354 @@ export interface AcademicDatasetMetadata {
 }
 
 // ============================================================================
-// LAYER 4: PEDAGOGICAL & CONTENT UNITS
+// LAYER 4: NOTEBOOK-STYLE PEDAGOGICAL & CONTENT UNITS
 // ============================================================================
+
+export interface NotebookMarkdownUnit {
+  type: "markdown";
+  id: string;
+  content: string;
+}
+
+export interface NotebookDefinitionUnit {
+  type: "definition";
+  id: string;
+  term: string;
+  formalDefinition: string;
+  intuitiveExplanation: string;
+  mathematicalBasis?: string;
+  realWorldAnalogy: string;
+  commonMisconceptions?: string[];
+}
+
+export interface NotebookFormulaUnit {
+  type: "formula";
+  id: string;
+  latex: string;
+  name: string;
+  derivationNotes?: string;
+  variables: Array<{
+    symbol: string;
+    description: string;
+    unit?: string;
+  }>;
+  workedExample?: {
+    inputs: Record<string, string | number>;
+    stepByStep: string[];
+    finalResult: string;
+  };
+}
+
+export interface NotebookExampleUnit {
+  type: "example";
+  id: string;
+  scenario: string;
+  rawInput: string | Record<string, unknown>;
+  transformationSteps: string[];
+  expectedOutput: string | Record<string, unknown>;
+  analysis: string;
+}
+
+export interface NotebookCodeUnit {
+  type: "code";
+  id: string;
+  language: string;
+  filename?: string;
+  executionStatus: ExecutionStatus;
+  cellIndex?: number;
+  preExplanation: string;
+  code: string;
+  dependencies: string[];
+  runtimeComplexity?: string;
+  memoryComplexity?: string;
+  failureModes?: string[];
+  postAnalysis?: string;
+}
+
+export interface NotebookOutputUnit {
+  type: "output";
+  id: string;
+  relatedCodeUnitId: string;
+  cellIndex?: number;
+  format: "text" | "table" | "json" | "image" | "error";
+  content: string;
+  executionEvidence?: ExecutionEvidence;
+}
+
+export interface NotebookInterpretationUnit {
+  type: "interpretation";
+  id: string;
+  relatedCodeUnitId?: string;
+  headline: string;
+  observations: string[];
+  domainImplication: string;
+  statisticalCaveats?: string[];
+}
+
+export interface NotebookWarningUnit {
+  type: "warning";
+  id: string;
+  severity: "tip" | "info" | "warning" | "danger";
+  title: string;
+  description: string;
+  countermeasure: string;
+}
+
+export interface NotebookExerciseUnit {
+  type: "exercise";
+  id: string;
+  level: 1 | 2 | 3 | 4 | 5;
+  title: string;
+  scenario: string;
+  task: string;
+  hints: string[];
+  solutionCode?: string;
+  solutionExplanation?: string;
+  evaluationRubric: Array<{
+    criterion: string;
+    weight: number;
+    expectation: string;
+  }>;
+}
+
+export interface NotebookProjectUnit {
+  type: "project";
+  id: string;
+  title: string;
+  industryContext: string;
+  businessProblem: string;
+  datasetSpecs: {
+    name: string;
+    rows: number;
+    columns: number;
+    source: string;
+    targetVariable?: string;
+  };
+  milestoneSteps: Array<{
+    title: string;
+    deliverables: string[];
+  }>;
+  acceptanceCriteria: string[];
+}
+
+export interface NotebookTableUnit {
+  type: "table";
+  id: string;
+  caption: string;
+  headers: string[];
+  rows: (string | number)[][];
+  markdownFallback?: string;
+}
+
+export interface NotebookImageUnit {
+  type: "image";
+  id: string;
+  src: string;
+  alt: string;
+  caption: string;
+  technicalDiagramNote?: string;
+}
+
+export type NotebookUnit =
+  | NotebookMarkdownUnit
+  | NotebookDefinitionUnit
+  | NotebookFormulaUnit
+  | NotebookExampleUnit
+  | NotebookCodeUnit
+  | NotebookOutputUnit
+  | NotebookInterpretationUnit
+  | NotebookWarningUnit
+  | NotebookExerciseUnit
+  | NotebookProjectUnit
+  | NotebookTableUnit
+  | NotebookImageUnit;
+
+/**
+ * Konversi serangkaian NotebookUnit menjadi Markdown komprehensif
+ * Menjamin kompatibilitas mundur dengan reader markdown biasa dan sistem indeks.
+ */
+export function notebookUnitsToMarkdown(units: NotebookUnit[]): string {
+  const parts: string[] = [];
+
+  for (const unit of units) {
+    switch (unit.type) {
+      case "markdown":
+        parts.push(unit.content);
+        break;
+
+      case "definition": {
+        let def = `### Definisi Formal: ${unit.term}\n\n`;
+        def += `> **Definisi:** ${unit.formalDefinition}\n\n`;
+        def += `**Intuisi & Pemahaman:** ${unit.intuitiveExplanation}\n\n`;
+        def += `**Analogi Dunia Nyata:** ${unit.realWorldAnalogy}\n\n`;
+        if (unit.mathematicalBasis) {
+          def += `**Basis Matematis:** ${unit.mathematicalBasis}\n\n`;
+        }
+        if (unit.commonMisconceptions && unit.commonMisconceptions.length > 0) {
+          def += `**Miskonsepsi Umum:**\n` + unit.commonMisconceptions.map((m) => `- ⚠️ ${m}`).join("\n") + "\n\n";
+        }
+        parts.push(def);
+        break;
+      }
+
+      case "formula": {
+        let form = `### Formulasi Matematis: ${unit.name}\n\n`;
+        form += `$$\n${unit.latex}\n$$\n\n`;
+        if (unit.derivationNotes) {
+          form += `*Catatan Penurunan:* ${unit.derivationNotes}\n\n`;
+        }
+        if (unit.variables && unit.variables.length > 0) {
+          form += `| Simbol | Deskripsi | Satuan/Dimensi |\n|---|---|---|\n`;
+          form += unit.variables.map((v) => `| $${v.symbol}$ | ${v.description} | ${v.unit || "-"} |`).join("\n") + "\n\n";
+        }
+        if (unit.workedExample) {
+          form += `**Contoh Perhitungan Manual:**\n\n`;
+          form += `*Input:* ${JSON.stringify(unit.workedExample.inputs)}\n\n`;
+          form += unit.workedExample.stepByStep.map((s, idx) => `${idx + 1}. ${s}`).join("\n") + "\n\n";
+          form += `**Hasil Akhir:** ${unit.workedExample.finalResult}\n\n`;
+        }
+        parts.push(form);
+        break;
+      }
+
+      case "example": {
+        let ex = `### Kasus Konkret: ${unit.scenario}\n\n`;
+        ex += `**Input Data Mentah:**\n\`\`\`json\n${typeof unit.rawInput === "string" ? unit.rawInput : JSON.stringify(unit.rawInput, null, 2)}\n\`\`\`\n\n`;
+        ex += `**Langkah Transformasi:**\n` + unit.transformationSteps.map((s, i) => `${i + 1}. ${s}`).join("\n") + "\n\n";
+        ex += `**Output Diharapkan:**\n\`\`\`json\n${typeof unit.expectedOutput === "string" ? unit.expectedOutput : JSON.stringify(unit.expectedOutput, null, 2)}\n\`\`\`\n\n`;
+        ex += `**Analisis Domain:** ${unit.analysis}\n\n`;
+        parts.push(ex);
+        break;
+      }
+
+      case "code": {
+        let c = "";
+        if (unit.preExplanation) {
+          c += `${unit.preExplanation}\n\n`;
+        }
+        const cellLabel = unit.cellIndex !== undefined ? `[In ${unit.cellIndex}]: ` : "";
+        const fileLabel = unit.filename ? ` (${unit.filename})` : "";
+        c += `\`\`\`${unit.language}\n# ${cellLabel}${fileLabel}\n${unit.code}\n\`\`\`\n\n`;
+        if (unit.dependencies && unit.dependencies.length > 0) {
+          c += `*Dependencies:* \`${unit.dependencies.join(", ")}\`\n\n`;
+        }
+        if (unit.runtimeComplexity || unit.memoryComplexity) {
+          c += `*Kompleksitas:* Waktu: \`${unit.runtimeComplexity || "O(1)"}\` | Memori: \`${unit.memoryComplexity || "O(1)"}\`\n\n`;
+        }
+        if (unit.failureModes && unit.failureModes.length > 0) {
+          c += `*Potensi Kegagalan Runtime:*\n` + unit.failureModes.map((f) => `- ❌ ${f}`).join("\n") + "\n\n";
+        }
+        if (unit.postAnalysis) {
+          c += `${unit.postAnalysis}\n\n`;
+        }
+        parts.push(c);
+        break;
+      }
+
+      case "output": {
+        const cellLabel = unit.cellIndex !== undefined ? `[Out ${unit.cellIndex}]` : "[Output]";
+        let out = `**Hasil Eksekusi ${cellLabel}:**\n\n`;
+        if (unit.executionEvidence) {
+          out += `> 🟢 *Diverifikasi pada ${unit.executionEvidence.runtime} (Runtime: ${unit.executionEvidence.executionTimeMs}ms, Exit: ${unit.executionEvidence.exitCode})*\n\n`;
+        }
+        out += `\`\`\`\n${unit.content}\n\`\`\`\n\n`;
+        parts.push(out);
+        break;
+      }
+
+      case "interpretation": {
+        let interp = `#### 🔍 Interpretasi Hasil: ${unit.headline}\n\n`;
+        interp += `**Observasi Kunci:**\n` + unit.observations.map((o) => `- 📌 ${o}`).join("\n") + "\n\n";
+        interp += `**Implikasi Domain:** ${unit.domainImplication}\n\n`;
+        if (unit.statisticalCaveats && unit.statisticalCaveats.length > 0) {
+          interp += `**Peringatan Statistik:**\n` + unit.statisticalCaveats.map((c) => `- ⚠️ ${c}`).join("\n") + "\n\n";
+        }
+        parts.push(interp);
+        break;
+      }
+
+      case "warning": {
+        const badgeMap = {
+          tip: "TIP",
+          info: "NOTE",
+          warning: "WARNING",
+          danger: "CAUTION",
+        };
+        const alertType = badgeMap[unit.severity] || "WARNING";
+        let w = `> [!${alertType}]\n`;
+        w += `> **${unit.title}**\n>\n`;
+        w += `> ${unit.description.replace(/\n/g, "\n> ")}\n>\n`;
+        w += `> **Mitigasi / Solusi Rekayasa:** ${unit.countermeasure.replace(/\n/g, "\n> ")}\n\n`;
+        parts.push(w);
+        break;
+      }
+
+      case "exercise": {
+        let ex = `### 🎯 Latihan Mandiri (Level ${unit.level}/5): ${unit.title}\n\n`;
+        ex += `**Skenario Masalah:** ${unit.scenario}\n\n`;
+        ex += `**Tugas Anda:** ${unit.task}\n\n`;
+        if (unit.hints && unit.hints.length > 0) {
+          ex += `<details><summary>💡 Petunjuk Penyelesaian (Klik untuk melihat)</summary>\n\n`;
+          ex += unit.hints.map((h, i) => `${i + 1}. ${h}`).join("\n") + `\n\n</details>\n\n`;
+        }
+        if (unit.solutionCode) {
+          ex += `<details><summary>🔑 Solusi Referensi & Penjelasan</summary>\n\n`;
+          ex += `\`\`\`python\n${unit.solutionCode}\n\`\`\`\n\n`;
+          if (unit.solutionExplanation) {
+            ex += `${unit.solutionExplanation}\n\n`;
+          }
+          ex += `</details>\n\n`;
+        }
+        if (unit.evaluationRubric && unit.evaluationRubric.length > 0) {
+          ex += `**Rubrik Penilaian:**\n\n| Kriteria | Bobot | Ekspektasi Capaian |\n|---|---|---|\n`;
+          ex += unit.evaluationRubric.map((r) => `| ${r.criterion} | ${r.weight}% | ${r.expectation} |`).join("\n") + "\n\n";
+        }
+        parts.push(ex);
+        break;
+      }
+
+      case "project": {
+        let p = `### 🚀 Proyek Terapan: ${unit.title}\n\n`;
+        p += `**Konteks Industri:** ${unit.industryContext}\n\n`;
+        p += `**Tantangan Bisnis:** ${unit.businessProblem}\n\n`;
+        p += `**Spesifikasi Dataset:**\n- Nama: \`${unit.datasetSpecs.name}\`\n- Dimensi: ${unit.datasetSpecs.rows} baris × ${unit.datasetSpecs.columns} kolom\n- Sumber: [${unit.datasetSpecs.source}](${unit.datasetSpecs.source})\n- Target Variabel: \`${unit.datasetSpecs.targetVariable || "N/A"}\`\n\n`;
+        p += `**Milestone Implementasi:**\n`;
+        p += unit.milestoneSteps.map((m, idx) => `${idx + 1}. **${m.title}**:\n   ` + m.deliverables.map((d) => `- [ ] ${d}`).join("\n   ")).join("\n") + "\n\n";
+        p += `**Kriteria Penerimaan (Acceptance Criteria):**\n` + unit.acceptanceCriteria.map((a) => `- ✅ ${a}`).join("\n") + "\n\n";
+        parts.push(p);
+        break;
+      }
+
+      case "table": {
+        let t = `### ${unit.caption}\n\n`;
+        if (unit.markdownFallback) {
+          t += `${unit.markdownFallback}\n\n`;
+        } else {
+          t += `| ${unit.headers.join(" | ")} |\n`;
+          t += `| ${unit.headers.map(() => "---").join(" | ")} |\n`;
+          for (const row of unit.rows) {
+            t += `| ${row.join(" | ")} |\n`;
+          }
+          t += "\n";
+        }
+        parts.push(t);
+        break;
+      }
+
+      case "image": {
+        let img = `![${unit.alt}](${unit.src})\n\n`;
+        img += `*Gambar: ${unit.caption}*\n\n`;
+        if (unit.technicalDiagramNote) {
+          img += `> ℹ️ *Catatan Diagram Teknis:* ${unit.technicalDiagramNote}\n\n`;
+        }
+        parts.push(img);
+        break;
+      }
+    }
+  }
+
+  return parts.join("\n\n");
+}
 
 export interface AcademicDiscussionUnit {
   id: string;
@@ -117,6 +520,10 @@ export interface AcademicSubchapter {
   learningObjectives?: string[];
   prerequisites?: string[];
   content_markdown: string;
+  summary?: string;
+  sourceRefIds?: string[];
+  units?: NotebookUnit[];
+  reviewStatus?: "legacy_synthetic" | "verified_with_limitations" | "verified";
   codeExamples?: AcademicCodeExample[];
   exercises?: Array<{ level: number; task: string; hint?: string; solution?: string } | string>;
   references?: AcademicCitation[];
@@ -187,15 +594,28 @@ export function curriculumToDocSectionItems(curriculum: AcademicCurriculum): Doc
         ...(sub.subSubchapters || []).flatMap((unit) => unit.codeExamples || []),
       ];
 
+      // Jika ada notebook units, pastikan markdown terisi jika content_markdown kosong
+      const finalMarkdown =
+        sub.content_markdown && sub.content_markdown.trim().length > 30
+          ? sub.content_markdown
+          : sub.units && sub.units.length > 0
+          ? notebookUnitsToMarkdown(sub.units)
+          : sub.content_markdown;
+
       return {
         id: sub.id,
         slug: sub.slug,
         title: sub.title,
         orderIndex: sub.orderIndex,
         description: sub.description,
-        content_markdown: sub.content_markdown,
+        content_markdown: finalMarkdown,
         parentTitle: chapter.title,
         chapterNumber: chapter.orderIndex,
+        units: sub.units,
+        summary: sub.summary,
+        learningObjectives: sub.learningObjectives,
+        sourceRefIds: sub.sourceRefIds,
+        reviewStatus: sub.reviewStatus,
         codeSnippets: allSnippets.map((c) => ({
           id: c.id,
           language: c.language,
@@ -247,15 +667,27 @@ export function curriculumToFlatDocSectionItems(curriculum: AcademicCurriculum):
           ...(sub.subSubchapters || []).flatMap((unit) => unit.codeExamples || []),
         ];
 
+        const finalMarkdown =
+          sub.content_markdown && sub.content_markdown.trim().length > 30
+            ? sub.content_markdown
+            : sub.units && sub.units.length > 0
+            ? notebookUnitsToMarkdown(sub.units)
+            : sub.content_markdown;
+
         flatList.push({
           id: sub.id,
           slug: sub.slug,
           title: sub.title,
           orderIndex: sub.orderIndex,
           description: sub.description,
-          content_markdown: sub.content_markdown,
+          content_markdown: finalMarkdown,
           parentTitle: chapter.title,
           chapterNumber: chapter.orderIndex,
+          units: sub.units,
+          summary: sub.summary,
+          learningObjectives: sub.learningObjectives,
+          sourceRefIds: sub.sourceRefIds,
+          reviewStatus: sub.reviewStatus,
           codeSnippets: allSnippets.map((c) => ({
             id: c.id,
             language: c.language,
