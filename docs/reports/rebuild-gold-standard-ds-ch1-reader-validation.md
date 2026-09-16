@@ -1,9 +1,9 @@
-# Velqora — Rebuild Gold Standard DS Ch 1 Reader Validation Report
+# Velqora â€” Rebuild Gold Standard DS Ch 1 Reader Validation Report
 
-**Dokumen**: Laporan Audit & Pengujian Perilaku Komponen Pembaca (*Reader UI/UX*)  
-**Komponen Target**: `src/components/modul/notebook/` & `src/components/modul/doc-reader-layout.tsx`  
-**Tanggal Pengujian**: 16 September 2026  
-**Status Audit Perilaku**: TECHNICALLY-VALIDATED & REVIEWED  
+**Dokumen**: Laporan Audit & Pengujian Perilaku Komponen Pembaca (*Reader UI/UX*)
+**Komponen Target**: `src/components/modul/notebook/` & `src/components/modul/doc-reader-layout.tsx`
+**Tanggal Pengujian**: 16 September 2026
+**Status Audit Perilaku**: TECHNICALLY-VALIDATED & REVIEWED
 
 ---
 
@@ -23,13 +23,13 @@ Pengujian antarmuka reader dilakukan melalui kombinasi:
 |:---:|---|---|---|---|:---:|:---:|---|
 | **RD-01** | Three-level hierarchy | Inspeksi breadcrumb dan TOC di `DocReaderLayout` | Navigasi menampilkan hierarki Topik $\to$ Bab $\to$ Subbab secara sinkron | Hirarki 3 tingkat tampil dengan slug dan ID presisi | Chrome 128 / SSR Node.js | **PASS** | `doc-reader-layout.tsx` |
 | **RD-02** | Lazy accordion behavior | Render unit `exercise` di `NotebookExerciseCard` | Hints dan solusi tersembunyi; hanya terbuka saat tombol toggle diklik | Accordion terkunci default; state `showHint` & `showSolution` reaktif | Chromium / React 19 | **PASS** | `notebook-exercise-card.tsx` |
-| **RD-03** | Deep-linking with section query | Navigasi URL dengan parameter `?section=sub-ds-01-02` | Halaman scroll otomatis ke subbab target dan menyorot item TOC | Parameter `useSearchParams` membaca `section` dan mengarahkan tampilan | Chrome / Edge | **PASS** | `doc-reader-layout.tsx` (L60–L85) |
+| **RD-03** | Deep-linking with section query | Navigasi URL dengan parameter `?section=sub-ds-01-02` | Halaman scroll otomatis ke subbab target dan menyorot item TOC | Parameter `useSearchParams` membaca `section` dan mengarahkan tampilan | Chrome / Edge | **PASS** | `doc-reader-layout.tsx` (L60â€“L85) |
 | **RD-04** | Back/forward navigation | Navigasi tombol Previous/Next Subchapter di footer reader | Klik tombol berpindah ke subbab sebelum/sesudahnya secara mulus | Navigasi memperbarui query param dan konten berganti tanpa full reload | Web & Mobile | **PASS** | Footer navigation controls |
 | **RD-05** | Code block rendering | Render `NotebookCodeCell` dengan sintaks Python | Sintaks Python terwarnai, nomor baris gutter konsisten, badge `[In x]` aktif | Sintaks terwarnai bersih, font JetBrains Mono / monospace | Desktop (1440px) | **PASS** | `notebook-code-cell.tsx` |
 | **RD-06** | Copy code behavior | Klik tombol "Salin Kode" pada header sel kode | Teks kode tersalin ke clipboard; badge berubah "Tersalin!" selama 2 detik; fallback jika denied | Teks tersalin ke OS clipboard; fallback textarea aktif jika API diblokir | Desktop & Mobile | **PASS** | `handleCopy` fallback implementation |
 | **RD-07** | Output cell rendering | Render `NotebookOutputCell` dengan execution evidence | Blok terminal gelap (`bg-zinc-950`), badge `[Out x]`, badge `Exit 0` hijau, dan durasi ms | Output monospace bersih dengan header provenance terstruktur | Desktop / Mobile | **PASS** | `notebook-output-cell.tsx` |
 | **RD-08** | Formula rendering | Render `NotebookFormulaCard` dengan KaTeX LaTeX | Rumus matematika ter-render menjadi simbol matematis rapi (bukan teks mentah) | KaTeX merender formula multivariat dan pecahan tanpa ParseError | All viewports | **PASS** | `notebook-formula-card.tsx` |
-| **RD-09** | Exercise rendering | Render `NotebookExerciseCard` 5 level bertingkat | Tampil skenario, tugas, badge Level 1–5, rubrik penilaian, hints, dan solusi | Komponen menampilkan seluruh elemen latihan tanpa kebocoran jawaban | All viewports | **PASS** | `notebook-exercise-card.tsx` |
+| **RD-09** | Exercise rendering | Render `NotebookExerciseCard` 5 level bertingkat | Tampil skenario, tugas, badge Level 1â€“5, rubrik penilaian, hints, dan solusi | Komponen menampilkan seluruh elemen latihan tanpa kebocoran jawaban | All viewports | **PASS** | `notebook-exercise-card.tsx` |
 | **RD-10** | Warning rendering | Render `NotebookWarningCard` (Critical / Warning / Caution) | Kotak peringatan memiliki aksen warna tegas (merah/kuning), judul, dan countermeasure | Peringatan tampil mencolok dengan countermeasure terkotak | All viewports | **PASS** | `notebook-warning-card.tsx` |
 | **RD-11** | Keyboard navigation | Navigasi menggunakan tombol `Tab`, `Enter`, dan `Space` | Seluruh tombol interaktif (copy, accordion, nav) dapat diakses dan diaktifkan via keyboard | Elemen interaktif merespons `Tab` dan tombol `Enter`/`Space` | Keyboard-only | **PASS** | Semantic `<button>` elements used |
 | **RD-12** | Visible focus state | Fokus keyboard pada tombol interaktif | Muncul ring outline fokus kontras (`focus-visible:ring-2 focus-visible:ring-brand-500`) | Ring fokus kontras tinggi terlihat jelas pada semua tombol | High Contrast Mode | **PASS** | Tailwind `focus-visible` classes |

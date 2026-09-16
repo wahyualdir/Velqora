@@ -1,16 +1,11 @@
-﻿On branch main
-Your branch is up to date with 'origin/main'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   scripts/curriculum-generator/ds_ch1_execution_evidence.json
-	modified:   src/lib/curriculum/pilot-content.ts
-	modified:   src/lib/ml-curriculum/chapters-1-to-6.ts
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	docs/evidence/
-	docs/reports/
-
-no changes added to commit (use "git add" and/or "git commit -a")
+﻿ M docs/evidence/rebuild-gold-standard-ds-ch1/03-negative-tests.log
+ M docs/evidence/rebuild-gold-standard-ds-ch1/04-python-runner.log
+ M docs/evidence/rebuild-gold-standard-ds-ch1/05-git-status.log
+ M docs/reports/batch-2-readiness-checklist.md
+ M docs/reports/rebuild-gold-standard-ds-ch1-audit.md
+ M docs/reports/rebuild-gold-standard-ds-ch1-defect-matrix.md
+ M docs/reports/rebuild-gold-standard-ds-ch1-final-audit.md
+ M docs/reports/rebuild-gold-standard-ds-ch1-reader-validation.md
+ M docs/reports/rebuild-gold-standard-ds-ch1-source-traceability.md
+ M scripts/curriculum-generator/ds_ch1_execution_evidence.json
+?? docs/reports/batch-2-dependency-dag-review.md

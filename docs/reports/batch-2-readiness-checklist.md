@@ -1,9 +1,9 @@
-# Velqora — Batch 2 Controlled Migration Readiness Checklist
+# Velqora â€” Batch 2 Controlled Migration Readiness Checklist
 
-**Dokumen**: Lembar Kesiapan Migrasi Terkontrol Batch 2  
-**Target Rencana**: Topik 01 (AI Fundamentals) & Topik 02 (Machine Learning Foundations)  
-**Status Evaluasi**: READY FOR REVIEW (DO NOT PROCEED TO IMPLEMENTATION YET)  
-**Tanggal Evaluasi**: 16 September 2026  
+**Dokumen**: Lembar Kesiapan Migrasi Terkontrol Batch 2
+**Target Rencana**: Topik 01 (AI Fundamentals) & Topik 02 (Machine Learning Foundations)
+**Status Evaluasi**: READY FOR REVIEW (DO NOT PROCEED TO IMPLEMENTATION YET)
+**Tanggal Evaluasi**: 16 September 2026
 
 ---
 
@@ -44,22 +44,22 @@ Sesuai prinsip kehati-hatian kurikulum, Batch 2 **dibatasi secara ketat maksimal
 
 ```
 [Topik 01: AI Fundamentals]
-  ├── Bab 1: Paradigma Agen Rasional & Kerangka PEAS
-  │     ↓
-  ├── Bab 2: Problem Solving via State-Space Search (A*, Heuristik)
-  │     ↓
-  └── Bab 3: Logika Simbolik, Inferensi Proposisional & CSP
-        │
-        └── (Transisi Kognitif: Dari Logika Deterministik ke Penalaran Stokastik)
-              ↓
+  â”œâ”€â”€ Bab 1: Paradigma Agen Rasional & Kerangka PEAS
+  â”‚     â†“
+  â”œâ”€â”€ Bab 2: Problem Solving via State-Space Search (A*, Heuristik)
+  â”‚     â†“
+  â””â”€â”€ Bab 3: Logika Simbolik, Inferensi Proposisional & CSP
+        â”‚
+        â””â”€â”€ (Transisi Kognitif: Dari Logika Deterministik ke Penalaran Stokastik)
+              â†“
 [Topik 02: Machine Learning Foundations]
-  ├── Bab 1: Epistemologi Supervised Learning & Normal Equation OLS
-  │     ↓
-  ├── Bab 2: Optimasi Gradien Numerik (Gradient Descent & SGD)
-  │     ↓
-  ├── Bab 3: Teori Belajar Statistik, Bias-Varians & PAC Learnability
-  │     ↓
-  └── Bab 4: Regularisasi L1/L2 (Sparsity vs Shrinkage) & Pipeline Anti-Leakage
+  â”œâ”€â”€ Bab 1: Epistemologi Supervised Learning & Normal Equation OLS
+  â”‚     â†“
+  â”œâ”€â”€ Bab 2: Optimasi Gradien Numerik (Gradient Descent & SGD)
+  â”‚     â†“
+  â”œâ”€â”€ Bab 3: Teori Belajar Statistik, Bias-Varians & PAC Learnability
+  â”‚     â†“
+  â””â”€â”€ Bab 4: Regularisasi L1/L2 (Sparsity vs Shrinkage) & Pipeline Anti-Leakage
 ```
 
 ---
@@ -73,5 +73,5 @@ Sesuai prinsip kehati-hatian kurikulum, Batch 2 **dibatasi secara ketat maksimal
 ---
 
 ## 5. Keputusan Kesiapan Gerbang Batch 2
-> **STATUS**: **PRASYARAT AUDIT TERPENUHI (READY FOR REVIEW)**.  
+> **STATUS**: **PRASYARAT AUDIT TERPENUHI (READY FOR REVIEW)**.
 > *Implementasi teknis Batch 2 TIDAK BOLEH dimulai sebelum dependency DAG di atas ditinjau dan disetujui secara eksplisit oleh tim kurikulum / pengguna.*

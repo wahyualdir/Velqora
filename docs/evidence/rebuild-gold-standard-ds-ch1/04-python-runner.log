@@ -1,9 +1,9 @@
-﻿[OK] 1.1-data-team-taxonomy.py finished with exit 0 in 2673.56ms
-[OK] 1.2-cost-weighted-problem-framing.py finished with exit 0 in 20.39ms
-[OK] 1.3-crisp-dm-state-machine.py finished with exit 0 in 0.36ms
-[OK] 1.4-osemn-pipeline-benchmark.py finished with exit 0 in 218.24ms
-[OK] 1.5-simpsons-paradox-reversal.py finished with exit 0 in 4402.11ms
-[OK] 1.6-california-housing-audit.py finished with exit 0 in 1627.83ms
-[OK] 1.6-california-housing-outliers-correlation.py finished with exit 0 in 255.18ms
+﻿[OK] 1.1-data-team-taxonomy.py finished with exit 0 in 2961.86ms
+[OK] 1.2-cost-weighted-problem-framing.py finished with exit 0 in 21.84ms
+[OK] 1.3-crisp-dm-state-machine.py finished with exit 0 in 0.77ms
+[OK] 1.4-osemn-pipeline-benchmark.py finished with exit 0 in 119.55ms
+[OK] 1.5-simpsons-paradox-reversal.py finished with exit 0 in 4968.14ms
+[OK] 1.6-california-housing-audit.py finished with exit 0 in 2475.49ms
+[OK] 1.6-california-housing-outliers-correlation.py finished with exit 0 in 211.48ms
 
 Semua 7 kode snippet berhasil dieksekusi dan disimpan ke ds_ch1_execution_evidence.json!

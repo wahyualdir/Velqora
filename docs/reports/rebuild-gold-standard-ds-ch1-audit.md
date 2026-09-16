@@ -1,8 +1,8 @@
-# Velqora — Rebuild Gold Standard DS Ch 1 Audit Report
-**Dokumen**: Audit Independen Klaim Hasil Rekonstruksi Kurikulum  
-**Target Audit**: Laporan Rekonstruksi & Dokumen Hasil Sebelumnya  
-**Status Evaluasi**: COMPLETED & CORRECTED  
-**Tanggal Audit**: 16 September 2026  
+# Velqora â€” Rebuild Gold Standard DS Ch 1 Audit Report
+**Dokumen**: Audit Independen Klaim Hasil Rekonstruksi Kurikulum
+**Target Audit**: Laporan Rekonstruksi & Dokumen Hasil Sebelumnya
+**Status Evaluasi**: COMPLETED & CORRECTED
+**Tanggal Audit**: 16 September 2026
 
 ---
 
@@ -43,8 +43,8 @@ Audit ini dilakukan secara independen terhadap seluruh klaim pencapaian, angka m
 ## 3. Koreksi Pernyataan Konseptual Kunci
 
 > [!IMPORTANT]
-> **Koreksi Terhadap Konsep Baseline**:  
-> *"The baseline is a historical comparison point. It does not represent a guaranteed error ceiling, worst-case bound, or universal tolerance."*  
+> **Koreksi Terhadap Konsep Baseline**:
+> *"The baseline is a historical comparison point. It does not represent a guaranteed error ceiling, worst-case bound, or universal tolerance."*
 > Menyamakan model baseline naif (misalnya estimator rata-rata sampel $\bar{y}$) dengan "error ceiling" adalah keliru secara metodologis: model prediktif yang buruk dengan overfitting ekstrem atau salah spesifikasi fitur dapat menghasilkan galat (MSE) yang jauh lebih besar daripada baseline naif. Baseline hadir murni sebagai tolok ukur minimal kelayakan komparatif.
 
 ---
