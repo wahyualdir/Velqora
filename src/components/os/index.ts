@@ -1,1 +1,11 @@
 export { OSWindow } from "./os-window";
+export { OSTopBar } from "./os-top-bar";
+export { OSTaskbar } from "./os-taskbar";
+export { OSDesktopIcons } from "./os-desktop-icons";
+export { OSHeroWindow } from "./os-hero-window";
+export { CanvasWireframeCube } from "./canvas-wireframe-cube";
+export { NotepadManifesto } from "./notepad-manifesto";
+export { CurriculumExplorer } from "./curriculum-explorer";
+export { SystemMonitorWindow } from "./system-monitor-window";
+export { MarqueeTicker } from "./marquee-ticker";
+export { RunDialogCTA } from "./run-dialog-cta";
