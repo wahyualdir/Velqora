@@ -1,0 +1,31 @@
+﻿Γû╢ Master Quality Gates: Notebook-Style Academic Module (Data Science Bab 1)
+  Γ£ö POSITIVE: Data Science Bab 1 memuat tepat 6 subbab komprehensif berstatus verified (17.9507ms)
+  Γ£ö Gate 1: Menolak subbab tanpa notebook units terstruktur (5.5227ms)
+  Γ£ö Gate 2: Menolak code cell tanpa penjelasan teoritis sebelum kode (preExplanation) (1.5288ms)
+  Γ£ö Gate 3: Menolak klaim verified jika executionEvidence tidak ada (1.4464ms)
+  Γ£ö Gate 4: Menolak code cell dengan exit code bukan nol (1.9092ms)
+  Γ£ö Gate 5: Menolak code cell yang menghasilkan output kosong (2.3006ms)
+  Γ£ö Gate 6: Menolak code cell tanpa definisi dependencies (1.3724ms)
+  Γ£ö Gate 7: Menolak code cell tanpa daftar potensi failureModes (4.5394ms)
+  Γ£ö Gate 8: Menolak code cell tanpa spesifikasi kompleksitas runtime/memori (3.0952ms)
+  Γ£ö Gate 9: Menolak formula matematis tanpa kamus variabel (variables dictionary) (2.9283ms)
+  Γ£ö Gate 10: Menolak formula matematis tanpa contoh perhitungan manual (worked example) (1.247ms)
+  Γ£ö Gate 11: Menolak exercise dengan bobot rubrik penilaian tidak sama dengan 100% (8.5507ms)
+  Γ£ö Gate 12: Menolak exercise tanpa petunjuk bertahap (hints) (2.2288ms)
+  Γ£ö Gate 13: Menolak exercise tanpa kode solusi atau pembahasan referensi (3.0146ms)
+  Γ£ö Gate 14: Menolak project praktikum tanpa spesifikasi dataset lengkap (1.2785ms)
+  Γ£ö Gate 15: Menolak project praktikum tanpa milestone deliverables (1.4193ms)
+  Γ£ö Gate 16: Menolak tabel dengan header atau baris kosong (4.359ms)
+  Γ£ö Gate 17: Menolak interpretation card dengan observasi kurang dari 2 (1.4836ms)
+  Γ£ö Gate 18: Menolak warning card tanpa countermeasure terukur (3.5571ms)
+  Γ£ö Gate 19: Menolak definition card tanpa analogi dunia nyata atau intuisi (1.1887ms)
+  Γ£ö Gate 20: Menolak audit California Housing yang mengabaikan ceiling truncation (1.1429ms)
+Γ£ö Master Quality Gates: Notebook-Style Academic Module (Data Science Bab 1) (87.1093ms)
+Γä╣ tests 21
+Γä╣ suites 1
+Γä╣ pass 21
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1799.0678

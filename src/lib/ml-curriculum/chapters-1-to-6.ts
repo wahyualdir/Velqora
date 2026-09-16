@@ -641,13 +641,30 @@ Jika $p \\gg n$ atau fitur memiliki korelasi linear sempurna, matriks $X^T X$ me
 
 ---
 
-## 5.1.2. Non-Negative Least Squares (NNLS)
-Dengan argumen \`positive=True\`, Scikit-Learn membatasi semua koefisien bernilai non-negatif ($w_j \\ge 0$), sangat berguna untuk data fisik seperti konsentrasi kimiawi atau porsi komposisi belanja:
+## 5.1.2. Non-Negative Least Squares (NNLS) & Batasan Estimasi OLS
+Dengan argumen \`positive=True\`, Scikit-Learn membatasi semua koefisien bernilai non-negatif ($w_j \\ge 0$), sangat berguna untuk data fisik seperti konsentrasi kimiawi atau porsi komposisi belanja.
+
+> **Klasifikasi Dataset**: \`Synthetic Toy Dataset\` (4 sampel terkontrol).
+>
+> **Batasan Generalisasi Model (Synthetic Data Limitation)**:
+> *"This example demonstrates the mechanics of ordinary least squares on controlled synthetic data. Its results should not be generalized directly to real-world data."*
+
+### Peringatan Metodologis & Bahaya Estimasi OLS pada Data Dunia Nyata:
+1. **Hubungan Non-Linear (Nonlinear Relationships)**: OLS memaksakan relasi linear; jika pola sejati memiliki kurvatur atau interaksi non-linear, OLS menghasilkan bias struktural permanen (*underfitting*).
+2. **Pencilan & Titik Daya Ungkit (Outliers & High Leverage Points)**: Karena OLS meminimalkan kuadrat selisih error, satu titik pencilan dapat memutar arah garis regresi secara ekstrem.
+3. **Heteroskedastisitas (Heteroskedasticity)**: OLS mengasumsikan variansi error konstan. Jika variansi noise berubah terhadap input, estimator OLS kehilangan efisiensi statistik (bukan lagi BLUE).
+4. **Kebocoran Data (Data Leakage)**: Menyertakan prediktor yang dihitung dari masa depan atau terkontaminasi variabel target akan menghasilkan performa latih sempurna semu yang kolaps di produksi.
+5. **Pergeseran Distribusi (Distribution Shift / Covariate Shift)**: Model yang fit pada distribusi latih tidak menjamin stabilitas ketika pola data produksi mengalami pergeseran temporal atau demografis.
+6. **Kolinearitas Fitur (Correlated Features / Multicollinearity)**: Korelasi tinggi antar prediktor memicu singularitas matriks Gramian $X^T X$, melipatgandakan variansi estimasi koefisien menjadi tidak stabil.
+7. **Overfitting pada Dimensi Tinggi ($p \\gg n$)**: Menambahkan fitur tanpa regularisasi meningkatkan kapasitas model hingga menghafal noise sampel.
+8. **Kontaminasi Data Latih/Uji (Train/Test Contamination)**: Menghitung parameter penskalaan atau imputasi sebelum partisi dataset merusak validitas estimasi risiko empiris.
 
 \`\`\`python
+# [DATASET: Synthetic Toy Data (4 samples)]
 from sklearn.linear_model import LinearRegression
 import numpy as np
 
+# Data sintetik kecil untuk demonstrasi mekanika komputasi OLS
 X = np.array([[1.0, 2.0], [2.0, 3.0], [3.0, 5.0], [4.0, 7.0]])
 y = np.array([3.1, 5.2, 7.9, 10.8])
 
@@ -660,6 +677,7 @@ print("Intercept OLS         :", lr.intercept_)
 lr_nnls = LinearRegression(positive=True).fit(X, y)
 print("Koefisien NNLS        :", lr_nnls.coef_)
 \`\`\`
+
 `
       },
       {

@@ -300,7 +300,11 @@ $$\\nabla_\\theta J(\\theta) = \\frac{1}{n} \\left( X^T X \\theta - X^T y \\righ
 
 $$X^T X \\theta = X^T y \\implies \\theta = (X^T X)^{-1} X^T y$$
 
-> **Syarat Keterbalikan**: Matriks $X^T X \\in \\mathbb{R}^{d \\times d}$ harus *full rank* (non-singular). Jika terdapat dua fitur yang berkorelasi sempurna (*multikolinearitas sempurna*), determinan $|X^T X| = 0$, sehingga invers tidak terdefinisi. Dalam kasus ini, teknik regularisasi (Ridge L2) mutlak diperlukan.`,
+> **Syarat Keterbalikan & Batasan Estimasi**: Matriks $X^T X \\in \\mathbb{R}^{d \\times d}$ harus *full rank* (non-singular). Jika terdapat dua fitur yang berkorelasi sempurna (*multikolinearitas sempurna*), determinan $|X^T X| = 0$, sehingga invers tidak terdefinisi.
+>
+> *"This example demonstrates the mechanics of ordinary least squares on controlled synthetic data. Its results should not be generalized directly to real-world data."*
+>
+> Pada data dunia nyata, estimasi OLS murni rentan terhadap outlier, heteroskedastisitas, kebocoran data (data leakage), dan pergeseran distribusi (distribution shift). Dalam kasus-kasus ini, teknik regularisasi (Ridge L2/Lasso L1) atau metode robust regression mutlak diperlukan.`,
       references: [
         {
           title: "The Elements of Statistical Learning",
