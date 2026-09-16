@@ -1,0 +1,1943 @@
+{
+  "topicId": "machine-learning",
+  "title": "Machine Learning",
+  "chaptersCount": 22,
+  "totalSubchapters": 220,
+  "totalUnits": 2200,
+  "curriculumDatasets": [
+    {
+      "name": "California Housing Dataset (Pace & Barry, 1997)",
+      "license": "Public Domain / CC0",
+      "samples": 20640,
+      "features": 8
+    }
+  ],
+  "keyVerifications": {
+    "has16StepInspection": false,
+    "hasOverfittingSuite": true,
+    "hasPolyDegree1315": false,
+    "hasBiasVarianceAnalysis": true,
+    "hasRidgeLassoMath": true,
+    "hasLearningCurve": true,
+    "hasValidationCurve": true,
+    "hasPipelineUsage": true,
+    "detectedDataLeakagesCount": 0,
+    "detectedDataLeakages": []
+  },
+  "chapters": [
+    {
+      "orderIndex": 1,
+      "title": "BAB 1: Fondasi Machine Learning: Paradigma, Formulasi Matematis & Alur Pemodelan",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "1.1. Definisi Operasional Machine Learning Menurut Tom Mitchell (1997)",
+          "codeSnippetSample": "print('Program dikatakan belajar jika kinerjanya pada tugas T, sebagaimana diukur oleh P, meningkat ",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "1.2. Taksonomi Utama Paradigma Pembelajaran: Terawasi, Tak Terawasi, dan Penguatan",
+          "codeSnippetSample": "paradigms = {'Supervised': 'Data berpasangan (X, y), memprediksi target', 'Unsupervised': 'Hanya fit",
+          "hasCode": true,
+          "contentWords": 316,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "1.3. Ruang Hipotesis (Hypothesis Space $\\mathcal{H}$) dan Fungsi Target Intrinsik ($f$)",
+          "codeSnippetSample": "print('Tujuan algoritma adalah menemukan hipotesis h dalam ruang H yang meminimalkan galat terhadap ",
+          "hasCode": true,
+          "contentWords": 347,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "1.4. Prinsip Minimisasi Risiko Empiris (Empirical Risk Minimization - ERM)",
+          "codeSnippetSample": "print('ERM mengasumsikan sampel data latih berdistribusi identik dan independen (i.i.d) terhadap dis",
+          "hasCode": true,
+          "contentWords": 352,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "1.5. Taksonomi Fungsi Kerugian (Loss Functions) untuk Regresi dan Klasifikasi",
+          "codeSnippetSample": "import numpy as np\ndef log_loss(y_true, y_prob):\n    return - (y_true * np.log(y_prob) + (1 - y_true",
+          "hasCode": true,
+          "contentWords": 364,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "1.6. Paradigma Induktif (Inductive Bias): Mengapa Pembelajaran Tanpa Asumsi Tidak Dimungkinkan",
+          "codeSnippetSample": "print('Teorema No Free Lunch: Tanpa asumsi induktif sebelumnya, tidak ada satu algoritma pun yang se",
+          "hasCode": true,
+          "contentWords": 314,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "1.7. Arsitektur Desain Estimator Scikit-Learn: Antarmuka Konsisten fit, transform, dan predict",
+          "codeSnippetSample": "print('fit(X, y): Mempelajari parameter; transform(X): Menerapkan transformasi; predict(X): Menghasi",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "1.8. Representasi Data Tabular: Vektor Fitur Multidimensi dan Matriks Desain",
+          "codeSnippetSample": "import numpy as np\nX = np.array([[1.2, 3.4], [5.6, 7.8]])\nprint('Matriks Desain X (2 sampel, 2 fitur",
+          "hasCode": true,
+          "contentWords": 372,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "1.9. Alur Kerja Rekayasa Machine Learning End-to-End: Dari Eksplorasi ke Produksi",
+          "codeSnippetSample": "steps = ['1. Problem Framing', '2. Data Ingestion & EDA', '3. Preprocessing & Feature Eng', '4. Mode",
+          "hasCode": true,
+          "contentWords": 324,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "1.10. Implementasi Estimator Linear Sederhana Dari Nol Memenuhi Kontrak Scikit-Learn",
+          "codeSnippetSample": "from sklearn.base import BaseEstimator, RegressorMixin\nclass ConstantMeanRegressor(BaseEstimator, Re",
+          "hasCode": true,
+          "contentWords": 326,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 2,
+      "title": "BAB 2: Pra-pemrosesan Data & Rekayasa Fitur: Penskalaan, Encoding, dan Imputasi",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "2.1. Urgensi Penskalaan Fitur: Mengapa Algoritma Berbasis Gradien dan Jarak Memerlukan Normalisasi",
+          "codeSnippetSample": "print('Algoritma berbasis jarak (k-NN, SVM) dan gradien (Linear, SGD) terdistorsi jika satu fitur me",
+          "hasCode": true,
+          "contentWords": 319,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "2.2. StandardScaler: Transformasi Z-Score Menuju Distribusi Rata-rata Nol dan Varians Satuan",
+          "codeSnippetSample": "from sklearn.preprocessing import StandardScaler\nimport numpy as np\ndata = np.array([[10.0], [20.0],",
+          "hasCode": true,
+          "contentWords": 352,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "2.3. MinMaxScaler vs RobustScaler: Menangani Penskalaan Saat Menghadapi Outlier Ekstrem",
+          "codeSnippetSample": "print('RobustScaler menggunakan kuartil IQR sehingga tidak terpengaruh oleh pencilan (outlier) ekstr",
+          "hasCode": true,
+          "contentWords": 352,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "2.4. Penyandian Kategorik Nominal: OneHotEncoder dan Perangkap Dummy Variable Trap",
+          "codeSnippetSample": "from sklearn.preprocessing import OneHotEncoder\nohe = OneHotEncoder(drop='first', sparse_output=Fals",
+          "hasCode": true,
+          "contentWords": 314,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "2.5. Penyandian Kategorik Ordinal & Target Encoding: Mengkodekan Informasi Urutan dan Relasi Target",
+          "codeSnippetSample": "print('OrdinalEncoder mengawetkan urutan (Rendah=0, Sedang=1, Tinggi=2); TargetEncoder mengkodekan r",
+          "hasCode": true,
+          "contentWords": 315,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "2.6. Strategi Imputasi Missing Values: SimpleImputer (Mean, Median, Most Frequent) vs IterativeImputer (MICE)",
+          "codeSnippetSample": "from sklearn.impute import SimpleImputer\nimp = SimpleImputer(strategy='median')\nclean_arr = imp.fit_",
+          "hasCode": true,
+          "contentWords": 315,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "2.7. Transformasi Non-Linear & Power Transforms: Box-Cox dan Yeo-Johnson untuk Distribusi Normal",
+          "codeSnippetSample": "print('Mengubah fitur berkemencengan tinggi (skewed) menjadi mendekati kurva lonceng Gaussian')",
+          "hasCode": true,
+          "contentWords": 366,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "2.8. Binning (Discretization) & Polinomial Features: Memperkenalkan Kapabilitas Non-Linear pada Model Linear",
+          "codeSnippetSample": "from sklearn.preprocessing import PolynomialFeatures\npoly = PolynomialFeatures(degree=2)\nprint('Dera",
+          "hasCode": true,
+          "contentWords": 352,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "2.9. Orkestrasi Preprocessing Heterogen dengan ColumnTransformer",
+          "codeSnippetSample": "from sklearn.compose import ColumnTransformer\nct = ColumnTransformer([\n    ('num', StandardScaler(),",
+          "hasCode": true,
+          "contentWords": 303,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "2.10. Pencegahan Kebocoran Data (Data Leakage) Mutlak Selama Tahap Preprocessing",
+          "codeSnippetSample": "print('ATURAN MUTLAK: Selalu jalankan scaler.fit(X_train) HANYA pada data latih; jangan pernah menja",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 3,
+      "title": "BAB 3: Teori Generalisasi, Trade-Off Bias-Varians & Suite Penanganan Overfitting",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "3.1. Definisi Formal Generalisasi & Fenomena Overfitting (Hafalan Derau)",
+          "codeSnippetSample": "print('Overfitting terjadi saat model mempelajari noise dan fluktuasi acak data latih alih-alih pola",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "3.2. Dekomposisi Bias-Varians Matematis Lengkap: Penurunan Teoretis Galat Kuadratik Rata-rata",
+          "codeSnippetSample": "print('1. Bias^2: Galat akibat simplifikasi asumsi salah pada model\\n2. Variance: Sensitivitas model",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "3.3. Karakteristik Underfitting (High Bias) vs Overfitting (High Variance)",
+          "codeSnippetSample": "profiles = {'Underfitting (High Bias)': 'Galat latih tinggi, galat uji tinggi (Model terlalu kaku)',",
+          "hasCode": true,
+          "contentWords": 320,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "3.4. Eksperimen Polinomial: Derajat 1 (Underfitting), Derajat 15 (Overfitting), dan Derajat 3 (Balanced)",
+          "codeSnippetSample": "import numpy as np\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import Poly",
+          "hasCode": true,
+          "contentWords": 406,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "3.5. Kurva Belajar (Learning Curve): Diagnosis Pengaruh Ukuran Sampel Latih vs Galat",
+          "codeSnippetSample": "from sklearn.model_selection import learning_curve\nprint('Kurva belajar memplot skor latih vs valida",
+          "hasCode": true,
+          "contentWords": 319,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "3.6. Kurva Validasi (Validation Curve): Analisis Pengaruh Hiperparameter Kompleksitas",
+          "codeSnippetSample": "from sklearn.model_selection import validation_curve\nprint('Kurva validasi memetakan performa terhad",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "3.7. Protokol Validasi Silang (Cross-Validation): K-Fold, Stratified K-Fold, dan Repeated K-Fold",
+          "codeSnippetSample": "from sklearn.model_selection import cross_val_score, KFold\nkf = KFold(n_splits=5, shuffle=True, rand",
+          "hasCode": true,
+          "contentWords": 344,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "3.8. Teknik Regularisasi Matematis L1 (Lasso) dan L2 (Ridge) Sebagai Penjinak Overfitting",
+          "codeSnippetSample": "print('Regularisasi menambahkan penalti pada magnitudo bobot w, menyusutkan koefisien agar kurva fun",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "3.9. Early Stopping & Pruning: Menghentikan Kompleksitas Sebelum Menghafal Derau",
+          "codeSnippetSample": "print('Menghentikan iterasi optimasi saat skor validasi mulai memburuk meskipun loss latih terus men",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "3.10. Rujukan Dokumentasi Resmi Scikit-Learn Mengenai Praktik Terbaik Generalisasi",
+          "codeSnippetSample": "cites = ['scikit-learn: Common Pitfalls and Recommended Practices', 'sklearn.model_selection.learnin",
+          "hasCode": true,
+          "contentWords": 302,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 4,
+      "title": "BAB 4: Model Regresi Linear & Regularisasi: OLS, Ridge, Lasso, dan ElasticNet",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "4.1. Formulasi Matematis Ordinary Least Squares (OLS) & Asumsi Klasik Gauss-Markov",
+          "codeSnippetSample": "print('Asumsi Gauss-Markov: Linearitas, eksogenitas ketat E[epsilon|X]=0, homoskedastisitas, dan tid",
+          "hasCode": true,
+          "contentWords": 357,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "4.2. Solusi Bentuk Tertutup (Normal Equation) untuk Regresi Linear",
+          "codeSnippetSample": "import numpy as np\nX_b = np.array([[1, 1], [1, 2], [1, 3]])\ny_b = np.array([2, 4, 6])\nw_star = np.li",
+          "hasCode": true,
+          "contentWords": 366,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "4.3. Regresi Ridge (Tikhonov Regularization / $L_2$): Mengatasi Singularitas $(X^\\top X)$",
+          "codeSnippetSample": "from sklearn.linear_model import Ridge\nridge = Ridge(alpha=1.0).fit([[1], [2], [3]], [2, 4, 6])\nprin",
+          "hasCode": true,
+          "contentWords": 348,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "4.4. Regresi Lasso ($L_1$ Regularization): Fitur Sparsity dan Seleksi Fitur Otomatis",
+          "codeSnippetSample": "from sklearn.linear_model import Lasso\nlasso = Lasso(alpha=0.1).fit([[1, 0], [2, 0], [3, 0]], [2, 4,",
+          "hasCode": true,
+          "contentWords": 359,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "4.5. Geometri Ruang Regularisasi: Mengapa Kontur $L_1$ Memotong Sumbu dan Menghasilkan Nol",
+          "codeSnippetSample": "print('Bola pembatas L1 berbentuk belah ketupat (diamond) dengan sudut tajam di sumbu koordinat; kon",
+          "hasCode": true,
+          "contentWords": 319,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "4.6. Algoritma Coordinate Descent untuk Optimasi Fungsi Kerugian Lasso Non-Diferensiabel",
+          "codeSnippetSample": "print('Coordinate descent mengoptimalkan satu parameter w_j pada satu waktu dengan fungsi soft-thres",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "4.7. ElasticNet: Menggabungkan Penalti $L_1$ dan $L_2$ untuk Mengatasi Masalah Fitur Berkorelasi",
+          "codeSnippetSample": "from sklearn.linear_model import ElasticNet\nenet = ElasticNet(alpha=0.1, l1_ratio=0.5).fit([[1, 2], ",
+          "hasCode": true,
+          "contentWords": 355,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "4.8. Stochastic Gradient Descent (SGDRegressor): Skalabilitas Data Raksasa yang Tidak Muat di RAM",
+          "codeSnippetSample": "from sklearn.linear_model import SGDRegressor\nsgd = SGDRegressor(loss='squared_error', penalty='l2',",
+          "hasCode": true,
+          "contentWords": 321,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "4.9. Regresi Polinomial & Penanganan Multikolinieritas via Variance Inflation Factor (VIF)",
+          "codeSnippetSample": "print('Multikolinieritas menyebabkan varians estimasi koefisien membesar tak terkendali dan tidak st",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "4.10. Implementasi Solusi Analitik OLS Lengkap dengan Estimasi Residual dan Standar Error",
+          "codeSnippetSample": "def fit_ols(X, y):\n    X_aug = np.c_[np.ones(len(X)), X]\n    beta = np.linalg.pinv(X_aug.T @ X_aug) ",
+          "hasCode": true,
+          "contentWords": 350,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 5,
+      "title": "BAB 5: Model Klasifikasi Linear: Regresi Logistik & Support Vector Classifier Linear",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "5.1. Fungsi Logistik (Sigmoid) dan Transformasi Logit: Memetakan Bilangan Real ke Probabilitas",
+          "codeSnippetSample": "import numpy as np\ndef sigmoid(z): return 1.0 / (1.0 + np.exp(-z))\nprint('Probabilitas z=0:', sigmoi",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "5.2. Rasio Peluang (Odds Ratio) dan Interpretasi Koefisien Model Regresi Logistik",
+          "codeSnippetSample": "print('Setiap peningkatan 1 unit pada x_j melipatgandakan peluang (odds) sebesar faktor e^{w_j}')",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "5.3. Penurunan Fungsi Kerugian Binary Cross-Entropy (Log-Loss) via Maximum Likelihood Estimation",
+          "codeSnippetSample": "print('Log-loss bersifat konveks global, menjamin gradien konvergen ke titik minimum global')",
+          "hasCode": true,
+          "contentWords": 354,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "5.4. Algoritma Optimasi Solver Regresi Logistik: L-BFGS, Newton-CG, Saga, dan Liblinear",
+          "codeSnippetSample": "solvers = {'lbfgs': 'Kuasi-Newton, cepat untuk dataset berukuran sedang', 'liblinear': 'Sangat efisi",
+          "hasCode": true,
+          "contentWords": 322,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "5.5. Klasifikasi Multikelas: Strategi One-vs-Rest (OvR) vs Multinomial Softmax Regression",
+          "codeSnippetSample": "from sklearn.linear_model import LogisticRegression\nlr = LogisticRegression(multi_class='multinomial",
+          "hasCode": true,
+          "contentWords": 347,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "5.6. Linear Support Vector Classifier (LinearSVC): Hinge Loss vs Log-Loss",
+          "codeSnippetSample": "from sklearn.svm import LinearSVC\nsvc = LinearSVC(C=1.0, dual='auto')\nprint('LinearSVC siap dengan o",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "5.7. Perbandingan Hinge Loss vs Cross-Entropy: Kerapatan Margin vs Kalibrasi Probabilitas",
+          "codeSnippetSample": "print('Hinge loss hanya peduli pada sampel yang melanggar margin (sparse support vectors); Log-loss ",
+          "hasCode": true,
+          "contentWords": 316,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "5.8. Penyetelan Parameter Regulasi $C$: Hubungan Invers Terhadap Kekuatan Regularisasi $\\alpha$",
+          "codeSnippetSample": "print('C kecil menghasilkan margin lebih lebar dan batas keputusan lebih halus')",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "5.9. Ambang Batas Keputusan (Decision Threshold Tuning): Mengoptimasi Precision vs Recall",
+          "codeSnippetSample": "probs = np.array([0.45, 0.55, 0.70])\npreds_custom = (probs >= 0.40).astype(int)\nprint('Prediksi deng",
+          "hasCode": true,
+          "contentWords": 310,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "5.10. Implementasi Lengkap Regresi Logistik Menggunakan Gradient Descent NumPy",
+          "codeSnippetSample": "def fit_logistic(X, y, lr=0.1, epochs=100):\n    w = np.zeros(X.shape[1])\n    for _ in range(epochs):",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 6,
+      "title": "BAB 6: Support Vector Machines (SVM): Teori Margin Maksimal & Kernel Trick",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "6.1. Geometri Hyperplane Pemisah dan Konsep Margin Maksimal (Maximum Margin)",
+          "codeSnippetSample": "print('SVM memaksimalkan jarak tegak lurus antara hyperplane pemisah dan titik data terdekat')",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "6.2. Formulasi Primal SVM Margin Keras (Hard Margin) untuk Data Terpisah Linear",
+          "codeSnippetSample": "print('Hard margin menuntut pemisahan linear 100% sempurna tanpa satu kesalahan pun')",
+          "hasCode": true,
+          "contentWords": 356,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "6.3. SVM Margin Lunak (Soft Margin): Variabel Slack ($\\xi_i$) dan Penalti $C$",
+          "codeSnippetSample": "print('Variabel slack xi_i mentoleransi pelanggaran margin terkontrol di bawah regulasi penalti C')",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "6.4. Formulasi Dual Lagrange dan Kondisi Karush-Kuhn-Tucker (KKT)",
+          "codeSnippetSample": "print('Hanya titik yang memiliki alpha_i > 0 yang menjadi Support Vectors; titik lainnya sama sekali",
+          "hasCode": true,
+          "contentWords": 364,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "6.5. Kernel Trick & Teorema Mercer: Memetakan ke Ruang Berdimensi Tinggi Tanpa Komputasi Eksplisit",
+          "codeSnippetSample": "print('Kernel trick memungkinkan pemisahan non-linear sangat kompleks di ruang fitur laten dengan bi",
+          "hasCode": true,
+          "contentWords": 368,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "6.6. Kernel Radial Basis Function (RBF / Gaussian Kernel) dan Parameter Gamma ($\\gamma$)",
+          "codeSnippetSample": "print('Gamma menentukan jangkauan pengaruh satu sampel latih: Gamma besar = radius sempit (berisiko ",
+          "hasCode": true,
+          "contentWords": 360,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "6.7. Kernel Polinomial dan Kernel Sigmoid",
+          "codeSnippetSample": "from sklearn.svm import SVC\nsvc_rbf = SVC(kernel='rbf', C=1.0, gamma='scale')\nsvc_poly = SVC(kernel=",
+          "hasCode": true,
+          "contentWords": 339,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "6.8. Support Vector Regression (SVR): Tabung Insensitif Epsilon ($\\epsilon$-Insensitive Tube)",
+          "codeSnippetSample": "from sklearn.svm import SVR\nsvr = SVR(kernel='rbf', epsilon=0.1, C=10.0)\nprint('SVR mengabaikan gala",
+          "hasCode": true,
+          "contentWords": 350,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "6.9. Kompleksitas Komputasi dan Skalabilitas Algoritma SMO (Sequential Minimal Optimization)",
+          "codeSnippetSample": "print('Kompleksitas komputasi SVM kuadratik hingga kubik O(N^2) s.d. O(N^3); kurang ideal untuk N > ",
+          "hasCode": true,
+          "contentWords": 308,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "6.10. Implementasi Evaluasi Fungsi Kernel RBF Menggunakan Matriks NumPy",
+          "codeSnippetSample": "def rbf_kernel_matrix(X, gamma=0.5):\n    sq_dists = np.sum(X**2, axis=1, keepdims=True) + np.sum(X**",
+          "hasCode": true,
+          "contentWords": 322,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 7,
+      "title": "BAB 7: Algoritma Tetangga Terdekat: k-Nearest Neighbors (k-NN) & Struktur Spasial",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "7.1. Prinsip Pembelajaran Malas (Lazy Learning) dan Estimasi Non-Parametrik",
+          "codeSnippetSample": "print('k-NN tidak mempelajari fungsi eksplisit saat fit(); seluruh komputasi penentuan tetangga ditu",
+          "hasCode": true,
+          "contentWords": 304,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "7.2. Aturan Keputusan k-NN untuk Klasifikasi (Majority Vote) dan Regresi (Local Mean)",
+          "codeSnippetSample": "from sklearn.neighbors import KNeighborsClassifier\nknn = KNeighborsClassifier(n_neighbors=3)\nknn.fit",
+          "hasCode": true,
+          "contentWords": 366,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "7.3. Taksonomi Metrik Jarak: Euclidean, Manhattan, Minkowski, dan Mahalanobis",
+          "codeSnippetSample": "import numpy as np\nu = np.array([1, 2]); v = np.array([4, 6])\neuclidean = np.sqrt(np.sum((u - v)**2)",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "7.4. Pembobotan Tetangga Berbasis Jarak: Uniform vs Distance Weights ($1/d$)",
+          "codeSnippetSample": "print('Tetangga yang lebih dekat memiliki pengaruh suara lebih besar terhadap keputusan')",
+          "hasCode": true,
+          "contentWords": 340,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "7.5. Pemilihan Hiperparameter $k$: Kompromi Antara Underfitting ($k$ Besar) dan Overfitting ($k=1$)",
+          "codeSnippetSample": "print('k=1 sangat sensitif terhadap noise outlier (High Variance); k=N memprediksi kelas mayoritas g",
+          "hasCode": true,
+          "contentWords": 313,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "7.6. Pencarian Brute-Force vs Pohon Spasial KD-Tree: Partisi Ruang Berulang Ortogonal",
+          "codeSnippetSample": "print('KD-tree membagi ruang data secara bergantian sepanjang sumbu koordinat, mereduksi pencarian d",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "7.7. Ball-Tree: Partisi Berbasis Hiperbola untuk Mengatasi Kelemahan Dimensi Tinggi",
+          "codeSnippetSample": "print('Ball-tree mengelompokkan titik ke dalam hiper-bola bertingkat, lebih tangguh pada dimensi fit",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "7.8. Kutukan Dimensi (Curse of Dimensionality) pada Ruang Metrik Spasial",
+          "codeSnippetSample": "print('Pada dimensi sangat tinggi, jarak antar setiap pasang titik menjadi hampir identik, melumpuhk",
+          "hasCode": true,
+          "contentWords": 352,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "7.9. Nearest Centroid Classifier & RadiusNeighborsClassifier",
+          "codeSnippetSample": "from sklearn.neighbors import NearestCentroid\nnc = NearestCentroid().fit([[1, 2], [2, 3], [8, 9]], [",
+          "hasCode": true,
+          "contentWords": 303,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "7.10. Implementasi Fungsi Pencarian Tetangga Terdekat Sederhana Menggunakan NumPy",
+          "codeSnippetSample": "def find_k_nearest(X_train, y_train, query, k=3):\n    dists = np.linalg.norm(X_train - query, axis=1",
+          "hasCode": true,
+          "contentWords": 332,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 8,
+      "title": "BAB 8: Pohon Keputusan (Decision Trees): Algoritma CART, Entropi, dan Pruning",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "8.1. Arsitektur Pohon Keputusan: Node Akar (Root), Node Internal, dan Daun (Leaf Nodes)",
+          "codeSnippetSample": "print('Pohon keputusan mempartisi ruang fitur menjadi hiper-persegi panjang ortogonal melalui aturan",
+          "hasCode": true,
+          "contentWords": 314,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "8.2. Kriteria Ketidakmurnian Gini (Gini Impurity): Formulasi dan Interpretasi Probabilitas",
+          "codeSnippetSample": "import numpy as np\ndef gini(probs):\n    return 1.0 - np.sum(np.array(probs)**2)\nprint('Gini untuk ke",
+          "hasCode": true,
+          "contentWords": 358,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "8.3. Kriteria Entropi Informasi Shannon & Perolehan Informasi (Information Gain)",
+          "codeSnippetSample": "def entropy(probs):\n    return - sum(p * np.log2(p) for p in probs if p > 0)\nprint('Entropi [0.5, 0.",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "8.4. Algoritma CART (Classification and Regression Trees): Pembagian Biner Rekursif",
+          "codeSnippetSample": "print('CART memilih fitur j dan ambang pemisah s terbaik yang meminimalkan ketidakmurnian tertimbang",
+          "hasCode": true,
+          "contentWords": 345,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "8.5. Kriteria Pohon Regresi: Reduksi Varians (Mean Squared Error / MAE)",
+          "codeSnippetSample": "from sklearn.tree import DecisionTreeRegressor\ndtr = DecisionTreeRegressor(max_depth=3)\nprint('Decis",
+          "hasCode": true,
+          "contentWords": 354,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "8.6. Penanganan Fitur Numerik Kontinu vs Fitur Kategorik Nominal",
+          "codeSnippetSample": "print('Fitur kontinu diurutkan; setiap titik tengah antara dua nilai berurutan diuji sebagai kandida",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "8.7. Kerentanan Pohon Keputusan: Varians Sangat Tinggi dan Overfitting Tanpa Batas",
+          "codeSnippetSample": "print('Tanpa batasan kedalaman, pohon akan terus membelah hingga setiap sampel daun murni bernilai 1",
+          "hasCode": true,
+          "contentWords": 312,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "8.8. Regulasi Pra-Pemangkasan (Pre-Pruning): max_depth, min_samples_split, dan min_samples_leaf",
+          "codeSnippetSample": "from sklearn.tree import DecisionTreeClassifier\nclf = DecisionTreeClassifier(max_depth=4, min_sample",
+          "hasCode": true,
+          "contentWords": 298,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "8.9. Pasca-Pemangkasan Minimal Cost-Complexity Pruning (ccp_alpha)",
+          "codeSnippetSample": "print('ccp_alpha menemukan sub-pohon yang menyeimbangkan galat misklasifikasi dengan kesederhanaan u",
+          "hasCode": true,
+          "contentWords": 329,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "8.10. Ekstraksi Aturan dan Visualisasi Pohon Keputusan via export_text",
+          "codeSnippetSample": "from sklearn.tree import export_text\nclf_toy = DecisionTreeClassifier(max_depth=2).fit([[0, 0], [1, ",
+          "hasCode": true,
+          "contentWords": 304,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 9,
+      "title": "BAB 9: Metode Ensemble Bagging & Random Forest",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "9.1. Prinsip Kebijaksanaan Massa (Wisdom of the Crowds) dan Teorema Juri Condorcet",
+          "codeSnippetSample": "print('Jika setiap estimator individu memiliki akurasi > 50% dan independen, penggabungan suara mayo",
+          "hasCode": true,
+          "contentWords": 319,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "9.2. Metode Bootstrap Aggregating (Bagging - Breiman, 1996): Sampling dengan Pengembalian",
+          "codeSnippetSample": "print('Setiap model dilatih pada subset acak berukuran n dengan pengembalian; ~36.8% sampel tersisa ",
+          "hasCode": true,
+          "contentWords": 357,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "9.3. Bagging Mereduksi Varians Tanpa Menaikkan Bias: Analisis Matematis",
+          "codeSnippetSample": "print('Jika model tidak berkorelasi (rho -> 0), varians ensemble meluruh seiring pertambahan jumlah ",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "9.4. Arsitektur Random Forest (Breiman, 2001): Bagging Ditambah Random Feature Subspace",
+          "codeSnippetSample": "print('Pada setiap pembelahan simpul, hanya m fitur acak yang dipertimbangkan; mendekorelasikan poho",
+          "hasCode": true,
+          "contentWords": 354,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "9.5. Evaluasi Out-of-Bag (OOB Score): Validasi Bawaan Tanpa Perlu Data Uji Terpisah",
+          "codeSnippetSample": "from sklearn.ensemble import RandomForestClassifier\nrf = RandomForestClassifier(n_estimators=50, oob",
+          "hasCode": true,
+          "contentWords": 323,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "9.6. Extremely Randomized Trees (ExtraTrees): Pemilihan Ambang Pemisah Sepenuhnya Acak",
+          "codeSnippetSample": "from sklearn.ensemble import ExtraTreesClassifier\net = ExtraTreesClassifier(n_estimators=100, random",
+          "hasCode": true,
+          "contentWords": 310,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "9.7. Pengukuran Kepentingan Fitur Berbasis Pengurangan Ketidakmurnian (MDI / Gini Importance)",
+          "codeSnippetSample": "print('MDI mengagregasi total penurunan ketidakmurnian yang disumbangkan oleh fitur j di seluruh poh",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "9.8. Kelemahan MDI: Bias Terhadap Fitur Berkardinalitas Tinggi dan Solusi Permutation Importance",
+          "codeSnippetSample": "print('MDI melebih-lebihkan fitur numerik unik / ID; Permutation Importance jauh lebih obyektif dan ",
+          "hasCode": true,
+          "contentWords": 317,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "9.9. Penyetelan Hiperparameter Random Forest: n_estimators, max_features, max_depth, n_jobs",
+          "codeSnippetSample": "print('n_estimators tidak pernah menyebabkan overfitting; semakin banyak pohon, estimasi semakin sta",
+          "hasCode": true,
+          "contentWords": 300,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "9.10. Implementasi Agregator Bagging Sederhana Menggunakan Model Regresi Dasar",
+          "codeSnippetSample": "def simple_bagging_predict(models, X):\n    preds = np.array([m.predict(X) for m in models])\n    retu",
+          "hasCode": true,
+          "contentWords": 308,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 10,
+      "title": "BAB 10: Metode Ensemble Boosting: AdaBoost, GBDT, HistGradientBoosting, dan XGBoost",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "10.1. Prinsip Dasar Boosting: Mengubah Koleksi Pembelajar Lemah (Weak Learners) Menjadi Kuat",
+          "codeSnippetSample": "print('Berbeda dari Bagging yang paralel, Boosting melatih model secara sekuensial: setiap model bar",
+          "hasCode": true,
+          "contentWords": 314,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "10.2. Algoritma AdaBoost (Adaptive Boosting - Freund & Schapire, 1997)",
+          "codeSnippetSample": "print('Sampel yang salah diklasifikasikan dinaikkan bobotnya, memaksa model berikutnya memprioritask",
+          "hasCode": true,
+          "contentWords": 347,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "10.3. Fungsi Keputusan Gabungan AdaBoost: Pembobotan Suara Berdasarkan Akurasi Estimator",
+          "codeSnippetSample": "from sklearn.ensemble import AdaBoostClassifier\nada = AdaBoostClassifier(n_estimators=50)\nprint('Ada",
+          "hasCode": true,
+          "contentWords": 332,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "10.4. Gradient Boosting Decision Trees (GBDT - Friedman, 2001): Optimasi Gradient Descent di Ruang Fungsi",
+          "codeSnippetSample": "print('Pohon baru dilatih untuk memprediksi pseudo-residuals (negatif gradien kerugian) dari model s",
+          "hasCode": true,
+          "contentWords": 365,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "10.5. Penyusutan (Shrinkage / Learning Rate $\\eta$): Memperlambat Pembelajaran Demi Generalisasi Lebih Baik",
+          "codeSnippetSample": "print('Learning rate kecil dikombinasikan dengan jumlah pohon besar secara konsisten mengalahkan lea",
+          "hasCode": true,
+          "contentWords": 358,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "10.6. Stochastic Gradient Boosting: Subsampling Baris dan Kolom untuk Mencegah Overfitting",
+          "codeSnippetSample": "from sklearn.ensemble import GradientBoostingClassifier\ngb = GradientBoostingClassifier(subsample=0.",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "10.7. HistGradientBoosting (Scikit-Learn) & LightGBM: Binning Histogram Berkecepatan Sangat Tinggi",
+          "codeSnippetSample": "from sklearn.ensemble import HistGradientBoostingClassifier\nhgb = HistGradientBoostingClassifier(max",
+          "hasCode": true,
+          "contentWords": 312,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "10.8. Inovasi Ekstrem XGBoost (Chen & Guestrin, 2016): Ekspansi Taylor Orde Kedua & Regularisasi Kompleksitas",
+          "codeSnippetSample": "print('XGBoost memanfaatkan turunan pertama (g) dan turunan kedua Hessian (h) untuk konvergensi kurv",
+          "hasCode": true,
+          "contentWords": 368,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "10.9. Pemberhentian Dini (Early Stopping) pada Boosting: Mencegah Overfitting Sekuensial",
+          "codeSnippetSample": "print('Memantau skor pada validasi internal dan menghentikan penambahan pohon saat skor tidak membai",
+          "hasCode": true,
+          "contentWords": 310,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "10.10. Simulasi Satu Langkah Pembaruan Residual GBDT Regresi Menggunakan Python",
+          "codeSnippetSample": "y_true = np.array([10.0, 20.0, 30.0])\ny_pred_0 = np.full(3, np.mean(y_true))\nresiduals_1 = y_true - ",
+          "hasCode": true,
+          "contentWords": 318,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 11,
+      "title": "BAB 11: Metode Ensemble Stacking, Voting, dan Kalibrasi Probabilitas",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "11.1. Prinsip Ensembel Heterogen: Menggabungkan Berbagai Keluarga Algoritma Berbeda",
+          "codeSnippetSample": "print('Menggabungkan model dengan asumsi induktif berbeda (misal: SVM + Random Forest + Logistic Reg",
+          "hasCode": true,
+          "contentWords": 307,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "11.2. Voting Classifier: Hard Voting (Mayoritas Label) vs Soft Voting (Rata-rata Probabilitas Tertimbang)",
+          "codeSnippetSample": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfr",
+          "hasCode": true,
+          "contentWords": 361,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "11.3. Stacking (Stacked Generalization - Wolpert, 1992): Melatih Meta-Learner Tingkat Dua",
+          "codeSnippetSample": "print('Tingkat 1 (Base Models): Menghasilkan prediksi out-of-fold; Tingkat 2 (Meta Model): Mempelaja",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "11.4. Protokol Out-of-Fold (OOF) Prediction pada Stacking: Menghindari Kebocoran Data Tingkat Dua",
+          "codeSnippetSample": "from sklearn.ensemble import StackingClassifier\nstk = StackingClassifier(estimators=[('rf', RandomFo",
+          "hasCode": true,
+          "contentWords": 313,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "11.5. Blending vs Stacking: Perbedaan Praktis Pemisahan Data Hold-Out",
+          "codeSnippetSample": "print('Blending menggunakan satu split data validasi sederhana (lebih cepat tetapi rentan overfit); ",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "11.6. Urgensi Kalibrasi Probabilitas: Mengapa Akurasi Tinggi Tidak Menjamin Probabilitas Tepercaya",
+          "codeSnippetSample": "print('Model seperti SVM atau Naive Bayes sering menghasilkan probabilitas yang terlalu percaya diri",
+          "hasCode": true,
+          "contentWords": 313,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "11.7. Diagram Keandalan (Reliability Diagram / Calibration Curve)",
+          "codeSnippetSample": "from sklearn.calibration import calibration_curve\nprint('Memplot fraksi positif empiris vs probabili",
+          "hasCode": true,
+          "contentWords": 308,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "11.8. Metode Kalibrasi: Regresi Platt (Sigmoid) vs Regresi Isotonik (Isotonic Regression)",
+          "codeSnippetSample": "from sklearn.calibration import CalibratedClassifierCV\ncal = CalibratedClassifierCV(estimator=Logist",
+          "hasCode": true,
+          "contentWords": 360,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "11.9. Metrik Brier Score: Pengukuran Akurasi Probabilitas Komprehensif",
+          "codeSnippetSample": "from sklearn.metrics import brier_score_loss\nprint('Brier score loss evaluator siap')",
+          "hasCode": true,
+          "contentWords": 337,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "11.10. Implementasi Evaluasi Brier Score Sederhana Menggunakan NumPy",
+          "codeSnippetSample": "y_true_cal = np.array([1, 0, 1, 1])\ny_prob_cal = np.array([0.9, 0.2, 0.7, 0.85])\nbs = np.mean((y_pro",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 12,
+      "title": "BAB 12: Pengurangan Dimensi (Dimensionality Reduction): PCA, SVD, t-SNE, dan UMAP",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "12.1. Motivasi Pengurangan Dimensi: Mengatasi Kutukan Dimensi dan Kompresi Fitur",
+          "codeSnippetSample": "print('Mengurangi biaya komputasi, menghilangkan multikolinieritas, dan memungkinkan visualisasi 2D/",
+          "hasCode": true,
+          "contentWords": 304,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "12.2. Analisis Komponen Utama (Principal Component Analysis - PCA): Memaksimalkan Varians Proyeksi",
+          "codeSnippetSample": "from sklearn.decomposition import PCA\npca = PCA(n_components=2)\nprint('PCA siap memproyeksikan fitur",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "12.3. Matriks Kovarians dan Dekomposisi Nilai Eigen (Eigenvalue Decomposition)",
+          "codeSnippetSample": "import numpy as np\nX_cent = np.array([[1.0, 2.0], [-1.0, -2.0]])\ncov = (X_cent.T @ X_cent) / len(X_c",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "12.4. Rasio Varians Terjelaskan (Explained Variance Ratio) dan Pemilihan Komponen via Scree Plot",
+          "codeSnippetSample": "print('Memilih jumlah komponen k hingga kumulatif varians terjelaskan mencapai ambang batas 95% atau",
+          "hasCode": true,
+          "contentWords": 352,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "12.5. Singular Value Decomposition (SVD) & TruncatedSVD untuk Matriks Jarang (Sparse Data)",
+          "codeSnippetSample": "from sklearn.decomposition import TruncatedSVD\ntsvd = TruncatedSVD(n_components=2)\nprint('TruncatedS",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "12.6. Kernel PCA: Pengurangan Dimensi Non-Linear Menggunakan Kernel Trick",
+          "codeSnippetSample": "from sklearn.decomposition import KernelPCA\nkpca = KernelPCA(n_components=2, kernel='rbf')\nprint('Ke",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "12.7. t-Distributed Stochastic Neighbor Embedding (t-SNE - van der Maaten & Hinton, 2008)",
+          "codeSnippetSample": "print('t-SNE menggunakan distribusi Student-t berekor tebal di ruang rendah untuk mengatasi masalah ",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "12.8. Keterbatasan t-SNE: Non-Parametrik, Sensitivitas Perplexity, dan Hilangnya Struktur Global",
+          "codeSnippetSample": "print('t-SNE tidak bisa memproyeksikan data baru via transform() dan jarak antar klaster jauh tidak ",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "12.9. Uniform Manifold Approximation and Projection (UMAP - McInnes et al., 2018)",
+          "codeSnippetSample": "print('UMAP mempertahankan struktur lokal maupun global secara simultan dengan kecepatan komputasi j",
+          "hasCode": true,
+          "contentWords": 312,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "12.10. Implementasi Proyeksi PCA 1D Sederhana Menggunakan Dekomposisi SVD NumPy",
+          "codeSnippetSample": "X_raw = np.array([[2.5, 2.4], [0.5, 0.7], [2.2, 2.9], [1.9, 2.2], [3.1, 3.0], [2.3, 2.7]])\nX_zero = ",
+          "hasCode": true,
+          "contentWords": 330,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 13,
+      "title": "BAB 13: Pengelompokan (Clustering): K-Means, GMM, dan DBSCAN",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "13.1. Taksonomi Pembelajaran Tak Terawasi: Pengelompokan Berbasis Centroid, Distribusi, dan Kepadatan",
+          "codeSnippetSample": "print('Clustering menemukan partisi alami dalam data tanpa label pembimbing supervisi')",
+          "hasCode": true,
+          "contentWords": 305,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "13.2. Algoritma K-Means (Lloyd's Algorithm): Iterasi Penugasan (Assignment) dan Pembaruan Centroid (Update)",
+          "codeSnippetSample": "from sklearn.cluster import KMeans\nkm = KMeans(n_clusters=3, random_state=42)\nprint('KMeans estimato",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "13.3. Inisialisasi K-Means++ (Arthur & Vassilvitskii, 2007): Mengatasi Konvergensi Sub-Optimal",
+          "codeSnippetSample": "print('K-Means++ mempercepat konvergensi dan memberikan jaminan batas galat teoretis O(log K)')",
+          "hasCode": true,
+          "contentWords": 340,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "13.4. Mini-Batch K-Means: Penskalaan Klastering untuk Dataset Skala Gigabyte",
+          "codeSnippetSample": "from sklearn.cluster import MiniBatchKMeans\nmbk = MiniBatchKMeans(n_clusters=3, batch_size=100)\nprin",
+          "hasCode": true,
+          "contentWords": 302,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "13.5. Model Campuran Gaussian (Gaussian Mixture Models - GMM): Pengelompokan Lunak (Soft Clustering)",
+          "codeSnippetSample": "from sklearn.mixture import GaussianMixture\ngmm = GaussianMixture(n_components=3, covariance_type='f",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "13.6. Algoritma Expectation-Maximization (EM) untuk Pelatihan GMM",
+          "codeSnippetSample": "print('E-step menghitung tanggung jawab keanggotaan posterior; M-step memperbarui parameter mu, Sigm",
+          "hasCode": true,
+          "contentWords": 340,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "13.7. DBSCAN (Density-Based Spatial Clustering of Applications with Noise - Ester et al., 1996)",
+          "codeSnippetSample": "pts = {'Core Point': 'Memiliki >= min_samples dalam radius epsilon', 'Border Point': 'Dalam radius c",
+          "hasCode": true,
+          "contentWords": 331,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "13.8. Keunggulan Kunci DBSCAN: Menemukan Bentuk Arbitrer & Tidak Memerlukan Spesifikasi Jumlah Klaster",
+          "codeSnippetSample": "from sklearn.cluster import DBSCAN\ndb = DBSCAN(eps=0.5, min_samples=5)\nprint('DBSCAN secara otomatis",
+          "hasCode": true,
+          "contentWords": 317,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "13.9. Kelemahan DBSCAN: Sensitivitas Terhadap Variasi Kepadatan dan Hiperparameter $\\epsilon$",
+          "codeSnippetSample": "print('DBSCAN gagal mempartisi data jika klaster memiliki disparitas densitas kepadatan yang sangat ",
+          "hasCode": true,
+          "contentWords": 305,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "13.10. Implementasi Loop Sederhana K-Means Menggunakan Operasi Vektor NumPy",
+          "codeSnippetSample": "def simple_kmeans(X, k=2, iters=5):\n    centroids = X[:k].copy()\n    for _ in range(iters):\n        ",
+          "hasCode": true,
+          "contentWords": 345,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 14,
+      "title": "BAB 14: Pengelompokan Lanjut & Evaluasi Kualitas Klaster",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "14.1. Pengelompokan Hierarki Aglomeratif (Agglomerative Hierarchical Clustering): Pendekatan Bottom-Up",
+          "codeSnippetSample": "print('Memulai dengan setiap sampel sebagai klaster mandiri; menggabungkan pasangan klaster terdekat",
+          "hasCode": true,
+          "contentWords": 303,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "14.2. Kriteria Tautan (Linkage Criteria): Ward, Complete, Average, dan Single Linkage",
+          "codeSnippetSample": "from sklearn.cluster import AgglomerativeClustering\nagg = AgglomerativeClustering(n_clusters=3, link",
+          "hasCode": true,
+          "contentWords": 346,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "14.3. Visualisasi Dendrogram: Membaca Pohon Hierarki dan Memotong Ambang Jarak",
+          "codeSnippetSample": "print('Dendrogram memvisualisasikan jarak penggabungan; garis horizontal panjang menunjukkan jarak p",
+          "hasCode": true,
+          "contentWords": 301,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "14.4. Algoritma OPTICS: Pengurutan Titik untuk Mengidentifikasi Struktur Klastering Densitas Variabel",
+          "codeSnippetSample": "from sklearn.cluster import OPTICS\nopt = OPTICS(min_samples=5)\nprint('OPTICS mengatasi kelemahan DBS",
+          "hasCode": true,
+          "contentWords": 308,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "14.5. Evaluasi Intrinsik: Metode Siku (Elbow Method) Berbasis Inersia / WCSS",
+          "codeSnippetSample": "print('Mencari titik belok (elbow) di mana laju penurunan inersia melambat secara signifikan')",
+          "hasCode": true,
+          "contentWords": 343,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "14.6. Koefisien Silhouette: Pengukuran Kohesi Internal vs Pemisahan Antar-Klaster",
+          "codeSnippetSample": "from sklearn.metrics import silhouette_score\nprint('Silhouette score mengukur seberapa dekat satu sa",
+          "hasCode": true,
+          "contentWords": 347,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "14.7. Indeks Davies-Bouldin: Rasio Kesamaan Rata-rata Pasangan Klaster",
+          "codeSnippetSample": "from sklearn.metrics import davies_bouldin_score\nprint('Davies-Bouldin score evaluator siap')",
+          "hasCode": true,
+          "contentWords": 339,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "14.8. Indeks Calinski-Harabasz (Variance Ratio Criterion)",
+          "codeSnippetSample": "from sklearn.metrics import calinski_harabasz_score\nprint('Calinski-Harabasz score evaluator siap')",
+          "hasCode": true,
+          "contentWords": 332,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "14.9. Evaluasi Ekstrinsik (Ground Truth): Adjusted Rand Index (ARI) dan V-Measure",
+          "codeSnippetSample": "from sklearn.metrics import adjusted_rand_score, v_measure_score\nprint('ARI mengukur kesesuaian part",
+          "hasCode": true,
+          "contentWords": 312,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "14.10. Implementasi Perhitungan Skor Silhouette Sederhana Menggunakan NumPy",
+          "codeSnippetSample": "def dummy_silhouette(a, b):\n    return (b - a) / max(a, b)\nprint('Kohesi a=0.2, Pemisahan b=0.8 -> S",
+          "hasCode": true,
+          "contentWords": 304,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 15,
+      "title": "BAB 15: Deteksi Anomali & Pencilan (Anomaly & Outlier Detection)",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "15.1. Diferensiasi Konseptual: Deteksi Pencilan (Outlier Detection) vs Deteksi Kebaruan (Novelty Detection)",
+          "codeSnippetSample": "modes = {'Outlier Detection': 'Data latih sudah terkontaminasi anomali; model membersihkan data koto",
+          "hasCode": true,
+          "contentWords": 327,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "15.2. Asumsi Distribusi Gaussian Multivariat: EllipticEnvelope & Jarak Mahalanobis",
+          "codeSnippetSample": "from sklearn.covariance import EllipticEnvelope\nee = EllipticEnvelope(contamination=0.05)\nprint('Ell",
+          "hasCode": true,
+          "contentWords": 340,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "15.3. Algoritma Isolation Forest (Liu, Ting & Zhou, 2008): Prinsip Isolasi Acak Cepat",
+          "codeSnippetSample": "print('Anomali adalah data yang \"sedikit dan berbeda\"; lebih cepat terisolasi pada kedalaman pohon y",
+          "hasCode": true,
+          "contentWords": 317,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "15.4. Formulasi Skor Anomali Isolation Forest Berbasis Rata-rata Kedalaman Jalur ($h(x)$)",
+          "codeSnippetSample": "from sklearn.ensemble import IsolationForest\niso = IsolationForest(contamination=0.02, random_state=",
+          "hasCode": true,
+          "contentWords": 360,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "15.5. Local Outlier Factor (LOF - Breunig et al., 2000): Kepadatan Lokal Komparatif",
+          "codeSnippetSample": "from sklearn.neighbors import LocalOutlierFactor\nlof = LocalOutlierFactor(n_neighbors=20, contaminat",
+          "hasCode": true,
+          "contentWords": 359,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "15.6. One-Class Support Vector Machine (One-Class SVM - Schölkopf et al., 2001)",
+          "codeSnippetSample": "from sklearn.svm import OneClassSVM\noc_svm = OneClassSVM(kernel='rbf', nu=0.05)\nprint('One-Class SVM",
+          "hasCode": true,
+          "contentWords": 367,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "15.7. Parameter Kontaminasi (Contamination Parameter): Menyetel Fraksi Pencilan yang Diharapkan",
+          "codeSnippetSample": "print('Nilai kontaminasi (misal: 0.01 = 1%) menentukan ambang threshold batas keputusan model')",
+          "hasCode": true,
+          "contentWords": 302,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "15.8. Evaluasi Model Anomali: Imbalanced Metrics (Precision, Recall, ROC-AUC, F1-Score)",
+          "codeSnippetSample": "print('Akurasi standar tidak berguna pada anomali karena kelas target sangat langka (< 1%)')",
+          "hasCode": true,
+          "contentWords": 305,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "15.9. Studi Kasus: Deteksi Penipuan Kartu Kredit (Credit Card Fraud Detection)",
+          "codeSnippetSample": "print('Mengombinasikan Isolation Forest untuk filtering awal dan LightGBM terbobot untuk prediksi fi",
+          "hasCode": true,
+          "contentWords": 307,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "15.10. Implementasi Detektor Outlier Z-Score dan IQR Menggunakan Python Murni",
+          "codeSnippetSample": "def detect_outliers_iqr(arr):\n    q1, q3 = np.percentile(arr, [25, 75])\n    iqr = q3 - q1\n    return",
+          "hasCode": true,
+          "contentWords": 337,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 16,
+      "title": "BAB 16: Pembelajaran Semi-Terawasi (Semi-Supervised Learning)",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "16.1. Motivasi Semi-Supervised Learning: Mahalnya Label Ahli vs Melimpahnya Data Mentah",
+          "codeSnippetSample": "print('Dalam dunia nyata, 95% data seringkali tidak berlabel; SSL memanfaatkan geometri data tak ber",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "16.2. Asumsi Inti Pembelajaran Semi-Terawasi: Smoothness, Cluster, dan Manifold Assumption",
+          "codeSnippetSample": "assumptions = {'Smoothness': 'Titik yang berdekatan cenderung memiliki label sama', 'Cluster': 'Bata",
+          "hasCode": true,
+          "contentWords": 319,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "16.3. Algoritma Label Propagation (Zhu & Ghahramani, 2002): Difusi Transisi Acak Graf",
+          "codeSnippetSample": "from sklearn.semi_supervised import LabelPropagation\nlp = LabelPropagation(kernel='rbf')\nprint('Labe",
+          "hasCode": true,
+          "contentWords": 360,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "16.4. Algoritma Label Spreading (Zhou et al., 2004): Regularisasi Laplasian Graf Ternormalisasi",
+          "codeSnippetSample": "from sklearn.semi_supervised import LabelSpreading\nls = LabelSpreading(kernel='rbf', alpha=0.8)\nprin",
+          "hasCode": true,
+          "contentWords": 361,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "16.5. Pengkodean Data Tak Berlabel: Standar Nilai `-1` pada Konvensi Scikit-Learn",
+          "codeSnippetSample": "labels_mixed = np.array([0, 1, -1, -1, 0, -1])\nprint('Data berlabel 0, 1; data tak berlabel diberi k",
+          "hasCode": true,
+          "contentWords": 315,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "16.6. Meta-Estimator Self-Training (Self-Training Classifier): Pseudo-Labeling Iteratif",
+          "codeSnippetSample": "from sklearn.semi_supervised import SelfTrainingClassifier\nfrom sklearn.svm import SVC\nst = SelfTrai",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "16.7. Bahaya Confirmation Bias pada Pseudo-Labeling dan Teknik Mitigasinya",
+          "codeSnippetSample": "print('Jika model salah memberi pseudo-label pada iterasi awal, kesalahan tersebut diperkuat pada it",
+          "hasCode": true,
+          "contentWords": 305,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "16.8. Matriks Afinitas Graf: Kernel RBF vs k-Nearest Neighbors untuk Konstruksi Busur",
+          "codeSnippetSample": "print('Graf k-NN menghasilkan matriks jarang yang sangat efisien untuk dataset ribuan sampel')",
+          "hasCode": true,
+          "contentWords": 357,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "16.9. Penerapan Semi-Supervised pada Klasifikasi Teks dengan Ekstraksi Fitur TF-IDF",
+          "codeSnippetSample": "print('Menyebarkan kategori topik dari segelintir dokumen rujukan ke ribuan artikel web mentah')",
+          "hasCode": true,
+          "contentWords": 304,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "16.10. Simulasi Satu Langkah Label Propagation Menggunakan Matriks Transisi NumPy",
+          "codeSnippetSample": "T = np.array([[0.5, 0.5], [0.5, 0.5]]) # Matriks transisi kesamaan\nY = np.array([[1.0, 0.0], [0.0, 0",
+          "hasCode": true,
+          "contentWords": 330,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 17,
+      "title": "BAB 17: Pemilihan Model & Penyetelan Hiperparameter (Hyperparameter Tuning)",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "17.1. Perbedaan Fundamental: Parameter Terlatih (Weights) vs Hiperparameter (Konfigurasi)",
+          "codeSnippetSample": "diff = {'Parameter': 'Dipelajari langsung dari data via optimasi loss (misal: w, b, tree splits)', '",
+          "hasCode": true,
+          "contentWords": 318,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "17.2. Grid Search Cross-Validation (GridSearchCV): Eksplorasi Grid Kombinatorik Lengkap",
+          "codeSnippetSample": "from sklearn.model_selection import GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier",
+          "hasCode": true,
+          "contentWords": 323,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "17.3. Kelemahan GridSearchCV: Ledakan Kombinatorik Ruang Parameter Ekponensial",
+          "codeSnippetSample": "print('Grid search membuang komputasi pada hiperparameter yang tidak berpengaruh signifikan')",
+          "hasCode": true,
+          "contentWords": 336,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "17.4. Randomized Search Cross-Validation (RandomizedSearchCV - Bergstra & Bengio, 2012)",
+          "codeSnippetSample": "from sklearn.model_selection import RandomizedSearchCV\nfrom scipy.stats import randint\nparam_dist = ",
+          "hasCode": true,
+          "contentWords": 322,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "17.5. Pencarian Bertahap Cepat: HalvingGridSearchCV dan HalvingRandomSearchCV (Successive Halving)",
+          "codeSnippetSample": "from sklearn.model_selection import HalvingGridSearchCV\nprint('Menguji seluruh kandidat pada anggara",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "17.6. Optimasi Bayesian (Bayesian Optimization): Pemodelan Gaussian Process dari Fungsi Objektif",
+          "codeSnippetSample": "print('Membangun model probabilistik dari performa masa lalu untuk memilih titik hiperparameter beri",
+          "hasCode": true,
+          "contentWords": 348,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "17.7. Pustaka Penyetelan Modern Skala Besar: Optuna (TPE Sampler & Median Pruner)",
+          "codeSnippetSample": "print('Optuna memanfaatkan Tree-structured Parzen Estimator (TPE) dan secara agresif mematikan (prun",
+          "hasCode": true,
+          "contentWords": 314,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "17.8. Nested Cross-Validation: Estimasi Kinerja Generalisasi Bebas Bias Seleksi Model",
+          "codeSnippetSample": "print('Inner Loop: Memilih hiperparameter terbaik; Outer Loop: Mengevaluasi performa model terpilih ",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "17.9. Pencegahan Kebocoran Skor: Metrik Penilaian Kustom (make_scorer)",
+          "codeSnippetSample": "from sklearn.metrics import make_scorer, fbeta_score\nftwo_scorer = make_scorer(fbeta_score, beta=2)\n",
+          "hasCode": true,
+          "contentWords": 299,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "17.10. Implementasi Grid Search Minimal Menggunakan Itertools Python Murni",
+          "codeSnippetSample": "import itertools\ndef custom_grid(params):\n    keys = params.keys()\n    return [dict(zip(keys, v)) fo",
+          "hasCode": true,
+          "contentWords": 317,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 18,
+      "title": "BAB 18: Metrik Evaluasi Model Lanjut: ROC-AUC, PR-Curve, dan Cost-Sensitive Learning",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "18.1. Anatomi Matriks Konfusi (Confusion Matrix): TP, FP, TN, dan FN",
+          "codeSnippetSample": "from sklearn.metrics import confusion_matrix\ny_true = [1, 0, 1, 1, 0, 1]\ny_pred = [1, 0, 0, 1, 0, 1]",
+          "hasCode": true,
+          "contentWords": 326,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "18.2. Turunan Metrik Klasifikasi: Accuracy, Precision, Recall (Sensitivity), Specificity, dan F1-Score",
+          "codeSnippetSample": "from sklearn.metrics import classification_report\nprint(classification_report(y_true, y_pred, zero_d",
+          "hasCode": true,
+          "contentWords": 350,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "18.3. Keluarga Skor $F_\\beta$: Menyesuaikan Bobot Relatif Precision vs Recall",
+          "codeSnippetSample": "from sklearn.metrics import fbeta_score\nprint('F2-Score:', fbeta_score(y_true, y_pred, beta=2))",
+          "hasCode": true,
+          "contentWords": 346,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "18.4. Kurva Receiver Operating Characteristic (ROC) dan Area Under Curve (ROC-AUC)",
+          "codeSnippetSample": "from sklearn.metrics import roc_auc_score\nprint('ROC-AUC Score mengukur probabilitas bahwa sampel po",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "18.5. Kurva Precision-Recall (PR-AUC / Average Precision): Tolok Ukur Kritis untuk Data Tidak Seimbang",
+          "codeSnippetSample": "from sklearn.metrics import precision_recall_curve, average_precision_score\nprint('Pada dataset sang",
+          "hasCode": true,
+          "contentWords": 327,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "18.6. Metrik Evaluasi Regresi: MSE, RMSE, MAE, MedAE, dan Koefisien Determinasi ($R^2$)",
+          "codeSnippetSample": "from sklearn.metrics import mean_squared_error, r2_score\nprint('R2 mengukur proporsi varians target ",
+          "hasCode": true,
+          "contentWords": 362,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "18.7. Pembelajaran Sensitif Biaya (Cost-Sensitive Learning): Mengintegrasikan Biaya Galat Asimetris",
+          "codeSnippetSample": "print('Memilih ambang batas keputusan yang meminimalkan total kerugian finansial atau klinis')",
+          "hasCode": true,
+          "contentWords": 344,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "18.8. Cohen's Kappa ($\\kappa$) dan Matthew's Correlation Coefficient (MCC)",
+          "codeSnippetSample": "from sklearn.metrics import matthews_corrcoef\nprint('MCC bernilai antara -1 hingga +1, merupakan met",
+          "hasCode": true,
+          "contentWords": 345,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "18.9. Cumulative Gains & Lift Charts: Mengukur Efektivitas Model Penargetan Pemasaran",
+          "codeSnippetSample": "print('Lift mengukur berapa kali lipat model lebih baik dibandingkan penargetan acak pada desil tera",
+          "hasCode": true,
+          "contentWords": 313,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "18.10. Implementasi Perhitungan Metrik Precision, Recall, dan MCC Menggunakan NumPy",
+          "codeSnippetSample": "def calc_metrics(tp, fp, fn, tn):\n    prec = tp / (tp + fp) if (tp + fp) > 0 else 0\n    rec = tp / (",
+          "hasCode": true,
+          "contentWords": 356,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 19,
+      "title": "BAB 19: Penanganan Data Tidak Seimbang (Class Imbalance Strategies)",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "19.1. Hakikat Masalah Ketidakseimbangan Kelas: Patologi Akurasi 99% yang Tidak Berguna",
+          "codeSnippetSample": "print('Jika kelas positif hanya 1%, model trivial yang memprediksi nol untuk semua sampel akan memil",
+          "hasCode": true,
+          "contentWords": 315,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "19.2. Pendekatan Algoritmik: Penyesuaian Bobot Kelas (`class_weight='balanced'`)",
+          "codeSnippetSample": "from sklearn.linear_model import LogisticRegression\nlr_bal = LogisticRegression(class_weight='balanc",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "19.3. Random Under-Sampling vs Random Over-Sampling: Keuntungan dan Bahaya Masing-Masing",
+          "codeSnippetSample": "print('Under-sampling membuang informasi berharga dari kelas mayoritas; Over-sampling mentah mendupl",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "19.4. SMOTE (Synthetic Minority Over-sampling Technique - Chawla et al., 2002)",
+          "codeSnippetSample": "print('SMOTE menciptakan sampel sintetis baru di sepanjang garis segmen yang menghubungkan titik min",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "19.5. Varian SMOTE Lanjut: Borderline-SMOTE dan ADASYN (Adaptive Synthetic)",
+          "codeSnippetSample": "print('ADASYN menghasilkan lebih banyak sampel sintetis di dekat area yang sulit dipelajari (wilayah",
+          "hasCode": true,
+          "contentWords": 305,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "19.6. Pembersihan Data Pasca-Resampling: Tomek Links dan Edited Nearest Neighbors (ENN)",
+          "codeSnippetSample": "print('Menghapus pasangan Tomek link membersihkan ambiguitas batas keputusan antara kelas mayoritas ",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "19.7. Kombinasi Resampling Hibrida: SMOTEENN dan SMOTETomek",
+          "codeSnippetSample": "print('Melakukan over-sampling sintetis terlebih dahulu dengan SMOTE, lalu membersihkan noise dengan",
+          "hasCode": true,
+          "contentWords": 293,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "19.8. Metode Ensemble Seimbang: BalancedRandomForestClassifier & EasyEnsembleClassifier",
+          "codeSnippetSample": "print('BalancedRandomForest melatih setiap pohon pada subset bootstrap yang diseimbangkan secara man",
+          "hasCode": true,
+          "contentWords": 292,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "19.9. Protokol Validasi Kritis: Jangan Pernah Menerapkan SMOTE Sebelum Train-Test Split!",
+          "codeSnippetSample": "print('KESALAHAN FATAL: Menjalankan SMOTE pada seluruh dataset membocorkan informasi sintetis dari d",
+          "hasCode": true,
+          "contentWords": 313,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "19.10. Implementasi Pembuat Sampel Sintetis Interpolasi Linear Sederhana Menggunakan Python",
+          "codeSnippetSample": "def interpolate_sample(p1, p2):\n    lam = np.random.rand()\n    return p1 + lam * (p2 - p1)\np_a = np.",
+          "hasCode": true,
+          "contentWords": 321,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 20,
+      "title": "BAB 20: Arsitektur Pipeline & Komposisi Estimator Scikit-Learn",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "20.1. Filosofi Desain Pipeline: Menjamin Enkapsulasi Atomik dan Mencegah Kebocoran Data",
+          "codeSnippetSample": "print('Pipeline merangkai serangkaian transformer dan estimator akhir menjadi satu unit eksekusi tun",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "20.2. Konstruksi Pipeline: `Pipeline` vs `make_pipeline`",
+          "codeSnippetSample": "from sklearn.pipeline import Pipeline, make_pipeline\nfrom sklearn.preprocessing import StandardScale",
+          "hasCode": true,
+          "contentWords": 303,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "20.3. Mengakses dan Menyetel Parameter di Dalam Pipeline: Sintaks Penamaan `estimator__parameter`",
+          "codeSnippetSample": "param_grid = {'logisticregression__C': [0.1, 1.0, 10.0]}\nprint('Parameter pipeline diakses via nama ",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "20.4. Penggabungan Fitur Sejajar (FeatureUnion) vs ColumnTransformer",
+          "codeSnippetSample": "from sklearn.pipeline import FeatureUnion\nfrom sklearn.decomposition import PCA\nfrom sklearn.feature",
+          "hasCode": true,
+          "contentWords": 310,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "20.5. Pembuatan Transformer Kustom Menggunakan `BaseEstimator` dan `TransformerMixin`",
+          "codeSnippetSample": "from sklearn.base import BaseEstimator, TransformerMixin\nclass LogTransformer(BaseEstimator, Transfo",
+          "hasCode": true,
+          "contentWords": 316,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "20.6. FunctionTransformer: Membungkus Fungsi Python Menjadi Transformer Tanpa Membuat Kelas",
+          "codeSnippetSample": "from sklearn.preprocessing import FunctionTransformer\nsqrt_trans = FunctionTransformer(np.sqrt)\nprin",
+          "hasCode": true,
+          "contentWords": 301,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "20.7. Caching Tahapan Pipeline (`memory` parameter): Menghemat Waktu Grid Search",
+          "codeSnippetSample": "print('Menyimpan hasil intermediate transformer ke disk agar tidak dihitung ulang berkali-kali selam",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "20.8. Persistensi Model: Menyimpan dan Memuat Checkpoint Pipeline Menggunakan `joblib`",
+          "codeSnippetSample": "import joblib\njoblib.dump(pipe, 'pipeline_checkpoint.joblib')\nprint('Pipeline disimpan aman ke disk;",
+          "hasCode": true,
+          "contentWords": 306,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "20.9. Bahaya Keamanan Serialisasi `pickle` dan Alternatif Terbuka (ONNX, Treelite)",
+          "codeSnippetSample": "print('File pickle yang tidak tepercaya dapat mengeksekusi kode berbahaya (arbitrary code execution)",
+          "hasCode": true,
+          "contentWords": 312,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "20.10. Implementasi Pipeline Lengkap End-to-End dengan Preprocessor dan Estimator",
+          "codeSnippetSample": "pipe_complete = make_pipeline(StandardScaler(), LogisticRegression())\nX_toy = np.array([[1.0], [2.0]",
+          "hasCode": true,
+          "contentWords": 313,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 21,
+      "title": "BAB 21: Interpretabilitas Model Machine Learning (Explainable AI - XAI)",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "21.1. Dilema Akurasi vs Transparansi (Interpretability Trade-Off)",
+          "codeSnippetSample": "print('Model linear dan pohon dangkal mudah dipahami tetapi berkapasitas terbatas; Ensembel dan Deep",
+          "hasCode": true,
+          "contentWords": 304,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "21.2. Interpretabilitas Global (Struktur Model) vs Interpretabilitas Lokal (Satu Prediksi Spesifik)",
+          "codeSnippetSample": "levels = {'Global': 'Bagaimana fitur secara umum mempengaruhi seluruh prediksi populasi', 'Local': '",
+          "hasCode": true,
+          "contentWords": 320,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "21.3. Permutation Feature Importance: Pengujian Sensitivitas Berbasis Pengacakan Fitur",
+          "codeSnippetSample": "from sklearn.inspection import permutation_importance\nprint('Mengacak nilai fitur j; jika galat mode",
+          "hasCode": true,
+          "contentWords": 341,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "21.4. Plot Ketergantungan Parsial (Partial Dependence Plots - PDP) & Individual Conditional Expectation (ICE)",
+          "codeSnippetSample": "from sklearn.inspection import PartialDependenceDisplay\nprint('PDP memvisualisasikan efek marginal s",
+          "hasCode": true,
+          "contentWords": 359,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "21.5. Teori Permainan Kooperatif & Nilai Shapley (Shapley Values - Lloyd Shapley, 1953)",
+          "codeSnippetSample": "print('Satu-satunya metode pembagian kontribusi fitur yang memenuhi 4 aksioma keadilan: Efisiensi, S",
+          "hasCode": true,
+          "contentWords": 366,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "21.6. Kerangka Kerja SHAP (SHapley Additive exPlanations - Lundberg & Lee, 2017)",
+          "codeSnippetSample": "print('TreeSHAP mengkalkulasi nilai Shapley secara eksak pada pohon ensemble dalam kompleksitas poli",
+          "hasCode": true,
+          "contentWords": 346,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "21.7. Plot Visualisasi SHAP: Beeswarm Plot, Waterfall Plot, dan Force Plot",
+          "codeSnippetSample": "print('Waterfall plot mengurai bagaimana setiap fitur mendorong prediksi dari nilai dasar (base valu",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "21.8. LIME (Local Interpretable Model-agnostic Explanations - Ribeiro et al., 2016)",
+          "codeSnippetSample": "print('LIME menghasilkan perturbasi di sekitar sampel uji dan mencocokkan regresi linear lokal berbo",
+          "hasCode": true,
+          "contentWords": 353,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "21.9. Kepatuhan Regulasi terhadap Hak atas Penjelasan (Right to Explanation - GDPR & AI Act)",
+          "codeSnippetSample": "print('Pasal 22 GDPR mewajibkan entitas bisnis memberikan penjelasan yang bermakna bagi keputusan ot",
+          "hasCode": true,
+          "contentWords": 325,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "21.10. Simulasi Perhitungan Permutation Importance Sederhana Menggunakan NumPy",
+          "codeSnippetSample": "def manual_perm_importance(model, X, y, metric_func):\n    base_score = metric_func(y, model.predict(",
+          "hasCode": true,
+          "contentWords": 323,
+          "unitsCount": 10
+        }
+      ]
+    },
+    {
+      "orderIndex": 22,
+      "title": "BAB 22: Etika, Kebocoran Data (Data Leakage) & Praktik Terbaik Machine Learning Produksi",
+      "subchaptersCount": 10,
+      "subchapters": [
+        {
+          "orderIndex": 1,
+          "title": "22.1. Taksonomi Kebocoran Data (Data Leakage): Target Leakage vs Train-Test Contamination",
+          "codeSnippetSample": "leakages = {'Target Leakage': 'Fitur mencakup informasi yang hanya tersedia setelah peristiwa terjad",
+          "hasCode": true,
+          "contentWords": 328,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 2,
+          "title": "22.2. Sinyal Bahaya Kebocoran Data: Model Terlalu Sempurna (Too Good to Be True)",
+          "codeSnippetSample": "print('Jika model Anda mencapai skor AUC 0.999 pada percobaan pertama, 99.9% kemungkinan besar telah",
+          "hasCode": true,
+          "contentWords": 324,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 3,
+          "title": "22.3. Keadilan Algoritmik (Algorithmic Fairness): Demografi Paritas vs Kesetaraan Peluang (Equal Opportunity)",
+          "codeSnippetSample": "print('Equal Opportunity menuntut kesetaraan True Positive Rate (TPR) di seluruh kelompok atribut te",
+          "hasCode": true,
+          "contentWords": 349,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 4,
+          "title": "22.4. Pergeseran Distribusi Data (Distribution Drift): Covariate Shift, Concept Drift, dan Prior Shift",
+          "codeSnippetSample": "print('Concept drift terjadi saat relasi hakiki antara fitur dan target berubah (misal: perubahan pe",
+          "hasCode": true,
+          "contentWords": 365,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 5,
+          "title": "22.5. Uji Statistik Deteksi Pergeseran Distribusi: Uji Kolmogorov-Smirnov (KS-Test) dan PSI",
+          "codeSnippetSample": "print('Uji KS membandingkan fungsi distribusi kumulatif (CDF) data produksi vs data acuan latih')",
+          "hasCode": true,
+          "contentWords": 351,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 6,
+          "title": "22.6. Reproduksibilitas Eksperimen: Penentuan Random Seed dan Isolasi Lingkungan Komputasi",
+          "codeSnippetSample": "import os\nos.environ['PYTHONHASHSEED'] = '42'\nnp.random.seed(42)\nprint('Seed 42 diterapkan konsisten",
+          "hasCode": true,
+          "contentWords": 300,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 7,
+          "title": "22.7. Desain Kontrak API Model: Skema Validasi Input Menggunakan Pydantic",
+          "codeSnippetSample": "print('Memastikan tipe data, rentang nilai numerik, dan kategori yang dikirim oleh klien sesuai spes",
+          "hasCode": true,
+          "contentWords": 311,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 8,
+          "title": "22.8. Checklist Kesiapan Machine Learning Produksi (The ML Test Score - Google 2017)",
+          "codeSnippetSample": "checks = ['Validasi fitur', 'Pengujian regresi model', 'Monitoring latensi inferensi', 'Prosedur rol",
+          "hasCode": true,
+          "contentWords": 315,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 9,
+          "title": "22.9. Ringkasan Kurikulum Scikit-Learn: Menghubungkan Teori Matematika dengan Nilai Bisnis Nyata",
+          "codeSnippetSample": "print('Sains data dan machine learning adalah perpaduan antara penalaran matematika rigor dan seni r",
+          "hasCode": true,
+          "contentWords": 309,
+          "unitsCount": 10
+        },
+        {
+          "orderIndex": 10,
+          "title": "22.10. Implementasi Fungsi Deteksi Populasi Stability Index (PSI) Menggunakan Python",
+          "codeSnippetSample": "def calculate_psi(actual, expected, num_buckets=10):\n    act_perc = np.histogram(actual, bins=num_bu",
+          "hasCode": true,
+          "contentWords": 336,
+          "unitsCount": 10
+        }
+      ]
+    }
+  ]
+}

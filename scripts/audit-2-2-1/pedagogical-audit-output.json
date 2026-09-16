@@ -1,0 +1,619 @@
+{
+  "totalChaptersEvaluated": 405,
+  "dimensionDistribution": {
+    "tujuan_pembelajaran": {
+      "0": 0,
+      "1": 0,
+      "2": 405,
+      "3": 0
+    },
+    "prasyarat": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "undefined": null
+    },
+    "definisi_formal": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "intuisi_analogi": {
+      "0": 400,
+      "1": 0,
+      "2": 5,
+      "3": 0
+    },
+    "istilah_terminologi": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "penjelasan_teknis": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "contoh_konkret": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "formula_matematika": {
+      "0": 0,
+      "1": 78,
+      "2": 327,
+      "3": 0
+    },
+    "kode_runnable": {
+      "0": 0,
+      "1": 0,
+      "2": 405,
+      "3": 0
+    },
+    "interpretasi_output": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "kesalahan_umum": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "keterbatasan": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "latihan_bertingkat": {
+      "0": 0,
+      "1": 405,
+      "2": 0,
+      "3": 0
+    },
+    "referensi_akademik": {
+      "0": 0,
+      "1": 0,
+      "2": 405,
+      "3": 0
+    },
+    "ringkasan_bab": {
+      "0": 405,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "hubungan_antar_bab": {
+      "0": 405,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    }
+  },
+  "percentageDistribution": {
+    "tujuan_pembelajaran": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "100.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "prasyarat": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "definisi_formal": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "intuisi_analogi": {
+      "0 (Missing)": "98.8%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "1.2%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "istilah_terminologi": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "penjelasan_teknis": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "contoh_konkret": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "formula_matematika": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "19.3%",
+      "2 (Adequate)": "80.7%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "kode_runnable": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "100.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "interpretasi_output": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "kesalahan_umum": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "keterbatasan": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "latihan_bertingkat": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "100.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "referensi_akademik": {
+      "0 (Missing)": "0.0%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "100.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "ringkasan_bab": {
+      "0 (Missing)": "100.0%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    },
+    "hubungan_antar_bab": {
+      "0 (Missing)": "100.0%",
+      "1 (Superficial)": "0.0%",
+      "2 (Adequate)": "0.0%",
+      "3 (Deep/Teachable)": "0.0%"
+    }
+  },
+  "deficitAnalysis": [
+    "Intuisi/Analogi: Mayoritas dinilai 1 (Superficial) karena unit sub-subbab hanya berupa skeleton 25 kata tanpa analogi empiris yang nyata.",
+    "Hubungan Antar Bab: 100% dinilai 0 (Missing) karena tidak ada paragraf transisi 'Dari Bab X menuju Bab Y' yang menghubungkan alur kognitif pelajar.",
+    "Ringkasan Bab: 100% dinilai 0 (Missing) karena field ch.summary tidak diisi pada objek bab.",
+    "Latihan Mandiri: Dinilai 1 (Superficial) karena instruksi 4 level latihan berulang secara identik di setiap subbab tanpa variasi soal matematika atau dataset nyata.",
+    "Interpretasi Output: Dinilai 1 (Superficial) karena menggunakan teks penjelasan 3-langkah generik daripada menjelaskan makna angka/metrik keluaran kode."
+  ],
+  "sampleChapterScores": [
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 1,
+      "chapterTitle": "BAB 1: Taksonomi Formal, Lingkungan PEAS & Arsitektur Kognitif",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 2,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Formulasi LaTeX KaTeX blok mandiri ($$) disajikan.",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 2,
+      "chapterTitle": "BAB 2: Perception-Reasoning-Action Loop",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 2,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Formulasi LaTeX KaTeX blok mandiri ($$) disajikan.",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 3,
+      "chapterTitle": "BAB 3: Kerangka ReAct (Reasoning and Acting)",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 1,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Hanya menggunakan notasi matematika inline ($).",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 4,
+      "chapterTitle": "BAB 4: Pemanggilan Alat & Eksekusi API (Tool Use)",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 1,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Hanya menggunakan notasi matematika inline ($).",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 5,
+      "chapterTitle": "BAB 5: Sistem Memori Kognitif Berstrata",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 2,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Formulasi LaTeX KaTeX blok mandiri ($$) disajikan.",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 6,
+      "chapterTitle": "BAB 6: Dekomposisi Tugas & Perencanaan Hirarkis",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 2,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Formulasi LaTeX KaTeX blok mandiri ($$) disajikan.",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 7,
+      "chapterTitle": "BAB 7: Refleksi Diri & Perbaikan Mandiri (Self-Correction)",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 1,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Hanya menggunakan notasi matematika inline ($).",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 8,
+      "chapterTitle": "BAB 8: Sistem Multi-Agent & Protokol Konsensus",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 2,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Formulasi LaTeX KaTeX blok mandiri ($$) disajikan.",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 9,
+      "chapterTitle": "BAB 9: Agen Web & Interaksi Antarmuka Pengguna",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 1,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Hanya menggunakan notasi matematika inline ($).",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    },
+    {
+      "topicId": "ai-agent",
+      "chapterIndex": 10,
+      "chapterTitle": "BAB 10: Agen Rekayasa Perangkat Lunak & Coding",
+      "scores": {
+        "tujuan_pembelajaran": 2,
+        "prerequisites": 1,
+        "definisi_formal": 1,
+        "intuisi_analogi": 0,
+        "istilah_terminologi": 1,
+        "penjelasan_teknis": 1,
+        "contoh_konkret": 1,
+        "formula_matematika": 1,
+        "kode_runnable": 2,
+        "interpretasi_output": 1,
+        "kesalahan_umum": 1,
+        "keterbatasan": 1,
+        "latihan_bertingkat": 1,
+        "referensi_akademik": 2,
+        "ringkasan_bab": 0,
+        "hubungan_antar_bab": 0
+      },
+      "notes": {
+        "tujuan_pembelajaran": "Tersedia learning objectives terstruktur di level bab.",
+        "prerequisites": "Prasyarat umum (dasar Python/NumPy) berulang.",
+        "definisi_formal": "Definisi hadir namun menggunakan kalimat template sintaks boilerplate.",
+        "intuisi_analogi": "Tidak ada analogi atau jembatan intuisi pemula.",
+        "istilah_terminologi": "Hanya berupa daftar konsep kunci tanpa penjelasan glosarium mendalam.",
+        "penjelasan_teknis": "Memiliki bagian mekanisme teknis namun strukturnya шаблон template 2 paragraf.",
+        "contoh_konkret": "Contoh tersedia dalam bentuk kode mini demonstrasi.",
+        "formula_matematika": "Hanya menggunakan notasi matematika inline ($).",
+        "kode_runnable": "Hampir seluruh subbab memiliki kode pendamping.",
+        "interpretasi_output": "Penjelasan alur 3-langkah template (Inisialisasi Data, Eksekusi Komputasi, Verifikasi Output).",
+        "kesalahan_umum": "Kesalahan umum tercantum sebagai bullet poin umum 3 butir.",
+        "keterbatasan": "Disebutkan secara sepintas dalam teks mekanisme kerja.",
+        "latihan_bertingkat": "Tersedia 4 level latihan (Pemahaman, Implementasi, Debugging, Mini-Project) namun teks instruksi generik.",
+        "referensi_akademik": "Sitasi akademik/dokumentasi tertaut di setiap subbab.",
+        "ringkasan_bab": "Tidak memiliki ringkasan rangkuman bab khusus.",
+        "hubungan_antar_bab": "Tidak ada eksplisit jembatan atau transisi menuju bab selanjutnya."
+      }
+    }
+  ]
+}
