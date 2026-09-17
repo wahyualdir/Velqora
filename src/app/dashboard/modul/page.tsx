@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus, Code2, Layers, RefreshCw, AlertCircle, ArrowRight } from "lucide-react";
+import { Plus, Code2, Layers, RefreshCw, AlertCircle, ArrowRight, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,6 +22,8 @@ import { AiCategoryCard, AiCategoryItem } from "@/components/modul/ai-category-c
 import { CategoryModuleGroup } from "@/components/modul/category-module-group";
 import { ModuleDriveFile } from "@/types/module-drive";
 import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
+import { getAcademicCurriculum } from "@/lib/curriculum/registry";
+import { getTopicStatus } from "@/lib/curriculum/status";
 import { toast } from "sonner";
 
 const AI_CATEGORY_PRESET = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
@@ -267,13 +269,12 @@ function ModulDanProjectContent() {
   }, [aiScopedModules, contentMode, search, selectedCategory, levelFilter, scope, sortBy, currentUserId]);
 
   const totalModulesCount = useMemo(() => {
-    const customCount = aiScopedModules.filter((m) => m.kind !== "project").length;
-    if (customCount > 0) return customCount;
-    return (AI_CATEGORY_PRESET?.subcategories || []).reduce(
-      (acc, sub) => acc + (getDefaultAiSections(sub.name).length || 14),
-      0
-    );
-  }, [aiScopedModules]);
+    return (AI_CATEGORY_PRESET?.subcategories || []).reduce((acc, sub) => {
+      const academicCurr = getAcademicCurriculum(sub.name);
+      const chCount = academicCurr?.chapters?.length || getDefaultAiSections(sub.name).length || 12;
+      return acc + chCount;
+    }, 0);
+  }, []);
   const totalProjectsCount = useMemo(
     () => aiScopedModules.filter((m) => m.kind === "project").length,
     [aiScopedModules]
@@ -297,9 +298,12 @@ function ModulDanProjectContent() {
         );
       }).length;
 
+      const academicCurr = getAcademicCurriculum(sub.name);
+      const academicChaptersCount = academicCurr?.chapters?.length || 0;
       const syllabusSections = getDefaultAiSections(sub.name);
       const syllabusCount = syllabusSections.length;
-      const count = customCount > 0 ? customCount : (syllabusCount > 0 ? syllabusCount : 14);
+      const count = Math.max(customCount, academicChaptersCount, syllabusCount, 10);
+      const statusMeta = getTopicStatus(sub.name);
 
       return {
         id: dbCat?.id || sub.name,
@@ -307,6 +311,7 @@ function ModulDanProjectContent() {
         color: sub.color || "#8B5CF6",
         icon: sub.icon || "machine_learning",
         moduleCount: count,
+        statusMeta,
       };
     });
   }, [aiScopedModules, categories]);
@@ -412,6 +417,30 @@ function ModulDanProjectContent() {
               <span>Eksplorasi Modul ({totalModulesCount + totalProjectsCount})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
+          </div>
+
+          {/* Banner Transparansi Audit Kualitas Kurikulum */}
+          <div className="p-3 sm:p-3.5 rounded-xl border border-border bg-surface/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+            <div className="flex items-center gap-2 text-text-secondary min-w-0">
+              <span className="font-semibold text-text-primary uppercase tracking-wide text-[11px] shrink-0">
+                Audit Mutu:
+              </span>
+              <span className="truncate">Sinyal transparansi kesiapan konten 28 topik</span>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold">
+                <CheckCircle2 className="w-3 h-3 shrink-0" />
+                <span>3 Terverifikasi (DA, DS, ML)</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30 font-semibold">
+                <Clock className="w-3 h-3 shrink-0" />
+                <span>1 Dalam Pengembangan (DL)</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-semibold">
+                <AlertTriangle className="w-3 h-3 shrink-0" />
+                <span>24 Sedang Ditinjau Ulang</span>
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">

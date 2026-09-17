@@ -2,12 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { getCategoryIconComponent } from "./category-icon";
 import { ModuleListItem } from "./module-list-item";
 import { MobileModuleList } from "@/surfaces/app/modul/mobile-module-list";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
 import { ModuleDriveFile } from "@/types/module-drive";
+import { getTopicStatus } from "@/lib/curriculum/status";
 
 interface CategoryModuleGroupProps {
   category: {
@@ -39,6 +40,7 @@ export function CategoryModuleGroup({
 }: CategoryModuleGroupProps) {
   const IconComponent = getCategoryIconComponent(category.icon);
   const href = `/dashboard/modul/kategori/${encodeURIComponent(category.id || category.name)}`;
+  const statusMeta = getTopicStatus(category.id || category.name);
 
   return (
     <div className="vt-window rounded-none overflow-hidden shadow-xs bg-[#FAF8F5] dark:bg-[#121214] border border-border mb-6">
@@ -70,6 +72,26 @@ export function CategoryModuleGroup({
               >
                 {modules.length} Konten
               </span>
+
+              {/* Status Badge */}
+              {statusMeta.status === "verified" && (
+                <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.2 text-[10px] font-mono font-semibold rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
+                  <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
+                  <span>{statusMeta.badgeLabel}</span>
+                </span>
+              )}
+              {statusMeta.status === "under_review" && (
+                <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.2 text-[10px] font-mono font-semibold rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0">
+                  <AlertTriangle className="w-2.5 h-2.5 shrink-0" />
+                  <span>{statusMeta.badgeLabel}</span>
+                </span>
+              )}
+              {statusMeta.status === "in_development" && (
+                <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.2 text-[10px] font-mono font-semibold rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30 shrink-0">
+                  <Clock className="w-2.5 h-2.5 shrink-0" />
+                  <span>{statusMeta.badgeLabel}</span>
+                </span>
+              )}
             </div>
           </div>
         </div>

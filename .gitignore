@@ -44,3 +44,7 @@ next-env.d.ts
 *.key
 credentials
 secrets
+scratch/
+__pycache__/
+*.pyc
+supabase/.temp/

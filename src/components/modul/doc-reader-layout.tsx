@@ -26,10 +26,14 @@ import {
   BrainCircuit,
   Code2,
   GraduationCap,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { NoteRenderer } from "@/components/notes/note-renderer";
 import { toast } from "sonner";
+import { getTopicStatus } from "@/lib/curriculum/status";
 import {
   NotebookUnitRenderer,
   NotebookLessonHeader,
@@ -144,6 +148,7 @@ export function DocReaderLayout({
   viewMode = "doc",
 }: DocReaderLayoutProps) {
   const { resolvedTheme, setTheme } = useTheme();
+  const statusMeta = useMemo(() => getTopicStatus(categoryName || categoryId), [categoryName, categoryId]);
 
   // Sidebar & Outline Adaptive State
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -706,6 +711,55 @@ export function DocReaderLayout({
                   categoryName={categoryName}
                   chapterTitle={parentChapter?.title}
                 />
+
+                {/* Status Transparansi Kualitas Kurikulum */}
+                {statusMeta.status === "under_review" && (
+                  <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 text-xs text-amber-800 dark:text-amber-200 flex items-start gap-3">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                          {statusMeta.badgeLabel}
+                        </span>
+                        <span className="text-[11px] text-text-tertiary font-mono">Status Audit Mutu</span>
+                      </div>
+                      <p className="text-text-secondary leading-relaxed text-[12px]">
+                        Kurikulum topik ini sedang dalam proses peninjauan ulang dan perombakan materi ke standar industri/universitas (pengisian kode substantif, formulasi analitis KaTeX, dan rujukan kanonikal terverifikasi). Anda tetap dapat mempelajari silabus draf saat ini.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {statusMeta.status === "verified" && (
+                  <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-800 dark:text-emerald-200 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      <span className="font-medium text-text-primary text-[12px]">
+                        Kurikulum Akademik Terverifikasi 100% — Seluruh bab memuat formulasi matematis, kode runnable mandiri, dan rujukan kanonikal resmi.
+                      </span>
+                    </div>
+                    <span className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shrink-0">
+                      Terverifikasi Penuh
+                    </span>
+                  </div>
+                )}
+
+                {statusMeta.status === "in_development" && (
+                  <div className="p-3.5 rounded-xl border border-sky-500/30 bg-sky-500/5 text-xs text-sky-800 dark:text-sky-200 flex items-start gap-3">
+                    <Clock className="w-4 h-4 shrink-0 text-sky-600 dark:text-sky-400 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-500/30">
+                          {statusMeta.badgeLabel}
+                        </span>
+                        <span className="text-[11px] text-text-tertiary font-mono">Status Roadmap</span>
+                      </div>
+                      <p className="text-text-secondary leading-relaxed text-[12px]">
+                        Kurikulum Deep Learning sedang dipersiapkan menjadi 18 Bab komprehensif berbasis PyTorch modern sesuai standar silabus MIT 6.S191 / Stanford CS230 (Prioritas 4).
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* 2. Contextual Quick Actions (Unobtrusive) */}
                 <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-surface/40 backdrop-blur-xs text-xs">

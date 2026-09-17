@@ -28,19 +28,12 @@ import { speechAudioAiCurriculum } from "./topics/26-speech-audio-ai";
 import { timeSeriesForecastingCurriculum } from "./topics/27-time-series-forecasting";
 import { vectorDatabaseRetrievalCurriculum } from "./topics/28-vector-database-retrieval";
 import {
-  substantiveAiFundamentalsChapter1,
   substantiveMachineLearningChapter1,
   substantiveMachineLearningChapter6,
 } from "./pilot-content";
 
-// Integrasikan konten pilot substantif hasil remediasi Phase 2.3-F
-export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = {
-  ...aiFundamentalsCurriculum,
-  chapters: [
-    substantiveAiFundamentalsChapter1,
-    ...aiFundamentalsCurriculum.chapters.slice(1),
-  ],
-};
+// AI Fundamentals kini telah diremediasi penuh menjadi kurikulum substantif mandiri
+export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = aiFundamentalsCurriculum;
 
 export const enrichedMachineLearningCurriculum: AcademicCurriculum = {
   ...machineLearningCurriculum,

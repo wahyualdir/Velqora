@@ -77,13 +77,14 @@ describe("Topik 5: Artificial Intelligence Fundamentals Academic Pilot Suite", (
     );
   });
 
-  it("harus terintegrasi dengan fallback-syllabus-defaults untuk Artificial Intelligence Fundamentals", () => {
-    const sections = getDefaultSectionsForCategory("Artificial Intelligence Fundamentals");
-    assert.strictEqual(sections.length, 5);
-    assert.strictEqual(sections[0].title, "BAB 1: Pengantar AI & Intelligent Agents");
-    assert.strictEqual(sections[1].title, "BAB 2: Search dan Planning");
-    assert.strictEqual(sections[2].title, "BAB 3: Knowledge dan Reasoning");
-    assert.strictEqual(sections[3].title, "BAB 4: Machine Learning Overview");
-    assert.strictEqual(sections[4].title, "BAB 5: Praktikum & Proyek Mandiri");
+  it("harus menyediakan silabus modul bawaan dan terintegrasi dengan kurikulum akademik SSOT", () => {
+    const pilotSections = getAiFundamentalsModuleSections();
+    assert.strictEqual(pilotSections.length, 5);
+    assert.strictEqual(pilotSections[0].title, "BAB 1: Pengantar AI & Intelligent Agents");
+
+    const academicSections = getDefaultSectionsForCategory("Artificial Intelligence Fundamentals");
+    assert.strictEqual(academicSections.length, 10);
+    assert.strictEqual(academicSections[0].title, "BAB 1: Pengantar Kecerdasan Buatan & Paradigma Agen Rasional");
+    assert.strictEqual(academicSections[4].title, "BAB 5: Teori Admisibilitas & Konsistensi Heuristik");
   });
 });

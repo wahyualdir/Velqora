@@ -144,6 +144,7 @@ export interface Module {
   repository_url?: string | null;
   demo_url?: string | null;
   author_name?: string | null;
+  sumber_referensi?: Array<{ title: string; url: string; authors?: string[]; year?: number }>;
   // Joined data
   category?: Category | null;
   chapters?: ModuleChapter[];
@@ -155,6 +156,7 @@ export interface ModuleChapter {
   title: string;
   order_index: number;
   is_completed: boolean;
+  sumber_referensi?: Array<{ title: string; url: string; authors?: string[]; year?: number }>;
   created_at: string;
 }
 
