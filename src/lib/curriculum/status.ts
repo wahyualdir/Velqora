@@ -17,7 +17,7 @@ export interface TopicStatusMeta {
   priorityOrder?: number;
 }
 
-// 4 Topik yang telah selesai ditulis ulang 100% dan lulus uji rujukan resmi
+// 5 Topik yang telah selesai ditulis ulang 100% dan lulus uji rujukan resmi
 const VERIFIED_PATTERNS = [
   "data-analyst",
   "dataanalyst",
@@ -27,15 +27,18 @@ const VERIFIED_PATTERNS = [
   "machinelearning",
   "deep-learning",
   "deeplearning",
-  "12-deep-learning"
-];
-
-// Topik mini dalam pengembangan berikutnya (Batch 1: AI Fundamentals, CV, NLP, LLM)
-const IN_DEVELOPMENT_PATTERNS: string[] = [
+  "12-deep-learning",
   "ai-fundamentals",
   "aifundamentals",
   "artificialintelligencefundamentals",
   "05-ai-fundamentals"
+];
+
+// Topik dalam pengembangan berikutnya (Batch 1: Computer Vision, NLP, LLM)
+const IN_DEVELOPMENT_PATTERNS: string[] = [
+  "computer-vision",
+  "natural-language-processing",
+  "large-language-models"
 ];
 
 /**
@@ -105,7 +108,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     };
   }
 
-  // 2. Cek Topik Dalam Pengerjaan Aktif (Batch 1: AI Fundamentals)
+  // 2. Cek AI Fundamentals (Prioritas 5: Terverifikasi Penuh 10 Bab / 100 Subbab)
   if (
     norm.includes("aifundamentals") ||
     norm.includes("artificialintelligencefundamentals") ||
@@ -113,11 +116,11 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     norm.includes("05aifundamentals")
   ) {
     return {
-      status: "in_development",
-      badgeLabel: "Dalam Pengerjaan (Chunk 1)",
-      badgeDescription: "Sedang dalam proses perombakan materi total berstandar Russell & Norvig (AIMA 4th Ed).",
-      shortDescription: "Sedang dalam proses penulisan ulang akademik berbasis Russell & Norvig (AIMA).",
-      isVerified: false,
+      status: "verified",
+      badgeLabel: "Terverifikasi 100%",
+      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (10 Bab / 100 Subbab).",
+      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis berbasis Russell & Norvig (AIMA 4th Ed).",
+      isVerified: true,
       priorityOrder: 5,
     };
   }

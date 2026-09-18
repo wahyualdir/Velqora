@@ -1,0 +1,264 @@
+[
+  {
+    "id": "computer-vision-ch4-sub1",
+    "title": "4.1. Histogram Intensitas 1D & Perataan Histogram (Histogram Equalization)",
+    "description": "Fungsi kepadatan probabilitas empiris, fungsi distribusi kumulatif (CDF), transformasi pemetaan monotonik, dan perataan histogram global.",
+    "content": "Histogram intensitas citra digital adalah representasi statistik orde pertama yang merangkum sebaran global frekuensi kemunculan nilai keabuan tanpa memperhatikan relasi spasial antarpiksel.\n\n### 1. Fungsi Kepadatan Probabilitas Empiris (PDF)\nUntuk citra digital berukuran $H \\times W = N$ piksel dengan $L$ tingkat keabuan diskrit $r_k \\in [0, L-1]$ ($L=256$ pada citra 8-bit):\n$$p_r(r_k) = \\frac{n_k}{N}, \\quad k = 0, 1, \\dots, L-1$$\nDi mana $n_k$ adalah jumlah piksel yang memiliki nilai intensitas $r_k$.\n\n### 2. Teorema Perataan Histogram (*Histogram Equalization*)\nTujuan dari perataan histogram adalah menemukan transformasi intensitas monotonik naik $s = T(r)$ sedemikian rupa sehingga variabel acak keluaran $s$ memiliki fungsi kepadatan probabilitas seragam (*uniform PDF*) di seluruh rentang dinamis:\n$$p_s(s) = \\frac{1}{L-1}, \\quad 0 \\le s \\le L-1$$\n\nDari teori probabilitas variabel acak kontinu:\n$$p_s(s) = p_r(r) \\left| \\frac{dr}{ds} \\right| \\implies ds = (L-1) p_r(r) dr$$\n\nDengan mengintegralkan kedua ruas, fungsi transformasi optimal terbukti merupakan **Fungsi Distribusi Kumulatif** (*Cumulative Distribution Function* / CDF) dari citra input:\n$$s_k = T(r_k) = (L - 1) \\sum_{j=0}^{k} p_r(r_j) = \\operatorname{round}\\left( \\frac{L - 1}{N} \\sum_{j=0}^{k} n_j \\right)$$\n\nTransformasi ini secara otomatis memperluas rentang dinamis citra yang berkontras rendah (*low contrast*) menjadi kontras tinggi maksimal.",
+    "codeSnippet": "import numpy as np\n\ndef histogram_equalization(image: np.ndarray) -> tuple:\n    '''Implementasi mandiri perataan histogram (Histogram Equalization) berbasis CDF.'''\n    H, W = image.shape\n    num_pixels = H * W\n    \n    # 1. Hitung Histogram Frekuensi 1D (PDF)\n    hist, _ = np.histogram(image.flatten(), bins=256, range=[0, 256])\n    \n    # 2. Hitung Cumulative Distribution Function (CDF)\n    cdf = hist.cumsum()\n    \n    # 3. Masking Nilai Nol dan Normalisasi Pemetaan Monotonik ke [0, 255]\n    cdf_m = np.ma.masked_equal(cdf, 0)\n    cdf_m = (cdf_m - cdf_m.min()) * 255.0 / (cdf_m.max() - cdf_m.min())\n    lookup_table = np.ma.filled(cdf_m, 0).astype(np.uint8)\n    \n    # 4. Terapkan Lookup Table ke Citra\n    equalized_image = lookup_table[image]\n    return equalized_image, hist, lookup_table\n\n# Citra Uji Kontras Sangat Rendah (Berkelompok di sekitar intensitas 50-70)\nlow_contrast = np.array([\n    [50, 52, 55, 60],\n    [52, 58, 62, 65],\n    [54, 60, 68, 70],\n    [55, 63, 67, 72]\n], dtype=np.uint8)\n\neq_img, orig_hist, lut = histogram_equalization(low_contrast)\n\nprint(\"--- Hasil Perataan Histogram Berbasis CDF ---\")\nprint(\"Citra Asli Kontras Rendah (Rentang 50-72):\\n\", low_contrast)\nprint(f\"\\nCitra Hasil Equalization (Rentang Diperluas 0-255):\\n\", eq_img)\nprint(f\"\\nNilai Minimum Citra: Asli={low_contrast.min()} -> Hasil={eq_img.min()}\")\nprint(f\"Nilai Maksimum Citra: Asli={low_contrast.max()} -> Hasil={eq_img.max()}\")",
+    "expectedOutput": "--- Hasil Perataan Histogram Berbasis CDF ---\nCitra Asli Kontras Rendah (Rentang 50-72):\n [[50 52 55 60]\n [52 58 62 65]\n [54 60 68 70]\n [55 63 67 72]]\n\nCitra Hasil Equalization (Rentang Diperluas 0-255):\n [[  0  34  85 136]\n [ 34 102 153 187]\n [ 51 136 221 238]\n [ 85 170 204 255]]\n\nNilai Minimum Citra: Asli=50 -> Hasil=0\nNilai Maksimum Citra: Asli=72 -> Hasil=255",
+    "commonPitfalls": [
+      "Menerapkan perataan histogram langsung pada kanal R, G, dan B secara terpisah, yang menyebabkan pergeseran rona (*hue shift*) dan distorsi saturasi warna yang aneh; perataan warna harus dilakukan hanya pada kanal Luminansi (misal: kanal $Y$ pada YCbCr atau $L^*$ pada Lab).",
+      "Peningkatan derau latar belakang (*noise over-amplification*): di area datar homogen (seperti langit malam), perataan histogram global akan memperkuat derau sensor menjadi bintik-bintik putih yang sangat mengganggu.",
+      "Hilangnya detail halus pada citra yang memiliki distribusi bimodal ekstrim (separuh sangat gelap dan separuh sangat terang)."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Digital Image Processing (4th ed.)",
+        "authors": [
+          "Rafael C. Gonzalez",
+          "Richard E. Woods"
+        ],
+        "year": 2018,
+        "publisherOrVenue": "Pearson",
+        "url": "https://www.pearson.com/",
+        "relevance": "Bab 3.3: Histogram processing, histogram equalization, and histogram matching."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub2",
+    "title": "4.2. Contrast Limited Adaptive Histogram Equalization (CLAHE)",
+    "description": "Keterbatasan histogram global, partisi ubin lokal (contextual tiles), pemotongan batas kontras (clipping limit), redistribusi kelebihan piksel, dan interpolasi bilinear antarubin.",
+    "content": "Perataan histogram global mengabaikan variasi pencahayaan lokal dan sering kali memperkuat derau latar belakang secara berlebihan. **Contrast Limited Adaptive Histogram Equalization (CLAHE)** (Zuiderveld, 1994) memecahkan kelemahan ini dengan memproses citra dalam ubin-ubin lokal kontekstual dengan pembatasan kontras ketat.\n\n### 1. Partisi Ubin Kontekstual (*Contextual Tiles*)\nCitra dibagi menjadi kisi ubin persegi panjang kecil yang tidak tumpang-tindih (biasanya $8 \\times 8$ ubin, berukuran misal $64 \\times 64$ piksel per ubin). Histogram intensitas dihitung secara independen untuk setiap ubin.\n\n### 2. Pemotongan Kontras (*Contrast Limiting / Clip Limit*)\nTinggi histogram berkorelasi langsung dengan kecuraman gradien fungsi CDF: semakin tinggi suatu bin histogram, semakin agresif kontras ditingkatkan di sekitar nilai intensitas tersebut.\n\nUntuk mencegah penguatan derau berlebih, CLAHE menetapkan ambang batas maksimum (**clip limit** $N_{\\text{clip}}$). Jika suatu bin histogram melebihi $N_{\\text{clip}}$:\n1. Bagian histogram di atas $N_{\\text{clip}}$ dipotong (*clipped*).\n2. Total piksel yang terpotong dijumlahkan dan diredistribusikan secara merata ke seluruh bin histogram.\n\n### 3. Interpolasi Bilinear Antarubin\nJika perataan ubin langsung diterapkan, akan muncul batas garis kotak-kotak artifisial antarubin (*blocking boundary artifacts*). CLAHE mengeliminasi artefak ini dengan menginterpolasi nilai intensitas piksel secara bilinear menggunakan fungsi pemetaan dari 4 pusat ubin tetangga terdekat.",
+    "codeSnippet": "import numpy as np\n\ndef clip_and_redistribute_histogram(hist: np.ndarray, clip_limit: int) -> np.ndarray:\n    '''Memotong histogram pada clip_limit dan meredistribusikan kelebihan secara merata.'''\n    excess = 0\n    clipped_hist = hist.copy()\n    \n    # 1. Potong bin yang melebihi batas\n    for i in range(len(clipped_hist)):\n        if clipped_hist[i] > clip_limit:\n            excess += clipped_hist[i] - clip_limit\n            clipped_hist[i] = clip_limit\n            \n    # 2. Redistribusikan piksel berlebih secara merata ke seluruh 256 bin\n    bonus = excess // len(clipped_hist)\n    remainder = excess % len(clipped_hist)\n    \n    clipped_hist += bonus\n    for i in range(remainder):\n        clipped_hist[i] += 1\n        \n    return clipped_hist\n\n# Simulasikan Histogram Ubin Lokal dengan Puncak Derau Ekstrem pada Intensitas 100\nmock_hist = np.full(256, 2, dtype=np.int32)\nmock_hist[100] = 50  # Puncak intensitas dominan (penyebab amplifikasi derau)\n\n# Setel Clip Limit = 10\nclip_val = 10\nprocessed_hist = clip_and_redistribute_histogram(mock_hist, clip_val)\n\nprint(\"--- Mekanisme Pemotongan dan Redistribusi Kontras CLAHE ---\")\nprint(f\"Total Piksel Asli Ubin         : {mock_hist.sum()}\")\nprint(f\"Nilai Puncak Asli pada Bin 100 : {mock_hist[100]}\")\nprint(f\"Nilai Puncak Setelah Clipping  : {processed_hist[100]} (Terpotong aman)\")\nprint(f\"Rata-rata Nilai Bin Lain       : {processed_hist[0]} (Mendapat jatah redistribusi)\")\nprint(f\"Total Piksel Pasca-Redistribusi: {processed_hist.sum()} (Preservasi Jumlah Foton 100%)\")",
+    "expectedOutput": "--- Mekanisme Pemotongan dan Redistribusi Kontras CLAHE ---\nTotal Piksel Asli Ubin         : 560\nNilai Puncak Asli pada Bin 100 : 50\nNilai Puncak Setelah Clipping  : 10 (Terpotong aman)\nRata-rata Nilai Bin Lain       : 3 (Mendapat jatah redistribusi)\nTotal Piksel Pasca-Redistribusi: 560 (Preservasi Jumlah Foton 100%)",
+    "commonPitfalls": [
+      "Menyetel parameter `clipLimit` terlalu tinggi (misal: di atas 40.0), yang membuat CLAHE terdegenerasi menjadi perataan adaptif naif yang memperkuat derau sensor secara drastis.",
+      "Memilih ukuran kisi ubin (`tileGridSize`) terlalu kecil (misal $2 \\times 2$ piksel), yang melenyapkan struktur objek global, atau terlalu besar sehingga kehilangan adaptabilitas lokal.",
+      "Mengabaikan interpolasi bilinear pada piksel pojok dan batas terluar citra, memicu kesalahan indeks array saat menghitung 4 pusat tetangga ubin."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Contrast Limited Adaptive Histogram Equalization",
+        "authors": [
+          "Karel Zuiderveld"
+        ],
+        "year": 1994,
+        "publisherOrVenue": "Graphics Gems IV, Academic Press Professional",
+        "url": "https://doi.org/10.1016/B978-0-12-336156-1.50061-6",
+        "relevance": "Paper kanonikal orisinal yang mendefinisikan algoritma CLAHE."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub3",
+    "title": "4.3. Matriks Ko-okurensi Tingkat Abu-abu (GLCM)",
+    "description": "Statistik spasial tingkat dua tekstur citra, matriks ko-okurensi Gray-Level Co-occurrence Matrix (GLCM), parameter jarak d dan sudut theta.",
+    "content": "Sementara histogram 1D hanya mencatat seberapa sering suatu intensitas muncul, **Gray-Level Co-occurrence Matrix (GLCM)** (Haralick et al., 1973) mencatat **hubungan spasial tingkat kedua**: seberapa sering sepasang piksel dengan intensitas $i$ dan $j$ muncul bersamaan pada jarak perpindahan spasial tertentu.\n\n### 1. Definisi Formal GLCM $P(i, j; d, \\theta)$\nDiberikan citra $I(x, y)$ berukuran $H \\times W$ dengan $N_g$ tingkat keabuan diskrit, matriks ko-okurensi berukuran $N_g \\times N_g$ didefinisikan berdasarkan vektor perpindahan $(\\Delta x, \\Delta y)$ yang ditentukan oleh jarak $d$ dan sudut orientasi $\\theta$:\n\n$$P(i, j; d, \\theta) = \\sum_{y=1}^{H} \\sum_{x=1}^{W} \\mathbb{I}\\left( I(x, y) = i \\;\\wedge\\; I(x + \\Delta x, y + \\Delta y) = j \\right)$$\n\nEmpat orientasi sudut standar:\n- $\\theta = 0^\\circ$ (Horizontal): $(\\Delta x = d, \\Delta y = 0)$\n- $\\theta = 45^\\circ$ (Diagonal Kanan-Atas): $(\\Delta x = d, \\Delta y = -d)$\n- $\\theta = 90^\\circ$ (Vertikal): $(\\Delta x = 0, \\Delta y = d)$\n- $\\theta = 135^\\circ$ (Diagonal Kiri-Atas): $(\\Delta x = -d, \\Delta y = -d)$\n\n### 2. Simetrisasi & Normalisasi Probabilitas\nDalam analisis tekstur invarian arah bolak-balik, GLCM dibuat simetris:\n$$P_{\\text{sym}} = P + P^T$$\nLalu dinormalisasi menjadi fungsi massa probabilitas gabungan:\n$$p(i, j) = \\frac{P_{\\text{sym}}(i, j)}{\\sum_{i} \\sum_{j} P_{\\text{sym}}(i, j)}$$",
+    "codeSnippet": "import numpy as np\n\ndef compute_glcm_horizontal(image: np.ndarray, num_levels: int = 4, distance: int = 1) -> np.ndarray:\n    '''Menghitung GLCM ter-normalisasi simetris arah horizontal (theta = 0 derajat).'''\n    H, W = image.shape\n    glcm = np.zeros((num_levels, num_levels), dtype=np.float64)\n    \n    # Kumpulkan pasangan piksel (i, j) berjarak d secara horizontal\n    for y in range(H):\n        for x in range(W - distance):\n            i = image[y, x]\n            j = image[y, x + distance]\n            glcm[i, j] += 1\n            \n    # Simetrisasi (P + P^T) untuk merefleksikan hubungan timbal balik\n    glcm_sym = glcm + glcm.T\n    \n    # Normalisasi probabilitas gabungan\n    total_pairs = np.sum(glcm_sym)\n    p_norm = glcm_sym / total_pairs if total_pairs > 0 else glcm_sym\n    return p_norm\n\n# Citra Sederhana 4x4 dengan Kuantisasi 4 Tingkat Keabuan (0, 1, 2, 3)\n# Mengandung Pola Garis-garis Horizontal Tegas (Tekstur Seragam Baris)\ntextured_patch = np.array([\n    [0, 0, 0, 0],\n    [1, 1, 1, 1],\n    [2, 2, 2, 2],\n    [3, 3, 3, 3]\n], dtype=np.int32)\n\nglcm_result = compute_glcm_horizontal(textured_patch, num_levels=4, distance=1)\n\nprint(\"--- Hasil Komputasi Matriks Ko-okurensi (GLCM) ---\")\nprint(\"Citra Tekstur Garis Horizontal (4 Tingkat Abu-abu):\\n\", textured_patch)\nprint(\"\\nMatriks Probabilitas GLCM 4x4 (Theta=0°, d=1):\\n\", glcm_result.round(3))\nprint(f\"\\nObservasi Ilmiah: Elemen diagonal utama (p[0,0], p[1,1], p[2,2], p[3,3]) mendominasi ({np.trace(glcm_result):.1f}),\")\nprint(\"membuktikan konsistensi intensitas horizontal yang sangat tinggi (tekstur berulang).\")",
+    "expectedOutput": "--- Hasil Komputasi Matriks Ko-okurensi (GLCM) ---\nCitra Tekstur Garis Horizontal (4 Tingkat Abu-abu):\n [[0 0 0 0]\n [1 1 1 1]\n [2 2 2 2]\n [3 3 3 3]]\n\nMatriks Probabilitas GLCM 4x4 (Theta=0°, d=1):\n [[0.25 0.   0.   0.  ]\n [0.   0.25 0.   0.  ]\n [0.   0.   0.25 0.  ]\n [0.   0.   0.   0.25]]\n\nObservasi Ilmiah: Elemen diagonal utama (p[0,0], p[1,1], p[2,2], p[3,3]) mendominasi (1.0),\nmembuktikan konsistensi intensitas horizontal yang sangat tinggi (tekstur berulang).",
+    "commonPitfalls": [
+      "Menghitung GLCM langsung pada citra 256 tingkat keabuan (`uint8`), menghasilkan matriks berukuran $256 \\times 256 = 65.536$ sel yang sangat renggang (*extremely sparse*) dan boros memori; citra harus dikuantisasi terlebih dahulu ke 8, 16, atau 32 tingkat keabuan.",
+      "Lupa melakukan simetrisasi matriks, sehingga hubungan antara piksel $i$ dan tetangga $j$ tidak invarian terhadap arah bolak-balik.",
+      "Mengabaikan piksel batas luar citra saat menghitung offset $(\\Delta x, \\Delta y)$, yang memicu pergeseran koordinat indeks yang salah."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Textural Features for Image Classification",
+        "authors": [
+          "Robert M. Haralick",
+          "K. Shanmugam",
+          "Its'Hak Dinstein"
+        ],
+        "year": 1973,
+        "publisherOrVenue": "IEEE Transactions on Systems, Man, and Cybernetics",
+        "url": "https://doi.org/10.1109/TSMC.1973.4309314",
+        "relevance": "Paper kanonikal bersejarah pendefinisian GLCM dan 14 fitur tekstur statistik."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub4",
+    "title": "4.4. Fitur Tekstur Haralick (Kontras, Disimilaritas, Homogenitas, Energi)",
+    "description": "Deskriptor statistik tingkat dua Haralick: Kontras, Disimilaritas, Homogenitas (IDM), Energi (Angular Second Moment), dan Entropi informasi.",
+    "content": "Dari matriks probabilitas ko-okurensi $p(i, j)$, Robert Haralick merumuskan serangkaian deskriptor skalar kompak yang mengukur karakteristik tekstur permukaan visual secara kuantitatif.\n\n### 1. Formulasi Fitur Utama Haralick\nDiberikan matriks probabilitas ternormalisasi $p(i, j) \\in [0, 1]$ berukuran $N_g \\times N_g$:\n\n1. **Kontras (*Contrast*)**:\n   Mengukur variasi intensitas lokal antara pasangan piksel bertetangga. Nilainya tinggi jika terdapat perbedaan kontras yang tajam (bobot kuadratik $(i-j)^2$):\n   $$\\text{Contrast} = \\sum_{i} \\sum_{j} (i - j)^2 \\, p(i, j)$$\n\n2. **Disimilaritas (*Dissimilarity*)**:\n   Serupa dengan kontras, namun menggunakan penalti linier absolut $|i - j|$:\n   $$\\text{Dissimilarity} = \\sum_{i} \\sum_{j} |i - j| \\, p(i, j)$$\n\n3. **Homogenitas (*Homogeneity / Inverse Difference Moment - IDM*)**:\n   Mengukur kedekatan distribusi elemen terhadap diagonal utama matriks GLCM. Bernilai maksimum ($1.0$) jika seluruh piksel bertetangga memiliki nilai identik:\n   $$\\text{Homogeneity} = \\sum_{i} \\sum_{j} \\frac{p(i, j)}{1 + (i - j)^2}$$\n\n4. **Energi (*Energy / Angular Second Moment - ASM*)**:\n   Mengukur keteraturan tekstur. Bernilai tinggi jika tekstur sangat repetitif atau seragam:\n   $$\\text{ASM} = \\sum_{i} \\sum_{j} p(i, j)^2, \\quad \\text{Energy} = \\sqrt{\\text{ASM}}$$\n\n5. **Entropi (*Entropy*)**:\n   Mengukur keacakan atau derajat ketidakteraturan distribusi tekstur:\n   $$\\text{Entropy} = - \\sum_{i} \\sum_{j} p(i, j) \\log_2(p(i, j) + \\epsilon)$$",
+    "codeSnippet": "import numpy as np\n\ndef extract_haralick_features(glcm_prob: np.ndarray) -> dict:\n    '''Mengekstrak 5 fitur tekstur utama Haralick dari matriks probabilitas GLCM.'''\n    Ng = glcm_prob.shape[0]\n    i_idx, j_idx = np.mgrid[0:Ng, 0:Ng]\n    \n    # 1. Kontras: Sum((i - j)^2 * p(i, j))\n    contrast = np.sum(((i_idx - j_idx) ** 2) * glcm_prob)\n    \n    # 2. Disimilaritas: Sum(|i - j| * p(i, j))\n    dissimilarity = np.sum(np.abs(i_idx - j_idx) * glcm_prob)\n    \n    # 3. Homogenitas (IDM): Sum(p(i, j) / (1 + (i - j)^2))\n    homogeneity = np.sum(glcm_prob / (1.0 + (i_idx - j_idx) ** 2))\n    \n    # 4. Angular Second Moment (ASM) / Energi\n    asm = np.sum(glcm_prob ** 2)\n    energy = np.sqrt(asm)\n    \n    # 5. Entropi: -Sum(p * log2(p))\n    mask = glcm_prob > 0\n    entropy = -np.sum(glcm_prob[mask] * np.log2(glcm_prob[mask]))\n    \n    return {\n        \"contrast\": float(contrast),\n        \"dissimilarity\": float(dissimilarity),\n        \"homogeneity\": float(homogeneity),\n        \"energy\": float(energy),\n        \"entropy\": float(entropy)\n    }\n\n# Evaluasi Dua Kondisi Tekstur Ekstrem (Matriks GLCM 4x4)\n# Matriks 1: Tekstur Homogen Sempurna (Hanya Diagonal Utama yang Terisi)\nglcm_homogen = np.diag([0.25, 0.25, 0.25, 0.25])\n\n# Matriks 2: Tekstur Acak Berderau Kasar (Tersebar Rata di Luar Diagonal)\nglcm_noisy = np.full((4, 4), 1.0 / 16.0)\n\nfeat_homogen = extract_haralick_features(glcm_homogen)\nfeat_noisy = extract_haralick_features(glcm_noisy)\n\nprint(\"--- Ekstraksi dan Komparasi Fitur Tekstur Haralick ---\")\nprint(f\"{'Metrik Fitur':15s} | {'Tekstur Homogen':16s} | {'Tekstur Acak Berderau':20s}\")\nprint(\"-\" * 58)\nfor k in feat_homogen:\n    print(f\"{k.capitalize():15s} | {feat_homogen[k]:16.4f} | {feat_noisy[k]:20.4f}\")",
+    "expectedOutput": "--- Ekstraksi dan Komparasi Fitur Tekstur Haralick ---\nMetrik Fitur    | Tekstur Homogen  | Tekstur Acak Berderau\n----------------------------------------------------------\nContrast        |           0.0000 |               2.5000\nDissimilarity   |           0.0000 |               1.2500\nHomogeneity     |           1.0000 |               0.5000\nEnergy          |           0.5000 |               0.2500\nEntropy         |           2.0000 |               4.0000",
+    "commonPitfalls": [
+      "Menghitung entropi tanpa memeriksa kondisi $p(i, j) = 0$, yang memicu `ValueError: math domain error` atau peringatan `RuntimeWarning: divide by zero encountered in log2`.",
+      "Mengabaikan ketergantungan fitur terhadap orientasi $\\theta$; untuk mencapai invariansi rotasi tekstur, fitur biasanya dihitung pada 4 sudut ($0^\\circ, 45^\\circ, 90^\\circ, 135^\\circ$) lalu dirata-ratakan.",
+      "Mencampuradukkan istilah Energi (Energy) dan Angular Second Moment (ASM); Energi adalah akar kuadrat dari ASM."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Textural Features for Image Classification",
+        "authors": [
+          "Robert M. Haralick",
+          "K. Shanmugam",
+          "Its'Hak Dinstein"
+        ],
+        "year": 1973,
+        "publisherOrVenue": "IEEE Transactions on Systems, Man, and Cybernetics",
+        "url": "https://doi.org/10.1109/TSMC.1973.4309314",
+        "relevance": "Persamaan analitis 14 fitur tekstur Haralick."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub5",
+    "title": "4.5. Local Binary Patterns (LBP) untuk Pengenalan Tekstur Wajah",
+    "description": "Operator tekstur mikro Local Binary Patterns (LBP), ambang batas 3x3, bobot biner berpangkat dua, invariansi pencahayaan monotonik, dan variasi sirkular LBP(P, R).",
+    "content": "Operator **Local Binary Patterns (LBP)** (Ojala et al., 1996, 2002) adalah salah satu deskriptor tekstur visual paling efisien dan populer untuk pengenalan wajah (*face recognition*), analisis pola kain, dan klasifikasi tekstur permukaan.\n\n### 1. Formulasi Operator LBP $3 \\times 3$ Dasar\nPada setiap piksel pusat $p_c$ dengan intensitas $I(x_c, y_c)$, intensitas 8 piksel tetangganya $p_p$ ($p = 0, 1, \\dots, 7$) dibandingkan dengan nilai pusat:\n\n$$s(I(p_p) - I(p_c)) = \\begin{cases} 1 & \\text{jika } I(p_p) \\ge I(p_c) \\\\ 0 & \\text{jika } I(p_p) < I(p_c) \\end{cases}$$\n\nNilai biner 8-bit yang dihasilkan dikalikan dengan bobot binomial berpangkat dua $2^p$ searah jarum jam untuk membentuk kode desimal tunggal:\n\n$$\\operatorname{LBP}(x_c, y_c) = \\sum_{p=0}^{7} s(I(p_p) - I(p_c)) \\cdot 2^p, \\quad \\operatorname{LBP} \\in [0, 255]$$\n\n### 2. Invariansi Transformasi Monotonik Abu-abu\nKeunggulan fundamental LBP adalah sifat invariansi mutlak terhadap transformasi pencahayaan monotonik:\nJika seluruh piksel mengalami pergeseran pencahayaan linear maupun non-linear strictly increasing $g(x) = f(x) + c$, relasi urutan biner tanda $s(g(p_p) - g(p_c)) = s(p_p - p_c)$ tidak berubah sama sekali!\n\n### 3. Ekstensi Sirkular $\\operatorname{LBP}_{P, R}$\nUntuk mengatasi batasan kisi kaku $3 \\times 3$, Ojala merumuskan lingkungan sirkular dengan $P$ titik sampel pada radius lingkaran $R$:\n$$x_p = x_c + R \\cos\\left(\\frac{2\\pi p}{P}\\right), \\quad y_p = y_c - R \\sin\\left(\\frac{2\\pi p}{P}\\right)$$\nNilai piksel pada koordinat kontinu diinterpolasi menggunakan interpolasi bilinear.",
+    "codeSnippet": "import numpy as np\n\ndef compute_lbp_basic_3x3(patch_3x3: np.ndarray) -> int:\n    '''Menghitung kode desimal LBP 8-bit untuk patch 3x3 di sekitar piksel pusat.'''\n    center = patch_3x3[1, 1]\n    \n    # 8 Tetangga diurutkan searah jarum jam mulai dari Top-Left:\n    # (0,0), (0,1), (0,2), (1,2), (2,2), (2,1), (2,0), (1,0)\n    neighbors = [\n        patch_3x3[0, 0], patch_3x3[0, 1], patch_3x3[0, 2],\n        patch_3x3[1, 2], patch_3x3[2, 2], patch_3x3[2, 1],\n        patch_3x3[2, 0], patch_3x3[1, 0]\n    ]\n    \n    lbp_code = 0\n    for p, val in enumerate(neighbors):\n        bit = 1 if val >= center else 0\n        lbp_code |= (bit << p)\n        \n    return lbp_code\n\n# Patch 3x3 Asli (Spot Terang di Tengah / Local Peak)\npatch_peak = np.array([\n    [ 50,  60,  55],\n    [ 40, 200,  45],  # Pusat 200 (lebih besar dari seluruh tetangganya)\n    [ 60,  50,  55]\n], dtype=np.uint8)\n\n# Patch 3x3 Transisi Tepi Miring (Edge Patch)\npatch_edge = np.array([\n    [ 20,  30, 210],\n    [ 25, 100, 220],\n    [ 30,  35, 215]\n], dtype=np.uint8)\n\ncode_peak = compute_lbp_basic_3x3(patch_peak)\ncode_edge = compute_lbp_basic_3x3(patch_edge)\n\nprint(\"--- Demonstrasi Operator Local Binary Patterns (LBP) ---\")\nprint(\"Patch Titik Puncak (Pusat Dominan):\\n\", patch_peak)\nprint(f\"Kode LBP Titik Puncak : {code_peak} (Binary: {code_peak:08b} - Seluruh bit 0 karena pusat > tetangga)\")\nprint(\"\\nPatch Transisi Tepi:\\n\", patch_edge)\nprint(f\"Kode LBP Transisi Tepi: {code_edge} (Binary: {code_edge:08b})\")",
+    "expectedOutput": "--- Demonstrasi Operator Local Binary Patterns (LBP) ---\nPatch Titik Puncak (Pusat Dominan):\n [[ 50  60  55]\n [ 40 200  45]\n [ 60  50  55]]\nKode LBP Titik Puncak : 0 (Binary: 00000000 - Seluruh bit 0 karena pusat > tetangga)\n\nPatch Transisi Tepi:\n [[ 20  30 210]\n [ 25 100 220]\n [ 30  35 215]]\nKode LBP Transisi Tepi: 28 (Binary: 00011100)",
+    "commonPitfalls": [
+      "Urutan pelabelan tetangga yang tidak konsisten antar modul (misal: dimulai dari Timur vs Barat Laut), menghasilkan histogram LBP yang tidak dapat dicocokkan satu sama lain.",
+      "LBP dasar sangat sensitif terhadap derau acak pada area datar yang homogen, di mana fluktuasi intensitas $\\pm 1$ dapat membalikkan bit biner dari 0 ke 1 (diatasi dengan Local Ternary Patterns / LTP).",
+      "Dimensi histogram LBP sirkular tanpa pola seragam (*uniform patterns*): untuk $P=16$ titik sampel, dimensi histogram membengkak menjadi $2^{16} = 65.536$ bin."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Multiresolution Gray-Scale and Rotation Invariant Texture Classification with Local Binary Patterns",
+        "authors": [
+          "Timo Ojala",
+          "Matti Pietikäinen",
+          "Topi Mäenpää"
+        ],
+        "year": 2002,
+        "publisherOrVenue": "IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)",
+        "url": "https://doi.org/10.1109/TPAMI.2002.1017623",
+        "relevance": "Paper kanonikal LBP sirkular dan pola seragam (uniform patterns)."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub6",
+    "title": "4.6. Histogram of Oriented Gradients (HOG - Dalal & Triggs, 2005)",
+    "description": "Filosofi fitur penampakan bentuk lokal Dalal & Triggs (2005), invariansi bentuk tubuh manusia terhadap variasi pakaian, dan pipeline arsitektur HOG.",
+    "content": "Pada konferensi CVPR 2005, Navneet Dalal dan Bill Triggs memperkenalkan **Histogram of Oriented Gradients (HOG)** untuk deteksi pejalan kaki (*pedestrian detection*). Paper ini merevolusi bidang visi komputer sebelum era deep learning.\n\n### 1. Filosofi Representasi HOG\nPremis ilmiah Dalal & Triggs adalah bahwa **penampakan dan bentuk objek lokal dapat dikarakterisasi secara sangat baik melalui distribusi gradien intensitas lokal atau arah tepi**, bahkan tanpa pengetahuan presisi mengenai posisi tepi absolut.\n\nFitur HOG memberikan kekebalan (*invariance*) terhadap:\n- Variasi warna dan tekstur pakaian (karena menggunakan arah gradien tepi siluet tubuh, bukan warna).\n- Perubahan pencahayaan fotometrik global (melalui normalisasi blok kontras lokal).\n- Deformasi dan variasi pose kecil (melalui perataan spasial pada sel-sel berukuran $8 \\times 8$ piksel).\n\n### 2. Arsitektur Pipeline HOG Standar\nUntuk jendela deteksi kanonikal $64 \\times 128$ piksel:\n1. **Kalkulasi Gradien**: Menghitung $G_x$ dan $G_y$ menggunakan filter diferensial 1D tanpa penghalusan ($[-1, 0, 1]$).\n2. **Spatial / Orientation Binning**: Membagi citra ke dalam sel grid kecil ($8 \\times 8$ piksel) dan memetakan gradien ke histogram 9 bin orientasi.\n3. **Normalisasi Blok**: Mengelompokkan sel ke dalam blok $2 \\times 2$ yang bertumpang tindih (*overlapping*) untuk normalisasi kontras.\n4. **Vektor Fitur & Klasifikasi**: Menggabungkan seluruh vektor blok menjadi satu deskriptor panjang (3.780 dimensi) untuk diklasifikasikan oleh Linear SVM.",
+    "codeSnippet": "import numpy as np\n\ndef compute_gradient_1d_centered(image: np.ndarray):\n    '''Kalkulasi gradien 1D terpusat Dalal-Triggs menggunakan kernel [-1, 0, 1].'''\n    H, W = image.shape\n    gx = np.zeros_like(image, dtype=np.float64)\n    gy = np.zeros_like(image, dtype=np.float64)\n    \n    # Gradien horizontal Gx: I(x+1) - I(x-1)\n    gx[:, 1:-1] = image[:, 2:] - image[:, :-2]\n    # Gradien vertikal Gy: I(y+1) - I(y-1)\n    gy[1:-1, :] = image[2:, :] - image[:-2, :]\n    \n    mag = np.sqrt(gx**2 + gy**2)\n    # Sudut tak berarah [0, 180) derajat\n    ang = (np.degrees(np.arctan2(gy, gx))) % 180.0\n    return mag, ang\n\n# Citra Sederhana 6x6 dengan Siluet Tubuh Vertikal di Tengah\npedestrian_patch = np.zeros((6, 6), dtype=np.float64)\npedestrian_patch[:, 2:4] = 180.0  # Siluet vertikal pejalan kaki\n\nmag, ang = compute_gradient_1d_centered(pedestrian_patch)\n\nprint(\"--- Ekstraksi Gradien Dalal & Triggs HOG ---\")\nprint(\"Citra Siluet Vertikal:\\n\", pedestrian_patch)\nprint(\"\\nMagnitudo Gradien Tepi:\\n\", mag.round(1))\nprint(\"\\nSudut Orientasi Gradien Tepi (Kolom 1=0°, Kolom 3=0°):\\n\", ang.round(1))\nprint(\"\\nObservasi: Pada batas siluet vertikal, orientasi gradien terpusat tajam pada 0°.\")",
+    "expectedOutput": "--- Ekstraksi Gradien Dalal & Triggs HOG ---\nCitra Siluet Vertikal:\n [[  0.   0. 180. 180.   0.   0.]\n [  0.   0. 180. 180.   0.   0.]\n [  0.   0. 180. 180.   0.   0.]\n [  0.   0. 180. 180.   0.   0.]\n [  0.   0. 180. 180.   0.   0.]\n [  0.   0. 180. 180.   0.   0.]]\n\nMagnitudo Gradien Tepi:\n [[  0. 180. 180. 180. 180.   0.]\n [  0. 180. 180. 180. 180.   0.]\n [  0. 180. 180. 180. 180.   0.]\n [  0. 180. 180. 180. 180.   0.]\n [  0. 180. 180. 180. 180.   0.]\n [  0. 180. 180. 180. 180.   0.]]\n\nSudut Orientasi Gradien Tepi (Kolom 1=0°, Kolom 3=0°):\n [[0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0.]]\n\nObservasi: Pada batas siluet vertikal, orientasi gradien terpusat tajam pada 0°.",
+    "commonPitfalls": [
+      "Menerapkan Gaussian blur tebal sebelum menghitung gradien HOG; Dalal & Triggs menemukan secara empiris bahwa menggunakan kernel turunan $[-1, 0, 1]$ tanpa smoothing awal mempertahankan tepi halus yang esensial untuk deteksi pejalan kaki.",
+      "Menggunakan orientasi bertanda (*signed gradients* $0-360^\\circ$); untuk deteksi pejalan kaki, orientasi tak bertanda (*unsigned gradients* $0-180^\\circ$) terbukti secara konsisten mengungguli karena tidak terpengaruh oleh warna baju terang vs gelap.",
+      "Menghitung sel tanpa normalisasi blok lokal, yang menyebabkan fitur HOG sangat rentan terhadap variasi bayangan dan kontras matahari."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Histograms of Oriented Gradients for Human Detection",
+        "authors": [
+          "Navneet Dalal",
+          "Bill Triggs"
+        ],
+        "year": 2005,
+        "publisherOrVenue": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)",
+        "url": "https://doi.org/10.1109/CVPR.2005.177",
+        "relevance": "Paper kanonikal fundamental penemu deskriptor HOG untuk deteksi pejalan kaki."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub7",
+    "title": "4.7. Pembagian Sel Grid, Voting Sudut & Interpolasi Trilinear HOG",
+    "description": "Pembagian sel spasial 8x8 piksel, histogram 9 bin orientasi (0-180 derajat), voting bobot magnitudo, dan interpolasi trilinear kontinu spasial-orientasi.",
+    "content": "Pada tahap spatial binning HOG, informasi gradien piksel individual diagregasikan ke dalam sel spasial kompak.\n\n### 1. Pembagian Sel Spasial & 9 Bin Orientasi\nCitra dibagi menjadi sel-sel grid independen berukuran $8 \\times 8$ piksel. Di setiap sel, histogram orientasi gradien 1D dibentuk dengan **9 kantong (*bins*)** yang mencakup rentang tak bertanda $[0^\\circ, 180^\\circ)$, masing-masing selebar $20^\\circ$:\n- Bin 0: Pusat $0^\\circ$ (rentang $0^\\circ - 20^\\circ$)\n- Bin 1: Pusat $20^\\circ$ (rentang $20^\\circ - 40^\\circ$)\n- ...\n- Bin 8: Pusat $160^\\circ$ (rentang $160^\\circ - 180^\\circ$)\n\n### 2. Voting Bobot Magnitudo Gradien\nSetiap piksel memberikan suara (*vote*) ke dalam bin histogram sebanding dengan **magnitudo gradiennya** $M(x, y)$ (bukan suara seragam bernilai 1). Dengan demikian, tepi yang tajam dan kontras memberikan kontribusi dominan pada profil bentuk, sedangkan fluktuasi derau halus terabaikan.\n\n### 3. Interpolasi Trilinear (Trilinear Interpolation)\nUntuk mencegah diskontinuitas kasar (*aliasing*) saat suatu piksel melintasi batas sel atau batas bin sudut, voting didistribusikan secara halus ke **8 sel-bin terdekat** melalui interpolasi linier 3 arah:\n1. Interpolasi linear pada sumbu horizontal sel ($x$).\n2. Interpolasi linear pada sumbu vertikal sel ($y$).\n3. Interpolasi linear pada sumbu sudut orientasi ($\\theta$).",
+    "codeSnippet": "import numpy as np\n\ndef vote_gradient_to_bins(magnitude: float, angle_deg: float, num_bins: int = 9) -> np.ndarray:\n    '''Mendistribusikan voting magnitudo gradien secara linier ke dua bin sudut terdekat.'''\n    hist = np.zeros(num_bins, dtype=np.float64)\n    bin_width = 180.0 / num_bins  # 20 derajat per bin\n    \n    # Normalisasi sudut ke rentang [0, 180)\n    ang = angle_deg % 180.0\n    \n    # Hitung posisi kontinu dalam indeks bin (pusat bin: 10, 30, 50, ...)\n    # Pergeseran -bin_width/2 agar bin 0 berpusat pada 0° (simetris melingkar)\n    cont_bin = (ang / bin_width) - 0.5\n    idx_low = int(np.floor(cont_bin))\n    idx_high = idx_low + 1\n    \n    weight_high = cont_bin - idx_low\n    weight_low = 1.0 - weight_high\n    \n    # Modulo sirkular untuk penanganan sudut melingkar di sekitar 0 dan 180 derajat\n    idx_low_mod = idx_low % num_bins\n    idx_high_mod = idx_high % num_bins\n    \n    hist[idx_low_mod] += magnitude * weight_low\n    hist[idx_high_mod] += magnitude * weight_high\n    return hist\n\n# Uji voting piksel dengan sudut 25 derajat (berada di antara bin 1 (20°) dan bin 2 (40°))\nmag_test = 100.0\nang_test = 25.0\nhist_vote = vote_gradient_to_bins(mag_test, ang_test, num_bins=9)\n\nprint(\"--- Voting Sudut Orientasi HOG dengan Interpolasi Linier ---\")\nprint(f\"Piksel Input: Magnitudo={mag_test:.1f}, Sudut={ang_test:.1f}°\")\nprint(\"Distribusi Histogram 9-Bin (Lebar 20° per bin):\")\nfor b in range(9):\n    center = b * 20.0\n    if hist_vote[b] > 0:\n        print(f\"  Bin {b} (Pusat {center:4.1f}°): Bobot Suara = {hist_vote[b]:.2f}\")\n    else:\n        print(f\"  Bin {b} (Pusat {center:4.1f}°): 0.0\")\n\nprint(f\"\\nTotal Akumulasi Voting: {np.sum(hist_vote):.1f} (Konservasi Energi Magnitudo Penuh)\")",
+    "expectedOutput": "--- Voting Sudut Orientasi HOG dengan Interpolasi Linier ---\nPiksel Input: Magnitudo=100.0, Sudut=25.0°\nDistribusi Histogram 9-Bin (Lebar 20° per bin):\n  Bin 0 (Pusat  0.0°): Bobot Suara = 25.00\n  Bin 1 (Pusat 20.0°): Bobot Suara = 75.00\n  Bin 2 (Pusat 40.0°): 0.0\n  Bin 3 (Pusat 60.0°): 0.0\n  Bin 4 (Pusat 80.0°): 0.0\n  Bin 5 (Pusat 100.0°): 0.0\n  Bin 6 (Pusat 120.0°): 0.0\n  Bin 7 (Pusat 140.0°): 0.0\n  Bin 8 (Pusat 160.0°): 0.0\n\nTotal Akumulasi Voting: 100.0 (Konservasi Energi Magnitudo Penuh)",
+    "commonPitfalls": [
+      "Memasukkan seluruh magnitudo gradien ke satu bin terdekat (*hard assignment*), yang menyebabkan perubahan deskriptor yang tidak stabil ketika objek sedikit berotasi.",
+      "Lupa memperlakukan sudut sebagai variabel periodik sirkular: sudut $175^\\circ$ dan $5^\\circ$ bertetangga secara sirkular melintasi diskontinuitas $0^\\circ/180^\\circ$.",
+      "Mengabaikan interpolasi spasial antar-sel: piksel yang terletak tepat di perbatasan dua sel harus mendistribusikan suaranya ke kedua sel tersebut."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Histograms of Oriented Gradients for Human Detection",
+        "authors": [
+          "Navneet Dalal",
+          "Bill Triggs"
+        ],
+        "year": 2005,
+        "publisherOrVenue": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)",
+        "url": "https://doi.org/10.1109/CVPR.2005.177",
+        "relevance": "Bagian 3: Spatial and Orientation Binning, Trilinear interpolation."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub8",
+    "title": "4.8. Normalisasi Blok HOG (L2-Hys / L2-Norm Clamped)",
+    "description": "Skema pengelompokan sel ke blok 2x2 tumpang tindih (overlapping blocks), formulasi normalisasi L2-norm, L1-sqrt, dan L2-Hys (clamped 0.2).",
+    "content": "Gradien intensitas sangat bergantung pada kontras pencahayaan lokal. Untuk mencapai invariansi terhadap bayangan, variasi kontras, dan iluminasi, vektor fitur sel dinormalisasi dalam blok spasial lokal.\n\n### 1. Struktur Blok Tumpang Tindih (*Overlapping Blocks*)\nDalal & Triggs menggunakan blok persegi panjang berukuran $2 \\times 2$ sel (atau $16 \\times 16$ piksel). Setiap blok menggabungkan vektor fitur dari 4 sel di dalamnya menjadi vektor gabungan sepanjang:\n$$4 \\text{ sel} \\times 9 \\text{ bin/sel} = 36 \\text{ dimensi}$$\n\nBlok bergeser (*stride*) sejauh $1$ sel ($8$ piksel). Akibatnya, setiap sel internal berkontribusi pada **4 blok yang berbeda**, masing-masing dinormalisasi terhadap konteks lingkungan lokal yang berbeda. Redundansi terstruktur ini meningkatkan diskriminasi pengenalan secara signifikan.\n\n### 2. Skema Normalisasi $L_2\\text{-Hys}$ (L2-Hysteresis)\nDiberikan vektor gabungan blok tak-ternormalisasi $\\mathbf{v} \\in \\mathbb{R}^{36}$:\n\n1. **Normalisasi $L_2$-norm standar**:\n   $$\\mathbf{v}' = \\frac{\\mathbf{v}}{\\sqrt{\\|\\mathbf{v}\\|_2^2 + \\epsilon^2}}$$\n   Di mana $\\epsilon$ adalah konstanta regulasi kecil untuk mencegah pembagian dengan nol pada area kosong.\n\n2. **Pemotongan Ambang Batas (*Clipping / Hysteresis*)**:\n   Komponen vektor yang bernilai sangat tinggi dipotong pada ambang batas $0.2$:\n   $$v''_k = \\min(v'_k, 0.2), \\quad \\forall k$$\n   Langkah ini menekan dampak gradien non-linear ekstrem yang disebabkan oleh kilauan cahaya (*specular highlights*).\n\n3. **Renormalisasi Ulang**:\n   $$\\mathbf{v}_{\\text{final}} = \\frac{\\mathbf{v}''}{\\sqrt{\\|\\mathbf{v}''\\|_2^2 + \\epsilon^2}}$$",
+    "codeSnippet": "import numpy as np\n\ndef normalize_l2_hys(v: np.ndarray, clip_threshold: float = 0.2, eps: float = 1e-4) -> np.ndarray:\n    '''Normalisasi blok HOG L2-Hys (L2-norm dengan clipping 0.2 dan re-normalisasi).'''\n    # 1. Tahap 1: L2-norm dasar\n    l2_norm = np.sqrt(np.sum(v ** 2) + eps**2)\n    v_prime = v / l2_norm\n    \n    # 2. Tahap 2: Clipping pada batas maksimum 0.2\n    v_clipped = np.clip(v_prime, 0.0, clip_threshold)\n    \n    # 3. Tahap 3: Re-normalisasi L2-norm\n    l2_norm_clipped = np.sqrt(np.sum(v_clipped ** 2) + eps**2)\n    v_final = v_clipped / l2_norm_clipped\n    return v_final\n\n# Buat Vektor Blok HOG Sintetis 36 Dimensi (4 Sel x 9 Bin)\n# Memuat satu fitur gradien sangat ekstrem akibat kilauan cahaya (specular flare) di bin ke-0\nnp.random.seed(42)\nblock_features = np.random.uniform(1.0, 5.0, 36)\nblock_features[0] = 100.0  # Kilauan ekstrem\n\n# Bandingkan L2-norm murni vs L2-Hys\nl2_standard = block_features / np.sqrt(np.sum(block_features**2) + 1e-4)\nl2_hys = normalize_l2_hys(block_features, clip_threshold=0.2)\n\nprint(\"--- Uji Komparasi Normalisasi Blok HOG (L2 vs L2-Hys) ---\")\nprint(f\"Nilai Elemen Ekstrem [0] Sebelum Normalisasi : {block_features[0]:.1f}\")\nprint(f\"Nilai Elemen Ekstrem [0] Pasca-L2 Standar     : {l2_standard[0]:.4f} (Mendominasi 98% energi vektor)\")\nprint(f\"Nilai Elemen Ekstrem [0] Pasca-L2-Hys Clamped : {l2_hys[0]:.4f} (Terpotong aman pada bobot proporsional)\")\nprint(f\"Norma Akhir Vektor L2-Hys                     : {np.linalg.norm(l2_hys):.6f} (Unit Length 1.0)\")",
+    "expectedOutput": "--- Uji Komparasi Normalisasi Blok HOG (L2 vs L2-Hys) ---\nNilai Elemen Ekstrem [0] Sebelum Normalisasi : 100.0\nNilai Elemen Ekstrem [0] Pasca-L2 Standar     : 0.9835 (Mendominasi 98% energi vektor)\nNilai Elemen Ekstrem [0] Pasca-L2-Hys Clamped : 0.7413 (Terpotong aman pada bobot proporsional)\nNorma Akhir Vektor L2-Hys                     : 1.000000 (Unit Length 1.0)",
+    "commonPitfalls": [
+      "Mengabaikan konstanta regulasi $\\epsilon$, menyebabkan `FloatingPointError` atau `NaN` pada blok citra yang sepenuhnya seragam (seperti langit biru atau latar belakang gelap).",
+      "Menghitung normalisasi secara global untuk seluruh citra alih-alih per blok lokal bertumpang-tindih; normalisasi lokal adalah kunci ketahanan HOG terhadap variasi bayangan parsial.",
+      "Lupa melakukan re-normalisasi setelah tahap *clipping* $0.2$, yang menyebabkan panjang vektor tidak lagi bernilai satu (*unit length*)."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Histograms of Oriented Gradients for Human Detection",
+        "authors": [
+          "Navneet Dalal",
+          "Bill Triggs"
+        ],
+        "year": 2005,
+        "publisherOrVenue": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)",
+        "url": "https://doi.org/10.1109/CVPR.2005.177",
+        "relevance": "Bagian 4: Block Normalization Schemes (L2-Hys, L2-norm, L1-sqrt)."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub9",
+    "title": "4.9. Deteksi Pejalan Kaki (Pedestrian Detection) Menggunakan HOG + Linear SVM",
+    "description": "Arsitektur deteksi objek klasik sliding window, kalkulasi skor margin SVM w^T x + b, thresholding kepercayaan, dan Non-Maximum Suppression (NMS) bounding box.",
+    "content": "Pipeline deteksi pejalan kaki klasik menggabungkan ekstraksi deskriptor HOG dengan pengklasifikasi **Support Vector Machine (SVM) Linear**.\n\n### 1. Klasifikasi Margin SVM Linear\nDiberikan vektor deskriptor HOG $\\mathbf{x} \\in \\mathbb{R}^{3780}$ dari suatu jendela deteksi kandidat, model SVM linear menghitung skor keputusan:\n\n$$f(\\mathbf{x}) = \\mathbf{w}^T \\mathbf{x} + b$$\n\nDi mana:\n- $\\mathbf{w}$ adalah vektor bobot hiperbidang optimal yang dipelajari selama pelatihan.\n- $b$ adalah bias skalar.\n- Jika $f(\\mathbf{x}) > \\text{threshold}$ (biasanya $0.0$), jendela diklasifikasikan sebagai pejalan kaki (*pedestrian*).\n\n### 2. Multi-Scale Sliding Window & Bounding Box NMS\nKarena pejalan kaki dapat muncul pada berbagai ukuran jarak dan posisi dalam citra:\n1. Citra diperkecil secara bertingkat membentuk **Piramida Citra** (*Image Pyramid*) dengan faktor skala (misal $1.05\\times$).\n2. Jendela kanonikal $64 \\times 128$ piksel digeser di setiap tingkat piramida.\n3. Seluruh jendela dengan skor SVM tinggi memicu beberapa deteksi tumpang tindih untuk objek pejalan kaki yang sama.\n4. **Bounding Box Non-Maximum Suppression (NMS)** mengeliminasi duplikasi deteksi berdasarkan metrik *Intersection over Union* (IoU):\n   $$\\operatorname{IoU}(B_1, B_2) = \\frac{\\operatorname{Area}(B_1 \\cap B_2)}{\\operatorname{Area}(B_1 \\cup B_2)}$$",
+    "codeSnippet": "import numpy as np\n\ndef bounding_box_nms(boxes: np.ndarray, scores: np.ndarray, iou_threshold: float = 0.5) -> list:\n    '''Eliminasi duplikasi deteksi kotak pembatas (Bounding Box NMS).'''\n    if len(boxes) == 0:\n        return []\n        \n    x1 = boxes[:, 0]\n    y1 = boxes[:, 1]\n    x2 = boxes[:, 2]\n    y2 = boxes[:, 3]\n    areas = (x2 - x1) * (y2 - y1)\n    \n    # Urutkan berdasarkan skor SVM tertinggi\n    order = scores.argsort()[::-1]\n    keep = []\n    \n    while len(order) > 0:\n        i = order[0]\n        keep.append(i)\n        if len(order) == 1:\n            break\n            \n        # Hitung koordinat perpotongan (Intersection)\n        xx1 = np.maximum(x1[i], x1[order[1:]])\n        yy1 = np.maximum(y1[i], y1[order[1:]])\n        xx2 = np.minimum(x2[i], x2[order[1:]])\n        yy2 = np.minimum(y2[i], y2[order[1:]])\n        \n        w = np.maximum(0.0, xx2 - xx1)\n        h = np.maximum(0.0, yy2 - yy1)\n        intersection = w * h\n        \n        # Hitung IoU\n        union = areas[i] + areas[order[1:]] - intersection\n        iou = intersection / union\n        \n        # Pertahankan hanya kotak dengan IoU di bawah ambang batas (tidak tumpang tindih berlebih)\n        inds = np.where(iou <= iou_threshold)[0]\n        order = order[inds + 1]\n        \n    return keep\n\n# Simulasikan 3 Kotak Deteksi Tumpang Tindih di Sekitar 1 Pejalan Kaki\n# Format: [x1, y1, x2, y2]\ndetected_boxes = np.array([\n    [100.0, 100.0, 164.0, 228.0],  # Deteksi Utama (Skor 2.8)\n    [105.0, 102.0, 168.0, 230.0],  # Duplikasi Geser Tipis (Skor 2.1)\n    [ 98.0,  99.0, 160.0, 225.0],  # Duplikasi Geser Tipis (Skor 1.5)\n    [300.0, 150.0, 364.0, 278.0]   # Pejalan Kaki Kedua Terpisah (Skor 2.4)\n], dtype=np.float64)\n\nsvm_scores = np.array([2.8, 2.1, 1.5, 2.4], dtype=np.float64)\n\nkept_indices = bounding_box_nms(detected_boxes, svm_scores, iou_threshold=0.3)\n\nprint(\"--- Hasil Bounding Box NMS pada Deteksi Pejalan Kaki HOG+SVM ---\")\nprint(f\"Jumlah Kotak Deteksi Mentah: {len(detected_boxes)}\")\nprint(f\"Kotak yang Dipertahankan Setelah NMS: {len(kept_indices)} kotak (Indeks: {kept_indices})\")\nfor idx in kept_indices:\n    box = detected_boxes[idx].astype(int)\n    print(f\"  Deteksi Terverifikasi: Koordinat={box.tolist()} | Skor SVM={svm_scores[idx]:.2f}\")",
+    "expectedOutput": "--- Hasil Bounding Box NMS pada Deteksi Pejalan Kaki HOG+SVM ---\nJumlah Kotak Deteksi Mentah: 4\nKotak yang Dipertahankan Setelah NMS: 2 kotak (Indeks: [np.int64(0), np.int64(3)])\n  Deteksi Terverifikasi: Koordinat=[100, 100, 164, 228] | Skor SVM=2.80\n  Deteksi Terverifikasi: Koordinat=[300, 150, 364, 278] | Skor SVM=2.40",
+    "commonPitfalls": [
+      "Menggunakan Linear SVM tanpa penambangan contoh negatif keras (*hard negative mining*); model awal akan menghasilkan ribuan positif palsu (*false positives*) pada cabang pohon atau tiang lampu jalan.",
+      "Langkah pergeseran jendela (*sliding window stride*) yang terlalu lebar menyebabkan terlewatnya objek pejalan kaki yang berada di antara langkah grid.",
+      "Mengabaikan rasio aspek pejalan kaki standar ($1:2$ rasio lebar:tinggi) saat menerapkan jendela deteksi."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Histograms of Oriented Gradients for Human Detection",
+        "authors": [
+          "Navneet Dalal",
+          "Bill Triggs"
+        ],
+        "year": 2005,
+        "publisherOrVenue": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)",
+        "url": "https://doi.org/10.1109/CVPR.2005.177",
+        "relevance": "Bagian 6: Linear SVM training, Hard negative mining, and Pedestrian detection performance."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch4-sub10",
+    "title": "4.10. Analisis Efisiensi Komputasi & Dimensi Vektor Deskriptor HOG",
+    "description": "Derivasi matematis dimensi vektor deskriptor HOG (3.780 dimensi), pemetaan tata letak memori, efisiensi citra integral untuk percepatan inferensi.",
+    "content": "Memahami komposisi dimensi vektor fitur HOG sangat penting untuk mendesain pipeline visi komputer berlatensi rendah dan menentukan kebutuhan memori model.\n\n### 1. Derivasi Matematis Dimensi HOG Baku\nUntuk jendela deteksi standar Dalal & Triggs berukuran $W = 64$ dan $H = 128$ piksel:\n- Ukuran sel: $8 \\times 8$ piksel.\n- Jumlah sel horizontal: $N_x = 64 / 8 = 8$ sel.\n- Jumlah sel vertikal: $N_y = 128 / 8 = 16$ sel.\n- Ukuran blok: $2 \\times 2$ sel ($16 \\times 16$ piksel).\n- Pergeseran blok (*block stride*): $1$ sel ($8$ piksel).\n\nJumlah blok horizontal:\n$$B_x = (N_x - 2) + 1 = 8 - 2 + 1 = 7 \\text{ blok}$$\n\nJumlah blok vertikal:\n$$B_y = (N_y - 2) + 1 = 16 - 2 + 1 = 15 \\text{ blok}$$\n\nTotal jumlah blok per jendela deteksi:\n$$B_{\\text{total}} = B_x \\times B_y = 7 \\times 15 = 105 \\text{ blok}$$\n\nSetiap blok memuat $2 \\times 2 = 4$ sel, dan setiap sel memiliki $9$ bin histogram orientasi. Maka panjang vektor per blok adalah:\n$$D_{\\text{block}} = 4 \\times 9 = 36 \\text{ dimensi}$$\n\nTotal dimensi akhir vektor deskriptor HOG:\n$$D_{\\text{total}} = B_{\\text{total}} \\times D_{\\text{block}} = 105 \\times 36 = \\mathbf{3.780 \\text{ dimensi}}$$\n\n### 2. Optimasi Kecepatan: Integral Histograms\nMenghitung histogram gradien berulang kali untuk ribuan jendela sliding window sangat mahal. Porikli (2005) mengadaptasi konsep *Integral Images* Viola-Jones ke dalam **Integral Histograms**: dengan menyimpan akumulasi histogram integral, histogram sel berukuran arbitrer dapat dievaluasi hanya dalam 4 kali pembacaan array memori $\\mathcal{O}(1)$.",
+    "codeSnippet": "import numpy as np\n\ndef calculate_hog_descriptor_dimension(win_w: int, win_h: int, cell_size: int, block_size_cells: int, num_bins: int):\n    '''Menghitung secara analitis jumlah blok dan total dimensi vektor fitur HOG.'''\n    cells_x = win_w // cell_size\n    cells_y = win_h // cell_size\n    \n    blocks_x = cells_x - block_size_cells + 1\n    blocks_y = cells_y - block_size_cells + 1\n    \n    total_blocks = blocks_x * blocks_y\n    dims_per_block = (block_size_cells ** 2) * num_bins\n    total_dimensions = total_blocks * dims_per_block\n    \n    return {\n        \"cells_grid\": (cells_x, cells_y),\n        \"blocks_grid\": (blocks_x, blocks_y),\n        \"total_blocks\": total_blocks,\n        \"dims_per_block\": dims_per_block,\n        \"total_dimensions\": total_dimensions\n    }\n\n# Konfigurasi Standar Dalal-Triggs: Jendela 64x128, Sel 8x8, Blok 2x2 sel, 9 Bin\nconfig_standard = calculate_hog_descriptor_dimension(\n    win_w=64, win_h=128, cell_size=8, block_size_cells=2, num_bins=9\n)\n\n# Konfigurasi Mobil / Rambu Lalu Lintas: Jendela 64x64 Bujursangkar\nconfig_square = calculate_hog_descriptor_dimension(\n    win_w=64, win_h=64, cell_size=8, block_size_cells=2, num_bins=9\n)\n\nprint(\"--- Analisis Dimensi Vektor Deskriptor HOG ---\")\nprint(\"1. Standar Pejalan Kaki (64x128 piksel):\")\nfor k, v in config_standard.items():\n    print(f\"   - {k:18s}: {v}\")\n\nprint(f\"\\n2. Deteksi Rambu Bujursangkar (64x64 piksel):\")\nfor k, v in config_square.items():\n    print(f\"   - {k:18s}: {v}\")\n\n# Verifikasi Aljabar: 105 blok * 36 dimensi = 3780 dimensi\nassert config_standard[\"total_dimensions\"] == 3780, \"Dimensi HOG standar harus tepat 3.780\"\nprint(\"\\nStatus Validasi: Perhitungan matematis dimensi HOG terbukti eksak 3.780 dimensi.\")",
+    "expectedOutput": "--- Analisis Dimensi Vektor Deskriptor HOG ---\n1. Standar Pejalan Kaki (64x128 piksel):\n   - cells_grid        : (8, 16)\n   - blocks_grid       : (7, 15)\n   - total_blocks      : 105\n   - dims_per_block    : 36\n   - total_dimensions  : 3780\n\n2. Deteksi Rambu Bujursangkar (64x64 piksel):\n   - cells_grid        : (8, 8)\n   - blocks_grid       : (7, 7)\n   - total_blocks      : 49\n   - dims_per_block    : 36\n   - total_dimensions  : 1764\n\nStatus Validasi: Perhitungan matematis dimensi HOG terbukti eksak 3.780 dimensi.",
+    "commonPitfalls": [
+      "Salah menghitung jumlah blok karena melupakan sifat tumpang tindih (*overlap*): $B_x = N_x - 1$ jika ukuran blok $2 \\times 2$ dan pergeseran stride adalah 1 sel.",
+      "Mengalokasikan memori vektor baru pada setiap pergeseran jendela sliding window tanpa menggunakan buffer array terpadu (*pre-allocated memory*), memicu *garbage collection pauses* parah.",
+      "Mencoba melatih model non-linear SVM (seperti RBF kernel) pada jutaan sampel vektor 3.780 dimensi; kompleksitas kuadratik $\\mathcal{O}(N^2)$ akan menyebabkan waktu pelatihan memakan waktu berhari-hari (selalu gunakan Linear SVM seperti LIBLINEAR)."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Histograms of Oriented Gradients for Human Detection",
+        "authors": [
+          "Navneet Dalal",
+          "Bill Triggs"
+        ],
+        "year": 2005,
+        "publisherOrVenue": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)",
+        "url": "https://doi.org/10.1109/CVPR.2005.177",
+        "relevance": "Bagian 6.1: Implementation details and detector window dimension parameters."
+      }
+    ]
+  }
+]

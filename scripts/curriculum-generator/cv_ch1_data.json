@@ -1,0 +1,266 @@
+[
+  {
+    "id": "computer-vision-ch1-sub1",
+    "title": "1.1. Model Kamera Pinhole & Persamaan Proyeksi Perspektif",
+    "description": "Formulasi matematis model kamera pinhole ideal, koordinat homogen 3D ke 2D, matriks intrinsik K, ekstrinsik [R|t], dan efek distorsi optik.",
+    "content": "Model kamera lubang jarum (*pinhole camera model*) merupakan fondasi geometri geometris proyektif dalam visi komputer modern. Model ini mendeskripsikan pemetaan matematis antara titik berdimensi tiga di dunia nyata $\\mathbf{P}_w = [X_w, Y_w, Z_w]^T$ ke bidang gambar berdimensi dua $\\mathbf{p} = [u, v]^T$.\n\n### 1. Geometri Proyeksi Perspektif\nBerdasarkan prinsip segitiga sebangun (*similar triangles*), jika pusat proyeksi berada pada titik asal $(0,0,0)$ dan bidang proyeksi (retina/sensor) berjarak $f$ (panjang fokus / *focal length*) di sepanjang sumbu optik $Z$:\n\n$$\\frac{x}{f} = \\frac{X_c}{Z_c} \\implies x = f \\frac{X_c}{Z_c}, \\quad \\frac{y}{f} = \\frac{Y_c}{Z_c} \\implies y = f \\frac{Y_c}{Z_c}$$\n\nEfek pembagian dengan $Z_c$ (*perspective division*) memunculkan fenomena visual fundamental: objek yang lebih jauh tampak mengecil secara proporsional berbanding terbalik dengan jarak kedalamannya.\n\n### 2. Koordinat Homogen & Matriks Intrinsik Kamera\nUntuk merepresentasikan proyeksi non-linear ini sebagai perkalian matriks linear tunggal, kita mengadopsi ruang proyektif $\\mathbb{P}^2$ dan $\\mathbb{P}^3$ menggunakan koordinat homogen:\n\n$$\\begin{bmatrix} u \\\\ v \\\\ 1 \\end{bmatrix} \\sim \\mathbf{K} \\begin{bmatrix} X_c \\\\ Y_c \\\\ Z_c \\end{bmatrix} = \\begin{bmatrix} f_x & s & c_x \\\\ 0 & f_y & c_y \\\\ 0 & 0 & 1 \\end{bmatrix} \\begin{bmatrix} X_c \\\\ Y_c \\\\ Z_c \\end{bmatrix}$$\n\nDi mana:\n- $f_x = f \\cdot m_x$ dan $f_y = f \\cdot m_y$ adalah panjang fokus efektif dalam satuan piksel ($m_x, m_y$ adalah jumlah piksel per satuan panjang).\n- $(c_x, c_y)$ adalah titik utama (*principal point*), yakni perpotongan sumbu optik tegak lurus dengan bidang sensor.\n- $s$ adalah parameter ketidaksesuaian sudut sensor (*skew factor*), yang bernilai $0$ pada sensor modern berbasis ortogonal.\n\n### 3. Matriks Transformasi Ekstrinsik $[\\mathbf{R} \\mid \\mathbf{t}]$\nTitik dunia $\\mathbf{P}_w$ ditransformasikan ke koordinat kamera $\\mathbf{P}_c$ melalui rotasi $\\mathbf{R} \\in SO(3)$ dan translasi $\\mathbf{t} \\in \\mathbb{R}^3$:\n\n$$\\mathbf{P}_c = \\mathbf{R} \\mathbf{P}_w + \\mathbf{t} = [\\mathbf{R} \\mid \\mathbf{t}] \\begin{bmatrix} X_w \\\\ Y_w \\\\ Z_w \\\\ 1 \\end{bmatrix}$$\n\nPersamaan proyeksi penuh (*full projection matrix*) $\\mathbf{P} = \\mathbf{K}[\\mathbf{R} \\mid \\mathbf{t}] \\in \\mathbb{R}^{3 \\times 4}$ memetakan koordinat dunia 3D homogen langsung ke piksel 2D:\n\n$$\\lambda \\begin{bmatrix} u \\\\ v \\\\ 1 \\end{bmatrix} = \\mathbf{K} [\\mathbf{R} \\mid \\mathbf{t}] \\begin{bmatrix} X_w \\\\ Y_w \\\\ Z_w \\\\ 1 \\end{bmatrix}, \\quad \\lambda = Z_c$$",
+    "codeSnippet": "import numpy as np\n\n# 1. Definisikan Parameter Intrinsik Kamera K (f_x=800, f_y=800, c_x=320, c_y=240, skew=0)\nK = np.array([\n    [800.0,   0.0, 320.0],\n    [  0.0, 800.0, 240.0],\n    [  0.0,   0.0,   1.0]\n], dtype=np.float64)\n\n# 2. Definisikan Ekstrinsik Kamera: Kamera berada di (0, 0, -2) menghadap sumbu Z positif\n# R = Identitas (tanpa rotasi), t = [0, 0, 2]^T (mentranslasikan objek dunia ke koordinat kamera)\nR = np.eye(3, dtype=np.float64)\nt = np.array([[0.0], [0.0], [2.0]], dtype=np.float64)\nextrinsic = np.hstack((R, t))\n\n# 3. Definisikan 3 Titik Uji 3D dalam Koordinat Dunia (X_w, Y_w, Z_w, 1)\n# Titik 1: Pusat, Titik 2: Geser kanan X=0.5, Titik 3: Lebih jauh Z=2.0\npoints_3d = np.array([\n    [0.0, 0.0, 1.0, 1.0],\n    [0.5, 0.0, 1.0, 1.0],\n    [0.5, 0.0, 3.0, 1.0]\n], dtype=np.float64).T\n\n# 4. Proyeksikan Titik 3D ke Piksel 2D: lambda * p = K * [R | t] * P_w\nP = K @ extrinsic\nhomogeneous_2d = P @ points_3d\n\nprint(\"--- Hasil Proyeksi Perspektif Pinhole ---\")\nfor i in range(points_3d.shape[1]):\n    pw = points_3d[:3, i]\n    # Normalisasi perspektif (pembagian dengan koordinat homogen z/lambda)\n    z_cam = homogeneous_2d[2, i]\n    u = homogeneous_2d[0, i] / z_cam\n    v = homogeneous_2d[1, i] / z_cam\n    print(f\"Titik {i+1} Dunia: {pw} -> Z_cam: {z_cam:.1f}m -> Piksel: (u={u:.1f}, v={v:.1f})\")",
+    "expectedOutput": "--- Hasil Proyeksi Perspektif Pinhole ---\nTitik 1 Dunia: [0. 0. 1.] -> Z_cam: 3.0m -> Piksel: (u=320.0, v=240.0)\nTitik 2 Dunia: [0.5 0.  1. ] -> Z_cam: 3.0m -> Piksel: (u=453.3, v=240.0)\nTitik 3 Dunia: [0.5 0.  3. ] -> Z_cam: 5.0m -> Piksel: (u=400.0, v=240.0)",
+    "commonPitfalls": [
+      "Lupa membagi dengan faktor skala kedalaman $\\lambda = Z_c$ saat mengonversi koordinat homogen proyektif kembali ke koordinat bidang kartesius $(u, v)$.",
+      "Mengasumsikan titik utama $(c_x, c_y)$ selalu tepat di tengah citra $((W-1)/2, (H-1)/2)$ tanpa memperhitungkan toleransi misalignment perakitan modul lensa fisik.",
+      "Mengabaikan arah orientasi sumbu koordinat: standar visi komputer mendefinisikan sumbu X ke kanan, sumbu Y ke bawah, dan sumbu Z maju searah pandangan optik."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+        "authors": [
+          "Richard Szeliski"
+        ],
+        "year": 2022,
+        "publisherOrVenue": "Springer",
+        "url": "https://szeliski.org/Book/",
+        "relevance": "Bab 2.1: Geometric Image Formation dan model kamera proyektif 3D-ke-2D."
+      },
+      {
+        "title": "Computer Vision: A Modern Approach (2nd ed.)",
+        "authors": [
+          "David A. Forsyth",
+          "Jean Ponce"
+        ],
+        "year": 2011,
+        "publisherOrVenue": "Prentice Hall",
+        "url": "https://www.pearson.com/",
+        "relevance": "Bab 1: Geometric Camera Models, intrinsics, extrinsics, and perspective projection."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub2",
+    "title": "1.2. Representasi Citra Digital sebagai Matriks Tensor 3D",
+    "description": "Struktur array multidimensi citra digital, tata letak memori HWC vs CHW, indexing spasial baris-kolom, dan tipe data kuantisasi piksel.",
+    "content": "Secara fisik, citra digital adalah fungsi kontinu intensitas cahaya dua dimensi $I(x, y)$ yang telah melalui dua tahap diskritisasi:\n1. **Sampling Spasial**: Membagi bidang kontinu ke dalam kisi-kisi teratur (*regular grid*) piksel berukuran $H \\times W$ (tinggi $\\times$ lebar).\n2. **Kuantisasi Intensitas**: Memetakan energi foton kontinu pada setiap sensor ke dalam himpunan diskrit berhingga (biasanya bilangan bulat tak bertanda 8-bit $[0, 255]$).\n\n### 1. Representasi Tensor 3D $(H \\times W \\times C)$\nCitra berwarna direpresentasikan sebagai tensor peringkat 3:\n- Dimensi 0 ($H$): Sumbu vertikal (baris / $y$-coordinate), berindeks $0$ hingga $H-1$ dari atas ke bawah.\n- Dimensi 1 ($W$): Sumbu horizontal (kolom / $x$-coordinate), berindeks $0$ hingga $W-1$ dari kiri ke kanan.\n- Dimensi 2 ($C$): Kedalaman kanal warna, bernilai 1 untuk skala abu-abu (*grayscale*), 3 untuk RGB/BGR, dan 4 untuk RGBA.\n\n$$\\mathbf{I} \\in \\mathbb{R}^{H \\times W \\times C}, \\quad \\mathbf{I}[y, x, c] \\in [0, 255] \\subset \\mathbb{Z}$$\n\n### 2. Format Memori: HWC vs CHW\nTata letak memori (*memory layout*) sangat menentukan performa komputasi:\n- **Format HWC (Channels-Last)**: Digunakan secara bawaan oleh OpenCV, NumPy, Matplotlib, dan TensorFlow CPU. Piksel warna disimpan secara bersebelahan (*interleaved*): `[R0, G0, B0, R1, G1, B1, ...]`.\n- **Format CHW (Channels-First)**: Standar format akselerator GPU pada PyTorch dan cuDNN. Setiap bidang warna (*color plane*) disimpan secara planar berurutan: seluruh bidang R, diikuti bidang G, lalu bidang B. Format ini memaksimalkan efisiensi *vectorized memory access* pada instruksi SIMD/Tensor Core.",
+    "codeSnippet": "import numpy as np\n\n# 1. Buat citra sintetis berukuran H=4 (tinggi), W=6 (lebar), C=3 (RGB)\n# Menggunakan pola bergradasi deterministik\nH, W, C = 4, 6, 3\nimage_hwc = np.zeros((H, W, C), dtype=np.uint8)\n\n# Isi kanal R dengan gradien vertikal, kanal G dengan gradien horizontal, kanal B bernilai konstan 128\nfor y in range(H):\n    for x in range(W):\n        image_hwc[y, x, 0] = int((y / (H - 1)) * 255)  # Red (vertikal)\n        image_hwc[y, x, 1] = int((x / (W - 1)) * 255)  # Green (horizontal)\n        image_hwc[y, x, 2] = 128                       # Blue (konstan)\n\nprint(\"--- Representasi Array HWC (Channels-Last) ---\")\nprint(\"Bentuk Tensor (H, W, C):\", image_hwc.shape)\nprint(\"Tipe Data Memori:\", image_hwc.dtype)\nprint(\"Ukuran Memori Total:\", image_hwc.nbytes, \"bytes\")\nprint(\"Piksel Pojok Kiri-Atas  (y=0, x=0):\", image_hwc[0, 0, :].tolist())\nprint(\"Piksel Pojok Kanan-Bawah (y=3, x=5):\", image_hwc[3, 5, :].tolist())\n\n# 2. Konversi ke Format CHW (Channels-First) untuk PyTorch/GPU processing\nimage_chw = np.transpose(image_hwc, (2, 0, 1))\nprint(\"\\n--- Konversi ke Format CHW (Channels-First) ---\")\nprint(\"Bentuk Tensor (C, H, W):\", image_chw.shape)\nprint(\"Kanal Hijau Bidang Rata (G plane 4x6):\\n\", image_chw[1])",
+    "expectedOutput": "--- Representasi Array HWC (Channels-Last) ---\nBentuk Tensor (H, W, C): (4, 6, 3)\nTipe Data Memori: uint8\nUkuran Memori Total: 72 bytes\nPiksel Pojok Kiri-Atas  (y=0, x=0): [0, 0, 128]\nPiksel Pojok Kanan-Bawah (y=3, x=5): [255, 255, 128]\n\n--- Konversi ke Format CHW (Channels-First) ---\nBentuk Tensor (C, H, W): (3, 4, 6)\nKanal Hijau Bidang Rata (G plane 4x6):\n [[  0  51 102 153 204 255]\n [  0  51 102 153 204 255]\n [  0  51 102 153 204 255]\n [  0  51 102 153 204 255]]",
+    "commonPitfalls": [
+      "Terbalik antara koordinat kartesius $(x, y)$ dan indeks array matriks NumPy `[row, col]` yang setara dengan `[y, x]`.",
+      "Melakukan operasi aritmatika langsung pada `np.uint8` tanpa konversi `np.float32`, menyebabkan fenomena *integer overflow* atau *underflow* (misal: $250 + 20 = 14$ modulo 256).",
+      "Melewatkan tensor berformat HWC ke modul konvolusi PyTorch yang mengharapkan dimensi $(B, C, H, W)$ sehingga memicu kesalahan fatal ukuran tensor."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+        "authors": [
+          "Richard Szeliski"
+        ],
+        "year": 2022,
+        "publisherOrVenue": "Springer",
+        "url": "https://szeliski.org/Book/",
+        "relevance": "Bab 2.3: Digital Image Representation and Color Representations."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub3",
+    "title": "1.3. Sensor CMOS, Pola Bayer Filter & Demosaicing",
+    "description": "Fisika sensor citra CMOS/CCD, susunan Color Filter Array (CFA) Bayer RGGB, dan algoritma rekonstruksi warna demosaicing bilinear.",
+    "content": "Sensor silikon semikonduktor (CMOS maupun CCD) pada dasarnya bersifat buta warna (*color-blind*). Sensor hanya merespons jumlah foton yang jatuh ke dalam sumur potensial (*photodiode well*) tanpa membedakan panjang gelombang spektrum elektromagnetik.\n\n### 1. Color Filter Array (CFA) & Pola Bayer\nUntuk menangkap warna dengan satu keping sensor tanpa menambah bobot dan biaya optik prisma 3-sensor, Bryce Bayer (Eastman Kodak, 1976) merancang susunan filter warna mosaik periodik $2 \\times 2$:\n\n$$\\begin{bmatrix} R & G \\\\ G & B \\end{bmatrix}$$\n\nProporsi kanal hijau ($50\\%$) sengaja dibuat dua kali lipat dibanding merah ($25\\%$) dan biru ($25\\%$). Desain ini mencerminkan fungsi efisiensi luminositas mata manusia (*human photopic luminous efficiency function* $V(\\lambda)$) yang memiliki kepekaan puncak pada wilayah hijau sekitar $555\\text{ nm}$.\n\n### 2. Algoritma Demosaicing Bilinear\nCitra RAW hasil tangkapan sensor berupa citra mosaik monokromatik 1 kanal. Proses merekonstruksi tiga komponen warna penuh $(R, G, B)$ di setiap piksel disebut **demosaicing** atau **de-Bayering**.\n\nPada algoritma demosaicing bilinear adaptif dasar:\n- Pada piksel hijau yang tidak memiliki komponen merah: nilai $R$ diinterpolasi dari rata-rata 2 tetangga horizontal atau vertikal:\n  $$R_{G} = \\frac{R_{\\text{kiri}} + R_{\\text{kanan}}}{2} \\quad \\text{atau} \\quad \\frac{R_{\\text{atas}} + R_{\\text{bawah}}}{2}$$\n- Pada piksel biru yang tidak memiliki komponen merah: nilai $R$ diinterpolasi dari rata-rata 4 tetangga diagonal:\n  $$R_{B} = \\frac{R_{1} + R_{2} + R_{3} + R_{4}}{4}$$\n- Nilai hijau $G$ pada lokasi $R$ atau $B$ diinterpolasi dari 4 tetangga ortogonal (atas, bawah, kiri, kanan):\n  $$G = \\frac{G_{\\text{atas}} + G_{\\text{bawah}} + G_{\\text{kiri}} + G_{\\text{kanan}}}{4}$$",
+    "codeSnippet": "import numpy as np\n\n# 1. Simulasikan Pola Bayer RGGB 4x4 dari Citra Warna Hipotetis\n# Baris genap (y=0, 2): R, G, R, G ...\n# Baris ganjil (y=1, 3): G, B, G, B ...\nbayer_raw = np.array([\n    [220, 140, 210, 135],\n    [138,  40, 142,  45],\n    [225, 145, 230, 150],\n    [140,  50, 148,  55]\n], dtype=np.float32)\n\nH, W = bayer_raw.shape\nreconstructed_rgb = np.zeros((H, W, 3), dtype=np.float32)\n\n# 2. Rekonstruksi Bilinear Sederhana untuk Piksel Bagian Dalam (y=1, x=1 yang merupakan piksel Biru asli)\n# Pada lokasi (1, 1), sensor merekam B=40. Komponen G dan R diinterpolasi:\nb_val = bayer_raw[1, 1]\n# G diinterpolasi dari 4 tetangga ortogonal (atas, bawah, kiri, kanan)\ng_val = (bayer_raw[0, 1] + bayer_raw[2, 1] + bayer_raw[1, 0] + bayer_raw[1, 2]) / 4.0\n# R diinterpolasi dari 4 tetangga diagonal\nr_val = (bayer_raw[0, 0] + bayer_raw[0, 2] + bayer_raw[2, 0] + bayer_raw[2, 2]) / 4.0\n\nprint(\"--- Evaluasi Demosaicing Pola Bayer RGGB ---\")\nprint(f\"Piksel Sensor RAW di (1,1): Nilai Biru Asli = {b_val:.1f}\")\nprint(f\"Interpolasi Kanal Hijau (4-tetangga silang): G = {g_val:.2f}\")\nprint(f\"Interpolasi Kanal Merah (4-tetangga diagonal): R = {r_val:.2f}\")\nprint(f\"Vektor Warna RGB Terekonstruksi: [R={r_val:.1f}, G={g_val:.1f}, B={b_val:.1f}]\")",
+    "expectedOutput": "--- Evaluasi Demosaicing Pola Bayer RGGB ---\nPiksel Sensor RAW di (1,1): Nilai Biru Asli = 40.0\nInterpolasi Kanal Hijau (4-tetangga silang): G = 141.25\nInterpolasi Kanal Merah (4-tetangga diagonal): R = 221.25\nVektor Warna RGB Terekonstruksi: [R=221.2, G=141.2, B=40.0]",
+    "commonPitfalls": [
+      "Keliru mengidentifikasi urutan fase Bayer hardware (misal: sensor berfase BGGR atau GBRG diproses menggunakan pipeline RGGB, mengakibatkan *color inversion* ekstrem).",
+      "Penggunaan demosaicing bilinear sederhana pada tepi berfrekuensi tinggi (*sharp edges*), memicu artefak visual *zippering* dan *false color fringes*.",
+      "Memproses citra RAW sebelum mengurangkan tingkat hitam (*black level calibration*) dan mengoreksi piksel mati (*dead pixel correction*)."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+        "authors": [
+          "Richard Szeliski"
+        ],
+        "year": 2022,
+        "publisherOrVenue": "Springer",
+        "url": "https://szeliski.org/Book/",
+        "relevance": "Bab 10.3.1: Color filter arrays and demosaicing."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub4",
+    "title": "1.4. Ruang Warna RGB vs BGR (OpenCV Standard)",
+    "description": "Analisis historis dan teknis konvensi BGR pada OpenCV, perbedaan susunan kanal memori dengan RGB standar, serta konversi matematis.",
+    "content": "Salah satu sumber kesalahan paling umum dalam rekayasa visi komputer adalah inkonsistensi urutan kanal warna (*color channel ordering*) antara modul pemuatan citra OpenCV dan pustaka pemrosesan/visualisasi lainnya (seperti Matplotlib, PIL, PyTorch, dan TensorFlow).\n\n### 1. Asal-Usul Historis Konvensi BGR\nKetika Bradski dan tim Intel mengembangkan OpenCV pada tahun 1999–2000, perangkat keras video grafis PC dan format *frame grabber* kamera industri berbasis arsitektur x86 mengandalkan format Windows Bitmap (`.bmp`) dan standar chipset video tertentu yang menyimpan piksel dalam urutan *Blue-Green-Red* (BGR) di ruang memori *little-endian*. Konvensi ini dipertahankan oleh OpenCV hingga saat ini untuk menjaga kompatibilitas mundur (*backward compatibility*).\n\n### 2. Disparitas Visual: Efek Kanal Terbalik\nPiksel warna dengan representasi RGB $[R=255, G=0, B=0]$ (merah murni) jika diinterpretasikan oleh pembaca BGR akan diperlakukan sebagai $[B=255, G=0, R=0]$ (biru murni).\n\nKetika citra BGR yang dimuat via `cv2.imread()` langsung divisualisasikan menggunakan `plt.imshow()`, wajah manusia akan tampak memiliki warna kulit kebiru-biruan abnormal (*zombie skin effect*).\n\n### 3. Operasi Pembalikan Kanal\nKonversi dapat dilakukan secara instan tanpa alokasi memori berlebih melalui pembalikan irisan (*negative slicing*) array NumPy atau transformasi geometris sumbu:\n$$\\mathbf{I}_{\\text{RGB}} = \\mathbf{I}_{\\text{BGR}}[:, :, ::-1]$$",
+    "codeSnippet": "import numpy as np\n\n# 1. Buat citra BGR 1 piksel dengan warna Merah Oranye khas (R=255, G=80, B=20)\n# Dalam format OpenCV BGR, urutannya adalah [B, G, R]\npixel_bgr = np.array([[[20, 80, 255]]], dtype=np.uint8)\n\n# 2. Konversi BGR -> RGB menggunakan array slicing NumPy [..., ::-1]\npixel_rgb = pixel_bgr[:, :, ::-1]\n\n# 3. Bandingkan representasi matematis kedua array\nprint(\"--- Perbandingan Kanal Warna BGR vs RGB ---\")\nprint(\"Format BGR (OpenCV):\", pixel_bgr[0, 0].tolist(), \"-> Interpretasi: B=20, G=80, R=255\")\nprint(\"Format RGB (Standar):\", pixel_rgb[0, 0].tolist(), \"-> Interpretasi: R=255, G=80, B=20\")\n\n# 4. Validasi Ekuivalensi Memori\nassert pixel_bgr[0, 0, 0] == pixel_rgb[0, 0, 2], \"Kanal B pada BGR harus identik dengan kanal B pada RGB\"\nassert pixel_bgr[0, 0, 2] == pixel_rgb[0, 0, 0], \"Kanal R pada BGR harus identik dengan kanal R pada RGB\"\nprint(\"Status Verifikasi: Konversi kanal dua arah terbukti konsisten 100%.\")",
+    "expectedOutput": "--- Perbandingan Kanal Warna BGR vs RGB ---\nFormat BGR (OpenCV): [20, 80, 255] -> Interpretasi: B=20, G=80, R=255\nFormat RGB (Standar): [255, 80, 20] -> Interpretasi: R=255, G=80, B=20\nStatus Verifikasi: Konversi kanal dua arah terbukti konsisten 100%.",
+    "commonPitfalls": [
+      "Menyimpan citra RGB menggunakan `cv2.imwrite()` tanpa konversi balik ke BGR, menyebabkan berkas citra disk tersimpan dengan warna merah dan biru yang tertukar.",
+      "Mengasumsikan `np.ascontiguousarray()` otomatis terjadi saat melakukan pembalikan irisan `[::-1]`. Tensor non-contiguous dapat menimbulkan penurunan performa pada operasi GPU PyTorch.",
+      "Melatih model deep learning visi (ResNet, YOLO) dengan input BGR tetapi mengevaluasinya di tahap inferensi dengan citra RGB, menurunkan akurasi model secara drastis."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "OpenCV Documentation & Design Patterns",
+        "authors": [
+          "OpenCV Team"
+        ],
+        "year": 2024,
+        "publisherOrVenue": "OpenCV Foundation",
+        "url": "https://docs.opencv.org/",
+        "relevance": "Core API Reference: Color Conversions (COLOR_BGR2RGB and COLOR_RGB2BGR)."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub5",
+    "title": "1.5. Ruang Warna HSV/HSL: Pemisahan Kromatisitas dan Intensitas",
+    "description": "Model silinder warna HSV (Hue, Saturation, Value), formulasi analitis konversi RGB ke HSV, serta keunggulannya dalam segmentasi warna invarian iluminasi.",
+    "content": "Meskipun ruang warna RGB sangat sesuai dengan karakteristik perangkat keras penampil (*display hardware*), model ini memiliki kelemahan mendasar untuk analisis visi komputer: ketiga kanal $(R, G, B)$ memiliki korelasi tinggi terhadap variasi intensitas pencahayaan (*illumination*). Perubahan bayangan atau kecerahan lampu akan mengubah ketiga nilai $R, G,$ dan $B$ secara drastis.\n\n### 1. Struktur Silinder Ruang Warna HSV\nModel HSV (Smith, 1978) memisahkan informasi warna menjadi komponen kromatisitas murni dan intensitas kecerahan:\n- **Hue ($H \\in [0^\\circ, 360^\\circ)$)**: Panjang gelombang warna dominan (merah murni pada $0^\\circ$, hijau pada $120^\\circ$, biru pada $240^\\circ$).\n- **Saturation ($S \\in [0, 1]$)**: Kemurnian warna (kejenuhan). $S=0$ menunjukkan skala abu-abu netral, sedangkan $S=1$ adalah warna murni tersaturasi penuh.\n- **Value ($V \\in [0, 1]$)**: Intensitas kecerahan fotometrik ($V = \\max(R, G, B)$).\n\n### 2. Formulasi Konversi Matematis RGB ke HSV\nDiberikan nilai $R, G, B \\in [0, 1]$, tentukan $V_{\\max} = \\max(R, G, B)$ dan $V_{\\min} = \\min(R, G, B)$, serta rentang diferensial $\\Delta = V_{\\max} - V_{\\min}$.\n\nKalkulasi komponen:\n$$V = V_{\\max}$$\n\n$$S = \\begin{cases} 0 & \\text{jika } V_{\\max} = 0 \\\\ \\frac{\\Delta}{V_{\\max}} & \\text{jika } V_{\\max} > 0 \\end{cases}$$\n\n$$H = \\begin{cases} \n0^\\circ & \\text{jika } \\Delta = 0 \\\\\n60^\\circ \\times \\left(\\frac{G - B}{\\Delta} \\pmod 6\\right) & \\text{jika } V_{\\max} = R \\\\\n60^\\circ \\times \\left(\\frac{B - R}{\\Delta} + 2\\right) & \\text{jika } V_{\\max} = G \\\\\n60^\\circ \\times \\left(\\frac{R - G}{\\Delta} + 4\\right) & \\text{jika } V_{\\max} = B\n\\end{cases}$$\n\nDalam segmentasi objek visual (seperti deteksi rambu lalu lintas atau pelacakan bola), kita cukup mendefinisikan batas ambang (*thresholding*) pada rentang $H$ dan $S$ tertentu, sambil membiarkan rentang $V$ fleksibel lebar untuk mengabaikan bayangan.",
+    "codeSnippet": "import numpy as np\n\ndef rgb_to_hsv_pure(r: float, g: float, b: float) -> tuple:\n    '''Konversi nilai RGB normalisasi [0, 1] ke HSV (H dalam derajat 0-360, S dan V dalam 0-1).'''\n    v_max = max(r, g, b)\n    v_min = min(r, g, b)\n    delta = v_max - v_min\n    \n    # Value\n    v = v_max\n    \n    # Saturation\n    s = 0.0 if v_max == 0.0 else delta / v_max\n    \n    # Hue\n    if delta == 0.0:\n        h = 0.0\n    elif v_max == r:\n        h = 60.0 * (((g - b) / delta) % 6)\n    elif v_max == g:\n        h = 60.0 * (((b - r) / delta) + 2)\n    else:\n        h = 60.0 * (((r - g) / delta) + 4)\n        \n    return h, s, v\n\n# Evaluasi 3 sampel warna: Merah Murni, Kuning Terang, dan Merah di Bawah Bayangan Gelap\nsamples = [\n    (\"Merah Cerah\", (1.0, 0.0, 0.0)),\n    (\"Kuning Terang\", (1.0, 1.0, 0.0)),\n    (\"Merah Bayangan (Gelap)\", (0.4, 0.0, 0.0))\n]\n\nprint(\"--- Demonstrasi Konversi RGB ke HSV & Invariansi Iluminasi ---\")\nfor label, (r, g, b) in samples:\n    h, s, v = rgb_to_hsv_pure(r, g, b)\n    print(f\"{label:22s} | RGB: ({r:.1f}, {g:.1f}, {b:.1f}) -> H={h:5.1f}°, S={s:.2f}, V={v:.2f}\")\n\nprint(\"\\nObservasi Ilmiah: Perhatikan bahwa 'Merah Cerah' dan 'Merah Bayangan' memiliki Hue identik (0.0°)\")\nprint(\"dan Saturation identik (1.00), membuktikan ketahanan komponen warna terhadap perubahan intensitas V.\")",
+    "expectedOutput": "--- Demonstrasi Konversi RGB ke HSV & Invariansi Iluminasi ---\nMerah Cerah            | RGB: (1.0, 0.0, 0.0) -> H=  0.0°, S=1.00, V=1.00\nKuning Terang          | RGB: (1.0, 1.0, 0.0) -> H= 60.0°, S=1.00, V=1.00\nMerah Bayangan (Gelap) | RGB: (0.4, 0.0, 0.0) -> H=  0.0°, S=1.00, V=0.40\n\nObservasi Ilmiah: Perhatikan bahwa 'Merah Cerah' dan 'Merah Bayangan' memiliki Hue identik (0.0°)\ndan Saturation identik (1.00), membuktikan ketahanan komponen warna terhadap perubahan intensitas V.",
+    "commonPitfalls": [
+      "Di OpenCV, nilai Hue pada citra 8-bit dipetakan ke rentang $[0, 179]$ (bukan $[0, 359]$) agar muat dalam tipe data `uint8` ($360 / 2 = 180$). Lupa membagi dua rentang target menyebabkan kegagalan deteksi.",
+      "Warna merah melintasi diskontinuitas sudut $0^\\circ$ dan $360^\\circ$. Filter ambang batas merah memerlukan operasi logika OR antara dua rentang: misal $[0, 10]$ dan $[170, 180]$.",
+      "Nilai Hue menjadi tidak terdefinisi secara matematis (*singularity*) ketika Saturation bernilai 0 (kondisi hitam, putih, atau abu-abu murni)."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+        "authors": [
+          "Richard Szeliski"
+        ],
+        "year": 2022,
+        "publisherOrVenue": "Springer",
+        "url": "https://szeliski.org/Book/",
+        "relevance": "Bab 2.3.2: Color spaces (HSV and HSL representations)."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub6",
+    "title": "1.6. Ruang Warna CIELAB ($L^*a^*b^*$) untuk Keseragaman Persepsi",
+    "description": "Standar ruang warna perseptual CIE 1976 L*a*b*, non-linearitas persepsi visual manusia, dan metrik selisih warna Euclidean Delta E.",
+    "content": "Ruang warna RGB maupun HSV tidak bersifat *perceptually uniform*: jarak Euclidean matematis antara dua titik warna dalam ruang RGB tidak berkorelasi linier dengan persepsi perbedaan warna yang dirasakan oleh mata manusia.\n\n### 1. Ruang Warna Perseptual CIE $L^*a^*b^*$ (1976)\nKomisi Internasional Pencahayaan (CIE) merancang ruang warna $L^*a^*b^*$ yang dipetakan melalui ruang perantara CIE XYZ berdasarkan fungsi kepekaan sel kerucut mata (*tristimulus values*):\n- $L^*$ (**Lightness**): Persepsi kecerahan manusia, bernilai $0$ (hitam sempurna) hingga $100$ (putih difus sempurna).\n- $a^*$: Sumbu kromatisitas hijau (negatif) ke merah (positif).\n- $b^*$: Sumbu kromatisitas biru (negatif) ke kuning (positif).\n\nTransformasi dari nilai XYZ yang dinormalisasi terhadap titik putih acuan ($X_n, Y_n, Z_n$):\n$$L^* = 116 f(Y / Y_n) - 16$$\n$$a^* = 500 [f(X / X_n) - f(Y / Y_n)]$$\n$$b^* = 200 [f(Y / Y_n) - f(Z / Z_n)]$$\n\nFungsi non-linear $f(t)$ mengoreksi respons logaritmik mata manusia:\n$$f(t) = \\begin{cases} t^{1/3} & \\text{jika } t > \\left(\\frac{6}{29}\\right)^3 \\\\ \\frac{1}{3} \\left(\\frac{29}{6}\\right)^2 t + \\frac{4}{29} & \\text{lainnya} \\end{cases}$$\n\n### 2. Metrik Jarak Warna $\\Delta E^*_{ab}$\nKeunggulan utama CIELAB adalah keseragaman persepsinya: perbedaan warna total antara dua sampel $\\mathbf{C}_1$ dan $\\mathbf{C}_2$ dapat dihitung langsung melalui jarak Euclidean:\n\n$$\\Delta E^*_{ab} = \\sqrt{(L_1^* - L_2^*)^2 + (a_1^* - a_2^*)^2 + (b_1^* - b_2^*)^2}$$\n\nAmbangan empiris:\n- $\\Delta E^* < 1.0$: Perbedaan tidak dapat dideteksi oleh mata manusia normal (*Just Noticeable Difference* / JND).\n- $1.0 < \\Delta E^* < 2.0$: Perbedaan hanya dapat dideteksi melalui inspeksi visual teliti.\n- $\\Delta E^* > 3.5$: Perbedaan terlihat jelas oleh pengamat awam.",
+    "codeSnippet": "import numpy as np\n\ndef delta_e_cielab(lab1: np.ndarray, lab2: np.ndarray) -> float:\n    '''Menghitung jarak Euclidean Delta E 76 antara dua vektor warna CIELAB.'''\n    return float(np.sqrt(np.sum((lab1 - lab2) ** 2)))\n\n# Nilai CIELAB (L*, a*, b*) untuk 3 sampel warna\n# Sampel 1: Referensi Cat Biru Laut\ncolor_ref = np.array([50.0, -10.0, -35.0])\n# Sampel 2: Batch Pabrik A (Variasi sangat tipis)\ncolor_batch_a = np.array([50.8, -9.5, -34.7])\n# Sampel 3: Batch Pabrik B (Variasi nyata terlihat)\ncolor_batch_b = np.array([55.0, -5.0, -28.0])\n\nde_a = delta_e_cielab(color_ref, color_batch_a)\nde_b = delta_e_cielab(color_ref, color_batch_b)\n\nprint(\"--- Evaluasi Toleransi Warna Industri dengan CIELAB Delta E ---\")\nprint(f\"Referensi: L*={color_ref[0]}, a*={color_ref[1]}, b*={color_ref[2]}\")\nprint(f\"Batch A  : Delta E = {de_a:.2f} -> Status: {'Lolos Toleransi (Perbedaan Halus)' if de_a < 1.5 else 'Gagal'}\")\nprint(f\"Batch B  : Delta E = {de_b:.2f} -> Status: {'Lolos Toleransi' if de_b < 1.5 else 'Gagal (Perbedaan Nyata Melebihi Ambang)'}\")",
+    "expectedOutput": "--- Evaluasi Toleransi Warna Industri dengan CIELAB Delta E ---\nReferensi: L*=50.0, a*=-10.0, b*=-35.0\nBatch A  : Delta E = 0.99 -> Status: Lolos Toleransi (Perbedaan Halus)\nBatch B  : Delta E = 9.95 -> Status: Gagal (Perbedaan Nyata Melebihi Ambang)",
+    "commonPitfalls": [
+      "Mengasumsikan formula $\\Delta E^*_{ab}$ Euclidean (1976) sepenuhnya sempurna di seluruh spektrum warna; pada warna jenuh tinggi, CIE merumuskan metrik revisi yang lebih presisi seperti CIEDE2000 ($\\Delta E_{00}$).",
+      "Di OpenCV, nilai $L^*, a^*, b^*$ pada citra 8-bit dipetakan ulang: $L^* \\gets L^* \\times 255 / 100$, $a^* \\gets a^* + 128$, $b^* \\gets b^* + 128$ agar masuk dalam rentang byte $[0, 255]$.",
+      "Melakukan interpolasi linear langsung pada ruang non-linear tanpa memperhitungkan *color gamut clipping*."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Colorimetry (4th ed.)",
+        "authors": [
+          "Janos Schanda"
+        ],
+        "year": 2007,
+        "publisherOrVenue": "CIE & Wiley",
+        "url": "https://cie.co.at/",
+        "relevance": "CIE standard colorimetric systems, CIELAB 1976 formulas, and color difference metrics."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub7",
+    "title": "1.7. Ruang Warna YUV / YCbCr pada Kompresi Video",
+    "description": "Kompresi video dan penyiaran digital, pemisahan Luminance Y dan Chrominance Cb/Cr, serta teknik Chroma Subsampling (4:4:4, 4:2:2, 4:2:0).",
+    "content": "Sistem penglihatan manusia (*human visual system* / HVS) memiliki kepekaan resolusi spasial yang jauh lebih tajam terhadap perbedaan intensitas cahaya/luminansi dibandingkan perbedaan rona warna/krominansi. Prinsip biologis ini mendasari ruang warna YUV dan YCbCr yang digunakan dalam kompresi JPEG, WebP, MPEG, dan standar streaming H.264/H.265.\n\n### 1. Komponen YCbCr (Standar ITU-R BT.601)\n- $Y$ (**Luminance / Luma**): Informasi monokromatik abu-abu beresolusi penuh.\n- $Cb$ (**Chroma Blue-difference**): Deviasi warna biru terhadap luminansi ($B - Y$).\n- $Cr$ (**Chroma Red-difference**): Deviasi warna merah terhadap luminansi ($R - Y$).\n\nMatriks transformasi digital dari komponen $R, G, B \\in [0, 255]$:\n$$\\begin{bmatrix} Y \\\\ Cb \\\\ Cr \\end{bmatrix} = \\begin{bmatrix} 0.299 & 0.587 & 0.114 \\\\ -0.168736 & -0.331264 & 0.5 \\\\ 0.5 & -0.418688 & -0.081312 \\end{bmatrix} \\begin{bmatrix} R \\\\ G \\\\ B \\end{bmatrix} + \\begin{bmatrix} 0 \\\\ 128 \\\\ 128 \\end{bmatrix}$$\n\n### 2. Skema Chroma Subsampling (J:a:b)\nDengan mengalokasikan laju bit lebih sedikit untuk kanal $Cb$ dan $Cr$, penghematan *bandwidth* signifikan tercapai tanpa penurunan kualitas visual yang kentara:\n- **4:4:4 (Tanpa Subsampling)**: Setiap piksel memiliki data $Y, Cb, Cr$ lengkap (100% ukuran data).\n- **4:2:2**: Kanal kroma di-subsample $2\\times$ secara horizontal. Setiap 2 piksel horizontal berbagi 1 pasang sampel $Cb/Cr$ (penghematan $33.3\\%$ ukuran data).\n- **4:2:0 (Standar Web & Video)**: Kanal kroma di-subsample $2\\times$ secara horizontal dan $2\\times$ vertikal. Setiap blok $2 \\times 2$ (4 piksel) berbagi 1 pasang sampel $Cb/Cr$ tunggal (penghematan $50\\%$ ukuran data).",
+    "codeSnippet": "import numpy as np\n\n# 1. Definisikan Matriks Transformasi ITU-R BT.601 (RGB ke YCbCr)\nrgb_to_ycbcr_mat = np.array([\n    [ 0.299000,  0.587000,  0.114000],\n    [-0.168736, -0.331264,  0.500000],\n    [ 0.500000, -0.418688, -0.081312]\n], dtype=np.float64)\noffset = np.array([0.0, 128.0, 128.0], dtype=np.float64)\n\n# 2. Sampel Blok Piksel 2x2 Warna Hijau Daun (R=34, G=139, B=34)\nblock_rgb = np.tile(np.array([34.0, 139.0, 34.0]), (2, 2, 1))\n\n# Konversi setiap piksel ke YCbCr\nblock_ycbcr = np.zeros_like(block_rgb)\nfor r in range(2):\n    for c in range(2):\n        block_ycbcr[r, c] = rgb_to_ycbcr_mat @ block_rgb[r, c] + offset\n\n# 3. Simulasi Chroma Subsampling 4:2:0:\n# Y dipertahankan 4 sampel penuh (2x2), Cb dan Cr dirata-ratakan menjadi 1 sampel tunggal\nluma_y = block_ycbcr[:, :, 0]\nchroma_cb_avg = np.mean(block_ycbcr[:, :, 1])\nchroma_cr_avg = np.mean(block_ycbcr[:, :, 2])\n\nprint(\"--- Komputasi Ruang Warna YCbCr & Chroma Subsampling 4:2:0 ---\")\nprint(f\"Ukuran Data Asli (RGB 4:4:4) : 4 piksel x 3 kanal = 12 nilai\")\nprint(f\"Luma Y (4 piksel penuh):\\n{luma_y.round(1)}\")\nprint(f\"Chroma Subsampled (1 pasang) : Cb={chroma_cb_avg:.2f}, Cr={chroma_cr_avg:.2f}\")\nprint(f\"Ukuran Data Hasil (4:2:0)    : 4 nilai Y + 1 Cb + 1 Cr = 6 nilai (Kompresi 50%)\")",
+    "expectedOutput": "--- Komputasi Ruang Warna YCbCr & Chroma Subsampling 4:2:0 ---\nUkuran Data Asli (RGB 4:4:4) : 4 piksel x 3 kanal = 12 nilai\nLuma Y (4 piksel penuh):\n[[95.6 95.6]\n [95.6 95.6]]\nChroma Subsampled (1 pasang) : Cb=93.22, Cr=84.04\nUkuran Data Hasil (4:2:0)    : 4 nilai Y + 1 Cb + 1 Cr = 6 nilai (Kompresi 50%)",
+    "commonPitfalls": [
+      "Mengabaikan standar koefisien warna: ITU-R BT.601 digunakan untuk video SD/JPEG, sedangkan video HD/UHD menggunakan koefisien ITU-R BT.709 atau BT.2020 yang memiliki bobot berbeda.",
+      "Rentang dinamis YCbCr: terdapat varian *full-range* ($Y \\in [0, 255]$) dan *limited-range* / *TV broadcast* ($Y \\in [16, 235]$). Mengabaikan perbedaan ini memicu kontras pudar (*washed-out blacks*).",
+      "Melakukan downsampling kroma tanpa pra-filter anti-aliasing spasial, menghasilkan artefak tepi warna berundak."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Digital Video and HD: Algorithms and Interfaces (2nd ed.)",
+        "authors": [
+          "Charles Poynton"
+        ],
+        "year": 2012,
+        "publisherOrVenue": "Morgan Kaufmann",
+        "url": "https://poynton.ca/",
+        "relevance": "Bab 8: Y'CbCr and color spaces in video processing, ITU-R standards, and subsampling."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub8",
+    "title": "1.8. Kedalaman Bit (Bit Depth) & Format Gambar (PNG, JPEG, WebP)",
+    "description": "Kedalaman bit intensitas (8-bit, 16-bit, 32-bit float), format kontainer raster, kompresi lossless vs lossy, dan implikasinya pada analisis citra medis/ilmiah.",
+    "content": "Kedalaman bit (*bit depth*) menentukan jumlah bit biner yang dialokasikan untuk merepresentasikan tingkat intensitas setiap kanal warna pada suatu piksel.\n\n### 1. Taksonomi Kedalaman Bit\n- **8-bit per kanal (`uint8`)**: Standar komputasi konsumen dan web. Menghasilkan $2^8 = 256$ tingkat diskrit per kanal ($16.7$ juta kombinasi warna pada mode 24-bit TrueColor).\n- **16-bit per kanal (`uint16`)**: Standar pencitraan medis (DICOM, CT/MRI), astronomi, dan format RAW kamera profesional. Menyediakan $2^{16} = 65.536$ tingkat diskrit, krusial untuk mencegah distorsi kuantisasi pada proses manipulasi kontras agresif.\n- **32-bit float per kanal (`float32`)**: Standar pemrosesan deep learning dan komputasi grafis HDR (*High Dynamic Range*), merepresentasikan radiansi fisik dalam rentang tak terbatas $[-\\infty, +\\infty]$.\n\n### 2. Karakteristik Format Berkas Citra\n1. **JPEG (Joint Photographic Experts Group)**:\n   - Jenis: Kompresi *lossy* berbasis *Discrete Cosine Transform* (DCT) $8 \\times 8$ piksel.\n   - Kelebihan: Rasio kompresi sangat tinggi untuk citra fotografi alami.\n   - Kelemahan: Memunculkan *blocking artifacts* dan *ringing noise* di sekitar tepi tajam.\n2. **PNG (Portable Network Graphics)**:\n   - Jenis: Kompresi *lossless* berbasis filter prediksi spasial 2D dan algoritma DEFLATE (LZ77 + Huffman).\n   - Kelebihan: Preservasi data 100% tanpa distorsi, mendukung kanal transparansi alfa 8/16-bit.\n3. **WebP**:\n   - Jenis: Format modern kontemporer dari Google yang mendukung kompresi *lossy* (prediksi intra-frame VP8) maupun *lossless*, dengan efisiensi ukuran $25-34\\%$ lebih hemat dibanding JPEG/PNG.",
+    "codeSnippet": "import numpy as np\n\n# 1. Simulasikan Gradien Intensitas Halus pada 8-bit vs 16-bit\n# Panjang garis 100 piksel melintasi rentang intensitas relatif 0.0 hingga 1.0\nt = np.linspace(0.0, 1.0, 100)\n\n# Kuantisasi ke 8-bit [0, 255]\ngrad_8bit = np.round(t * 255).astype(np.uint8)\n# Kuantisasi ke 16-bit [0, 65535]\ngrad_16bit = np.round(t * 65535).astype(np.uint16)\n\n# 2. Hitung jumlah tingkat unik yang dapat dibedakan\nunique_8bit = len(np.unique(grad_8bit))\nunique_16bit = len(np.unique(grad_16bit))\n\n# 3. Hitung Galat Kuantisasi Rata-Rata (Mean Absolute Error terhadap nilai kontinu)\nmae_8bit = np.mean(np.abs(t - (grad_8bit / 255.0)))\nmae_16bit = np.mean(np.abs(t - (grad_16bit / 65535.0)))\n\nprint(\"--- Analisis Resolusi Kedalaman Bit (Bit Depth) ---\")\nprint(f\"Jumlah sampel pengujian      : 100 piksel\")\nprint(f\"Tingkat Unik 8-bit (uint8)   : {unique_8bit}/100 tingkat | MAE Kuantisasi: {mae_8bit:.6f}\")\nprint(f\"Tingkat Unik 16-bit (uint16) : {unique_16bit}/100 tingkat | MAE Kuantisasi: {mae_16bit:.9f}\")\nprint(f\"Rasio Presisi Kuantisasi 16-bit vs 8-bit: {mae_8bit / mae_16bit:.1f}x lebih presisi\")",
+    "expectedOutput": "--- Analisis Resolusi Kedalaman Bit (Bit Depth) ---\nJumlah sampel pengujian      : 100 piksel\nTingkat Unik 8-bit (uint8)   : 100/100 tingkat | MAE Kuantisasi: 0.000970\nTingkat Unik 16-bit (uint16) : 100/100 tingkat | MAE Kuantisasi: 0.000003773\nRasio Presisi Kuantisasi 16-bit vs 8-bit: 257.0x lebih presisi",
+    "commonPitfalls": [
+      "Menyimpan citra segmentasi masker (*ground truth masks*) dalam format JPEG, yang memicu nilai piksel kontinu artifisial di sekitar tepi akibat kuantisasi DCT lossy.",
+      "Mengonversi array `float32` dengan rentang $[0.0, 1.0]$ langsung ke `uint8` tanpa perkalian skala 255 (`(img * 255).astype(np.uint8)`), menyebabkan citra berubah menjadi hitam pekat (semua nilai $\\le 0.99$ dibulatkan ke 0).",
+      "Membuka citra 16-bit DICOM atau TIFF menggunakan flag default `cv2.imread()` yang secara otomatis memotong dan menguantisasi data ke 8-bit kecuali parameter `cv2.IMREAD_UNCHANGED` disertakan."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+        "authors": [
+          "Richard Szeliski"
+        ],
+        "year": 2022,
+        "publisherOrVenue": "Springer",
+        "url": "https://szeliski.org/Book/",
+        "relevance": "Bab 2.3.3: Quantization, bit depth, and image compression formats."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub9",
+    "title": "1.9. Kuantisasi Intensitas & Dynamic Range (HDR vs SDR)",
+    "description": "Rentang dinamis pencitraan (Dynamic Range), kontras rasio fisik, koreksi gamma non-linear, dan operator Tone Mapping Reinhard untuk tampilan HDR ke SDR.",
+    "content": "Rentang dinamis (*dynamic range*) dalam visi komputer adalah rasio antara intensitas radiansi tertinggi yang dapat diukur tanpa saturasi (*over-exposure*) dan intensitas terendah yang masih dapat dibedakan di atas ambang batas derau sensor (*noise floor*):\n\n$$\\text{DR} = \\frac{I_{\\max}}{I_{\\min}}, \\quad \\text{DR}_{\\text{dB}} = 20 \\log_{10} \\left(\\frac{I_{\\max}}{I_{\\min}}\\right)$$\n\n### 1. Keterbatasan Sensor SDR vs Realitas Fisik\nPemandangan dunia nyata sering kali memiliki rentang dinamis ekstrem melebihi $100.000:1$ (100 dB) — misal interior ruangan redup yang memiliki jendela menghadap matahari terik. Sensor standar SDR (*Standard Dynamic Range*) 8-bit hanya mampu menangkap rasio sekitar $255:1$ (~48 dB). Akibatnya terjadi pemotongan informasi (*clipping*): area gelap menjadi hitam pekat (*underexposed / crushed blacks*), sedangkan area terang menjadi putih jenuh (*blown highlights*).\n\n### 2. Koreksi Gamma Non-linear ($\\gamma$)\nMata manusia merespons cahaya secara non-linear mendekati fungsi daya. Standar sRGB menerapkan koreksi gamma $\\gamma \\approx 2.2$ untuk mendistribusikan bit kuantisasi lebih efisien ke area gelap:\n\n$$I_{\\text{display}} = I_{\\text{linear}}^{1 / \\gamma}$$\n\n### 3. Operator Pemetaan Nada (Reinhard Tone Mapping)\nUntuk menampilkan citra HDR (*High Dynamic Range*) berbasis radiansi fisik mengambang (`float32`) pada monitor SDR biasa, digunakan operator pemetaan nada (*tone mapping*). Operator global Reinhard (2002) memetakan rentang $[0, \\infty)$ ke $[0, 1)$ secara halus:\n\n$$I_{\\text{sdr}}(x, y) = \\frac{I_{\\text{hdr}}(x, y)}{1 + I_{\\text{hdr}}(x, y)}$$",
+    "codeSnippet": "import numpy as np\n\n# 1. Simulasikan Array Radiansi HDR (Float32) dengan Rentang Dinamis Ekstrem\n# Mengandung area gelap (0.01), normal (1.0), dan pantulan cahaya luar ruangan ekstrem (50.0)\nhdr_radiance = np.array([0.01, 0.1, 0.5, 1.0, 5.0, 20.0, 50.0], dtype=np.float32)\n\n# 2. Pemetaan Linier Naif dengan Clipping Sederhana [0, 1]\nsdr_naive = np.clip(hdr_radiance, 0.0, 1.0)\n\n# 3. Reinhard Global Tone Mapping Operator: L_sdr = L_hdr / (1 + L_hdr)\nsdr_reinhard = hdr_radiance / (1.0 + hdr_radiance)\n\n# 4. Aplikasi Koreksi Gamma sRGB (gamma = 2.2) pada Output Reinhard\nsdr_gamma = np.power(sdr_reinhard, 1.0 / 2.2)\n\nprint(\"--- Komparasi Operator Tone Mapping HDR ke SDR ---\")\nprint(f\"{'Radiansi Asli':15s} | {'Naif Clip':10s} | {'Reinhard':10s} | {'Reinhard + Gamma':16s}\")\nprint(\"-\" * 60)\nfor i in range(len(hdr_radiance)):\n    rad = hdr_radiance[i]\n    print(f\"{rad:15.2f} | {sdr_naive[i]:10.2f} | {sdr_reinhard[i]:10.3f} | {sdr_gamma[i]:16.3f}\")\n\nprint(\"\\nAnalisis: Perhatikan bahwa pada radiansi tinggi (20.0 dan 50.0), Reinhard mencegah saturasi total\")\nprint(\"dan mempertahankan gradasi relatif, tidak seperti clipping naif yang langsung jenuh di 1.00.\")",
+    "expectedOutput": "--- Komparasi Operator Tone Mapping HDR ke SDR ---\nRadiansi Asli   | Naif Clip  | Reinhard   | Reinhard + Gamma\n------------------------------------------------------------\n           0.01 |       0.01 |      0.010 |            0.123\n           0.10 |       0.10 |      0.091 |            0.336\n           0.50 |       0.50 |      0.333 |            0.607\n           1.00 |       1.00 |      0.500 |            0.730\n           5.00 |       1.00 |      0.833 |            0.920\n          20.00 |       1.00 |      0.952 |            0.978\n          50.00 |       1.00 |      0.980 |            0.991\n\nAnalisis: Perhatikan bahwa pada radiansi tinggi (20.0 dan 50.0), Reinhard mencegah saturasi total\ndan mempertahankan gradasi relatif, tidak seperti clipping naif yang langsung jenuh di 1.00.",
+    "commonPitfalls": [
+      "Menghitung rata-rata atau konvolusi pada citra yang telah melalui koreksi gamma (ruang non-linear), yang secara fisik melanggar hukum penambahan foton linier (*radiometric linearity*).",
+      "Melakukan tonemapping global sederhana pada pemandangan dengan gradien lokal tinggi, yang dapat menyebabkan hilangnya kontras mikro (*local contrast loss*); solusi modern menggunakan tonemapping lokal berbasis bilateral filter.",
+      "Mengabaikan kalibrasi eksposur saat menggabungkan eksposur multi-frame (*exposure bracketing*) pada rekonstruksi kurva respons kamera Debevec-Malik."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Photographic Tone Reproduction for Digital Images",
+        "authors": [
+          "Erik Reinhard",
+          "Michael Stark",
+          "Peter Shirley",
+          "James Ferwerda"
+        ],
+        "year": 2002,
+        "publisherOrVenue": "ACM Transactions on Graphics (SIGGRAPH)",
+        "url": "https://doi.org/10.1145/566654.566575",
+        "relevance": "Landasan operator tone mapping global dan lokal untuk kompresi rentang dinamis HDR."
+      }
+    ]
+  },
+  {
+    "id": "computer-vision-ch1-sub10",
+    "title": "1.10. Pemuatan, Manipulasi & Visualisasi Citra Menggunakan OpenCV & Matplotlib",
+    "description": "Praktikum terpadu pemuatan berkas, manipulasi irisan matriks NumPy, penyesuaian kontras berbasis lookup table, kalkulasi histogram, dan visualisasi kanvas.",
+    "content": "Dalam lingkungan rekayasa visi komputer modern, NumPy bertindak sebagai tulang punggung struktur data internal (*in-memory data structure*), menghubungkan antarmuka I/O OpenCV dengan ekosistem visualisasi dan deep learning.\n\n### 1. Operasi Irisan Array (Slicing) & Wilayah Minat (ROI)\nKarena citra adalah array NumPy 2D/3D, ekstraksi wilayah minat (*Region of Interest* / ROI) dapat dilakukan dengan kompleksitas waktu $\\mathcal{O}(1)$ melalui *view* memori tanpa menyalin data:\n$$\\mathbf{ROI} = \\mathbf{I}[y_1:y_2, x_1:x_2]$$\n\n### 2. Histogram Intensitas Citra\nHistogram intensitas adalah perkiraan empiris fungsi kepadatan probabilitas (PDF) tingkat keabuan citra. Untuk citra dengan $L$ tingkat keabuan ($L=256$ pada 8-bit), histogram $h(k)$ menghitung frekuensi kemunculan nilai intensitas $k$:\n$$h(k) = \\sum_{y=0}^{H-1} \\sum_{x=0}^{W-1} \\mathbb{I}(I(y, x) == k), \\quad k \\in [0, L-1]$$\n\n### 3. Penyesuaian Kontras & Kecerahan Linear\nManipulasi titik piksel linear dirumuskan sebagai:\n$$g(x, y) = \\operatorname{clip}(\\alpha \\cdot f(x, y) + \\beta, 0, 255)$$\nDi mana $\\alpha > 0$ mengendalikan kontras (penguatan gradien) dan $\\beta \\in [-255, 255]$ mengendalikan kecerahan (*brightness offset*).",
+    "codeSnippet": "import numpy as np\n\n# 1. Bangun Citra Uji Sintetis 8x8 Skala Abu-Abu dengan Objek di Tengah\nimage = np.full((8, 8), 50, dtype=np.uint8)\n# Beri objek terang di wilayah tengah (ROI: baris 2..5, kolom 2..5)\nimage[2:6, 2:6] = 200\n\n# 2. Ekstraksi Region of Interest (ROI)\nroi = image[2:6, 2:6]\n\n# 3. Transformasi Kontras dan Kecerahan Linear: g = clip(alpha * f + beta, 0, 255)\nalpha = 1.2   # Penguatan kontras\nbeta = 10.0   # Peningkatan kecerahan\nadjusted_image = np.clip(alpha * image.astype(np.float32) + beta, 0, 255).astype(np.uint8)\n\n# 4. Kalkulasi Histogram Intensitas 8-bit secara Manual Berbasis Frekuensi\nbins = np.zeros(256, dtype=np.int32)\nfor val in image.ravel():\n    bins[val] += 1\n\n# Temukan nilai intensitas yang benar-benar muncul dalam citra\nnon_zero_bins = [(k, int(bins[k])) for k in range(256) if bins[k] > 0]\n\nprint(\"--- Hasil Manipulasi Matriks Citra & Analisis Histogram ---\")\nprint(\"Dimensi Citra Asli :\", image.shape)\nprint(\"Dimensi ROI Terpotong :\", roi.shape)\nprint(\"Intensitas Asli Latar:\", image[0, 0], \"-> Setelah Transformasi:\", adjusted_image[0, 0])\nprint(\"Intensitas Asli Objek:\", image[3, 3], \"-> Setelah Transformasi:\", adjusted_image[3, 3])\nprint(\"Frekuensi Histogram Citra Asli (Nilai Intensitas, Jumlah Piksel):\", non_zero_bins)",
+    "expectedOutput": "--- Hasil Manipulasi Matriks Citra & Analisis Histogram ---\nDimensi Citra Asli : (8, 8)\nDimensi ROI Terpotong : (4, 4)\nIntensitas Asli Latar: 50 -> Setelah Transformasi: 70\nIntensitas Asli Objek: 200 -> Setelah Transformasi: 250\nFrekuensi Histogram Citra Asli (Nilai Intensitas, Jumlah Piksel): [(50, 48), (200, 16)]",
+    "commonPitfalls": [
+      "Memodifikasi array ROI hasil irisan (`roi = img[y1:y2, x1:x2]`) secara tidak sengaja mengubah citra asli karena irisan NumPy secara default mengembalikan *memory view*, bukan salinan independen (`.copy()`).",
+      "Melakukan operasi kontras langsung pada array `uint8` (`img * 1.2 + 10`), memicu kesalahan tipe float atau *silent rollover overflow*.",
+      "Menggunakan fungsi GUI interaktif (`cv2.imshow()`, `cv2.waitKey()`) dalam lingkungan server/backend tanpa layar tampilan (headless server / CI/CD pipeline), menyebabkan proses hang tanpa batas."
+    ],
+    "canonicalReferences": [
+      {
+        "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+        "authors": [
+          "Richard Szeliski"
+        ],
+        "year": 2022,
+        "publisherOrVenue": "Springer",
+        "url": "https://szeliski.org/Book/",
+        "relevance": "Bab 3.1: Point operators and pixel transformations."
+      }
+    ]
+  }
+]
