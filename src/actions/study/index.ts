@@ -9,3 +9,4 @@ export * from "./files";
 export * from "./backup";
 export * from "./notes";
 export * from "./projects";
+export * from "./module-file-import";

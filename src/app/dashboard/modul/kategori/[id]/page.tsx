@@ -23,7 +23,7 @@ import { isBookmarked, toggleBookmark } from "@/lib/bookmark-service";
 import { NotebookOutline } from "@/components/modul/notebook-outline";
 import { DocReaderLayout, DocSectionItem } from "@/components/modul/doc-reader-layout";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
-import { BulkImportModal } from "@/components/notes/bulk-import-modal";
+import { OwnerModuleImportModal } from "@/components/modul/owner-module-import-modal";
 import { ModuleDriveFile } from "@/types/module-drive";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
@@ -476,10 +476,11 @@ export default function DedicatedCategoryModulesPage({
           />
         )}
 
-        <BulkImportModal
+        <OwnerModuleImportModal
           isOpen={showImportModal}
           onClose={() => setShowImportModal(false)}
           onSuccess={() => loadData()}
+          defaultCategoryId={category?.id || categoryId}
         />
       </div>
     );
@@ -582,8 +583,8 @@ export default function DedicatedCategoryModulesPage({
                   type="button"
                   onClick={() => setShowImportModal(true)}
                   className="p-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
-                  title="Import Massal Catatan (Admin)"
-                  aria-label="Import Massal Catatan"
+                  title="Import Berkas Modul (Owner/Admin)"
+                  aria-label="Import Berkas Modul"
                 >
                   <Upload className="w-4 h-4" />
                 </button>
@@ -651,11 +652,12 @@ export default function DedicatedCategoryModulesPage({
         />
       )}
 
-      {/* ─── 5. Bulk Import Modal ─── */}
-      <BulkImportModal
+      {/* ─── 5. Owner Module Import Modal ─── */}
+      <OwnerModuleImportModal
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
         onSuccess={() => loadData()}
+        defaultCategoryId={category?.id || categoryId}
       />
     </PageContainer>
   );

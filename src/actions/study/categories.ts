@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
+import { isOwnerUser } from "@/lib/utils";
 import type { CategoryFormData } from "@/lib/validations";
 
 export async function sanitizeAndMigrateCategories() {
@@ -538,4 +539,107 @@ export async function deleteCategory(id: string) {
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/kategori");
   revalidatePath("/dashboard/modul");
+}
+
+/**
+ * Server Action Khusus System Owner:
+ * Menghapus topik/kategori secara definitif tanpa batasan user_id.
+ * Menyediakan opsi aman penanganan modul:
+ * - deleteLinkedModules: false (Default) => Modul terkait di-unassign (category_id = null) agar materi tidak hilang.
+ * - deleteLinkedModules: true => Modul terkait beserta bab-babnya dihapus permanen (cascade).
+ */
+export async function ownerDeleteCategoryAction(
+  categoryId: string,
+  options?: { deleteLinkedModules?: boolean }
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Silakan masuk ke akun Anda terlebih dahulu.");
+  }
+
+  const userEmail = (user.email || "").toLowerCase().trim();
+  if (!isOwnerUser(userEmail)) {
+    throw new Error("Akses ditolak: Hanya System Owner yang memiliki wewenang menghapus topik/kategori ini.");
+  }
+
+  const deleteLinked = options?.deleteLinkedModules === true;
+
+  // 1. Ambil daftar subkategori jika ada
+  const { data: childCats } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("parent_id", categoryId);
+
+  const childIds = (childCats || []).map((c) => c.id);
+  const allAffectedCatIds = [categoryId, ...childIds];
+
+  // 2. Tangani modul yang berada di kategori atau subkategori tersebut
+  const { data: linkedMods } = await supabase
+    .from("modules")
+    .select("id")
+    .in("category_id", allAffectedCatIds);
+
+  const linkedModIds = (linkedMods || []).map((m) => m.id);
+
+  if (deleteLinked) {
+    if (linkedModIds.length > 0) {
+      // Hapus bab-bab materi modul terlebih dahulu
+      await supabase.from("module_chapters").delete().in("module_id", linkedModIds);
+      // Hapus modul
+      await supabase.from("modules").delete().in("id", linkedModIds);
+    }
+  } else {
+    // Unassign: ubah category_id menjadi null
+    if (linkedModIds.length > 0) {
+      await supabase
+        .from("modules")
+        .update({ category_id: null })
+        .in("id", linkedModIds);
+    }
+  }
+
+  // 3. Tangani catatan (notes) terkait
+  if (deleteLinked) {
+    await supabase.from("notes").delete().in("category_id", allAffectedCatIds);
+  } else {
+    await supabase
+      .from("notes")
+      .update({ category_id: null })
+      .in("category_id", allAffectedCatIds);
+  }
+
+  // 4. Hapus subkategori (jika deleteLinked, atau lepas parent_id)
+  if (childIds.length > 0) {
+    if (deleteLinked) {
+      await supabase.from("categories").delete().in("id", childIds);
+    } else {
+      await supabase
+        .from("categories")
+        .update({ parent_id: null })
+        .in("id", childIds);
+    }
+  }
+
+  // 5. Hapus kategori utama
+  const { error } = await supabase
+    .from("categories")
+    .delete()
+    .eq("id", categoryId);
+
+  if (error) {
+    throw new Error(`Gagal menghapus kategori: ${error.message}`);
+  }
+
+  revalidatePath("/dashboard/kategori");
+  revalidatePath("/dashboard/modul");
+  return {
+    success: true,
+    categoryId,
+    affectedModulesCount: linkedModIds.length,
+    deletedModules: deleteLinked,
+  };
 }

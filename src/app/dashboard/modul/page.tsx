@@ -17,7 +17,7 @@ import { ModuleFilters } from "@/components/modul/module-filters";
 import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
 import { SmartModuleSorterModal } from "@/components/modul/smart-module-sorter-modal";
 import { ModuleFilePreviewerModal } from "@/components/modul/module-file-previewer-modal";
-import { BulkImportModal } from "@/components/notes/bulk-import-modal";
+import { OwnerModuleImportModal } from "@/components/modul/owner-module-import-modal";
 import { AiCategoryCard, AiCategoryItem } from "@/components/modul/ai-category-card";
 import { CategoryModuleGroup } from "@/components/modul/category-module-group";
 import { ModuleDriveFile } from "@/types/module-drive";
@@ -575,8 +575,8 @@ function ModulDanProjectContent() {
         />
       )}
 
-      {/* Bulk Import Modal */}
-      <BulkImportModal
+      {/* Owner Module Import Modal */}
+      <OwnerModuleImportModal
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
         onSuccess={() => loadData()}

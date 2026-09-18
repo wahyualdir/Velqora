@@ -2,17 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, FolderOpen, Trash2, FolderTree, Sparkles, ArrowRight, Search } from "lucide-react";
+import { Plus, FolderOpen, Trash2, FolderTree, Sparkles, ArrowRight, Search, Crown, AlertTriangle } from "lucide-react";
 import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
-import { Card, Skeleton, EmptyState, ConfirmDialog } from "@/components/ui/card";
+import { Card, Skeleton, EmptyState, ConfirmDialog, Modal } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageSection } from "@/components/ui/section";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
-import { getCategories, createCategory, deleteCategory } from "@/actions/study-actions";
+import { getCategories, createCategory, deleteCategory, ownerDeleteCategoryAction } from "@/actions/study-actions";
 import { TechIcon, TechIconPicker, TECH_ICONS, TechIconKey } from "@/components/ui/tech-icon";
 import { SYSTEM_PRIMARY_CATEGORIES, isCategoryInActiveScope } from "@/lib/constants";
+import { isOwnerUser } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 export default function KategoriPage() {
@@ -26,6 +28,8 @@ export default function KategoriPage() {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteCascade, setDeleteCascade] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const [search, setSearch] = useState("");
 
   async function loadCats() {
@@ -42,6 +46,19 @@ export default function KategoriPage() {
 
   useEffect(() => {
     loadCats();
+    async function checkOwner() {
+      try {
+        const localRole = typeof window !== "undefined" ? localStorage.getItem("user_role") : null;
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && (isOwnerUser(user.email) || localRole === "owner")) {
+          setIsOwner(true);
+        }
+      } catch (err) {
+        console.error("Owner check error:", err);
+      }
+    }
+    checkOwner();
   }, []);
 
   const parentOptions = categories
@@ -118,12 +135,24 @@ export default function KategoriPage() {
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await deleteCategory(deleteId);
-      toast.success("Kategori berhasil dihapus");
-      setCategories(categories.filter((c) => c.id !== deleteId));
+      if (isOwner) {
+        const res = await ownerDeleteCategoryAction(deleteId, {
+          deleteLinkedModules: deleteCascade,
+        });
+        toast.success(
+          res.deletedModules
+            ? `Topik berhasil dihapus beserta modul terkait.`
+            : `Topik berhasil dihapus. Modul terkait dialihkan ke Tanpa Kategori.`
+        );
+      } else {
+        await deleteCategory(deleteId);
+        toast.success("Kategori berhasil dihapus");
+      }
+      setCategories((prev) => prev.filter((c) => c.id !== deleteId && c.parent_id !== deleteId));
       setDeleteId(null);
+      setDeleteCascade(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || "Gagal menghapus kategori.");
     } finally {
       setDeleting(false);
     }
@@ -410,14 +439,89 @@ export default function KategoriPage() {
         </PageSection>
       )}
 
-      <ConfirmDialog
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-        loading={deleting}
-        title="Hapus Kategori?"
-        message="Materi dan modul yang menggunakan kategori ini akan di-set menjadi tanpa kategori."
-      />
+      {/* Dialog Hapus Kategori untuk Owner vs Pengguna Biasa */}
+      {isOwner ? (
+        <Modal
+          isOpen={!!deleteId}
+          onClose={() => {
+            setDeleteId(null);
+            setDeleteCascade(false);
+          }}
+          size="sm"
+          title={
+            <div className="flex items-center gap-2">
+              <Crown className="w-5 h-5 text-amber-500" />
+              <span className="font-bold text-text-primary text-sm">
+                Hapus Topik (Wewenang Owner)
+              </span>
+            </div>
+          }
+        >
+          <div className="space-y-4 pt-1">
+            <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
+              Apakah Anda yakin ingin menghapus topik{" "}
+              <strong className="text-text-primary">
+                &quot;{categories.find((c) => c.id === deleteId)?.name}&quot;
+              </strong>
+              ?
+            </p>
+
+            <div className="p-3 rounded-xl bg-surface-secondary border border-border space-y-2">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deleteCascade}
+                  onChange={(e) => setDeleteCascade(e.target.checked)}
+                  className="rounded text-red-600 focus:ring-red-500 w-4 h-4 mt-0.5"
+                />
+                <div className="text-xs">
+                  <span className="font-semibold text-text-primary block">
+                    Hapus permanen seluruh modul terkait (Cascade Delete)
+                  </span>
+                  <span className="text-text-tertiary">
+                    {deleteCascade
+                      ? "⚠️ Seluruh modul dan materi di dalam topik ini akan dihapus permanen!"
+                      : "Jika tidak dicentang (Aman), modul akan tetap disimpan dan dipindahkan ke 'Tanpa Kategori'."}
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setDeleteId(null);
+                  setDeleteCascade(false);
+                }}
+                disabled={deleting}
+              >
+                Batal
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={handleDelete}
+                loading={deleting}
+                leftIcon={<Trash2 className="w-4 h-4" />}
+              >
+                {deleting ? "Menghapus..." : "Hapus Topik"}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      ) : (
+        <ConfirmDialog
+          isOpen={!!deleteId}
+          onClose={() => setDeleteId(null)}
+          onConfirm={handleDelete}
+          loading={deleting}
+          title="Hapus Kategori?"
+          message="Materi dan modul yang menggunakan kategori ini akan di-set menjadi tanpa kategori."
+        />
+      )}
     </PageContainer>
   );
 }
