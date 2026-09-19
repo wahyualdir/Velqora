@@ -44,7 +44,7 @@ export function NotepadManifesto() {
             <div className="p-4 bg-[#FAF8F5] dark:bg-[#18181B] border-l-4 border-[#C2553A] space-y-2 text-xs">
               <div className="font-bold text-[#C2553A] dark:text-brand-400">PEDOMAN REKAYASA &amp; KURIKULUM VELQORA:</div>
               <div>• <strong>Computational Notebook Terisolasi:</strong> Setiap modul menyajikan formulasi matematis formal LaTeX KaTeX yang dipadukan dengan sel kode Python 3.12 terverifikasi.</div>
-              <div>• <strong>Penelusuran 102 Rujukan Pustaka Primer:</strong> Setiap klaim ilmiah dipetakan langsung ke bab dan halaman karya kanonikal (Hastie ESL, Judea Pearl Causality, John Tukey EDA).</div>
+              <div>• <strong>Penelusuran Rujukan Pustaka Primer Ber-DOI:</strong> Setiap materi dipetakan langsung ke bab dan halaman karya kanonikal (Hastie ESL, Judea Pearl Causality, John Tukey EDA, Goodfellow, Russell &amp; Norvig).</div>
               <div>• <strong>Evaluasi Berpikir Kritis 5 Tingkat:</strong> Latihan skenario analitis bertingkat dengan scaffolding petunjuk solusi anti-spoiler untuk melatih ketajaman intuisi.</div>
             </div>
 

@@ -55,6 +55,9 @@ export interface ModuleItem {
 
 export interface LandingStats {
   totalDisciplines: number;
+  verifiedDisciplines: number;
+  inProgressDisciplines: number;
+  underReviewDisciplines: number;
   totalChapters: number;
   totalSubchapters: number;
   totalSources: number;
@@ -206,6 +209,9 @@ export async function getLandingCurriculumData(): Promise<LandingCurriculumData>
   });
 
   const totalDisciplines = allDisciplines.length; // 28
+  const verifiedDisciplines = 7; // 7 terverifikasi penuh: Data Analyst, Data Science, Machine Learning, Deep Learning, AI Fundamentals, Computer Vision, NLP
+  const inProgressDisciplines = 1; // 1 dalam proses lanjut: Large Language Models (LLM) 72% (130/180 subbab)
+  const underReviewDisciplines = 20; // 20 draf silabus sedang dalam proses peninjauan ulang bertahap
   const totalChapters = allDisciplines.reduce((acc, d) => acc + d.chaptersCount, 0); // 373
   const totalSubchapters = allDisciplines.reduce((acc, d) => acc + d.subchaptersCount, 0); // 3,680
   const totalSources = 102; // Canonical Source Registry
@@ -277,6 +283,9 @@ export async function getLandingCurriculumData(): Promise<LandingCurriculumData>
 
   const stats: LandingStats = {
     totalDisciplines,
+    verifiedDisciplines,
+    inProgressDisciplines,
+    underReviewDisciplines,
     totalChapters,
     totalSubchapters,
     totalSources,

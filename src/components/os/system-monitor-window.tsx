@@ -25,7 +25,7 @@ export function SystemMonitorWindow({ stats }: SystemMonitorWindowProps) {
         <div className="lg:col-span-7 flex flex-col">
           <OSWindow
             title="SYSTEM_MONITOR.EXE"
-            statusText="TELEMETRY 100% HEALTHY"
+            statusText="AUDIT MONITOR · TRANSPARANSI KURIKULUM AKTIF"
             className="flex-1 shadow-md"
             bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100 flex flex-col justify-between"
           >
@@ -36,12 +36,12 @@ export function SystemMonitorWindow({ stats }: SystemMonitorWindowProps) {
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
-                Dibangun untuk kejelasan.
+                Dibangun untuk kejelasan &amp; kejujuran.
               </h2>
 
               <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 font-sans leading-relaxed">
-                Bukan sekadar video tutorial yang ditonton sambil lalu. Diktat kurikulum mandiri dengan 
-                standar evaluasi komprehensif, latihan terstruktur, dan pembongkaran studi kasus nyata.
+                Bukan sekadar video tutorial yang ditonton sambil lalu. Diktat kurikulum akademik dengan 
+                standar evaluasi komprehensif, latihan terstruktur, dan pembuktian matematis formal.
               </p>
 
               {/* 3 Stat Progress Cards */}
@@ -49,28 +49,28 @@ export function SystemMonitorWindow({ stats }: SystemMonitorWindowProps) {
                 {/* Stat 1: 28 Disiplin Akademik */}
                 <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">28 TOPIK DISIPLIN AKADEMIK (3.680 SUBBAB)</span>
-                    <span className="text-[#C2553A] dark:text-brand-400 font-bold">100% LENGKAP</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">AUDIT SUBSTANSIF: 7 DARI 28 TOPIK AKADEMIK</span>
+                    <span className="text-[#10B981] font-bold">7/28 TERVERIFIKASI PENUH (25.0%)</span>
                   </div>
                   <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
-                    <div className="h-full bg-[#C2553A] w-full" />
+                    <div className="h-full bg-[#10B981]" style={{ width: "25.0%" }} />
                   </div>
                   <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
-                    Mencakup AI Agent, Machine Learning, Data Science, Time Series, &amp; Sistem Rekayasa.
+                    7 topik (Data Analyst, Data Science, ML, Deep Learning, AI Fundamentals, Computer Vision, NLP) terverifikasi penuh (1.250 subbab), LLM mencapai 72% (130 subbab), 20 topik lainnya dalam peninjauan bertahap.
                   </div>
                 </div>
 
-                {/* Stat 2: 102 Sumber Rujukan Pustaka Primer */}
+                {/* Stat 2: Sumber Rujukan Pustaka Primer */}
                 <div className="p-3 bg-[#FAF8F5] dark:bg-[#18181B] border border-[#E5DDD5] dark:border-zinc-800 rounded-xs space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">102 SUMBER RUJUKAN PUSTAKA PRIMER</span>
-                    <span className="text-[#10B981] font-bold">TERVERIFIKASI DOI</span>
+                    <span className="font-bold text-[#1C1917] dark:text-zinc-100">SUMBER RUJUKAN PUSTAKA PRIMER KANONIKAL</span>
+                    <span className="text-[#10B981] font-bold">TERVERIFIKASI BER-DOI</span>
                   </div>
                   <div className="w-full h-2 bg-[#E5DDD5] dark:bg-zinc-800 rounded-none overflow-hidden">
                     <div className="h-full bg-[#10B981] w-full" />
                   </div>
                   <div className="text-[10px] text-[#7A756D] dark:text-zinc-400">
-                    Dipetakan ke karya Hastie (ESL), Judea Pearl (Causality), John Tukey (EDA), dan Goodfellow.
+                    Dipetakan ke karya Hastie (ESL), Judea Pearl (Causality), John Tukey (EDA), Goodfellow, Russell &amp; Norvig (AIMA), dan paper primer.
                   </div>
                 </div>
 

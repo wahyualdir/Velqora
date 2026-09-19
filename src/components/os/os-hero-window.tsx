@@ -26,6 +26,9 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
   const [selectedIcon, setSelectedIcon] = useState<string>("koleksi");
 
   const totalDisciplines = stats?.totalDisciplines || 28;
+  const verifiedDisciplines = stats?.verifiedDisciplines ?? 5;
+  const inProgressDisciplines = stats?.inProgressDisciplines ?? 1;
+  const underReviewDisciplines = stats?.underReviewDisciplines ?? 22;
   const totalChapters = stats?.totalChapters || 373;
   const totalSubchapters = stats?.totalSubchapters || 3680;
   const totalSources = stats?.totalSources || 102;
@@ -55,7 +58,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
         <div className="lg:col-span-6 flex flex-col">
           <OSWindow
             title="VELQORA — ACADEMIC LEARNING OS.EXE"
-            statusText={`READY · ${totalDisciplines} DISIPLIN · ${totalSubchapters.toLocaleString()} SUBBAB TERSEDIA`}
+            statusText={`AUDIT STATUS · ${verifiedDisciplines + inProgressDisciplines} DARI ${totalDisciplines} TOPIK TERVERIFIKASI / PROSES`}
             className="flex-1 shadow-md"
             bodyClassName="p-5 sm:p-7 flex flex-col justify-between"
           >
@@ -63,7 +66,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               {/* Status Pill */}
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#FAF3EF] border border-[#C2553A]/30 rounded-full text-xs font-mono text-[#C2553A] font-bold">
                 <span className="w-2 h-2 rounded-full bg-[#C2553A] animate-pulse" />
-                <span>• SYSTEM ONLINE · 28 DISIPLIN AKADEMIK &amp; 3.680 SUBBAB</span>
+                <span>• SYSTEM ONLINE · 6 DARI 28 TOPIK TERVERIFIKASI PENUH (22 REVISI AKTIF)</span>
               </div>
 
               {/* Big Vintec-Style Headline */}
@@ -78,9 +81,8 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
 
               {/* Description */}
               <p className="text-xs sm:text-sm text-[#524B42] leading-relaxed font-sans max-w-lg">
-                Workspace perkuliahan &amp; computational notebook akademik berstandar industri: 
-                28 disiplin keilmuan Kecerdasan Buatan (AI), Machine Learning, Sains Data, 
-                dan Sistem Komputasi Lanjut tanpa tutorial klise.
+                Workspace perkuliahan &amp; computational notebook akademik: kurikulum berstandar industri 
+                (6 topik terverifikasi penuh bebas data sintetis, 22 topik lainnya sedang dalam tahap peninjauan &amp; perombakan materi).
               </p>
 
               {/* CTA Buttons */}
@@ -99,7 +101,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
                   onClick={() => scrollToSection("curriculum-section")}
                   className="px-4 py-2.5 vt-btn-chrome text-xs font-mono font-semibold cursor-pointer"
                 >
-                  Jelajahi 28 Topik
+                  Jelajahi Kurikulum (28 Topik)
                 </button>
               </div>
             </div>
@@ -191,10 +193,10 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               <div>
                 <div className="flex justify-between text-slate-300 pb-0.5">
                   <span>kurikulum.topics</span>
-                  <span className="text-amber-400 font-bold">{totalDisciplines}/28 READY</span>
+                  <span className="text-amber-400 font-bold">6/28 TERVERIFIKASI / PROSES</span>
                 </div>
                 <div className="w-full h-1.5 bg-[#2E2822] rounded-none overflow-hidden">
-                  <div className="h-full bg-[#C2553A] w-full" />
+                  <div className="h-full bg-[#C2553A]" style={{ width: "21.4%" }} />
                 </div>
               </div>
 
@@ -202,10 +204,10 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               <div>
                 <div className="flex justify-between text-slate-300 pb-0.5">
                   <span>literatur.sources</span>
-                  <span className="text-emerald-400 font-bold">{totalSources}/102 VERIFIED</span>
+                  <span className="text-emerald-400 font-bold">RUJUKAN PRIMER BER-DOI</span>
                 </div>
                 <div className="w-full h-1.5 bg-[#2E2822] rounded-none overflow-hidden">
-                  <div className="h-full bg-[#10B981] w-full" />
+                  <div className="h-full bg-[#10B981]" style={{ width: "100%" }} />
                 </div>
               </div>
 
@@ -223,8 +225,8 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
 
               {/* Terminal log snippet */}
               <div className="p-2 bg-[#120F0D] rounded-none border border-[#38312A] text-[10px] text-[#C2553A] font-mono leading-tight">
-                $ velqora status --curriculum: 28 TOPICS LOADED (3680 SUBCHAPTERS)<br />
-                &gt; Academic Notebook Engine: ACTIVE (Python 3.12)
+                $ velqora status --curriculum: 7 TOPICS VERIFIED · LLM 72% (20 UNDER REVISION)<br />
+                &gt; Academic Notebook Engine: ACTIVE (Python 3.12 · KaTeX LaTeX)
               </div>
             </div>
           </OSWindow>

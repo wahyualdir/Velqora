@@ -17,7 +17,7 @@ export interface TopicStatusMeta {
   priorityOrder?: number;
 }
 
-// 5 Topik yang telah selesai ditulis ulang 100% dan lulus uji rujukan resmi
+// 7 Topik yang telah selesai ditulis ulang 100% dan lulus uji rujukan resmi
 const VERIFIED_PATTERNS = [
   "data-analyst",
   "dataanalyst",
@@ -31,14 +31,22 @@ const VERIFIED_PATTERNS = [
   "ai-fundamentals",
   "aifundamentals",
   "artificialintelligencefundamentals",
-  "05-ai-fundamentals"
+  "05-ai-fundamentals",
+  "computer-vision",
+  "computervision",
+  "08-computer-vision",
+  "natural-language-processing",
+  "naturallanguageprocessing",
+  "22-natural-language-processing"
 ];
 
-// Topik dalam pengembangan berikutnya (Batch 1: Computer Vision, NLP, LLM)
+// Topik dalam pengembangan berikutnya (Batch 1: LLM 72% / 130 Subbab)
 const IN_DEVELOPMENT_PATTERNS: string[] = [
-  "computer-vision",
-  "natural-language-processing",
-  "large-language-models"
+  "large-language-model",
+  "large-language-models",
+  "largelanguagemodel",
+  "largelanguagemodels",
+  "18-large-language-model"
 ];
 
 /**
@@ -125,7 +133,56 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     };
   }
 
-  // 3. Seluruh 23 Topik Cangkang Boilerplate Lainnya
+  // 3. Cek Computer Vision (Prioritas 6: Terverifikasi Penuh 18 Bab / 180 Subbab)
+  if (
+    norm.includes("computervision") ||
+    norm.includes("08computervision") ||
+    (norm.includes("computer") && norm.includes("vision"))
+  ) {
+    return {
+      status: "verified",
+      badgeLabel: "Terverifikasi 100%",
+      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (18 Bab / 180 Subbab).",
+      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis berbasis Szeliski, Forsyth & Ponce, dan literatur primer.",
+      isVerified: true,
+      priorityOrder: 6,
+    };
+  }
+
+  // 4. Cek Natural Language Processing (Prioritas 7: Terverifikasi Penuh 18 Bab / 180 Subbab)
+  if (
+    norm.includes("naturallanguageprocessing") ||
+    norm.includes("22naturallanguageprocessing") ||
+    (norm.includes("natural") && norm.includes("language") && norm.includes("processing")) ||
+    norm === "nlp"
+  ) {
+    return {
+      status: "verified",
+      badgeLabel: "Terverifikasi 100%",
+      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (18 Bab / 180 Subbab).",
+      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis berbasis Jurafsky & Martin (SLP3) dan literatur primer.",
+      isVerified: true,
+      priorityOrder: 7,
+    };
+  }
+
+  // 5. Cek Large Language Models (Prioritas 8: Progres 130 / 180 Subbab Terverifikasi)
+  if (
+    norm.includes("largelanguagemodel") ||
+    norm.includes("18largelanguagemodel") ||
+    norm === "llm"
+  ) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres 72%",
+      badgeDescription: "Kurikulum akademik tingkat lanjut: 13 Bab / 130 Subbab terverifikasi substantif.",
+      shortDescription: "Model Bahasa Besar (LLM) tingkat lanjut: 130 subbab terverifikasi (Alignment, Reasoning, RAG, Long-Context).",
+      isVerified: false,
+      priorityOrder: 8,
+    };
+  }
+
+  // 6. Seluruh 20 Topik Cangkang Draf Lainnya
   return {
     status: "under_review",
     badgeLabel: "Sedang Ditinjau Ulang",

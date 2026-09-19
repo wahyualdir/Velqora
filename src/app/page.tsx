@@ -16,7 +16,7 @@ import { getLandingCurriculumData } from "@/actions/study/landing";
 export const metadata: Metadata = {
   title: "Velqora — Academic Learning OS & Computational Notebook",
   description:
-    "Velqora Retro Learning OS: 28 disiplin keilmuan akademik Kecerdasan Buatan (AI), Machine Learning, Sains Data, dan Sistem Komputasi Lanjut dengan 3.680 subbab dan computational notebook Python 3.12 terverifikasi.",
+    "Velqora Retro Learning OS: Kurikulum akademik Kecerdasan Buatan (AI), Machine Learning, Sains Data, dan Sistem Komputasi Lanjut berbasis rujukan kanonikal ber-DOI (7 dari 28 topik terverifikasi penuh, LLM 72%, sisanya dalam proses revisi substantif).",
   keywords: [
     "Velqora",
     "Learning OS",
@@ -58,7 +58,7 @@ export default async function LandingPage() {
         {/* Notepad Window: README.TXT Manifesto */}
         <NotepadManifesto />
 
-        {/* Explorer Window: C:\VELQORA\CURRICULUM_EXPLORER (28 Disciplines, 4 Clusters, 3.680 Subchapters) */}
+        {/* Explorer Window: C:\VELQORA\CURRICULUM_EXPLORER (28 Disiplin Akademik, 7 Terverifikasi, 1 Proses Lanjut [LLM]) */}
         <CurriculumExplorer 
           disciplines={curriculumData.allDisciplines}
           clusters={curriculumData.clusters}

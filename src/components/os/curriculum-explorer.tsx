@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { AcademicDisciplineItem, DisciplineCluster } from "@/actions/study/landing";
+import { getTopicStatus } from "@/lib/curriculum/status";
 
 interface CurriculumExplorerProps {
   disciplines?: AcademicDisciplineItem[];
@@ -90,7 +91,7 @@ export function CurriculumExplorer({
       <OSWindow
         title="C:\VELQORA\CURRICULUM_EXPLORER"
         icon={<Folder className="w-4 h-4 text-amber-200" />}
-        statusText={`28 DISIPLIN AKADEMIK | 373 BAB | 3.680 SUBBAB | My Computer`}
+        statusText={`28 DISIPLIN AKADEMIK (7 TERVERIFIKASI, 1 PROSES LANJUT, 20 DALAM REVISI) | My Computer`}
         className="shadow-md"
         bodyClassName="p-4 sm:p-6 bg-[#FFFFFF] dark:bg-[#141416] text-[#1C1917] dark:text-zinc-100"
       >
@@ -99,7 +100,7 @@ export function CurriculumExplorer({
           <span className="text-[#6B6560] dark:text-zinc-400 font-bold">Address</span>
           <div className="flex-1 px-3 py-1 bg-[#FAF8F5] dark:bg-[#1a1a1e] border border-[#D6CEC4] dark:border-zinc-700 text-[#1C1917] dark:text-zinc-200 font-bold flex items-center justify-between">
             <span>C:\Velqora\Curriculum_Explorer\</span>
-            <span className="text-[10px] text-[#A89F91] dark:text-zinc-500">28 DISIPLIN TERSTRUKTUR</span>
+            <span className="text-[10px] text-[#A89F91] dark:text-zinc-500">7 TERVERIFIKASI · 1 PROSES LANJUT (LLM) · 20 REVISI</span>
           </div>
           <button
             type="button"
@@ -114,14 +115,15 @@ export function CurriculumExplorer({
         <div className="space-y-2 mb-6 font-mono">
           <div className="text-xs text-[#C2553A] font-bold tracking-wider uppercase flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#C2553A] animate-pulse" />
-            <span>02 — KURIKULUM &amp; MATERI TERSTANDARISASI · 28 DISIPLIN AKADEMIK</span>
+            <span>02 — KURIKULUM &amp; MATERI AKADEMIK · 7 DARI 28 TOPIK TERVERIFIKASI PENUH (1.250 SUBBAB)</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold font-sans text-[#1C1917] dark:text-zinc-100 tracking-tight">
             Kurikulum Modern Berstandar Industri.
           </h2>
           <p className="text-xs sm:text-sm text-[#524B42] dark:text-zinc-400 font-sans max-w-3xl leading-relaxed">
             Mencakup materi mutakhir Kecerdasan Buatan (AI), Machine Learning, Deep Learning, Sains Data, 
-            hingga Rekayasa Perangkat Lunak. Terbagi menjadi 4 cluster keilmuan dengan total 373 bab dan 3.680 subbab.
+            Computer Vision, NLP, hingga Model Bahasa Besar (LLM). 7 dari 28 disiplin terverifikasi penuh bebas data sintetis, 
+            LLM mencapai 72% (130 subbab), dan 20 topik lainnya dalam tahap perombakan materi bertahap.
           </p>
         </div>
 
@@ -170,12 +172,12 @@ export function CurriculumExplorer({
             }}
             className="px-5 py-2.5 vt-btn-terracotta text-xs font-mono font-bold flex items-center gap-1.5 shadow-sm cursor-pointer"
           >
-            <span>Lihat semua 28 disiplin &amp; 3.680 subbab</span>
+            <span>Lihat status seluruh 28 disiplin</span>
             <span>▸</span>
           </button>
 
           <span className="text-xs font-mono text-[#7A756D] dark:text-zinc-400">
-            Terhubung langsung dengan database akademik dan computational notebook reader
+            Terhubung langsung dengan database akademik dan status audit rujukan kanonikal
           </span>
         </div>
       </OSWindow>
@@ -188,7 +190,7 @@ export function CurriculumExplorer({
             <div className="vt-titlebar px-3 py-1.5 flex items-center justify-between select-none">
               <span className="font-mono text-xs font-bold text-white uppercase flex items-center gap-2">
                 <Folder className="w-3.5 h-3.5" />
-                <span>DAFTAR LENGKAP 28 KURIKULUM &amp; MATERI AKADEMIK VELQORA</span>
+                <span>DAFTAR 28 KURIKULUM AKADEMIK VELQORA (STATUS AUDIT TRANSPARAN)</span>
               </span>
               <button
                 type="button"
@@ -205,7 +207,7 @@ export function CurriculumExplorer({
               <div className="space-y-2 pb-2 border-b border-[#E5DDD5] dark:border-zinc-800">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="text-xs text-[#C2553A] font-bold">
-                    KURIKULUM AKADEMIK RESMI VELQORA (28 DISIPLIN)
+                    KURIKULUM AKADEMIK VELQORA (6 TERVERIFIKASI / ONGOING, 22 DALAM REVISI)
                   </div>
                   <span className="text-[11px] text-[#7A756D] dark:text-zinc-400">
                     {filteredDisciplines.length} dari {effectiveDisciplines.length} disiplin ditemukan
@@ -286,43 +288,55 @@ export function CurriculumExplorer({
 
               {/* Disciplines Table / List */}
               <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-                {filteredDisciplines.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-3 bg-[#FAF8F5] dark:bg-zinc-900/60 border border-[#E5DDD5] dark:border-zinc-800 rounded-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F5EFEB] dark:hover:bg-zinc-800/80 transition-colors"
-                  >
-                    <div className="space-y-1 max-w-xl">
-                      <div className="flex items-center gap-2">
-                        <span className="px-1.5 py-0.5 rounded-xs bg-[#E5DDD5] dark:bg-zinc-800 text-[#1C1917] dark:text-zinc-200 text-[10px] font-bold">
-                          {item.code}
-                        </span>
-                        <h4 className="font-bold font-sans text-xs text-[#1C1917] dark:text-zinc-100">
-                          {item.title}
-                        </h4>
-                        <span className="text-[10px] text-zinc-500">
-                          ({item.totalCredits} SKS · {item.degreeLevel})
-                        </span>
+                {filteredDisciplines.map((item) => {
+                  const topicStatus = getTopicStatus(item.slug);
+                  return (
+                    <div
+                      key={item.id}
+                      className="p-3 bg-[#FAF8F5] dark:bg-zinc-900/60 border border-[#E5DDD5] dark:border-zinc-800 rounded-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F5EFEB] dark:hover:bg-zinc-800/80 transition-colors"
+                    >
+                      <div className="space-y-1 max-w-xl">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-1.5 py-0.5 rounded-xs bg-[#E5DDD5] dark:bg-zinc-800 text-[#1C1917] dark:text-zinc-200 text-[10px] font-bold">
+                            {item.code}
+                          </span>
+                          <h4 className="font-bold font-sans text-xs text-[#1C1917] dark:text-zinc-100">
+                            {item.title}
+                          </h4>
+                          <span className={`px-1.5 py-0.2 rounded-xs text-[9px] font-bold border ${
+                            topicStatus.status === "verified"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                              : topicStatus.status === "in_development"
+                              ? "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300 dark:border-amber-800"
+                              : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700"
+                          }`}>
+                            {topicStatus.badgeLabel}
+                          </span>
+                          <span className="text-[10px] text-zinc-500">
+                            ({item.totalCredits} SKS · {item.degreeLevel})
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#524B42] dark:text-zinc-400 font-sans line-clamp-1">
+                          {item.description}
+                        </p>
+                        <div className="text-[10px] text-zinc-500">
+                          {item.chaptersCount} Bab · {item.subchaptersCount} Subbab · Target: {item.targetRole}
+                        </div>
                       </div>
-                      <p className="text-[11px] text-[#524B42] dark:text-zinc-400 font-sans line-clamp-1">
-                        {item.description}
-                      </p>
-                      <div className="text-[10px] text-zinc-500">
-                        {item.chaptersCount} Bab · {item.subchaptersCount} Subbab · Target: {item.targetRole}
-                      </div>
-                    </div>
 
-                    <div className="shrink-0 flex items-center gap-2">
-                      <Link
-                        href={`/dashboard/modul/kategori/${item.slug}`}
-                        onClick={() => setShowAllModal(false)}
-                        className="px-3 py-1.5 vt-btn-terracotta text-[11px] font-bold flex items-center gap-1"
-                      >
-                        <span>Buka di Reader</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </Link>
+                      <div className="shrink-0 flex items-center gap-2">
+                        <Link
+                          href={`/dashboard/modul/kategori/${item.slug}`}
+                          onClick={() => setShowAllModal(false)}
+                          className="px-3 py-1.5 vt-btn-terracotta text-[11px] font-bold flex items-center gap-1"
+                        >
+                          <span>Buka di Reader</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {filteredDisciplines.length === 0 && (
                   <div className="text-center py-8 text-zinc-500 text-xs">
@@ -334,7 +348,7 @@ export function CurriculumExplorer({
               {/* Modal Footer */}
               <div className="pt-3 border-t border-[#E5DDD5] dark:border-zinc-800 flex items-center justify-between">
                 <span className="text-[11px] text-[#7A756D] dark:text-zinc-400">
-                  Total Kurikulum: 28 Topik Terverifikasi (3.680 Subbab)
+                  Total Kurikulum: 28 Topik (7 Terverifikasi Penuh, 1 Proses Lanjut [LLM], 20 Dalam Revisi)
                 </span>
                 <button
                   type="button"
