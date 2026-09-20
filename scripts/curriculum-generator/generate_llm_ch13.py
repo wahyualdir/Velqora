@@ -209,8 +209,11 @@ Misteri ini dipecahkan oleh Guangxuan Xiao et al. (MIT, Meta AI, Carnegie Mellon
 > **"Efficient Streaming Language Models with Attention Sinks"**
 > (Guangxuan Xiao, Yuandong Tian, Beidi Chen, Song Han, Mike Lewis, 2024, International Conference on Learning Representations / ICLR 2024 Spotlight).
 
-### Kutipan Verbatim Inti (Section 3 'StreamingLLM: Streaming LLM with Attention Sinks', Halaman 4–5):
-> *"We discover attention sinks: LLMs dedicate an unexpectedly large amount of attention score to the initial tokens, regardless of their relevance to the language modeling task. Keeping only the initial tokens (as few as 4 attention sink tokens) alongside the recent tokens in the KV cache fully recovers the performance of window attention, enabling LLMs to generalize to infinite sequence lengths (4M+ tokens) without fine-tuning."*
+### Kutipan Verbatim Inti (Xiao et al. 2024, Abstrak):
+> *"We observe an interesting phenomenon, namely attention sink, that keeping the KV of initial tokens will largely recover the performance of window attention."*
+
+Kutipan kedua mengenai mekanisme StreamingLLM dan 4 token awal (Xiao et al. 2024, Section 1 'Introduction', Halaman 2):
+> *"Therefore, StreamingLLM simply keeps the attention sink tokens' KV (with just 4 initial tokens sufficing) together with the sliding window's KV to anchor the attention computation and stabilize the model's performance. With StreamingLLM, models including Llama-2-[7, 13, 70]B, MPT-[7, 30]B, Falcon-[7, 40]B, and Pythia-[2.9,6.9,12]B can reliably model 4 million tokens, and potentially even more."*
 
 ### Mengapa Attention Sinks Terjadi?
 Operasi Softmax pada self-attention mengharuskan jumlah total bobot atensi bernilai tepat satu:

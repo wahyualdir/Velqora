@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { parseMarkdownToModuleStructure } from "../module-file-import";
+import { parseMarkdownToModuleStructure } from "@/lib/import/module-parser";
 
 describe("Module File Import & Parsing Engine (Owner Specific)", () => {
   it("should extract title, description, and chapters from standard markdown document", () => {
