@@ -6,6 +6,7 @@ import { aiFundamentalsCurriculum } from "../../src/lib/curriculum/topics/05-ai-
 import { computerVisionCurriculum } from "../../src/lib/curriculum/topics/08-computer-vision";
 import { naturalLanguageProcessingCurriculum } from "../../src/lib/curriculum/topics/22-natural-language-processing";
 import { largeLanguageModelCurriculum } from "../../src/lib/curriculum/topics/18-large-language-model";
+import { vectorDatabaseRetrievalCurriculum } from "../../src/lib/curriculum/topics/28-vector-database-retrieval";
 
 const list = [
   { name: "Data Analyst", curr: dataAnalystCurriculum, expectedUserCh: 10, expectedUserSub: 100, fullTargetSub: 100 },
@@ -15,7 +16,8 @@ const list = [
   { name: "AI Fundamentals", curr: aiFundamentalsCurriculum, expectedUserCh: 10, expectedUserSub: 100, fullTargetSub: 100 },
   { name: "Computer Vision", curr: computerVisionCurriculum, expectedUserCh: 18, expectedUserSub: 180, fullTargetSub: 180 },
   { name: "Natural Language Processing", curr: naturalLanguageProcessingCurriculum, expectedUserCh: 18, expectedUserSub: 180, fullTargetSub: 180 },
-  { name: "Large Language Models (Topik 18)", curr: largeLanguageModelCurriculum, expectedUserCh: 18, expectedUserSub: 180, fullTargetSub: 180 }
+  { name: "Large Language Models (Topik 18)", curr: largeLanguageModelCurriculum, expectedUserCh: 18, expectedUserSub: 180, fullTargetSub: 180 },
+  { name: "Vector Database & RAG (Topik 28)", curr: vectorDatabaseRetrievalCurriculum, expectedUserCh: 15, expectedUserSub: 150, fullTargetSub: 150 }
 ];
 
 console.log("=== AUDIT VERIFIKASI AKTUAL DATA KURIKULUM .TS ===");
