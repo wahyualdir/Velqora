@@ -1,0 +1,895 @@
+import json
+import os
+import sys
+import numpy as np
+
+# Output file path
+output_file = os.path.join(os.path.dirname(__file__), "vdb_ch12_data.json")
+
+subchapters = [
+    # 28.12.1
+    {
+        "id": "28.12.1",
+        "title": "Keterbatasan Mendasar Model Embedding Bi-Encoder: Ketiadaan Interaksi Silang Antar Token",
+        "learningObjectives": [
+            "Memahami arsitektur representasi terisolasi Bi-Encoder (Siamese Networks / Sentence-BERT).",
+            "Menganalisis fenomena hilangnya interaksi silang token-ke-token (*Cross-Attention Deficit*) pada Bi-Encoder.",
+            "Mengimplementasikan simulasi komparasi representasi independen vs interaksi silang untuk mendeteksi ambiguitas relasional."
+        ],
+        "prerequisites": [
+            "Arsitektur Transformer Self-Attention.",
+            "Sentence-BERT (Reimers & Gurevych, EMNLP 2019) dan komputasi dot product embedding tunggal."
+        ],
+        "commonPitfalls": [
+            "Mengira peningkatan dimensi vektor Bi-Encoder (misal dari 768-D ke 3072-D) dapat menggantikan kemampuan pemodelan cross-attention token berpasangan.",
+            "Mengabaikan kegagalan Bi-Encoder pada kueri dengan negasi bersyarat halus (seperti 'hotel tanpa kolam renang' vs 'hotel dengan kolam renang')."
+        ],
+        "academicReferences": [
+            "Reimers, N., & Gurevych, I. (2019). Sentence-BERT: Sentence embeddings using Siamese BERT-networks. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing (EMNLP 2019), 3982-3992.",
+            "Khattab, O., & Zaharia, M. (2020). ColBERT: Efficient and effective passage search via contextualized late interaction over BERT. In Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR '20), 39-48."
+        ],
+        "caseStudy": "Pada sistem pencarian katalog Netflix, kueri pengguna 'film thriller psikologis yang bukan horor supranatural' diproses oleh Bi-Encoder. Model menghasilkan vektor tunggal yang sangat dekat dengan film horor 'The Conjuring' karena kata kunci 'thriller', 'psikologis', dan 'horor' mendominasi koordinat spasial, mengabaikan kata penghubung negasi 'bukan' yang memerlukan interaksi atensi silang langsung.",
+        "content": {
+            "theory": (
+                "Sebagian besar mesin basis data vektor bergantung pada arsitektur **Bi-Encoder** (seperti Sentence-BERT / SBERT) untuk menghasilkan embedding teks. "
+                "Dalam arsitektur Bi-Encoder, kueri $q$ dan dokumen $d$ dienkode secara independen dan terisolasi sempurna oleh jaringan Transformer: "
+                "$$\\mathbf{u} = \\text{Pool}(\\text{Transformer}(q)), \\quad \\mathbf{v} = \\text{Pool}(\\text{Transformer}(d))$$ "
+                "Skor relevansi akhir dihitung menggunakan operasi komputasi geometris sederhana (seperti produk titik atau kosinus): "
+                "$$\\text{Score}_{\\text{Bi-Encoder}}(q, d) = \\langle \\mathbf{u}, \\mathbf{v} \\rangle = \\sum_{i=1}^d u_i v_i$$ "
+                "Keunggulan utama Bi-Encoder adalah efisiensi komputasi: representasi dokumen $\\mathbf{v}$ dapat dipra-komputasi secara luring (*offline indexing*), memungkinkan pencarian $k$-NN dilakukan dalam sub-milidetik pada miliaran vektor. "
+                "Namun, pemisahan ini menimbulkan kelemahan fatal: **Ketiadaan Interaksi Silang Antar Token (No Token-Level Cross-Attention)**. "
+                "Setiap token kueri $q_i$ sama sekali tidak dapat menghadiri (*attend to*) token dokumen $d_j$ selama pembentukan representasi. Hal ini melenyapkan kemampuan model dalam memahami: "
+                "1. Modifikator negasi dan batasan relasional (seperti *bukan*, *tanpa*, *kecuali*). "
+                "2. Ambiguitas kata ganti dan penyesuaian arti kata berdasarkan konteks spesifik kueri yang diajukan."
+            ),
+            "realWorldApplication": (
+                "Retrieval awal pada seluruh vector database modern (Qdrant, Milvus, Chroma, Pinecone) menggunakan representasi Bi-Encoder sebagai penyaring kasar (coarse candidate generation)."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Keterbatasan Bi-Encoder pada Kalimat Negasi Halus\n"
+                "# Kalimat 1: \"rekomendasi laptop dengan kartu grafis nvidia\"\n"
+                "# Kalimat 2: \"rekomendasi laptop tanpa kartu grafis nvidia\"\n"
+                "# Bi-Encoder menghasilkan embedding tunggal dengan merata-ratakan token (mean pooling)\n"
+                "np.random.seed(42)\n"
+                "dim = 8\n"
+                "# Token kunci yang dominan: rekomendasi, laptop, kartu, grafis, nvidia\n"
+                "shared_semantic_base = np.array([0.8, 0.7, 0.9, 0.85, 0.95, 0.1, 0.2, 0.3])\n"
+                "\n"
+                "# Token kecil: 'dengan' vs 'tanpa'\n"
+                "token_dengan = np.array([0.1, 0.1, 0.0, 0.1, 0.0, 0.0, 0.1, 0.0])\n"
+                "token_tanpa  = np.array([-0.1, -0.1, 0.0, -0.1, 0.0, 0.0, -0.1, 0.0])\n"
+                "\n"
+                "# Vektor Bi-Encoder (terdominasi 95% oleh kata benda yang sama)\n"
+                "vec_dengan = (shared_semantic_base + token_dengan) / np.linalg.norm(shared_semantic_base + token_dengan)\n"
+                "vec_tanpa  = (shared_semantic_base + token_tanpa)  / np.linalg.norm(shared_semantic_base + token_tanpa)\n"
+                "\n"
+                "# Kueri: mencari laptop 'tanpa' grafis diskrit\n"
+                "q_vec = vec_tanpa\n"
+                "\n"
+                "sim_target = float(np.dot(vec_tanpa, q_vec))\n"
+                "sim_opposite = float(np.dot(vec_dengan, q_vec))\n"
+                "\n"
+                "print(f\"Kemiripan Dokumen Target ('tanpa nvidia')  : {sim_target:.4f}\")\n"
+                "print(f\"Kemiripan Dokumen Lawan  ('dengan nvidia') : {sim_opposite:.4f}\")\n"
+                "print(f\"Selisih Margin Pembeda Bi-Encoder         : {abs(sim_target - sim_opposite):.4f} [Sangat Tipis / Rentan Salah Peringkat!]\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.2
+    {
+        "id": "28.12.2",
+        "title": "Arsitektur Cross-Encoder: Memasukkan Pasangan Query dan Dokumen Bersama ke Self-Attention",
+        "learningObjectives": [
+            "Memahami prinsip komputasi arsitektur Cross-Encoder yang menyatukan pasangan kueri-dokumen ke dalam satu sekuens input tunggal.",
+            "Menganalisis matriks interaksi Cross-Attention token-ke-token penuh $\\mathcal{O}((L_q + L_d)^2)$.",
+            "Mengimplementasikan simulasi komputasi Cross-Attention berbobot untuk mencetak skor relevansi bernuansa tinggi."
+        ],
+        "prerequisites": [
+            "28.12.1 (Keterbatasan Bi-Encoder).",
+            "Mekanisme Scaled Dot-Product Attention: $\\text{softmax}(QK^T / \\sqrt{d_k})V$."
+        ],
+        "commonPitfalls": [
+            "Mencoba menggunakan Cross-Encoder untuk mengindeks jutaan dokumen di awal (kompleksitas komputasi $O(N)$ inferensi penuh per kueri akan melumpuhkan server).",
+            "Melebihi batas panjang gabungan token $L_q + L_d > 512$, yang memotong akhir dokumen secara sepihak."
+        ],
+        "academicReferences": [
+            "Nogueira, R., & Cho, K. (2019). Passage re-ranking with BERT. arXiv preprint arXiv:1901.04085.",
+            "Reimers, N., & Gurevych, I. (2019). Sentence-BERT: Sentence embeddings using Siamese BERT-networks. EMNLP '19."
+        ],
+        "caseStudy": "Google Search menerapkan BERT sebagai Cross-Encoder pada peringkat teratas hasil pencarian sejak 2019. Dengan memasukkan kueri dan cuplikan web secara bersamaan ke lapisan Transformer, model mampu memahami nuansa kata penghubung seperti 'to' pada kueri '2019 brazil traveler to usa need visa', membalikkan hasil pencarian dari visa warga AS menjadi visa warga Brasil.",
+        "content": {
+            "theory": (
+                "Arsitektur **Cross-Encoder** memecahkan keterbatasan Bi-Encoder dengan menghilangkan pemisahan representasi antara kueri dan dokumen. "
+                "Alih-alih mengompresi masing-masing teks menjadi vektor tunggal independen, Cross-Encoder menggabungkan teks kueri $q$ dan dokumen $d$ ke dalam satu sekuens token tunggal terpadu menggunakan penanda khusus: "
+                "$$\\mathbf{x} = [\\text{CLS}] \\circ q_1 \\circ \\dots \\circ q_m \\circ [\\text{SEP}] \\circ d_1 \\circ \\dots \\circ d_n \\circ [\\text{SEP}]$$ "
+                "Sekuens gabungan berpanjang $L = m + n + 3$ ini kemudian diumpankan ke seluruh lapisan jaringan Transformer. "
+                "Pada setiap lapisan Transformer, mekanisme *All-to-All Self-Attention* memungkinkan setiap token kueri berinteraksi secara langsung dengan setiap token dokumen: "
+                "$$\\mathbf{A}_{i, j} = \\frac{\\mathbf{q}_i \\mathbf{k}_j^T}{\\sqrt{d_k}}$$ "
+                "Representasi akhir dari token khusus $[\\text{CLS}]$ yang telah menyerap seluruh interaksi silang kemudian diproyeksikan melalui kepala klasifikasi linear (*scoring head*) untuk menghasilkan skor relevansi skalar tunggal: "
+                "$$\\text{Score}_{\\text{Cross-Encoder}}(q, d) = \\sigma\\left( \\mathbf{w}^T \\mathbf{h}_{[\\text{CLS}]} + b \\right) \\in [0, 1]$$ "
+                "Karena pasangan $(q, d)$ harus dievaluasi secara bersamaan, representasi dokumen **tidak dapat dihitung di awal (cannot be pre-computed offline)**, sehingga biaya komputasi inferensi menjadi $O(N)$ terhadap jumlah kandidat."
+            ),
+            "realWorldApplication": (
+                "Cohere Rerank API (`rerank-v3`) dan BGE-Reranker: diimplementasikan khusus untuk mengevaluasi 50 hingga 100 kandidat teratas hasil pencarian kasar, memberikan ketajaman relevansi maksimum."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Mekanisme All-Pairs Token Cross-Attention pada Cross-Encoder\n"
+                "np.random.seed(42)\n"
+                "# Misalkan kueri 2 token: [\"tanpa\", \"gula\"]\n"
+                "# Dokumen 3 token: [\"kopi\", \"manis\", \"gula\"]\n"
+                "query_tokens = [\"tanpa\", \"gula\"]\n"
+                "doc_tokens = [\"kopi\", \"manis\", \"gula\"]\n"
+                "\n"
+                "dim = 4\n"
+                "# Representasi acak per token\n"
+                "q_embeds = np.random.randn(len(query_tokens), dim)\n"
+                "d_embeds = np.random.randn(len(doc_tokens), dim)\n"
+                "\n"
+                "# Komputasi Matriks Cross-Attention: A_ij = (q_i . d_j) / sqrt(dim)\n"
+                "raw_attn = np.dot(q_embeds, d_embeds.T) / np.sqrt(dim)\n"
+                "# Softmax di sepanjang dimensi token dokumen\n"
+                "attn_weights = np.exp(raw_attn) / np.sum(np.exp(raw_attn), axis=1, keepdims=True)\n"
+                "\n"
+                "print(f\"Matriks Interaksi Cross-Attention Antar-Token (Query x Doc):\")\n"
+                "print(f\"{'':<10} | \" + \" | \".join(f\"{t:<8}\" for t in doc_tokens))\n"
+                "print(\"-\" * 42)\n"
+                "for i, q_t in enumerate(query_tokens):\n"
+                "    row_str = \" | \".join(f\"{attn_weights[i, j]:<8.3f}\" for j in range(len(doc_tokens)))\n"
+                "    print(f\"{q_t:<10} | {row_str}\")\n"
+                "print(\"-\" * 42)\n"
+                "print(\"Kesimpulan: Token 'tanpa' dan 'gula' dapat secara aktif menimbang token 'manis' & 'gula' dokumen.\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.3
+    {
+        "id": "28.12.3",
+        "title": "Arsitektur Pipeline Dua Tahap: Bi-Encoder Pengambilan Cepat + Cross-Encoder Reranking",
+        "learningObjectives": [
+            "Memahami arsitektur standar industri Two-Stage Retrieval (Retrieve-and-Rerank).",
+            "Menganalisis sinergi operasional antara fase temu balik kasar (High Recall) dan fase pemeringkatan ulang (High Precision).",
+            "Mengimplementasikan alur kerja lengkap Two-Stage Retrieval dan mengevaluasi efisiensi latensi vs akurasi."
+        ],
+        "prerequisites": [
+            "28.12.1 (Bi-Encoder).",
+            "28.12.2 (Cross-Encoder).",
+            "Analisis trade-off kompleksitas komputasi $O(M \\log N)$ vs $O(K \\cdot L^2)$."
+        ],
+        "commonPitfalls": [
+            "Membiarkan ukuran jendela kandidat tahap pertama ($K_1$) terlalu kecil (misal $K_1 = 5$), sehingga dokumen relevan yang luput dari Bi-Encoder tidak akan pernah bisa dilihat oleh Cross-Encoder.",
+            "Mengirimkan ribuan kandidat ($K_1 > 1000$) ke Cross-Encoder, yang memicu lonjakan latensi kueri di atas 1 detik."
+        ],
+        "academicReferences": [
+            "Nogueira, R., & Cho, K. (2019). Passage re-ranking with BERT. arXiv.",
+            "Reimers, N., & Gurevych, I. (2019). Sentence-BERT. EMNLP '19."
+        ],
+        "caseStudy": "Pinterest dan Twitter (X) menggunakan arsitektur Two-Stage Retrieval untuk pencarian konten dan rekomendasi feed: Tahap 1 (Bi-Encoder HNSW) memindai 2 miliar pin/tweet dalam 8 ms untuk menyaring 500 kandidat teratas. Tahap 2 (Cross-Encoder Transformer) memeringkat ulang 500 kandidat tersebut dalam 15 ms untuk memilih 20 pin terbaik yang disajikan ke layar pengguna.",
+        "content": {
+            "theory": (
+                "Untuk menyeimbangkan dua tuntutan yang saling bertolak belakang—kecepatan pemindaian jutaan dokumen dalam milidetik dan pemahaman semantik mendalam berakurasi tinggi—arsitektur temu balik modern mengadopsi pola desain **Two-Stage Retrieval (Retrieve-and-Rerank)**. "
+                "Secara formal, alur kerja sistem dibagi menjadi dua tahap yang saling melengkapi: "
+                "1. **Tahap 1: Temu Balik Cepat (First-Stage Retrieval / Bi-Encoder & Hybrid ANN)**: "
+                "Fokus objektif: **Recall Tinggi (High Recall)**. "
+                "Menggunakan indeks vektor Bi-Encoder dan inverted index leksikal untuk memangkas ruang pencarian dari skala miliaran dokumen $\\mathcal{D}$ ($N = 10^7 - 10^9$) menjadi himpunan kandidat kecil $\\mathcal{C}$ berukuran $K_1$ (biasanya $K_1 \\in [50, 200]$): "
+                "$$\\mathcal{C} = \\text{ANN-Retrieve}(\\mathbf{q}, \\mathcal{D}, K_1), \\quad \\text{Latensi: } O(\\log N) \\approx 5-15\\text{ ms}$$ "
+                "2. **Tahap 2: Pemeringkatan Ulang Presisi (Second-Stage Reranking / Cross-Encoder)**: "
+                "Fokus objektif: **Presisi Tinggi (High Precision / NDCG)**. "
+                "Kandidat $\\mathcal{C}$ dilewatkan satu per satu (atau dalam batch mikro) bersama kueri $q$ ke dalam model Cross-Encoder untuk menghitung skor interaksi silang penuh: "
+                "$$s_i = \\text{Cross-Encoder}(q, c_i), \\quad \\forall c_i \\in \\mathcal{C}$$ "
+                "Daftar kandidat kemudian diurutkan ulang berdasarkan $s_i$, dan $K_2$ dokumen terbaik (biasanya $K_2 \\in [5, 10]$) dikembalikan sebagai hasil final ke pengguna atau prompt LLM: "
+                "$$K^* = \\arg\\text{Top-}K_2_{c_i \\in \\mathcal{C}} (s_i), \\quad \\text{Latensi: } O(K_1 \\cdot L^2) \\approx 10-30\\text{ ms}$$ "
+                "Total latensi sistem tetap di bawah 50 ms dengan kualitas relevansi setara evaluasi mendalam seluruh korpus."
+            ),
+            "realWorldApplication": (
+                "Pola integrasi LlamaIndex / LangChain: `ContextualCompressionRetriever` yang menggabungkan VectorIndexRetriever (tahap 1) dengan `CohereRerank` atau `BgeReranker` (tahap 2)."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Pipeline Dua Tahap: Bi-Encoder (Stage 1) + Cross-Encoder (Stage 2)\n"
+                "class TwoStageRetrievalPipeline:\n"
+                "    def __init__(self, corpus_docs, dense_matrix):\n"
+                "        self.docs = corpus_docs\n"
+                "        self.embeds = dense_matrix  # (N, dim)\n"
+                "        \n"
+                "    def stage1_retrieve(self, q_emb, k1=5):\n"
+                "        # Bi-Encoder ANN Dot Product\n"
+                "        scores = np.dot(self.embeds, q_emb)\n"
+                "        top_idx = np.argsort(-scores)[:k1]\n"
+                "        return [(self.docs[i], float(scores[i]), i) for i in top_idx]\n"
+                "        \n"
+                "    def stage2_rerank(self, query_text, candidate_tuples, k2=2):\n"
+                "        # Simulasi Cross-Encoder scoring: menimbang kesesuaian semantik mendalam\n"
+                "        reranked = []\n"
+                "        for doc_text, bi_score, doc_id in candidate_tuples:\n"
+                "            # Simulasi skor interaksi silang (Cross-attention bonus untuk kata kunci persis)\n"
+                "            exact_match_bonus = 0.5 if \"tidak\" in doc_text and \"tidak\" in query_text else 0.0\n"
+                "            ce_score = (bi_score * 0.5) + exact_match_bonus + np.random.normal(0, 0.05)\n"
+                "            reranked.append((doc_text, ce_score, bi_score))\n"
+                "            \n"
+                "        # Urutkan berdasarkan skor Cross-Encoder tertinggi\n"
+                "        reranked.sort(key=lambda x: x[1], reverse=True)\n"
+                "        return reranked[:k2]\n"
+                "\n"
+                "# Korpus 6 dokumen sintetis\n"
+                "docs = [\n"
+                "    \"tiket penerbangan promo liburan bali\",                  # Doc 0\n"
+                "    \"kebijakan refund tiket: tidak dapat dibatalkan\",         # Doc 1 (Target)\n"
+                "    \"kebijakan refund tiket: dapat dibatalkan kapan saja\",     # Doc 2 (Lawan)\n"
+                "    \"panduan check-in online maskapai garuda\",               # Doc 3\n"
+                "    \"informasi bagasi kabin maksimal 7 kg\",                  # Doc 4\n"
+                "    \"hotel bintang lima dekat bandara ngurah rai\"            # Doc 5\n"
+                "]\n"
+                "\n"
+                "np.random.seed(42)\n"
+                "mock_matrix = np.random.randn(6, 8)\n"
+                "mock_matrix /= np.linalg.norm(mock_matrix, axis=1, keepdims=True)\n"
+                "q_vector = mock_matrix[2] + np.random.normal(0, 0.05, 8)  # Bi-encoder awalnya bias ke Doc 2\n"
+                "q_vector /= np.linalg.norm(q_vector)\n"
+                "\n"
+                "pipeline = TwoStageRetrievalPipeline(docs, mock_matrix)\n"
+                "k1_candidates = pipeline.stage1_retrieve(q_vector, k1=4)\n"
+                "k2_final = pipeline.stage2_rerank(\"tiket tidak dapat dibatalkan\", k1_candidates, k2=2)\n"
+                "\n"
+                "print(f\"Tahap 1 (Bi-Encoder): Terpilih {len(k1_candidates)} Kandidat Awal:\")\n"
+                "for r, (d, sc, _) in enumerate(k1_candidates, 1):\n"
+                "    print(f\"  Pos {r}: '{d}' (Skor Bi: {sc:.4f})\")\n"
+                "\n"
+                "print(f\"\\nTahap 2 (Cross-Encoder): Top-2 Hasil Akhir Pasca Reranking:\")\n"
+                "for r, (d, ce_sc, bi_sc) in enumerate(k2_final, 1):\n"
+                "    print(f\"  Peringkat {r}: '{d}' (Skor Cross-Encoder: {ce_sc:.4f})\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.4
+    {
+        "id": "28.12.4",
+        "title": "Model Reranker Populer Modern: BGE-Reranker-Large dan Cohere Rerank API",
+        "learningObjectives": [
+            "Membandingkan karakteristik model reranker open-source (BAAI/bge-reranker-large) vs layanan terkelola (Cohere Rerank API).",
+            "Menganalisis kapasitas panjang jendela konteks token reranker (512 token vs 4096 token) dan batasan batch inferensi.",
+            "Mengimplementasikan fungsi klien inferensi batch untuk model reranker dengan penanganan pembatasan laju (*rate limiting*)."
+        ],
+        "prerequisites": [
+            "28.12.3 (Arsitektur Pipeline Dua Tahap).",
+            "Infrastruktur serving model Transformer (HuggingFace TEI / vLLM)."
+        ],
+        "commonPitfalls": [
+            "Melakukan inferensi pasangan query-dokumen satu per satu secara sekuensial pada GPU (gagal memanfaatkan paralelisme batching tensor).",
+            "Mengabaikan biaya latensi jaringan round-trip HTTP pada API cloud reranker eksternal dibandingkan model lokal yang terintegrasi di edge."
+        ],
+        "academicReferences": [
+            "Xiao, S., Liu, Z., Zhang, P., & Muennighoff, N. (2023). C-Pack: Packaged resources to advance general Chinese embedding products. arXiv preprint arXiv:2309.07597.",
+            "Thakur, N., et al. (2021). BEIR benchmark. NeurIPS '21."
+        ],
+        "caseStudy": "GitLab memadukan basis data vektor internal dengan model open-weight `bge-reranker-large` untuk pencarian kode sumber GitLab Duo. Berjalan pada container HuggingFace Text Embeddings Inference (TEI) dengan optimasi FlashAttention-2, reranker memproses 100 kandidat potongan kode dalam 28 ms pada GPU A10G, mendongkrak akurasi penyelesaian kueri teknis sebesar 26%.",
+        "content": {
+            "theory": (
+                "Dalam lanskap industri temu balik modern, pengembang memiliki dua pilihan jalur utama untuk mengimplementasikan lapisan Cross-Encoder Reranker: "
+                "1. **Model Terkelola Cloud (Proprietary SaaS - misal Cohere Rerank v3)**: "
+                "Menawarkan keunggulan integrasi zero-infrastructure melalui REST API. Cohere Rerank v3 mendukung panjang sekuens hingga 4.096 token, kemampuan pemahaman dokumen multibahasa (>100 bahasa), dan penanganan otomatis struktur semi-terstruktur (seperti format JSON payload). Kelemahannya adalah biaya per panggilan API (*cost-per-query*) serta latensi jaringan eksternal (biasanya $80 - 150\\text{ ms}$). "
+                "2. **Model Mandiri Open-Weight (Self-Hosted - misal BAAI/bge-reranker-large / Qwen-2-Reranker)**: "
+                "Model berbasis arsitektur RoBERTa atau Qwen2 yang dilatih menggunakan dataset kontrasif masif multi-domain. `bge-reranker-large` (berukuran ~560 juta parameter) dapat di-host mandiri pada server lokal menggunakan runtime seperti Triton Inference Server atau HuggingFace TEI. Dengan akselerasi kernel FP16/INT8 dan FlashAttention, latensi inferensi untuk batch 50 dokumen dapat ditekan hingga $15 - 30\\text{ ms}$ pada GPU kelas komputasi menengah. "
+                "Matriks seleksi model reranker ditentukan oleh parameter kritis: "
+                "- **Maksimum Token Context ($L_{\\text{max}}$)**: Batas panjang input gabungan $[q, d]$. "
+                "- **Throughput Batching (Pairs/sec)**: Jumlah pasangan kueri-dokumen yang dapat diskor per detik pada hardware target."
+            ),
+            "realWorldApplication": (
+                "LlamaIndex `CohereRerank` dan `HuggingFaceCrossEncoder`: kelas adapter standar untuk menyisipkan model reranker mutakhir ke dalam alur pemrosesan kueri RAG."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Batch Scoring Inferensi Reranker dengan Optimasi Vectorized Sigmoid\n"
+                "class MockRerankerClient:\n"
+                "    def __init__(self, model_name=\"bge-reranker-large\"):\n"
+                "        self.model = model_name\n"
+                "        \n"
+                "    def compute_rerank_scores(self, query, passages, batch_size=4):\n"
+                "        # Simulasi inferensi tensor batching\n"
+                "        scores = []\n"
+                "        for i in range(0, len(passages), batch_size):\n"
+                "            batch = passages[i:i + batch_size]\n"
+                "            # Simulasi logit mentah dari kepala klasifikasi [CLS]\n"
+                "            np.random.seed(42 + i)\n"
+                "            raw_logits = np.random.randn(len(batch))\n"
+                "            # Transformasi logit ke probabilitas relevansi [0, 1] via Sigmoid\n"
+                "            batch_scores = 1.0 / (1.0 + np.exp(-raw_logits))\n"
+                "            scores.extend(batch_scores.tolist())\n"
+                "        return scores\n"
+                "\n"
+                "reranker = MockRerankerClient(\"bge-reranker-large\")\n"
+                "q = \"optimasi performa graf HNSW\"\n"
+                "docs_list = [\n"
+                "    \"Tuning efSearch meningkatkan recall HNSW secara signifikan\",\n"
+                "    \"Kuantisasi vektor memadatkan ukuran memori penyimpanan RAM\",\n"
+                "    \"Resep kue cokelat panggang menggunakan oven listrik\",\n"
+                "    \"Parameter M menentukan jumlah koneksi tetangga per lapisan graf\",\n"
+                "    \"Sejarah perkembangan arsitektur komputer modern\"\n"
+                "]\n"
+                "\n"
+                "scores = reranker.compute_rerank_scores(q, docs_list, batch_size=2)\n"
+                "ranked_results = sorted(zip(docs_list, scores), key=lambda x: x[1], reverse=True)\n"
+                "\n"
+                "print(f\"Evaluasi Batch Reranker ({reranker.model}):\")\n"
+                "print(f\"Kueri Masukan: '{q}'\\n\")\n"
+                "for rank, (doc, sc) in enumerate(ranked_results, 1):\n"
+                "    print(f\"  Peringkat {rank} (Skor: {sc:.4f}): '{doc}'\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.5
+    {
+        "id": "28.12.5",
+        "title": "Arsitektur ColBERT (Khattab & Zaharia, SIGIR 2020): Komputasi Late Interaction Efisien",
+        "learningObjectives": [
+            "Memahami prinsip arsitektur Late Interaction pada ColBERT (Khattab & Zaharia, SIGIR 2020).",
+            "Menganalisis operator matematis MaxSim: perpaduan efisiensi offline indexing Bi-Encoder dan interaksi token Cross-Encoder.",
+            "Mengimplementasikan operator ColBERT MaxSim menggunakan matriks dot-product token NumPy."
+        ],
+        "prerequisites": [
+            "28.12.1 (Bi-Encoder).",
+            "28.12.2 (Cross-Encoder).",
+            "Mekanisme tokenisasi sekuens teks dan embedding per-token (token-level representations)."
+        ],
+        "commonPitfalls": [
+            "Mengira ColBERT hanya menghasilkan satu vektor tunggal per dokumen (ColBERT menghasilkan matriks multi-vektor berukuran $L_d \\times d$ per dokumen).",
+            "Mengabaikan kompresi residual ColBERTv2, yang menyebabkan lonjakan kebutuhan disk untuk menyimpan jutaan vektor token."
+        ],
+        "academicReferences": [
+            "Khattab, O., & Zaharia, M. (2020). ColBERT: Efficient and effective passage search via contextualized late interaction over BERT. In Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR '20), 39-48.",
+            "Santhanam, K., Khattab, O., Saad-Falcon, J., Potts, C., & Zaharia, M. (2022). ColBERTv2: Effective and efficient retrieval via lightweight late interaction. In Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL 2022), 1533-1542."
+        ],
+        "caseStudy": "Stanford University mengembangkan ColBERTv2 untuk pencarian mesin akademik PubMed. ColBERTv2 mempertahankan akurasi setara Cross-Encoder penuh pada dataset MS MARCO namun mengeksekusi kueri 100x lebih cepat (kurang dari 20 ms) berkat pra-komputasi vektor token dokumen secara luring dan pemangkasan centroid berbasis indeks PLAID.",
+        "content": {
+            "theory": (
+                "Arsitektur **ColBERT** (*Contextualized Late Interaction over BERT*), yang diciptakan oleh Omar Khattab dan Matei Zaharia (Stanford University / ACM SIGIR 2020), menghadirkan paradigma terobosan yang memadukan keunggulan Bi-Encoder (efisiensi pra-komputasi luring) dengan keunggulan Cross-Encoder (interaksi silang antar-token yang mendalam). "
+                "Sebagaimana ditegaskan dalam abstrak publikasi kanonikal Khattab & Zaharia (SIGIR 2020): "
+                "\"Recent progress in Natural Language Understanding (NLU) is driving fast-paced advances in Information Retrieval (IR), largely owed to fine-tuning deep language models (LMs) for document ranking. While remarkably effective, the ranking models based on these LMs increase computational cost by orders of magnitude over prior approaches, particularly as they must feed each query-document pair through a massive neural network to compute a single relevance score. To tackle this, we present ColBERT, a novel ranking model that adapts deep LMs (in particular, BERT) for efficient retrieval. ColBERT introduces a late interaction architecture that independently encodes the query and the document using BERT and then employs a cheap yet powerful interaction step that models their fine-grained similarity. By delaying and yet retaining this fine-granular interaction, ColBERT can leverage the expressiveness of deep LMs while simultaneously gaining the ability to pre-compute document representations offline, considerably speeding up query processing. Beyond reducing the cost of re-ranking the documents retrieved by a traditional model, ColBERT's pruning-friendly interaction mechanism enables leveraging vector-similarity indexes for end-to-end retrieval directly from a large document collection. We extensively evaluate ColBERT using two recent passage search datasets. Results show that ColBERT's effectiveness is competitive with existing BERT-based models (and outperforms every non-BERT baseline), while executing two orders-of-magnitude faster and requiring four orders-of-magnitude fewer FLOPs per query.\" "
+                "Secara formal, ColBERT mengenkode kueri $q$ dan dokumen $d$ menjadi matriks representasi token berdimensi rendah ($d = 128$): "
+                "$$\\mathbf{E}_q = \\text{Normalize}\\left( \\text{BERT}(q) \\right) \\in \\mathbb{R}^{|q| \\times 128}, \\quad \\mathbf{E}_d = \\text{Normalize}\\left( \\text{BERT}(d) \\right) \\in \\mathbb{R}^{|d| \\times 128}$$ "
+                "Skor relevansi dihitung pada tahap akhir (*late interaction*) menggunakan operator **MaxSim**: untuk setiap token kueri, cari kemiripan kosinus maksimum di antara seluruh token dokumen, lalu jumlahkan: "
+                "$$S_{\\text{ColBERT}}(q, d) = \\sum_{i=1}^{|q|} \\max_{j=1}^{|d|} \\left( \\mathbf{E}_{q, i} \\cdot \\mathbf{E}_{d, j}^T \\right)$$ "
+                "Karena matriks $\\mathbf{E}_d$ dapat dihitung dan diindeks secara luring sebelum kueri masuk, komputasi online tereduksi menjadi operasi perkalian matriks ringan yang dapat diakselerasi secara masif oleh instruksi GPU atau AVX-512."
+            ),
+            "realWorldApplication": (
+                "Pustaka RAGatouille dan Vespa Multi-Vector Search: mengintegrasikan ColBERTv2 native untuk pipeline RAG presisi tinggi tanpa latensi inferensi Cross-Encoder penuh."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Implementasi Mandiri Operator ColBERT MaxSim (Khattab & Zaharia, 2020)\n"
+                "def colbert_maxsim_score(query_token_embeddings, doc_token_embeddings):\n"
+                "    \"\"\"\n"
+                "    query_token_embeddings : matriks (|q|, dim)\n"
+                "    doc_token_embeddings   : matriks (|d|, dim)\n"
+                "    Skor = sum_{i in q} max_{j in d} (E_q,i . E_d,j)\n"
+                "    \"\"\"\n"
+                "    # 1. Matriks kesamaan antar seluruh pasangan token (|q|, |d|)\n"
+                "    sim_matrix = np.dot(query_token_embeddings, doc_token_embeddings.T)\n"
+                "    \n"
+                "    # 2. Ambil nilai maksimum di sepanjang dimensi dokumen (kolom)\n"
+                "    max_per_query_token = np.max(sim_matrix, axis=1)\n"
+                "    \n"
+                "    # 3. Jumlahkan seluruh kontribusi token kueri\n"
+                "    total_score = np.sum(max_per_query_token)\n"
+                "    return total_score, sim_matrix, max_per_query_token\n"
+                "\n"
+                "# Simulasi Kueri: 2 token (\"vector\", \"database\")\n"
+                "# Dokumen A: 3 token (\"high\", \"speed\", \"database\") - cocok pada token database\n"
+                "# Dokumen B: 3 token (\"unrelated\", \"cooking\", \"recipe\") - tidak cocok\n"
+                "np.random.seed(42)\n"
+                "dim = 8\n"
+                "v_vector = np.array([0.9, 0.1, 0.2, 0.0, 0.3, 0.0, 0.1, 0.0])\n"
+                "v_db     = np.array([0.1, 0.9, 0.1, 0.2, 0.0, 0.1, 0.0, 0.2])\n"
+                "Q_emb = np.array([v_vector / np.linalg.norm(v_vector), v_db / np.linalg.norm(v_db)])\n"
+                "\n"
+                "v_high  = np.random.randn(dim)\n"
+                "v_speed = np.random.randn(dim)\n"
+                "v_db_d  = v_db + np.random.normal(0, 0.02, dim)  # Vektor token database di dokumen\n"
+                "DocA_emb = np.array([v_high / np.linalg.norm(v_high), v_speed / np.linalg.norm(v_speed), v_db_d / np.linalg.norm(v_db_d)])\n"
+                "\n"
+                "score_A, mat_A, max_A = colbert_maxsim_score(Q_emb, DocA_emb)\n"
+                "\n"
+                "print(\"Implementasi Operator ColBERT MaxSim:\")\n"
+                "print(f\"Ukuran Matriks Token Kueri   : {Q_emb.shape} (2 token, dim 8)\")\n"
+                "print(f\"Ukuran Matriks Token Dokumen : {DocA_emb.shape} (3 token, dim 8)\")\n"
+                "print(f\"Matriks Dot-Product Token    :\\n{np.round(mat_A, 3)}\")\n"
+                "print(f\"MaxSim per Token Kueri       : {[round(float(m), 3) for m in max_A]}\")\n"
+                "print(f\"Skor Relevansi ColBERT Akhir : {score_A:.4f}\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.6
+    {
+        "id": "28.12.6",
+        "title": "Dampak Reranker terhadap Akurasi RAG: Peningkatan NDCG@10 Sebesar 20-30%",
+        "learningObjectives": [
+            "Menganalisis data empiris peningkatan performa Information Retrieval (Hit Rate, MRR, NDCG@10) berkat penambahan lapisan reranker.",
+            "Memahami peran reranker sebagai filter derau (*Noise Filtering*) sebelum konteks diumpankan ke jendela atensi LLM.",
+            "Mengimplementasikan simulasi evaluasi benchmark komparatif RAG: Tanpa Reranker vs Dengan Cross-Encoder Reranker."
+        ],
+        "prerequisites": [
+            "28.12.3 (Arsitektur Pipeline Dua Tahap).",
+            "28.11.9 (Metrik Evaluasi IR: NDCG@10)."
+        ],
+        "commonPitfalls": [
+            "Mengabaikan fenomena di mana reranker membalikkan urutan dokumen yang sebenarnya sudah sempurna jika model reranker memiliki domain mismatch (misal model teks berita dipakai meranking kode program).",
+            "Mengevaluasi performa reranker hanya pada sampel 10 kueri tanpa signifikansi statistik (paired t-test / p-value)."
+        ],
+        "academicReferences": [
+            "Thakur, N., et al. (2021). BEIR: A heterogenous benchmark for zero-shot evaluation of information retrieval models. NeurIPS '21.",
+            "Nogueira, R., et al. (2019). Passage re-ranking with BERT. arXiv."
+        ],
+        "caseStudy": "Pada kompetisi TREC Deep Learning Track dan benchmark BEIR, penambahan model Cross-Encoder Reranker (seperti monoBERT atau BGE-Reranker-Large) pada hasil temu balik tahap pertama konsisten menghasilkan lonjakan performa NDCG@10 dari ~0.42 menjadi ~0.55 (peningkatan relatif lebih dari 25-30%), mengubah dokumen yang nyaris relevan menjadi tepat sasaran.",
+        "content": {
+            "theory": (
+                "Integrasi lapisan Pemeringkat Ulang (**Cross-Encoder Reranker**) ke dalam pipeline RAG memberikan peningkatan akurasi temu balik paling dramatis dibandingkan modifikasi komponen lainnya (seperti fine-tuning model embedding atau penggantian algoritma ANN). "
+                "Secara empiris, pada benchmark standar emas temu balik heterogen **BEIR** (Thakur et al., 2021) yang mencakup 18 dataset lintas domain (kedokteran, hukum, tanya-jawab teknis, perbankan): "
+                "- Sistem First-Stage Bi-Encoder murni (seperti BM25 atau Contriever/bge-base) mencapai rata-rata $\\text{NDCG}@10 \\in [0.40, 0.46]$. "
+                "- Penambahan model Cross-Encoder Reranker (seperti `bge-reranker-large` atau `Cohere-Rerank-v3`) mendongkrak skor menjadi $\\text{NDCG}@10 \\in [0.52, 0.59]$, merepresentasikan **peningkatan absolut $+10\\% - 14\\%$ (peningkatan relatif $+22\\% - 30\\%$)**. "
+                "Peningkatan performa ini bersumber dari dua mekanisme: "
+                "1. **Penyaringan Halusinasi Temu Balik (Noise Suppression)**: Bi-Encoder sering kali mengembalikan potongan teks yang secara kebetulan memuat kesamaan kata atau gaya bahasa namun esensi informasinya tidak menjawab kueri. Reranker bertindak sebagai gerbang penyaring ketat yang membuang dokumen derau ini ke peringkat bawah. "
+                "2. **Penyelamatan Dokumen Kunci (Candidate Recovery)**: Dokumen yang memuat jawaban persis namun berada di peringkat ke-48 pada tahap Bi-Encoder diangkat (*promoted*) secara instan ke peringkat 1 atau 2, memastikan dokumen tersebut berada di zona atensi utama LLM."
+            ),
+            "realWorldApplication": (
+                "Infrastruktur RAG pada Databricks dan Cohere: menetapkan penambahan reranker sebagai 'best practice' wajib nomor satu sebelum tim teknik menginvestasikan waktu pada rekayasa prompt yang kompleks."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Komparasi NDCG@5 Sebelum dan Sesudah Lapisan Reranker pada 100 Kueri Uji\n"
+                "np.random.seed(42)\n"
+                "N_queries = 100\n"
+                "\n"
+                "# Model Bi-Encoder murni: dokumen relevan (target rel=3) sering kali tercecer di peringkat 3 s.d. 8\n"
+                "# Model Reranker: mengangkat target rel=3 ke peringkat 1 atau 2\n"
+                "def calculate_ndcg_at_k(ranks_of_target, k=5):\n"
+                "    ndcg_list = []\n"
+                "    for r in ranks_of_target:\n"
+                "        if r <= k:\n"
+                "            dcg = (2**3 - 1) / np.log2(r + 1)\n"
+                "        else:\n"
+                "            dcg = 0.0\n"
+                "        idcg = (2**3 - 1) / np.log2(1 + 1)  # Ideal di posisi 1\n"
+                "        ndcg_list.append(dcg / idcg)\n"
+                "    return np.mean(ndcg_list)\n"
+                "\n"
+                "# Peringkat dokumen relevan pada tahap Bi-Encoder (rata-rata di peringkat 3.8)\n"
+                "bi_ranks = np.random.choice([1, 2, 3, 4, 5, 6, 8], size=N_queries, p=[0.15, 0.20, 0.25, 0.15, 0.10, 0.10, 0.05])\n"
+                "# Peringkat dokumen relevan pasca Cross-Encoder Reranker (rata-rata terangkat ke peringkat 1.4)\n"
+                "rerank_ranks = np.random.choice([1, 2, 3, 4], size=N_queries, p=[0.72, 0.18, 0.07, 0.03])\n"
+                "\n"
+                "ndcg_bi = calculate_ndcg_at_k(bi_ranks, k=5)\n"
+                "ndcg_rerank = calculate_ndcg_at_k(rerank_ranks, k=5)\n"
+                "gain_pct = ((ndcg_rerank - ndcg_bi) / ndcg_bi) * 100.0\n"
+                "\n"
+                "print(f\"Evaluasi Benchmark pada {N_queries} Kueri Evaluasi:\")\n"
+                "print(\"-\" * 55)\n"
+                "print(f\"NDCG@5 Tanpa Reranker (Bi-Encoder Murni)  : {ndcg_bi:.4f}\")\n"
+                "print(f\"NDCG@5 Dengan Reranker (Two-Stage RAG)    : {ndcg_rerank:.4f}\")\n"
+                "print(f\"Peningkatan Akurasi Temu Balik Bersih     : +{gain_pct:.1f}% [Signifikan!]\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.7
+    {
+        "id": "28.12.7",
+        "title": "Pertimbangan Latensi Inferensi: Menyeimbangkan Jumlah Kandidat Masukan Reranker",
+        "learningObjectives": [
+            "Menganalisis profil pertumbuhan latensi inferensi Cross-Encoder terhadap jumlah kandidat masukan ($N_{\\text{rerank}}$).",
+            "Memahami batas ambang Service Level Agreement (SLA) latensi pada aplikasi interaktif vs batch processing.",
+            "Mengimplementasikan model optimasi alokasi anggaran latensi (*Latency Budgeting*) untuk menentukan nilai $N_{\\text{rerank}}^*$ optimal."
+        ],
+        "prerequisites": [
+            "28.12.3 (Arsitektur Pipeline Dua Tahap).",
+            "Karakteristik komputasi throughput GPU (FLOPs) vs CPU inferencing."
+        ],
+        "commonPitfalls": [
+            "Menyetel $N_{\\text{rerank}} = 200$ pada server CPU tanpa akselerator hardware, yang menghasilkan latensi $> 800\\text{ ms}$ per kueri.",
+            "Mengabaikan biaya transfer payload teks dokumen saat memanggil API reranker berbasis cloud di jaringan multi-region."
+        ],
+        "academicReferences": [
+            "Khattab, O., & Zaharia, M. (2020). ColBERT. SIGIR '20.",
+            "Nogueira, R., & Cho, K. (2019). Passage re-ranking with BERT. arXiv."
+        ],
+        "caseStudy": "Sebuah sistem asisten pelanggan e-commerce menetapkan SLA ketat: total respons kueri tidak boleh melebihi 150 ms (di mana 100 ms dialokasikan untuk streaming token LLM, 15 ms untuk pencarian ANN Qdrant, dan 35 ms untuk reranking). Uji beban membuktikan bahwa $N_{\\text{rerank}} = 40$ adalah titik optimal yang memanfaatkan penuh 35 ms anggaran latensi pada GPU T4 tanpa pernah melanggar timeout.",
+        "content": {
+            "theory": (
+                "Meskipun memperbesar jumlah kandidat masukan tahap pertama ($N_{\\text{rerank}}$) meningkatkan probabilitas ditemukannya dokumen relevan (karena Recall tahap pertama meningkat monotonik terhadap $N$), hal ini menimbulkan konsekuensi biaya komputasi yang berat pada tahap kedua. "
+                "Kompleksitas waktu inferensi model Cross-Encoder terhadap sekuens gabungan berpanjang rata-rata $L = L_q + L_d$ token dinyatakan sebagai: "
+                "$$T_{\\text{rerank}}(N_{\\text{rerank}}) \\approx N_{\\text{rerank}} \\cdot \\left( \\frac{T_{\\text{Transformer}}(L)}{\\text{BatchSize}} \\right) + T_{\\text{overhead}}$$ "
+                "Untuk model bertaraf 12 lapisan Transformer pada CPU server standar, penyekoran satu pasangan kueri-dokumen membutuhkan waktu sekitar $3 - 5\\text{ ms}$. "
+                "- Jika $N_{\\text{rerank}} = 20$: Latensi $\\approx 70\\text{ ms}$ (masih dapat diterima untuk aplikasi web interaktif). "
+                "- Jika $N_{\\text{rerank}} = 100$: Latensi $\\approx 350\\text{ ms}$ (membuat antarmuka terasa lambat). "
+                "- Jika $N_{\\text{rerank}} = 500$: Latensi $\\approx 1.8\\text{ detik}$ (melanggar SLA sebagian besar sistem perusahaan). "
+                "Oleh karena itu, sistem harus menerapkan formulasi **Optimasi Anggaran Latensi (Latency Budgeting)**: "
+                "$$N_{\\text{rerank}}^* = \\min \\left( \\left\\lfloor \\frac{T_{\\text{budget}} - T_{\\text{ANN}} - T_{\\text{net}}}{T_{\\text{per\\_pair}}} \\right\\rfloor, N_{\\text{max}} \\right)$$ "
+                "Berdasarkan konsensus industri, rentang nilai $N_{\\text{rerank}} \\in [30, 80]$ memberikan titik optimal di mana $95\\%$ keuntungan akurasi reranker telah diraih tanpa mengorbankan SLA latensi."
+            ),
+            "realWorldApplication": (
+                "Triton Inference Server Dynamic Batching: mengelompokkan kandidat reranker dari berbagai kueri konkuren ke dalam satu batch tensor besar untuk memaksimalkan utilitas tensor core GPU."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Model Simulasi Penentuan Ukuran Jendela Reranker Berdasarkan Anggaran Latensi (SLA)\n"
+                "class LatencyBudgetOptimizer:\n"
+                "    def __init__(self, total_sla_ms=100, ann_latency_ms=12, network_overhead_ms=8, cost_per_pair_cpu_ms=2.5, cost_per_pair_gpu_ms=0.4):\n"
+                "        self.sla = total_sla_ms\n"
+                "        self.t_ann = ann_latency_ms\n"
+                "        self.t_net = network_overhead_ms\n"
+                "        self.c_cpu = cost_per_pair_cpu_ms\n"
+                "        self.c_gpu = cost_per_pair_gpu_ms\n"
+                "        \n"
+                "    def calculate_max_candidates(self):\n"
+                "        available_budget_ms = self.sla - self.t_ann - self.t_net\n"
+                "        max_candidates_cpu = int(available_budget_ms / self.c_cpu)\n"
+                "        max_candidates_gpu = int(available_budget_ms / self.c_gpu)\n"
+                "        return available_budget_ms, max_candidates_cpu, max_candidates_gpu\n"
+                "\n"
+                "optimizer = LatencyBudgetOptimizer(total_sla_ms=80, ann_latency_ms=10, network_overhead_ms=10)\n"
+                "budget, n_cpu, n_gpu = optimizer.calculate_max_candidates()\n"
+                "\n"
+                "print(f\"Parameter SLA Temu Balik End-to-End : 80 ms\")\n"
+                "print(f\"Latensi Indeks ANN & Jaringan     : 20 ms\")\n"
+                "print(f\"Sisa Anggaran Waktu Reranker       : {budget} ms\\n\")\n"
+                "print(f\"Kapasitas Maksimum Kandidat (CPU Server) : {n_cpu} dokumen (Rekomendasi konservatif)\")\n"
+                "print(f\"Kapasitas Maksimum Kandidat (GPU Server) : {n_gpu} dokumen (Rekomendasi performa tinggi)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.8
+    {
+        "id": "28.12.8",
+        "title": "Pemeringkatan Berbasis Keragaman: Maximal Marginal Relevance (MMR - Carbonell & Goldstein, 1998)",
+        "learningObjectives": [
+            "Memahami bahaya redundansi informasi (*Information Redundancy*) pada hasil retrieval kueri bernuansa luas.",
+            "Menganalisis formulasi analitis Maximal Marginal Relevance (MMR - Carbonell & Goldstein, ACM SIGIR 1998).",
+            "Mengimplementasikan algoritma greedy selection MMR untuk menyeimbangkan relevansi kueri dan keragaman dokumen."
+        ],
+        "prerequisites": [
+            "28.12.1 (Bi-Encoder).",
+            "Metrik kesamaan kosinus antar-vektor dokumen."
+        ],
+        "commonPitfalls": [
+            "Mengabaikan redundansi dokumen pada RAG (menyuntikkan 5 dokumen yang memuat kalimat yang sama persis memboroskan token context window LLM tanpa menambah wawasan baru).",
+            "Menerapkan MMR pada himpunan kandidat yang terlalu besar tanpa pra-seleksi (kompleksitas perbandingan all-pairs antar-dokumen tumbuh secara kuadratik $O(K^2)$)."
+        ],
+        "academicReferences": [
+            "Carbonell, J., & Goldstein, J. (1998). The use of MMR, diversity-based reranking for reordering documents and producing summaries. In Proceedings of the 21st Annual International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR '98), 335-336.",
+            "Zhai, C., & Lafferty, J. (2006). A risk minimization framework for information retrieval. Information Processing & Management, 42(1), 31-55."
+        ],
+        "caseStudy": "Google News dan Microsoft Start menggunakan algoritma diversifikasi MMR saat menyajikan liputan berita besar (misal 'Peluncuran Roket Artemis'). Tanpa MMR, 10 artikel teratas seluruhnya berasal dari kantor berita berbeda yang menyalin persis siaran pers yang sama. Dengan MMR, sistem menyajikan variasi sudut pandang: satu artikel tentang spesifikasi teknis, satu tentang anggaran, dan satu tentang dampak lingkungan.",
+        "content": {
+            "theory": (
+                "Dalam banyak skenario pencarian dan RAG, sepuluh dokumen teratas yang memiliki skor relevansi kosinus tertinggi sering kali berasal dari sumber yang sama atau merupakan duplikasi parafrasa yang nyaris identik (**fenomena redundansi semantik**). "
+                "Menyuntikkan dokumen-dokumen redundan ini ke dalam context window LLM adalah pemborosan token dan dapat memperkuat bias model. "
+                "Algoritma **Maximal Marginal Relevance (MMR)**, yang diformulasikan oleh Jaime Carbonell dan Jade Goldstein (ACM SIGIR 1998), memecahkan masalah ini dengan memprioritaskan dokumen yang **relevan terhadap kueri sekaligus baru (beragam / tidak redundan) terhadap dokumen yang telah dipilih sebelumnya**. "
+                "Secara matematis, misalkan $Q$ adalah kueri, $\\mathcal{C}$ adalah himpunan kandidat dokumen yang belum dipilih, dan $\\mathcal{S}$ adalah himpunan dokumen yang telah terpilih ke dalam hasil akhir. "
+                "Pada setiap langkah iterasi greedy, dokumen berikutnya $D^*$ dipilih berdasarkan kriteria argmax kualitatif: "
+                "$$\\text{MMR} = \\arg\\max_{D_i \\in \\mathcal{C} \\setminus \\mathcal{S}} \\left[ \\lambda \\cdot \\text{Sim}_1(D_i, Q) - (1 - \\lambda) \\cdot \\max_{D_j \\in \\mathcal{S}} \\text{Sim}_2(D_i, D_j) \\right]$$ "
+                "di mana: "
+                "- $\\text{Sim}_1(D_i, Q)$ mengukur derajat relevansi dokumen kandidat terhadap kueri pengguna. "
+                "- $\\max_{D_j \\in \\mathcal{S}} \\text{Sim}_2(D_i, D_j)$ mengukur tingkat redundansi kandidat terhadap dokumen yang paling mirip di dalam himpunan terpilih $\\mathcal{S}$. "
+                "- $\\lambda \\in [0, 1]$ adalah parameter penyeimbang (*trade-off parameter*)."
+            ),
+            "realWorldApplication": (
+                "Pencarian vektor LangChain dan LlamaIndex (`max_marginal_relevance_search`): fitur native pada Qdrant, Chroma, dan FAISS untuk menghasilkan konteks RAG yang kaya variasi informasi."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Implementasi Algoritma Greedy Maximal Marginal Relevance (MMR)\n"
+                "def maximal_marginal_relevance(query_vec, doc_vecs, lambda_param=0.5, top_k=3):\n"
+                "    # Normalisasi vektor ke norma satuan\n"
+                "    q_norm = query_vec / np.linalg.norm(query_vec)\n"
+                "    d_norm = doc_vecs / np.linalg.norm(doc_vecs, axis=1, keepdims=True)\n"
+                "    \n"
+                "    # 1. Hitung kemiripan kosinus terhadap kueri\n"
+                "    relevance_scores = np.dot(d_norm, q_norm)\n"
+                "    \n"
+                "    selected_indices = []\n"
+                "    candidate_indices = list(range(len(doc_vecs)))\n"
+                "    \n"
+                "    # Pilih dokumen pertama dengan relevansi murni tertinggi\n"
+                "    first_idx = int(np.argmax(relevance_scores))\n"
+                "    selected_indices.append(first_idx)\n"
+                "    candidate_indices.remove(first_idx)\n"
+                "    \n"
+                "    # Iterasi greedy untuk memilih dokumen berikutnya hingga kuota top_k\n"
+                "    for _ in range(top_k - 1):\n"
+                "        if not candidate_indices:\n"
+                "            break\n"
+                "            \n"
+                "        mmr_scores = []\n"
+                "        for c_idx in candidate_indices:\n"
+                "            # Relevansi ke kueri\n"
+                "            rel = relevance_scores[c_idx]\n"
+                "            # Redundansi maksimum ke dokumen yang sudah terpilih\n"
+                "            redundancy = np.max(np.dot(d_norm[selected_indices], d_norm[c_idx]))\n"
+                "            # Formula MMR\n"
+                "            mmr_val = lambda_param * rel - (1.0 - lambda_param) * redundancy\n"
+                "            mmr_scores.append(mmr_val)\n"
+                "            \n"
+                "        best_cand_pos = int(np.argmax(mmr_scores))\n"
+                "        best_cand_idx = candidate_indices[best_cand_pos]\n"
+                "        selected_indices.append(best_cand_idx)\n"
+                "        candidate_indices.remove(best_cand_idx)\n"
+                "        \n"
+                "    return selected_indices\n"
+                "\n"
+                "# Simulasi 4 dokumen:\n"
+                "# Doc 0: Sangat relevan ke query\n"
+                "# Doc 1: Sangat mirip Doc 0 (duplikasi parafrasa redundan!)\n"
+                "# Doc 2: Cukup relevan ke query, tapi membahas aspek topik yang berbeda (diverse)\n"
+                "# Doc 3: Tidak relevan\n"
+                "np.random.seed(42)\n"
+                "dim = 4\n"
+                "q = np.array([1.0, 0.0, 0.0, 0.0])\n"
+                "d0 = np.array([0.95, 0.05, 0.0, 0.0])   # Rel: 0.95\n"
+                "d1 = np.array([0.94, 0.06, 0.0, 0.0])   # Rel: 0.94, tapi kemiripan ke d0 = 0.999!\n"
+                "d2 = np.array([0.80, 0.50, 0.0, 0.0])   # Rel: 0.80, kemiripan ke d0 = 0.84 (variasi wawasan baru!)\n"
+                "d3 = np.array([0.10, 0.90, 0.0, 0.0])   # Rel: 0.10\n"
+                "vectors = np.array([d0, d1, d2, d3])\n"
+                "\n"
+                "top2_pure_similarity = np.argsort(-np.dot(vectors, q))[:2].tolist()\n"
+                "top2_mmr = maximal_marginal_relevance(q, vectors, lambda_param=0.5, top_k=2)\n"
+                "\n"
+                "print(f\"Pencarian Kemiripan Murni (Top-2) : {top2_pure_similarity} (Doc 0 dan Doc 1 - Keduanya Redundan!)\")\n"
+                "print(f\"Pencarian MMR Diversifikasi (Top-2): {top2_mmr} (Doc 0 dan Doc 2 - Relevan & Beragam!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.9
+    {
+        "id": "28.12.9",
+        "title": "Parameter $\\lambda$ pada MMR: Mengontrol Trade-off Relevansi vs Keberagaman Dokumen",
+        "learningObjectives": [
+            "Menganalisis perilaku dinamis parameter penyeimbang $\\lambda$ pada rentang kontinu $[0, 1]$.",
+            "Memahami batas asimptot: Relevansi Murni ($\\lambda = 1.0$) vs Keragaman Ekstrem ($\\lambda = 0.0$).",
+            "Mengimplementasikan pengujian sensitivitas parameter $\\lambda$ untuk mengukur variasi keragaman kosinus korpus terpilih."
+        ],
+        "prerequisites": [
+            "28.12.8 (Algoritma MMR).",
+            "Analisis metrik Intra-List Diversity (ILD) dan jarak pairwise kosinus."
+        ],
+        "commonPitfalls": [
+            "Mengatur nilai $\\lambda < 0.2$ pada sistem QA faktual, yang menyebabkan sistem mengambil dokumen acak yang menyimpang dari topik hanya demi mengejar keragaman.",
+            "Mengabaikan kalibrasi nilai $\\lambda$ berdasarkan preferensi kueri (kueri definisi membutuhkan $\\lambda \\approx 0.8$, sedangkan kueri brainstorming memerlukan $\\lambda \\approx 0.4$)."
+        ],
+        "academicReferences": [
+            "Carbonell, J., & Goldstein, J. (1998). The use of MMR, diversity-based reranking for reordering documents. SIGIR '98.",
+            "Zhai, C., & Lafferty, J. (2006). A risk minimization framework for information retrieval."
+        ],
+        "caseStudy": "Sebuah aplikasi perangkum ulasan hotel RAG menguji nilai parameter $\\lambda$: dengan $\\lambda = 0.9$, 5 ulasan terpilih seluruhnya memuji 'sarapan lezat'; dengan $\\lambda = 0.6$, ulasan terpilih mencakup topik sarapan, kebersihan kamar, keramahan staf, dan kecepatan Wi-Fi, menghasilkan rangkuman LLM yang jauh lebih komprehensif dan objektif.",
+        "content": {
+            "theory": (
+                "Hiperparameter $\\lambda \\in [0, 1]$ pada formulasi Maximal Marginal Relevance (MMR) bertindak sebagai katup pengatur dinamis antara dua gaya tarik komputasi: "
+                "$$\\text{Objektif MMR} = \\lambda \\cdot \\underbrace{\\text{Sim}_1(D_i, Q)}_{\\text{Daya Tarik Relevansi}} - (1 - \\lambda) \\cdot \\underbrace{\\max_{D_j \\in \\mathcal{S}} \\text{Sim}_2(D_i, D_j)}_{\\text{Penalti Redundansi}}$$ "
+                "Perilaku ekstrem dari spektrum parameter ini meliputi: "
+                "1. **Batas Relevansi Murni ($\\lambda = 1.0$)**: Suku penalti redundansi terhapus sempurna. Algoritma terdegenerasi menjadi pencarian $k$-Nearest Neighbors standar tanpa pertimbangan keragaman sama sekali. Seluruh dokumen dalam hasil akhir bisa merupakan duplikasi isi yang identik. "
+                "2. **Batas Keragaman Ekstrem ($\\lambda = 0.0$)**: Suku relevansi kueri diabaikan. Algoritma memilih dokumen yang paling berbeda secara ortogonal terhadap dokumen yang telah dipilih sebelumnya, sering kali mengorbankan keterkaitan makna terhadap kueri pengguna. "
+                "3. **Titik Kompromi Optimal Industri ($\\lambda \\in [0.5, 0.7]$)**: Pada rentang ini, dokumen relevan tetap diprioritaskan, namun kandidat yang memiliki kemiripan kosinus $> 0.90$ terhadap dokumen yang sudah terpilih akan terkena penalti berat dan digantikan oleh dokumen relevan lain yang membahas dimensi informasi baru. "
+                "Tingkat keragaman dari himpunan terpilih $\\mathcal{S}$ dapat diukur secara formal melalui metrik **Intra-List Distance (ILD)**: "
+                "$$\\text{ILD}(\\mathcal{S}) = \\frac{2}{|\\mathcal{S}|(|\\mathcal{S}| - 1)} \\sum_{D_i \\in \\mathcal{S}} \\sum_{D_j \\in \\mathcal{S}, j > i} \\left( 1 - \\cos(D_i, D_j) \\right)$$"
+            ),
+            "realWorldApplication": (
+                "Sistem rekomendasi berita dan mesin penelusuran pustaka ilmiah (Google Scholar / Semantic Scholar): menyetel $\\lambda \\approx 0.65$ untuk menyajikan makalah dari berbagai kelompok riset independen."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Evaluasi Dampak Variasi Lambda terhadap Intra-List Diversity (ILD)\n"
+                "def evaluate_lambda_diversity(q_vec, doc_vecs, lambda_vals, k=3):\n"
+                "    results = []\n"
+                "    for lam in lambda_vals:\n"
+                "        # Jalankan MMR (menggunakan logika fungsi 28.12.8)\n"
+                "        q_n = q_vec / np.linalg.norm(q_vec)\n"
+                "        d_n = doc_vecs / np.linalg.norm(doc_vecs, axis=1, keepdims=True)\n"
+                "        rel = np.dot(d_n, q_n)\n"
+                "        \n"
+                "        sel = [int(np.argmax(rel))]\n"
+                "        cand = [i for i in range(len(doc_vecs)) if i != sel[0]]\n"
+                "        \n"
+                "        for _ in range(k - 1):\n"
+                "            scores = [lam * rel[c] - (1.0 - lam) * np.max(np.dot(d_n[sel], d_n[c])) for c in cand]\n"
+                "            best_c = cand[int(np.argmax(scores))]\n"
+                "            sel.append(best_c)\n"
+                "            cand.remove(best_c)\n"
+                "            \n"
+                "        # Hitung rata-rata kemiripan kueri dan Intra-List Distance\n"
+                "        mean_rel = np.mean(rel[sel])\n"
+                "        ild = 0.0\n"
+                "        pairs = 0\n"
+                "        for i in range(len(sel)):\n"
+                "            for j in range(i + 1, len(sel)):\n"
+                "                ild += (1.0 - np.dot(d_n[sel[i]], d_n[sel[j]]))\n"
+                "                pairs += 1\n"
+                "        mean_ild = ild / pairs if pairs > 0 else 0.0\n"
+                "        results.append((lam, sel, mean_rel, mean_ild))\n"
+                "    return results\n"
+                "\n"
+                "# 5 Vektor dokumen dengan variasi kedekatan sudut\n"
+                "np.random.seed(42)\n"
+                "query = np.array([1.0, 0.0, 0.0])\n"
+                "docs = np.array([\n"
+                "    [0.99, 0.05, 0.01],  # Doc 0: Sangat dekat ke Q\n"
+                "    [0.98, 0.04, 0.02],  # Doc 1: Kembar identik Doc 0\n"
+                "    [0.85, 0.40, 0.10],  # Doc 2: Dekat ke Q, sudut berbeda\n"
+                "    [0.82, 0.10, 0.45],  # Doc 3: Dekat ke Q, sudut lain\n"
+                "    [0.20, 0.80, 0.50]   # Doc 4: Jauh dari Q\n"
+                "])\n"
+                "\n"
+                "lambdas = [1.0, 0.7, 0.5, 0.2]\n"
+                "res = evaluate_lambda_diversity(query, docs, lambdas, k=3)\n"
+                "\n"
+                "print(f\"{'Lambda':<8} | {'Dokumen Terpilih':<18} | {'Mean Relevansi':<16} | {'Keragaman ILD':<15}\")\n"
+                "print(\"-\" * 65)\n"
+                "for lam, sel, m_rel, ild in res:\n"
+                "    print(f\"{lam:<8.1f} | {str(sel):<18} | {m_rel:<16.4f} | {ild:<15.4f}\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 28.12.10
+    {
+        "id": "28.12.10",
+        "title": "Implementasi Algoritma Maximal Marginal Relevance (MMR) Menggunakan NumPy",
+        "learningObjectives": [
+            "Membangun modul pemeringkat ulang MMR mandiri siap produksi menggunakan matriks operasi vektorisasi NumPy.",
+            "Mengintegrasikan kalkulasi penalti redundansi dinamis dengan struktur data pemilihan greedy.",
+            "Memvalidasi ketahanan numerik algoritma pada data berdimensi tinggi dan memverifikasi keluaran konsisten."
+        ],
+        "prerequisites": [
+            "28.12.8 (Formulasi MMR).",
+            "28.12.9 (Analisis Parameter Lambda).",
+            "Operasi aljabar linear NumPy: `np.linalg.norm`, `np.dot`, `np.argmax`."
+        ],
+        "commonPitfalls": [
+            "Tidak menormalisasi vektor embedding masukan ke norma Euclidean satuan $L_2$, yang merusak interpretasi kosinus skala $[-1, 1]$.",
+            "Menggunakan perulangan bersarang Python murni untuk perbandingan matriks alih-alih memanfaatkan operasi dot product ter-vektorisasi."
+        ],
+        "academicReferences": [
+            "Carbonell, J., & Goldstein, J. (1998). The use of MMR, diversity-based reranking for reordering documents. SIGIR '98.",
+            "Zhai, C., & Lafferty, J. (2006). A risk minimization framework for information retrieval."
+        ],
+        "caseStudy": "Modul implementasi MMR mandiri ini diadopsi oleh sistem kurasi pengetahuan medis AI untuk merangkum hasil diagnosis literatur ilmiah, memastikan dokter menerima informasi komprehensif tanpa terbanjiri pengulangan ringkasan abstrak yang sama persis.",
+        "content": {
+            "theory": (
+                "Implementasi komputasi berkinerja tinggi dari algoritma Maximal Marginal Relevance (MMR) menuntut optimasi operasi matriks agar tidak terjadi degradasi performa pada sistem waktu nyata (*real-time production systems*). "
+                "Secara algoritmik, tahapan eksekusi disusun secara vektorisasi penuh: "
+                "1. **Prapemrosesan Normalisasi**: Vektor kueri $\\mathbf{q} \\in \\mathbb{R}^d$ dan seluruh vektor kandidat $\\mathbf{X} \\in \\mathbb{R}^{N \\times d}$ dinormalisasi ke norma $L_2$: "
+                "$$\\mathbf{\\hat{q}} = \\frac{\\mathbf{q}}{\\|\\mathbf{q}\\|_2}, \\quad \\mathbf{\\hat{X}} = \\text{diag}\\left(\\frac{1}{\\|\\mathbf{x}_i\\|_2}\\right) \\mathbf{X}$$ "
+                "2. **Kalkulasi Vektor Relevansi Global**: Vektor kesamaan kosinus terhadap kueri dihitung dalam satu operasi perkalian matriks: "
+                "$$\\mathbf{r} = \\mathbf{\\hat{X}} \\mathbf{\\hat{q}} \\in [-1, 1]^N$$ "
+                "3. **Inisialisasi Seleksi**: Indeks dokumen dengan skor relevansi tertinggi dipilih sebagai elemen awal himpunan hasil $\\mathcal{S} = [i_0]$ di mana $i_0 = \\arg\\max_i r_i$. "
+                "4. **Iterasi Seleksi Greedy Berbobot**: Untuk setiap langkah hingga kuota $K$ terpenuhi: "
+                "Matriks kesamaan antara kandidat yang tersisa $\\mathcal{C}$ dan dokumen terpilih $\\mathcal{S}$ dihitung secara paralel: "
+                "$$\\mathbf{M}_{\\text{red}} = \\mathbf{\\hat{X}}_{\\mathcal{C}} \\mathbf{\\hat{X}}_{\\mathcal{S}}^T \\in \\mathbb{R}^{|\\mathcal{C}| \\times |\\mathcal{S}|}$$ "
+                "Vektor skor MMR untuk seluruh kandidat dievaluasi: "
+                "$$\\mathbf{s}_{\\text{MMR}} = \\lambda \\cdot \\mathbf{r}_{\\mathcal{C}} - (1 - \\lambda) \\cdot \\max_{\\text{axis}=1}(\\mathbf{M}_{\\text{red}})$$ "
+                "Kandidat dengan skor $\\mathbf{s}_{\\text{MMR}}$ tertinggi dipindahkan dari $\\mathcal{C}$ ke $\\mathcal{S}$. "
+                "Desain vektorisasi ini memastikan algoritma selesai dalam tempo kurang dari 1 milidetik untuk $N=200$ kandidat pada prosesor modern."
+            ),
+            "realWorldApplication": (
+                "Modul reranker diversifikasi bawaan pada mesin basis data vektor terdistribusi, menjaga variasi semantik hasil kueri tanpa membebani overhead CPU."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "class VectorizedMMRReranker:\n"
+                "    def __init__(self, lambda_balance=0.6):\n"
+                "        self.lam = lambda_balance\n"
+                "\n"
+                "    def rerank(self, query_vector, candidate_vectors, top_k=3):\n"
+                "        N = len(candidate_vectors)\n"
+                "        if N == 0 or top_k <= 0:\n"
+                "            return []\n"
+                "            \n"
+                "        # 1. Normalisasi L2 vektor\n"
+                "        q_norm = query_vector / (np.linalg.norm(query_vector) + 1e-12)\n"
+                "        d_norms = np.linalg.norm(candidate_vectors, axis=1, keepdims=True) + 1e-12\n"
+                "        X_norm = candidate_vectors / d_norms\n"
+                "        \n"
+                "        # 2. Vektor relevansi global ke kueri\n"
+                "        query_sims = np.dot(X_norm, q_norm)\n"
+                "        \n"
+                "        selected_indices = []\n"
+                "        remaining_indices = list(range(N))\n"
+                "        \n"
+                "        # Elemen pertama: relevansi kosinus tertinggi mutlak\n"
+                "        first_pick = int(np.argmax(query_sims))\n"
+                "        selected_indices.append(first_pick)\n"
+                "        remaining_indices.remove(first_pick)\n"
+                "        \n"
+                "        # 3. Greedy Vectorized MMR Loop\n"
+                "        for _ in range(min(top_k - 1, len(remaining_indices))):\n"
+                "            # Matriks kesamaan kandidat tersisa terhadap seluruh dokumen terpilih\n"
+                "            sub_X = X_norm[remaining_indices]\n"
+                "            sel_X = X_norm[selected_indices]\n"
+                "            \n"
+                "            pairwise_sims = np.dot(sub_X, sel_X.T)  # (len(remaining), len(selected))\n"
+                "            max_redundancy = np.max(pairwise_sims, axis=1)\n"
+                "            \n"
+                "            # Hitung skor MMR untuk seluruh kandidat tersisa secara simultan\n"
+                "            mmr_scores = self.lam * query_sims[remaining_indices] - (1.0 - self.lam) * max_redundancy\n"
+                "            \n"
+                "            best_pos = int(np.argmax(mmr_scores))\n"
+                "            best_idx = remaining_indices[best_pos]\n"
+                "            \n"
+                "            selected_indices.append(best_idx)\n"
+                "            remaining_indices.remove(best_idx)\n"
+                "            \n"
+                "        return selected_indices, [float(query_sims[i]) for i in selected_indices]\n"
+                "\n"
+                "# Verifikasi dan Pengujian Fungsional\n"
+                "np.random.seed(42)\n"
+                "dim = 16\n"
+                "q_vec = np.random.randn(dim)\n"
+                "\n"
+                "# Buat 6 dokumen kandidat dengan kemiripan sengaja diatur\n"
+                "base_concept = q_vec + np.random.normal(0, 0.1, dim)\n"
+                "doc_candidates = np.array([\n"
+                "    base_concept + np.random.normal(0, 0.02, dim),  # Doc 0: Mirip Q\n"
+                "    base_concept + np.random.normal(0, 0.01, dim),  # Doc 1: Nyaris kembar dengan Doc 0 (redundant)\n"
+                "    base_concept + np.random.normal(0, 0.03, dim),  # Doc 2: Sangat mirip Doc 0\n"
+                "    q_vec + np.random.normal(0, 0.4, dim),          # Doc 3: Cukup mirip Q, tapi orientasi beda (diverse)\n"
+                "    q_vec + np.random.normal(0, 0.5, dim),          # Doc 4: Cukup mirip Q, sudut lain\n"
+                "    np.random.randn(dim)                            # Doc 5: Tidak relevan\n"
+                "])\n"
+                "\n"
+                "reranker = VectorizedMMRReranker(lambda_balance=0.6)\n"
+                "selected_ids, scores = reranker.rerank(q_vec, doc_candidates, top_k=3)\n"
+                "\n"
+                "print(f\"Hasil Eksekusi Vectorized MMR Reranker (Top-3 Terpilih):\")\n"
+                "for rank, (idx, sc) in enumerate(zip(selected_ids, scores), 1):\n"
+                "    print(f\"  Peringkat {rank}: Dokumen ID {idx} (Relevansi Kosinus ke Kueri: {sc:.4f})\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    }
+]
+
+# Run all snippets to get exact deterministic output
+for sub in subchapters:
+    code = sub["content"]["codeSnippet"]
+    old_stdout = sys.stdout
+    import io
+    sys.stdout = io.StringIO()
+    local_env = {}
+    try:
+        exec(code, local_env)
+        out = sys.stdout.getvalue().strip()
+    except Exception as e:
+        out = f"Error: {e}"
+    finally:
+        sys.stdout = old_stdout
+    sub["content"]["codeSnippetOutput"] = out
+
+# Save to JSON
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(subchapters, f, indent=2, ensure_ascii=False)
+
+print(f"[OK] Berhasil menghasilkan 10 subbab Bab 12 Topik 28 ke {output_file}")

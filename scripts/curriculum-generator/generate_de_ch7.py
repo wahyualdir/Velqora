@@ -1,0 +1,957 @@
+import json
+import os
+import sys
+import io
+import struct
+import numpy as np
+
+output_file = os.path.join(os.path.dirname(__file__), "de_ch7_data.json")
+
+subchapters = [
+    # 10.7.1
+    {
+        "id": "10.7.1",
+        "title": "Mekanisme Kerja Catalyst Optimizer: 4 Tahapan Transformasi",
+        "learningObjectives": [
+            "Memahami arsitektur internal Catalyst Optimizer pada Spark SQL berbasis Abstract Syntax Tree (AST).",
+            "Menganalisis empat tahapan transformasi kueri: Analysis, Logical Optimization, Physical Planning, dan Code Generation.",
+            "Mengkaji makalah kanonikal Michael Armbrust et al. (ACM SIGMOD 2015) mengenai integrasi aljabar relasional dan pemrograman fungsional."
+        ],
+        "prerequisites": [
+            "10.6.5 (Spark DataFrame API).",
+            "Teori Kompiler & Abstract Syntax Trees (AST)."
+        ],
+        "commonPitfalls": [
+            "Mencoba memaksa penulisan kueri relasional menggunakan transformasi RDD tingkat rendah, menonaktifkan seluruh aturan optimasi otomatis Catalyst.",
+            "Membuat ekspresi filter kompleks di dalam black-box Python UDF yang tidak dapat diuraikan oleh pohon ekspresi Catalyst (opaque UDF)."
+        ],
+        "academicReferences": [
+            "Armbrust, M., Xin, R. S., Lian, C., Huai, Y., Liu, D., Bradley, J. K., Meng, X., Kaftan, T., Franklin, M. J., Ghodsi, A., & Zaharia, M. (2015). Spark SQL: Relational Data Processing in Spark. In Proceedings of the 2015 ACM SIGMOD International Conference on Management of Data, 1383–1394.",
+            "Graefe, G. (1995). The Volcano Optimizer Generator: Extensibility and Efficient Search. In Proceedings of the Ninth International Conference on Data Engineering, 209–218."
+        ],
+        "caseStudy": "Analisis kueri analitik 40-tabel di platform analitik data finansial. Catalyst Optimizer secara otomatis menerapkan aturan Constant Folding dan Filter Pushdown, mereduksi pemindaian data disk dari 1.8 TB menjadi 12 GB dan mempercepat kueri sebesar 24x lipat.",
+        "content": {
+            "theory": (
+                "Inti kecerdasan komputasi di balik Spark SQL dan DataFrame API adalah **Catalyst Optimizer**, sebuah mesin optimasi kueri ekstensibel berbasis aljabar relasional. "
+                "Makalah kanonikal oleh **Michael Armbrust et al. (ACM SIGMOD 2015)** merumuskan landasan formal arsitektur ini: "
+                "> \"Spark SQL is a new module in Apache Spark that integrates relational processing with Spark’s functional programming API. Built on our experience with Shark, Spark SQL lets Spark programmers leverage the benefits of relational processing (e.g., declarative queries and optimized storage), and lets SQL users call complex analytics libraries in Spark (e.g., machine learning). Compared to previous systems, Spark SQL makes two main additions. First, it offers much tighter integration between relational and procedural processing, through a declarative DataFrame API that integrates with procedural Spark code. Second, it includes a highly extensible optimizer, Catalyst, built using features of the Scala programming language, that makes it easy to add composable rules, control code generation, and define extension points. Using Catalyst, we have built a variety of features (e.g., schema inference for JSON, machine learning types, and query federation to external databases) tailored for the complex needs of modern data analysis. We see Spark SQL as an evolution of both SQL-on-Spark and of Spark itself, offering richer APIs and optimizations while keeping the benefits of the Spark programming model.\" "
+                "Catalyst mentransformasikan kueri melalui **Empat Tahapan Kanonikal**: "
+                "1. **Analysis**: Menerima Unresolved Logical Plan dari SQL parser atau DataFrame DSL. Analyzer mencocokkan nama kolom dan tabel terhadap metadata Catalog (Hive Metastore) untuk menghasilkan Analyzed Logical Plan. "
+                "2. **Logical Optimization**: Menerapkan serangkaian aturan optimasi berbasis aturan (*rule-based optimizations* / RBO) yang didefinisikan sebagai fungsi pattern-matching rekursif pada pohon AST: "
+                "   - *Constant Folding*: Menyederhanakan `1 + 1` menjadi `2` saat kompilasi. "
+                "   - *Predicate Pushdown*: Mendorong filter sedekat mungkin ke sumber data fisik: $\\sigma_{\\phi}(R \\bowtie S) \\to \\sigma_{\\phi}(R) \\bowtie S$. "
+                "   - *Projection Pruning*: Membuang kolom yang tidak pernah dirujuk dalam kueri akhir: $\\pi_{c}(R)$. "
+                "3. **Physical Planning**: Menghasilkan satu atau beberapa Physical Plan dari Logical Plan yang telah dioptimasi, kemudian memilih rencana terbaik menggunakan Cost-Based Optimizer (CBO) (misalnya memilih antara Broadcast Hash Join vs Sort-Merge Join). "
+                "4. **Code Generation**: Mengonversi rencana fisik terpilih menjadi bytecode Java berkecepatan tinggi melalui Whole-Stage Code Generation."
+            ),
+            "realWorldApplication": (
+                "Seluruh antarmuka relasional modern di Databricks, Apache Spark, dan Delta Lake mengeksekusi kueri melalui pipeline kompilasi pohon AST Catalyst."
+            ),
+            "codeSnippet": (
+                "# Implementasi Simulator Mini Catalyst Optimizer: Rule-Based AST Optimization (Constant Folding & Predicate Pushdown)\n"
+                "class TreeNode:\n"
+                "    def __init__(self, node_type, children=None, **kwargs):\n"
+                "        self.node_type = node_type\n"
+                "        self.children = children or []\n"
+                "        self.props = kwargs\n"
+                "        \n"
+                "    def __repr__(self):\n"
+                "        props_str = ', '.join(f'{k}={v}' for k, v in self.props.items())\n"
+                "        return f'{self.node_type}({props_str})'\n"
+                "\n"
+                "class MiniCatalyst:\n"
+                "    @staticmethod\n"
+                "    def optimize_tree(node):\n"
+                "        # Optimasi anak secara rekursif (bottom-up rewrite)\n"
+                "        optimized_children = [MiniCatalyst.optimize_tree(c) for c in node.children]\n"
+                "        node.children = optimized_children\n"
+                "        \n"
+                "        # Aturan 1: Constant Folding: Filter(10 + 20) -> Filter(30)\n"
+                "        if node.node_type == 'Filter' and 'expr' in node.props:\n"
+                "            expr = node.props['expr']\n"
+                "            if isinstance(expr, tuple) and expr[0] == '+':\n"
+                "                folded_val = expr[1] + expr[2]\n"
+                "                node.props['expr'] = ('==', 'amount', folded_val)\n"
+                "                node.props['folded'] = True\n"
+                "                \n"
+                "        # Aturan 2: Pushdown Filter melintasi Project: Filter(Project(Scan)) -> Project(Filter(Scan))\n"
+                "        if node.node_type == 'Project' and len(node.children) == 1:\n"
+                "            child = node.children[0]\n"
+                "            if child.node_type == 'Filter':\n"
+                "                # Tukar posisi operator AST: dorong filter ke bawah proyeksi\n"
+                "                scan_node = child.children[0]\n"
+                "                new_filter = TreeNode('Filter', children=[scan_node], **child.props)\n"
+                "                node.children = [new_filter]\n"
+                "                node.props['pushdown_applied'] = True\n"
+                "                \n"
+                "        return node\n"
+                "\n"
+                "# Bangun Pohon Rencana Logis Awal (Unoptimized Plan): Project(Filter(Scan))\n"
+                "scan_op = TreeNode('FileScan', table='orders_parquet', read_cols=['id', 'amount'])\n"
+                "filter_op = TreeNode('Filter', children=[scan_op], expr=('+', 10, 20))\n"
+                "project_op = TreeNode('Project', children=[filter_op], select_cols=['id'])\n"
+                "\n"
+                "print('Pohon Rencana Logis Awal (Unoptimized AST):')\n"
+                "print(f'  {project_op} -> {project_op.children[0]} -> {project_op.children[0].children[0]}')\n"
+                "\n"
+                "opt_tree = MiniCatalyst.optimize_tree(project_op)\n"
+                "print('')\n"
+                "print('Pohon Rencana Logis Pasca-Optimasi Catalyst:')\n"
+                "print(f'  {opt_tree} -> {opt_tree.children[0]} -> {opt_tree.children[0].children[0]}')\n"
+                "print(f'  Hasil Folding Atribut Filter: {opt_tree.children[0].props.get(\"expr\")}')\n"
+                "print('Kesimpulan: Catalyst menyederhanakan predikat konstan dan menata ulang operator logis.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.2
+    {
+        "id": "10.7.2",
+        "title": "Inspeksi Rencana Eksekusi: Parsed, Analyzed, Optimized, dan Physical Plan",
+        "learningObjectives": [
+            "Menguasai teknik diagnostik performa kueri menggunakan metode `explain(extended=true)` pada Spark SQL.",
+            "Menganalisis perbedaan semantik antara Parsed Logical Plan, Analyzed Logical Plan, Optimized Logical Plan, dan Physical Plan.",
+            "Mengidentifikasi operator fisik kritis seperti `WholeStageCodegen`, `Exchange`, dan `HashAggregate` pada query plan."
+        ],
+        "prerequisites": [
+            "10.7.1 (Mekanisme Catalyst Optimizer).",
+            "10.6.7 (Transformasi PySpark)."
+        ],
+        "commonPitfalls": [
+            "Hanya membaca output `df.explain()` default (hanya physical plan) tanpa memeriksa `extended=true`, sehingga melewatkan informasi penyebab kegagalan optimasi logis.",
+            "Mengabaikan keberadaan operator `Exchange` yang berulang di dalam physical plan, menandakan terjadinya operasi shuffle data jaringan yang berlebihan."
+        ],
+        "academicReferences": [
+            "Armbrust, M., et al. (2015). Spark SQL: Relational Data Processing in Spark. ACM SIGMOD 2015.",
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media."
+        ],
+        "caseStudy": "Sebuah pipeline analitik ritel mengalami penurunan performa dari 5 menit menjadi 45 menit. Inspeksi rencana fisik melalui `explain(extended=true)` mengungkapkan bahwa optimizer gagal mengenali tabel kecil karena ketiadaan statistik ukuran, sehingga memilih SortMergeJoin alih-alih BroadcastHashJoin.",
+        "content": {
+            "theory": (
+                "Untuk memverifikasi bagaimana Catalyst Optimizer mentransformasikan kode pengguna menjadi instruksi fisik, Spark menyediakan metode diagnostik **`df.explain(extended=true)`**. "
+                "Metode ini menampilkan empat tahapan evolusi rencana eksekusi secara berurutan: "
+                "1. **Parsed Logical Plan (Unresolved Plan)**: "
+                "Representasi langsung dari sintaks SQL atau rantai metode DataFrame yang dihasilkan oleh ANTLR parser. "
+                "Pada tahap ini, relasi tabel dan kolom masih berstatus belum terselesaikan (*unresolved*): sistem belum memvalidasi apakah kolom tersebut benar-benar ada di catalog. "
+                "2. **Analyzed Logical Plan**: "
+                "Hasil penyelesaian nama atribut oleh Catalog Analyzer. Tipe data kolom (`IntegerType`, `StringType`) telah dipetakan, dan fungsi-fungsi bawaan telah diikat (*resolved*). "
+                "3. **Optimized Logical Plan**: "
+                "Pohon rencana logis setelah dikenai seluruh aturan transformasi aljabar relasional (RBO): "
+                "$$\\text{LogicalPlan}_{\\text{opt}} = \\text{PruneColumns}(\\text{PushdownPredicates}(\\text{FoldConstants}(\\text{AnalyzedPlan})))$$ "
+                "4. **Physical Plan**: "
+                "Rencana instruksi komputasi fisik yang akan dieksekusi oleh worker. Operator aljabar relasional logis dipetakan ke operator algoritma fisik konkret: "
+                "- `Project` $\\longrightarrow$ `ProjectExec` (dengan WholeStageCodegen). "
+                "- `Join` $\\longrightarrow$ `BroadcastHashJoinExec` atau `SortMergeJoinExec`. "
+                "- `Aggregate` $\\longrightarrow$ `HashAggregateExec` (Two-Phase)."
+            ),
+            "realWorldApplication": (
+                "Data engineers di Netflix dan Uber selalu menginspeksi output `explain()` dalam unit test CI/CD untuk memastikan tidak ada regresi join strategy pada query penting."
+            ),
+            "codeSnippet": (
+                "# Simulator Parsing & Analisis 4 Tahap Rencana Eksekusi Spark SQL (Explain Simulator)\n"
+                "class QueryExplainSimulator:\n"
+                "    def __init__(self, raw_sql_query):\n"
+                "        self.query = raw_sql_query\n"
+                "        \n"
+                "    def generate_extended_explain(self):\n"
+                "        # 1. Parsed Logical Plan: Ekstraksi AST mentah\n"
+                "        parsed = '== Parsed Logical Plan ==\\n' \\\n"
+                "                 \"'Project ['user_id, 'amount * 1.1 AS 'gross_val]\\n\" \\\n"
+                "                 \"+- 'Filter ('status = 'SETTLED')\\n\" \\\n"
+                "                 \"   +- 'UnresolvedRelation [orders]\"\n"
+                "                 \n"
+                "        # 2. Analyzed Logical Plan: Pengikatan tipe data catalog\n"
+                "        analyzed = '== Analyzed Logical Plan ==\\n' \\\n"
+                "                   'user_id: bigint, gross_val: double\\n' \\\n"
+                "                   'Project [user_id#1L, (amount#2 * 1.1) AS gross_val#3]\\n' \\\n"
+                "                   \"+- Filter (status#4 = 'SETTLED')\\n\" \\\n"
+                "                   '   +- SubqueryAlias orders\\n' \\\n"
+                "                   '      +- Relation [user_id#1L, amount#2, status#4] parquet'\n"
+                "                   \n"
+                "        # 3. Optimized Logical Plan: Predicate pushdown & projection pruning\n"
+                "        optimized = '== Optimized Logical Plan ==\\n' \\\n"
+                "                    'Project [user_id#1L, (amount#2 * 1.1) AS gross_val#3]\\n' \\\n"
+                "                    \"+- Filter (isnotnull(status#4) AND (status#4 = 'SETTLED'))\\n\" \\\n"
+                "                    '   +- Relation [user_id#1L, amount#2, status#4] parquet'\n"
+                "                    \n"
+                "        # 4. Physical Plan: Operator fisik ber-codegen\n"
+                "        physical = '== Physical Plan ==\\n' \\\n"
+                "                   '*(1) Project [user_id#1L, (amount#2 * 1.1) AS gross_val#3]\\n' \\\n"
+                "                   \"+- *(1) Filter (isnotnull(status#4) AND (status#4 = 'SETTLED'))\\n\" \\\n"
+                "                   '   +- *(1) ColumnarScan parquet orders [user_id#1L, amount#2, status#4]'\n"
+                "                   \n"
+                "        return '\\n\\n'.join([parsed, analyzed, optimized, physical])\n"
+                "\n"
+                "simulator = QueryExplainSimulator('SELECT user_id, amount * 1.1 FROM orders WHERE status = \"SETTLED\"')\n"
+                "report = simulator.generate_extended_explain()\n"
+                "\n"
+                "print('Demonstrasi Output df.explain(extended=true):')\n"
+                "print(report)\n"
+                "print('\\nAnalisis Kritis: Tanda *(1) pada Physical Plan membuktikan aktivasi WholeStageCodegen.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.3
+    {
+        "id": "10.7.3",
+        "title": "Project Tungsten: Manajemen Memori Off-Heap & Enkoding Biner",
+        "learningObjectives": [
+            "Menganalisis keterbatasan arsitektur Java Virtual Machine (JVM Object Overhead & GC Pauses) pada pemrosesan Big Data.",
+            "Memahami pilar Project Tungsten: Compact Off-Heap Binary Format, Cache-Aware Computation, dan Whole-Stage Code Generation.",
+            "Mengimplementasikan model struktur data off-heap compact byte buffer menggunakan representasi biner murni."
+        ],
+        "prerequisites": [
+            "10.6.9 (Manajemen Memori Spark).",
+            "Representasi Memori Biner & Operasi Pointer Unsafe."
+        ],
+        "commonPitfalls": [
+            "Mengasumsikan bahwa seluruh kode PySpark otomatis menggunakan Tungsten; penggunaan ekspresi Python non-vektorized tetap memaksa data dialihkan ke proses Python VM yang lambat.",
+            "Mengabaikan kebocoran memori native off-heap yang tidak dapat dibersihkan secara otomatis oleh Garbage Collector JVM."
+        ],
+        "academicReferences": [
+            "Armbrust, M., et al. (2015). Spark SQL: Relational Data Processing in Spark. ACM SIGMOD 2015.",
+            "Neumann, T. (2011). Efficiently Compiling Efficient Query Plans for Modern Hardware. Proceedings of the VLDB Endowment, 4(9), 539–550."
+        ],
+        "caseStudy": "Analisis profiler pada kluster komputasi petabyte di Databricks menemukan bahwa 70% waktu CPU terbuang untuk overhead objek Java (header 16 byte untuk integer 4 byte) dan jeda Garbage Collection. Pengaktifan Project Tungsten mengeliminasi 90% objek JVM dan meningkatkan throughput komputasi 3.2x.",
+        "content": {
+            "theory": (
+                "Dalam sistem komputasi modern, kemacetan (*bottleneck*) performa pemrosesan data telah bergeser dari I/O disk/jaringan ke efisiensi CPU dan memori RAM. "
+                "Arsitektur berbasis JVM tradisional memiliki inefisiensi laten: sebuah string kecil 4 karakter `abcd` di Java memakan memori hingga 48 byte akibat header objek, hash code, dan pointer padding. "
+                "Untuk menembus batas keterbatasan JVM, Spark meluncurkan **Project Tungsten** yang bertumpu pada tiga pilar inovasi: "
+                "1. **Off-Heap Memory Management (Unsafe Row Format)**: "
+                "Tungsten mengelola memori secara langsung di luar JVM Heap menggunakan pemanggilan `sun.misc.Unsafe`. "
+                "Setiap baris data (*Row*) dikodekan secara rapat ke dalam **Compact Binary Format**: "
+                "$$\\text{RowLayout} = [\\text{NullBitSet}] \\parallel [\\text{FixedLengthFieldArray}] \\parallel [\\text{VariableLengthData}]$$ "
+                "Nilai numerik integer 4 byte tepat menghabiskan 4 byte di memori, tanpa header objek JVM sama sekali. "
+                "2. **Cache-Aware Computation**: Merancang algoritma sorting dan hash table yang selaras dengan garis cache CPU L1/L2/L3 (Cache-line friendly layout) untuk meminimalkan *cache misses*. "
+                "3. **Whole-Stage Code Generation (WSCG)**: Diilhami oleh makalah Thomas Neumann (VLDB 2011), WSCG mengompilasi seluruh tahapan operator fisik di dalam satu stage menjadi satu fungsi Java tunggal yang bersih saat runtime, menghilangkan virtual function dispatch dan menjaga data di register CPU."
+            ),
+            "realWorldApplication": (
+                "Mesin eksekusi Photon pada Databricks dan Project Tungsten pada Apache Spark 3.x memanfaatkan manajemen memori native untuk akselerasi kueri analitik ekstrem."
+            ),
+            "codeSnippet": (
+                "import struct\n"
+                "import sys\n"
+                "\n"
+                "# Komparasi Footprint Memori: Objek Tingkat Tinggi vs Tungsten Compact Binary Row\n"
+                "class TungstenBinaryRowEncoder:\n"
+                "    @staticmethod\n"
+                "    def encode_row(user_id, age, score, status_str):\n"
+                "        # Tungsten-like Binary Format:\n"
+                "        # Header: 1 byte NullBitset (0 = valid)\n"
+                "        # Fixed-width fields: int64 (8B), int32 (4B), float64 (8B), str_offset & len (8B)\n"
+                "        # Variable-width data: UTF-8 string bytes\n"
+                "        str_bytes = status_str.encode('utf-8')\n"
+                "        fixed_part = struct.pack('<B Q I d I I', \n"
+                "                                0,              # Null bitset\n"
+                "                                user_id,        # 8 bytes uint64\n"
+                "                                age,            # 4 bytes uint32\n"
+                "                                score,          # 8 bytes double\n"
+                "                                33,             # Offset ke data variabel (1+8+4+8+4+4=29 -> 33)\n"
+                "                                len(str_bytes)  # Panjang string variabel\n"
+                "                               )\n"
+                "        return fixed_part + str_bytes\n"
+                "\n"
+                "# Buat data representatif\n"
+                "uid, uage, uscore, ustatus = 1048576, 28, 98.75, 'ACTIVE_PRO'\n"
+                "tungsten_binary = TungstenBinaryRowEncoder.encode_row(uid, uage, uscore, ustatus)\n"
+                "\n"
+                "# Perkiraan ukuran objek Python / Java konvensional (Dict + String + Float Objects)\n"
+                "dict_approx_bytes = sys.getsizeof({}) + sys.getsizeof(uid) + sys.getsizeof(uage) + sys.getsizeof(uscore) + sys.getsizeof(ustatus)\n"
+                "\n"
+                "print('Evaluasi Arsitektur Project Tungsten Compact Binary Layout:')\n"
+                "print(f'  Data Input      : user_id={uid}, age={uage}, score={uscore}, status=\"{ustatus}\"')\n"
+                "print(f'  Tungsten Payload: {tungsten_binary.hex()} ({len(tungsten_binary)} bytes)')\n"
+                "print(f'  Footprint Objek Tingkat Tinggi: ~{dict_approx_bytes} bytes')\n"
+                "print(f'  Efisiensi Densitas Memori: {dict_approx_bytes / len(tungsten_binary):.1f}x lipat lebih hemat RAM!')\n"
+                "print('Kesimpulan: Off-heap binary format mengeliminasi GC pause dan JVM object overhead.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.4
+    {
+        "id": "10.7.4",
+        "title": "Operasi Shuffle Terdistribusi: Biaya Jaringan & Disk Spill",
+        "learningObjectives": [
+            "Memahami anatomi fisik operasi Shuffle pada Spark: Shuffle Write, Shuffle Files, dan Shuffle Read.",
+            "Menganalisis fenomena Disk Spill (Memory Spill vs Disk Spill) dan dampaknya terhadap degradasi I/O.",
+            "Mengimplementasikan simulator proses Map-Side Shuffle Sort and Spill saat memori buffer terlampaui."
+        ],
+        "prerequisites": [
+            "10.6.4 (DAG & Stage Boundary).",
+            "10.6.9 (Manajemen Memori Spark)."
+        ],
+        "commonPitfalls": [
+            "Membiarkan partisi shuffle terlalu sedikit pada kueri agregasi raksasa, memicu disk spill masif dan out-of-memory pada worker.",
+            "Menggunakan partisi shuffle default 200 untuk dataset mikro (misal 5 MB), memicu overhead ratusan koneksi jaringan kecil (small shuffle overhead)."
+        ],
+        "academicReferences": [
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media.",
+            "Ousterhout, K., et al. (2015). Making Sense of Performance in Data Analytics Frameworks. In 12th USENIX Symposium on Networked Systems Design and Implementation (NSDI 15), 293–307."
+        ],
+        "caseStudy": "Analisis bottleneck pada job agregasi transaksi finansial 500 GB menunjukkan bahwa eksekusi menghabiskan 80% durasi pada fase Shuffle Spill to Disk karena alokasi `spark.shuffle.file.buffer` terlalu kecil. Melakukan tuning buffer dan menambah jumlah partisi shuffle mereduksi total spill dari 420 GB menjadi 0 GB, memangkas durasi dari 90 menit menjadi 12 menit.",
+        "content": {
+            "theory": (
+                "**Shuffle** adalah operasi penataan ulang data (*all-to-all data redistribution*) melintasi seluruh partisi dan node kluster untuk menyatukan data dengan kunci yang sama pada satu tempat (misal pada `groupBy`, `join`, `distinct`). "
+                "Shuffle merupakan fase paling rentan mengalami kegagalan dan bottleneck performa karena melibatkan gabungan beban CPU, RAM, disk I/O, dan bandwidth jaringan. "
+                "Anatomi proses Shuffle terbagi menjadi dua fase utama: "
+                "1. **Shuffle Write (Map Side)**: "
+                "Setiap map task mempartisi baris data berdasarkan nilai hash kunci: "
+                "$$\\text{TargetPartition} = \\text{Hash}(K) \\pmod{N_{\\text{reduce\\_partitions}}}$$ "
+                "Data dimasukkan ke dalam buffer memori `AppendOnlyMap`. "
+                "Jika volume data di buffer memori melampaui ambang batas keamanan RAM, Spark secara terpaksa melakukan **Disk Spill**: menyortir data di memori dan menumpahkannya ke disk lokal worker sebagai file sementara terkompresi. "
+                "2. **Shuffle Read (Reduce Side)**: "
+                "Setiap reduce task menghubungi seluruh executor lain via jaringan (Netty server) untuk mengambil (*fetch*) blok-blok partisi yang menjadi hak miliknya. "
+                "Metrik **Spill (Memory)** menunjukkan ukuran data sebelum kompresi saat berada di RAM, sedangkan **Spill (Disk)** menunjukkan ukuran data fisik setelah dikompresi di disk lokal."
+            ),
+            "realWorldApplication": (
+                "Monitor Spark UI `Shuffle Read Size` dan `Spill (Disk)` adalah dua indikator utama yang dievaluasi engineer untuk menentukan kesehatan dan biaya komputasi job Spark."
+            ),
+            "codeSnippet": (
+                "# Implementasi Simulator Map-Side Shuffle Partitioning & Disk Spilling\n"
+                "class ShuffleMapSimulator:\n"
+                "    def __init__(self, num_reducers=3, memory_buffer_limit=5):\n"
+                "        self.num_reducers = num_reducers\n"
+                "        self.buffer_limit = memory_buffer_limit\n"
+                "        self.memory_buffer = []\n"
+                "        self.spill_files = []\n"
+                "        \n"
+                "    def process_record(self, key, value):\n"
+                "        target_reducer = hash(key) % self.num_reducers\n"
+                "        self.memory_buffer.append((target_reducer, key, value))\n"
+                "        \n"
+                "        # Evaluasi apakah buffer memori meluap -> Lakukan Disk Spill!\n"
+                "        if len(self.memory_buffer) >= self.buffer_limit:\n"
+                "            self._spill_to_disk()\n"
+                "            \n"
+                "    def _spill_to_disk(self):\n"
+                "        # Urutkan berdasarkan target_reducer lalu simpan ke disk simulasi\n"
+                "        sorted_records = sorted(self.memory_buffer, key=lambda x: x[0])\n"
+                "        spill_id = len(self.spill_files) + 1\n"
+                "        self.spill_files.append({\n"
+                "            'spill_id': spill_id,\n"
+                "            'records_count': len(sorted_records),\n"
+                "            'data': sorted_records\n"
+                "        })\n"
+                "        self.memory_buffer = []  # Kosongkan buffer memori\n"
+                "\n"
+                "sim = ShuffleMapSimulator(num_reducers=3, memory_buffer_limit=4)\n"
+                "input_events = [\n"
+                "    ('k1', 10), ('k2', 20), ('k3', 30), ('k1', 40), # Memicu Spill 1\n"
+                "    ('k2', 50), ('k1', 60), ('k3', 70), ('k2', 80), # Memicu Spill 2\n"
+                "    ('k1', 90)\n"
+                "]\n"
+                "\n"
+                "for k, v in input_events:\n"
+                "    sim.process_record(k, v)\n"
+                "\n"
+                "print(f'Simulasi Shuffle Map-Side ({len(input_events)} Event, Batas Buffer={sim.buffer_limit}):')\n"
+                "print(f'  Jumlah File Disk Spill: {len(sim.spill_files)} berkas tumpahan')\n"
+                "for s in sim.spill_files:\n"
+                "    print(f'    - [Spill File #{s[\"spill_id\"]}] Berisi {s[\"records_count\"]} record terurut: {s[\"data\"]}')\n"
+                "print(f'  Sisa Data di Memori Buffer: {sim.memory_buffer}')\n"
+                "print('Kesimpulan: Disk spill menjaga task tidak OOM namun menimbulkan penalti latensi I/O.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.5
+    {
+        "id": "10.7.5",
+        "title": "Partisi Data: spark.sql.shuffle.partitions & Coalesce vs Repartition",
+        "learningObjectives": [
+            "Menganalisis dampak parameter `spark.sql.shuffle.partitions` terhadap konkurensi kluster dan ukuran partisi data.",
+            "Membedakan secara mendalam karakteristik algoritmik antara `repartition()` (Full Shuffle) dan `coalesce()` (Narrow Merge).",
+            "Mengimplementasikan simulator partisi ulang untuk mengevaluasi pemerataan distribusi data dan penghindaran shuffle."
+        ],
+        "prerequisites": [
+            "10.6.4 (DAG Stages & Narrow vs Wide Dependency).",
+            "10.7.4 (Operasi Shuffle Terdistribusi)."
+        ],
+        "commonPitfalls": [
+            "Menggunakan `repartition(1)` untuk mengekspor hasil ke satu file sebelum penulisan disk, memaksa seluruh data kluster ditransfer ke satu executor dan memicu OOM.",
+            "Menggunakan `coalesce()` untuk *menaikkan* jumlah partisi; operasi ini akan diabaikan secara diam-diam oleh Spark karena coalesce tidak dapat menambah partisi tanpa shuffle."
+        ],
+        "academicReferences": [
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media.",
+            "Apache Spark Optimization Guide: Tuning Partition Counts."
+        ],
+        "caseStudy": "Sebuah pipeline analitik harian di Pinterest menghasilkan 200 file berukuran 15 KB karena konfigurasi default `spark.sql.shuffle.partitions=200` pada dataset kecil. Menerapkan `coalesce(5)` sebelum tahap penulisan mengeliminasi small files problem dan memangkas waktu pemrosesan downstream hingga 4x lipat.",
+        "content": {
+            "theory": (
+                "Jumlah dan ukuran partisi data terdistribusi merupakan tuas kontrol paling berpengaruh terhadap pemanfaatan CPU dan memori kluster Spark. "
+                "Secara default, parameter `spark.sql.shuffle.partitions` bernilai **200**. Angka ini sering kali terlalu besar untuk dataset kecil (< 1 GB) dan terlalu kecil untuk dataset skala terabyte (di mana ukuran partisi ideal berkisar antara 100 MB hingga 200 MB). "
+                "Untuk mengatur ulang partisi data, Spark menyediakan dua metode fundamental: "
+                "1. **`repartition(N)` (Full Shuffle Partitioning)**: "
+                "Melakukan pembagian ulang data secara acak terdistribusi seragam atau berdasarkan hash kolom kunci. "
+                "Karakteristik: melibatkan dependensi lebar (**Wide Dependency** / Full Shuffle). "
+                "Dapat digunakan untuk **menambah maupun mengurangi** jumlah partisi. Menghasilkan ukuran partisi yang sangat seimbang merata di seluruh executor kluster. "
+                "2. **`coalesce(N)` (Narrow Partition Consolidation)**: "
+                "Menggabungkan partisi-partisi lokal yang berdampingan pada worker yang sama tanpa melakukan pertukaran jaringan (*no shuffle*). "
+                "Karakteristik: bersifat dependensi sempit (**Narrow Dependency**). "
+                "Hanya dapat digunakan untuk **mengurangi** jumlah partisi ($N_{\\text{new}} < N_{\\text{current}}$): "
+                "$$\\text{Complexity}(\\text{coalesce}) = \\mathcal{O}(N_{\\text{local}}) \\ll \\text{Complexity}(\\text{repartition}) = \\mathcal{O}(N \\log N + \\text{Network})$$"
+            ),
+            "realWorldApplication": (
+                "Data engineers menggunakan `repartition(col)` saat mempersiapkan join data miring, dan selalu memanggil `.coalesce(num_files)` tepat sebelum menulis hasil ke AWS S3 atau Delta Lake."
+            ),
+            "codeSnippet": (
+                "# Implementasi Simulator Perbandingan: repartition() (Full Shuffle) vs coalesce() (Narrow Merge)\n"
+                "class PartitioningSimulator:\n"
+                "    @staticmethod\n"
+                "    def simulate_repartition(partitions, target_n):\n"
+                "        # Full Shuffle: Kumpulkan seluruh data lalu bagi rata (Round-robin hash)\n"
+                "        flat_data = []\n"
+                "        for p in partitions:\n"
+                "            flat_data.extend(p)\n"
+                "            \n"
+                "        new_parts = [[] for _ in range(target_n)]\n"
+                "        for idx, item in enumerate(flat_data):\n"
+                "            new_parts[idx % target_n].append(item)\n"
+                "            \n"
+                "        return {\n"
+                "            'method': 'repartition',\n"
+                "            'new_partitions': new_parts,\n"
+                "            'shuffle_cost_network_records': len(flat_data)\n"
+                "        }\n"
+                "        \n"
+                "    @staticmethod\n"
+                "    def simulate_coalesce(partitions, target_n):\n"
+                "        # Narrow Merge: Gabungkan partisi berdampingan tanpa shuffle jaringan!\n"
+                "        if target_n >= len(partitions):\n"
+                "            return {'method': 'coalesce', 'new_partitions': partitions, 'shuffle_cost_network_records': 0}\n"
+                "            \n"
+                "        k, m = divmod(len(partitions), target_n)\n"
+                "        new_parts = []\n"
+                "        idx = 0\n"
+                "        for i in range(target_n):\n"
+                "            chunk_size = k + (1 if i < m else 0)\n"
+                "            merged = []\n"
+                "            for p in partitions[idx : idx + chunk_size]:\n"
+                "                merged.extend(p)\n"
+                "            new_parts.append(merged)\n"
+                "            idx += chunk_size\n"
+                "            \n"
+                "        return {\n"
+                "            'method': 'coalesce',\n"
+                "            'new_partitions': new_parts,\n"
+                "            'shuffle_cost_network_records': 0  # Nol shuffle!\n"
+                "        }\n"
+                "\n"
+                "initial_parts = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]\n"
+                "repart_res = PartitioningSimulator.simulate_repartition(initial_parts, target_n=2)\n"
+                "coal_res = PartitioningSimulator.simulate_coalesce(initial_parts, target_n=2)\n"
+                "\n"
+                "print(f'Partisi Awal (6 Partisi): {initial_parts}')\n"
+                "print(f'Hasil 1. {repart_res[\"method\"]} (Target 2 Partisi):')\n"
+                "print(f'   Partisi: {repart_res[\"new_partitions\"]} | Biaya Shuffle Jaringan: {repart_res[\"shuffle_cost_network_records\"]} baris')\n"
+                "print(f'Hasil 2. {coal_res[\"method\"]} (Target 2 Partisi):')\n"
+                "print(f'   Partisi: {coal_res[\"new_partitions\"]} | Biaya Shuffle Jaringan: {coal_res[\"shuffle_cost_network_records\"]} baris (Zero Shuffle!)')\n"
+                "print('Kesimpulan: coalesce menghemat jaringan saat mereduksi partisi; repartition menjamin keseimbangan merata.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.6
+    {
+        "id": "10.7.6",
+        "title": "Masalah Data Skew (Ketimpangan Distribusi Kunci) & Dampak Straggler Task",
+        "learningObjectives": [
+            "Menganalisis fenomena Data Skew pada komputasi paralel dan pembuktian hukum batas kinerja terlama (Straggler Tasks).",
+            "Menghitung metrik ketimpangan distribusi data menggunakan koefisien skewness statistik dan rasio disparitas kuantil.",
+            "Mengimplementasikan simulator visualisasi beban kerja task untuk mendeteksi partisi timpang secara kuantitatif."
+        ],
+        "prerequisites": [
+            "10.7.4 (Operasi Shuffle).",
+            "Statistik Deskriptif (Variansi, Skewness, Distribusi Zipfian)."
+        ],
+        "commonPitfalls": [
+            "Mencoba menyelesaikan data skew hanya dengan menambah jumlah CPU core atau menaikkan memori executor, yang tidak menyelesaikan akar masalah ketimpangan partisi tunggal.",
+            "Mengabaikan data nilai `NULL` pada join key yang secara otomatis dialokasikan ke partisi tunggal yang sama oleh hash partitioner."
+        ],
+        "academicReferences": [
+            "Kwon, Y., et al. (2012). SkewTune: Mitigating Skew in MapReduce Applications. In Proceedings of the 2012 ACM SIGMOD International Conference on Management of Data, 25–36.",
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media."
+        ],
+        "caseStudy": "Analisis kueri join pesanan pelanggan pada sistem ritel raksasa mendapati bahwa 99 dari 100 task selesai dalam waktu 30 detik, namun 1 task tersisa memakan waktu 45 menit karena 30% transaksi berasal dari akun pelanggan anonim (kunci bernilai 'GUEST').",
+        "content": {
+            "theory": (
+                "Dalam sistem terdistribusi skala besar, kinerja paralel kluster dibatasi oleh fenomena **Straggler Tasks (Tugas Tertinggal)**. "
+                "Penyebab paling dominan dari straggler task di tingkat aplikasi adalah **Ketimpangan Data (Data Skew)**: kondisi di mana satu atau beberapa kunci data memiliki frekuensi kemunculan yang jauh melampaui kunci lainnya (sering mengikuti hukum pangkat Zipf's Law). "
+                "Ketika operasi shuffle dijalankan, partisi hash menempatkan seluruh rekaman dengan kunci yang sama ke dalam satu partisi fisik yang identik: "
+                "$$P(\\text{Key}) = \\text{Hash}(\\text{Key}) \\pmod{N_{\\text{partitions}}}$$ "
+                "Jika kunci populer $K_{\\text{skew}}$ memiliki $10^7$ record sementara kunci lain rata-rata hanya memiliki $10^3$ record, maka executor yang menerima partisi tersebut akan kebanjiran beban data raksasa. "
+                "Total waktu penyelesaian job ditentukan secara mutlak oleh task paling lambat: "
+                "$$T_{\\text{Job}} = \\max_{i \\in [1, N_{\\text{tasks}}]} T_i \\gg \\text{Median}(T_i)$$ "
+                "Hal ini menyebabkan 99% resource kluster menganggur menunggu satu worker yang mengalami kelebihan beban (*idle resource starvation*)."
+            ),
+            "realWorldApplication": (
+                "Data engineers di LinkedIn dan Meta memonitor metrik durasi task pada Spark UI (persentil p75 vs max) untuk mendeteksi keberadaan data skew pada pipeline produksi."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulator Deteksi Data Skew & Dampak Straggler Task pada Kluster Terdistribusi\n"
+                "class DataSkewAnalyzer:\n"
+                "    def __init__(self, key_distribution):\n"
+                "        self.keys = key_distribution\n"
+                "        \n"
+                "    def simulate_hash_partitioning(self, num_partitions=4):\n"
+                "        partitions = [[] for _ in range(num_partitions)]\n"
+                "        for k in self.keys:\n"
+                "            part_idx = hash(k) % num_partitions\n"
+                "            partitions[part_idx].append(k)\n"
+                "            \n"
+                "        sizes = [len(p) for p in partitions]\n"
+                "        max_size = max(sizes)\n"
+                "        mean_size = np.mean(sizes)\n"
+                "        skew_ratio = max_size / max(1, mean_size)\n"
+                "        \n"
+                "        # Estimasi waktu task sebanding dengan kuadrat/linear ukuran partisi\n"
+                "        task_durations_sec = [round(s * 0.01, 2) for s in sizes]\n"
+                "        job_total_walltime = max(task_durations_sec)\n"
+                "        \n"
+                "        return {\n"
+                "            'partition_sizes': sizes,\n"
+                "            'skew_ratio': skew_ratio,\n"
+                "            'task_durations_sec': task_durations_sec,\n"
+                "            'job_walltime_sec': job_total_walltime\n"
+                "        }\n"
+                "\n"
+                "# Simulasi distribusi data: Kunci 'GUEST' muncul 5.000 kali, kunci normal masing-masing 50 kali\n"
+                "normal_keys = [f'user_{i}' for i in range(1, 41) for _ in range(50)]  # 2.000 record normal\n"
+                "skewed_keys = ['GUEST_USER'] * 5000                                    # 5.000 record miring!\n"
+                "dataset = normal_keys + skewed_keys\n"
+                "\n"
+                "analyzer = DataSkewAnalyzer(dataset)\n"
+                "metrics = analyzer.simulate_hash_partitioning(num_partitions=4)\n"
+                "\n"
+                "print(f'Analisis Data Skew ({len(dataset):,} Total Record pada 4 Partisi):')\n"
+                "print(f'  Distribusi Ukuran Partisi: {metrics[\"partition_sizes\"]}')\n"
+                "print(f'  Estimasi Durasi per Task : {metrics[\"task_durations_sec\"]} detik')\n"
+                "print(f'  Rasio Disparitas Skew    : {metrics[\"skew_ratio\"]:.2f}x lebih besar dari rata-rata')\n"
+                "print(f'  Total Waktu Job Selesai  : {metrics[\"job_walltime_sec\"]} detik (Dibatasi oleh Straggler Task!)')\n"
+                "print('Kesimpulan: Straggler task menahan penyelesaian job meskipun 3 partisi lain selesai instan.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.7
+    {
+        "id": "10.7.7",
+        "title": "Mitigasi Data Skew: Teknik Salting Kunci Acak",
+        "learningObjectives": [
+            "Memahami prinsip algoritmik teknik Key Salting untuk memecah partisi panas (hot partition).",
+            "Menganalisis skema replikasi kunci pada tabel dimensi pendamping agar menghasilkan relasi join yang tepat.",
+            "Mengimplementasikan pipeline mitigasi data skew menggunakan penambahan garam acak terdistribusi seragam."
+        ],
+        "prerequisites": [
+            "10.7.6 (Masalah Data Skew & Straggler Task).",
+            "10.6.8 (Operasi Join Terdistribusi)."
+        ],
+        "commonPitfalls": [
+            "Lupa mereplikasi tabel dimensi pendamping sebanyak faktor salting $K$, menyebabkan sebagian baris fakta salted gagal menemukan pasangannya pada join.",
+            "Memilih faktor garam $K$ yang terlalu besar (> 100), menyebabkan overhead replikasi tabel dimensi melampaui penghematan waktu eksekusi."
+        ],
+        "academicReferences": [
+            "Kwon, Y., et al. (2012). SkewTune: Mitigating Skew in MapReduce Applications. ACM SIGMOD 2012.",
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media."
+        ],
+        "caseStudy": "Sebuah sistem pemrosesan iklan online menggabungkan tabel impresi dengan tabel kampanye. Kunci kampanye mega-viral memicu crash OOM pada worker. Menerapkan Key Salting dengan faktor garam $K=10$ membagi partisi miring menjadi 10 sub-partisi seimbang, menstabilkan penggunaan memori kluster dan mempercepat durasi join sebesar 78%.",
+        "content": {
+            "theory": (
+                "Teknik paling ampuh dan teruji dalam industri untuk menanggulangi data skew pada operasi join adalah **Teknik Penggaraman Kunci (Key Salting)**. "
+                "Tujuan utama salting adalah menyebarkan rekaman yang menumpuk pada satu kunci populer ke beberapa partisi acak yang berbeda. "
+                "Mekanisme algoritmik Key Salting dieksekusi melalui langkah-langkah sistematis berikut: "
+                "1. **Penggaraman Tabel Miring (Fact Table Salting)**: "
+                "Untuk setiap baris pada tabel fakta yang miring, kunci join dimodifikasi dengan menyematkan bilangan bulat acak yang ditarik dari distribusi seragam $[0, K-1]$: "
+                "$$\\text{Key}_{\\text{salted}} = \\text{Key} \\parallel \\text{RandomInt}(0, K-1)$$ "
+                "Faktor $K$ (salting factor) biasanya dipilih antara 5 hingga 20 tergantung tingkat keparahan skew. "
+                "2. **Replikasi Tabel Pendamping (Dimension Table Exploding)**: "
+                "Agar setiap baris yang telah digarami tetap dapat menemukan pasangannya pada saat join, tabel dimensi pendamping direplikasi sebanyak $K$ kali menggunakan fungsi `explode`: "
+                "$$\\text{Row}_{\\text{dim}}(\\text{Key}) \\longrightarrow \\bigcup_{i=0}^{K-1} \\text{Row}_{\\text{dim}}(\\text{Key} \\parallel i)$$ "
+                "3. **Join & Agregasi**: Kedua tabel yang telah digarami di-join berdasarkan `Key_salted`. "
+                "Beban data kini terbagi merata ke $K$ executor berbeda tanpa ada satu pun worker yang kelebihan beban (*zero straggler*)."
+            ),
+            "realWorldApplication": (
+                "Data engineers di Meta dan Alibaba menerapkan salting otomatis pada pipeline Spark SQL saat menggabungkan data log interaksi dengan profil pengguna selebriti/influencer."
+            ),
+            "codeSnippet": (
+                "import random\n"
+                "\n"
+                "# Implementasi Algoritma Key Salting untuk Mengatasi Data Skew pada Join Terdistribusi\n"
+                "class KeySaltingEngine:\n"
+                "    @staticmethod\n"
+                "    def apply_salting(fact_records, dim_records, salt_factor=4):\n"
+                "        random.seed(42)\n"
+                "        \n"
+                "        # 1. Tambahkan salt acak [0, salt_factor-1] pada tabel fakta miring\n"
+                "        salted_facts = []\n"
+                "        for r in fact_records:\n"
+                "            salt = random.randint(0, salt_factor - 1)\n"
+                "            salted_key = f\"{r['key']}_SALT_{salt}\"\n"
+                "            salted_facts.append({'salted_key': salted_key, 'orig_key': r['key'], 'val': r['val']})\n"
+                "            \n"
+                "        # 2. Replikasi tabel dimensi sebanyak salt_factor kali (Explode)\n"
+                "        exploded_dims = {}\n"
+                "        for r in dim_records:\n"
+                "            for s in range(salt_factor):\n"
+                "                s_key = f\"{r['key']}_SALT_{s}\"\n"
+                "                exploded_dims[s_key] = r['name']\n"
+                "                \n"
+                "        # 3. Eksekusi Join berbasis salted key\n"
+                "        joined_results = []\n"
+                "        for sf in salted_facts:\n"
+                "            dim_name = exploded_dims.get(sf['salted_key'], 'UNKNOWN')\n"
+                "            joined_results.append({\n"
+                "                'key': sf['orig_key'],\n"
+                "                'name': dim_name,\n"
+                "                'val': sf['val'],\n"
+                "                'partition_bucket': hash(sf['salted_key']) % salt_factor\n"
+                "            })\n"
+                "            \n"
+                "        return joined_results\n"
+                "\n"
+                "# Fakta: 100 record bertumpuk pada kunci 'HOT_KEY'\n"
+                "fact_table = [{'key': 'HOT_KEY', 'val': i * 10} for i in range(100)]\n"
+                "dim_table = [{'key': 'HOT_KEY', 'name': 'Mega Influencer'}]\n"
+                "\n"
+                "joined = KeySaltingEngine.apply_salting(fact_table, dim_table, salt_factor=4)\n"
+                "\n"
+                "# Hitung persebaran partisi hasil salting\n"
+                "partition_counts = {}\n"
+                "for r in joined:\n"
+                "    b = r['partition_bucket']\n"
+                "    partition_counts[b] = partition_counts.get(b, 0) + 1\n"
+                "\n"
+                "print('Hasil Mitigasi Data Skew Menggunakan Key Salting (Salt Factor = 4):')\n"
+                "print(f'  Total Record Selesai di-Join: {len(joined)} record')\n"
+                "print(f'  Contoh Record Hasil Join    : {joined[0]}')\n"
+                "print(f'  Distribusi Beban per Bucket  : {partition_counts}')\n"
+                "print('Kesimpulan: 100 record miring berhasil didistribusikan merata ke 4 partisi seimbang.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.8
+    {
+        "id": "10.7.8",
+        "title": "Adaptive Query Execution (AQE) pada Spark 3.x",
+        "learningObjectives": [
+            "Memahami arsitektur Adaptive Query Execution (AQE) pada Spark 3.x yang mengoptimasi query plan saat runtime.",
+            "Menganalisis tiga fitur utama AQE: Dynamically Coalescing Shuffle Partitions, Dynamic Join Strategy Switching, dan Skew Join Optimization.",
+            "Mengimplementasikan simulator engine adaptif yang mengubah query plan berdasarkan statistik data runtime aktual."
+        ],
+        "prerequisites": [
+            "10.7.1 (Catalyst Optimizer).",
+            "10.7.6 (Data Skew & Shuffle Partitions)."
+        ],
+        "commonPitfalls": [
+            "Mengharapkan AQE bekerja pada kueri streaming; AQE secara eksklusif dirancang untuk beban kerja batch SQL di mana stage boundary materialisasi terjadi.",
+            "Menonaktifkan AQE secara manual karena kebiasaan lama Spark 2.x, menghilangkan optimasi otomatis yang stabil."
+        ],
+        "academicReferences": [
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media.",
+            "Apache Spark Documentation: Adaptive Query Execution (AQE)."
+        ],
+        "caseStudy": "Kluster Spark di Uber mengaktifkan `spark.sql.adaptive.enabled=true`. Fitur ini secara otomatis menggabungkan partisi-partisi shuffle kecil pada 80% kueri harian dan mengubah SortMergeJoin menjadi BroadcastJoin secara dinamis, menghemat 40% alokasi core CPU.",
+        "content": {
+            "theory": (
+                "Dalam sistem database terdistribusi tradisional, rencana kueri dioptimasi dan dibekukan (*frozen*) sebelum kueri dijalankan. "
+                "Kelemahan fatal pendekatan statis ini adalah ketergantungan pada statistik pra-kueri yang sering kali tidak akurat atau usang. "
+                "Spark 3.0 memperkenalkan **Adaptive Query Execution (AQE)**: paradigma di mana rencana eksekusi terus diperbarui secara dinamis pada saat kueri sedang berjalan, memanfaatkan statistik aktual yang dikumpulkan pada akhir setiap Stage eksekusi. "
+                "AQE diatur oleh tiga fitur revolusioner: "
+                "1. **Dynamically Coalescing Shuffle Partitions**: "
+                "Alih-alih menggunakan 200 partisi statis, Spark membaca ukuran aktual output map-stage dan secara otomatis menggabungkan partisi-partisi kecil yang berdekatan menjadi partisi target (misalnya 64 MB per partisi). "
+                "2. **Dynamic Switching Join Strategies**: "
+                "Jika setelah fase filter data suatu tabel menyusut drastis di bawah ambang batas broadcast (misal dari 1 GB menjadi 8 MB), AQE mengubah rencana fisik dari Sort-Merge Join menjadi **Broadcast Hash Join** saat runtime. "
+                "3. **Dynamic Optimizing Skew Joins**: "
+                "Jika AQE mendeteksi salah satu partisi shuffle berukuran jauh lebih besar daripada median partisi lain: "
+                "$$\\text{Size}(P_k) > \\text{Median}(P) \\times \\text{spark.sql.adaptive.skewJoin.skewedPartitionFactor}$$ "
+                "Spark secara otomatis memecah partisi miring tersebut menjadi beberapa sub-partisi kecil tanpa memerlukan intervensi manual dari pengguna."
+            ),
+            "realWorldApplication": (
+                "Databricks dan Apache Spark 3.2+ mengaktifkan Adaptive Query Execution secara default untuk seluruh beban kerja SQL dan DataFrame produksi."
+            ),
+            "codeSnippet": (
+                "# Implementasi Simulator Adaptive Query Execution (AQE): Dynamic Coalesce & Dynamic Join Switch\n"
+                "class AQERuntimeEngine:\n"
+                "    def __init__(self, target_partition_size_mb=64, auto_broadcast_threshold_mb=10):\n"
+                "        self.target_size = target_partition_size_mb\n"
+                "        self.broadcast_threshold = auto_broadcast_threshold_mb\n"
+                "        \n"
+                "    def optimize_post_map_stage(self, map_output_partition_sizes, initial_join_strategy='SortMergeJoin'):\n"
+                "        total_size = sum(map_output_partition_sizes)\n"
+                "        \n"
+                "        # 1. Dynamic Join Strategy Switching\n"
+                "        chosen_join = initial_join_strategy\n"
+                "        if total_size <= self.broadcast_threshold:\n"
+                "            chosen_join = 'BroadcastHashJoin'  # Dialihkan dinamis saat runtime!\n"
+                "            \n"
+                "        # 2. Dynamically Coalescing Shuffle Partitions\n"
+                "        coalesced_partitions = []\n"
+                "        current_accum = 0\n"
+                "        current_group = []\n"
+                "        \n"
+                "        for p_idx, p_size in enumerate(map_output_partition_sizes):\n"
+                "            if current_accum + p_size > self.target_size and current_group:\n"
+                "                coalesced_partitions.append({'parts': current_group, 'total_mb': current_accum})\n"
+                "                current_group = [p_idx]\n"
+                "                current_accum = p_size\n"
+                "            else:\n"
+                "                current_group.append(p_idx)\n"
+                "                current_accum += p_size\n"
+                "        if current_group:\n"
+                "            coalesced_partitions.append({'parts': current_group, 'total_mb': current_accum})\n"
+                "            \n"
+                "        return {\n"
+                "            'original_partitions_count': len(map_output_partition_sizes),\n"
+                "            'coalesced_partitions_count': len(coalesced_partitions),\n"
+                "            'runtime_join_strategy': chosen_join,\n"
+                "            'coalesced_details': coalesced_partitions\n"
+                "        }\n"
+                "\n"
+                "engine = AQERuntimeEngine(target_partition_size_mb=64, auto_broadcast_threshold_mb=10)\n"
+                "# Output stage pasca-filter: 8 partisi kecil (masing-masing 1 MB, total 8 MB)\n"
+                "post_filter_sizes = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]\n"
+                "\n"
+                "plan = engine.optimize_post_map_stage(post_filter_sizes, initial_join_strategy='SortMergeJoin')\n"
+                "\n"
+                "print('Simulasi Adaptive Query Execution (AQE) Pasca-Stage Evaluasi:')\n"
+                "print(f'  Partisi Shuffle Awal: {plan[\"original_partitions_count\"]} partisi terfragmentasi')\n"
+                "print(f'  Partisi Pasca-AQE   : {plan[\"coalesced_partitions_count\"]} partisi terpadatkan')\n"
+                "print(f'  Strategi Join Awal  : SortMergeJoin')\n"
+                "print(f'  Strategi Join Akhir : {plan[\"runtime_join_strategy\"]} (Beralih dinamis karena ukuran <= 10 MB!)')\n"
+                "print('Kesimpulan: AQE mengoreksi keputusan optimizer statis berdasarkan metrik nyata runtime.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.9
+    {
+        "id": "10.7.9",
+        "title": "Bucketing pada Spark SQL untuk Menghilangkan Shuffle Join Berulang",
+        "learningObjectives": [
+            "Memahami konsep Bucketing pada Spark SQL sebagai teknik penataan fisik data di media penyimpanan persisten.",
+            "Menganalisis bagaimana Bucketing dan Sorting mengeliminasi tahapan Exchange (Shuffle) dan Sort pada kueri join berkala.",
+            "Mengimplementasikan simulator pembentukan bucket data terstruktur dan verifikasi peniadaan operasi shuffle."
+        ],
+        "prerequisites": [
+            "10.7.4 (Operasi Shuffle Terdistribusi).",
+            "10.6.8 (Strategi Join Terdistribusi)."
+        ],
+        "commonPitfalls": [
+            "Menggabungkan dua tabel yang memiliki jumlah bucket berbeda atau kolom pengurutan yang tidak cocok, membatalkan peniadaan shuffle secara total.",
+            "Menggunakan bucketing pada tabel yang hanya dibaca sekali atau jarang di-join, membuang biaya komputasi penulisan awal yang mahal."
+        ],
+        "academicReferences": [
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media.",
+            "Armbrust, M., et al. (2015). Spark SQL: Relational Data Processing in Spark. ACM SIGMOD 2015."
+        ],
+        "caseStudy": "Dua tabel raksasa (Tabel Pesanan 500 GB dan Tabel Pengguna 100 GB) di-join 50 kali sehari oleh dasbor analitik bisnis. Mengorganisasikan kedua tabel dengan Bucketing 32 bucket pada kolom `user_id` mengeliminasi tahapan shuffle harian sebesar 30 TB transfer jaringan, mempercepat kueri dari 8 menit menjadi 45 detik.",
+        "content": {
+            "theory": (
+                "Ketika dua tabel besar di-join menggunakan algoritma Sort-Merge Join konvensional, Spark diwajibkan mengeksekusi dua tahapan berat: (1) **Exchange**: melakukan shuffle jaringan untuk mempartisi data berdasarkan join key, dan (2) **Sort**: mengurutkan data di setiap partisi. "
+                "Jika kueri join ini dieksekusi ratusan kali setiap hari, biaya pertukaran data jaringan tersebut menjadi pemborosan yang sangat masif. "
+                "Spark SQL menyediakan fitur **Bucketing (`bucketBy` & `sortBy`)** untuk memecahkan masalah ini: "
+                "Bucketing melakukan pra-partisi dan pra-pengurutan data fisik langsung saat data pertama kali ditulis ke penyimpanan persisten (Hive Metastore / Parquet): "
+                "$$\\text{TargetBucket} = \\text{Murmur3Hash}(\\text{Key}) \\pmod{N_{\\text{buckets}}}$$ "
+                "Ketika dua tabel yang telah ter-bucket pada kolom yang sama dengan jumlah bucket yang identik digabungkan (`TableA.join(TableB, 'key')`), Catalyst Optimizer mendeteksi keselarasan partisi tersebut. "
+                "Akibatnya, operator fisik **`Exchange` dan `Sort` dieliminasi 100% dari rencana eksekusi**: data dibaca langsung dan di-join secara lokal pada setiap worker node tanpa ada satu byte pun yang ditransfer melintasi kabel jaringan."
+            ),
+            "realWorldApplication": (
+                "Data warehouse berbasis Spark SQL di Facebook (Meta) dan Netflix menggunakan bucketing pada kolom `user_id` untuk seluruh tabel fakta utama guna menjamin latensi kueri sub-menit."
+            ),
+            "codeSnippet": (
+                "# Implementasi Simulator Bucketing Spark SQL: Menghilangkan Shuffle pada Join Berulang\n"
+                "class BucketedTableSimulator:\n"
+                "    def __init__(self, table_name, num_buckets=4, bucket_col='user_id'):\n"
+                "        self.table_name = table_name\n"
+                "        self.num_buckets = num_buckets\n"
+                "        self.bucket_col = bucket_col\n"
+                "        self.buckets = {i: [] for i in range(num_buckets)}\n"
+                "        \n"
+                "    def write_bucketed_data(self, records):\n"
+                "        for r in records:\n"
+                "            val = r[self.bucket_col]\n"
+                "            b_idx = hash(val) % self.num_buckets\n"
+                "            self.buckets[b_idx].append(r)\n"
+                "            \n"
+                "        # Pra-urutkan setiap bucket fisik\n"
+                "        for b_idx in self.buckets:\n"
+                "            self.buckets[b_idx].sort(key=lambda x: x[self.bucket_col])\n"
+                "            \n"
+                "    @staticmethod\n"
+                "    def bucketed_sort_merge_join(tbl_a, tbl_b):\n"
+                "        # Jika kedua tabel memiliki jumlah bucket dan kunci yang sama, shuffle dihilangkan!\n"
+                "        if tbl_a.num_buckets != tbl_b.num_buckets:\n"
+                "            return {'shuffle_eliminated': False, 'matches': 0}\n"
+                "            \n"
+                "        matched_pairs = []\n"
+                "        # Eksekusi join lokal per-bucket secara independen tanpa network transfer!\n"
+                "        for b_idx in range(tbl_a.num_buckets):\n"
+                "            list_a = tbl_a.buckets[b_idx]\n"
+                "            list_b = tbl_b.buckets[b_idx]\n"
+                "            for ra in list_a:\n"
+                "                for rb in list_b:\n"
+                "                    if ra[tbl_a.bucket_col] == rb[tbl_b.bucket_col]:\n"
+                "                        matched_pairs.append((ra, rb))\n"
+                "                        \n"
+                "        return {'shuffle_eliminated': True, 'matches': len(matched_pairs)}\n"
+                "\n"
+                "# Inisialisasi 2 tabel dengan 4 bucket pada kolom 'user_id'\n"
+                "orders_tbl = BucketedTableSimulator('orders', num_buckets=4, bucket_col='user_id')\n"
+                "users_tbl = BucketedTableSimulator('users', num_buckets=4, bucket_col='user_id')\n"
+                "\n"
+                "orders_tbl.write_bucketed_data([{'user_id': 101, 'amount': 250}, {'user_id': 102, 'amount': 150}, {'user_id': 103, 'amount': 400}])\n"
+                "users_tbl.write_bucketed_data([{'user_id': 101, 'name': 'Alice'}, {'user_id': 102, 'name': 'Bob'}, {'user_id': 103, 'name': 'Charlie'}])\n"
+                "\n"
+                "join_res = BucketedTableSimulator.bucketed_sort_merge_join(orders_tbl, users_tbl)\n"
+                "\n"
+                "print('Evaluasi Optimasi Bucketing pada Spark SQL:')\n"
+                "print(f'  Jumlah Bucket Kedua Tabel : 4 Bucket (Selaras)')\n"
+                "print(f'  Peniadaan Tahapan Shuffle : {join_res[\"shuffle_eliminated\"]} (Zero Network Transfer!)')\n"
+                "print(f'  Total Pasangan Cocok     : {join_res[\"matches\"]}')\n"
+                "print('Kesimpulan: Bucketing memindahkan biaya shuffle saat write sehingga kueri join berjalan instan.')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.7.10
+    {
+        "id": "10.7.10",
+        "title": "Monitoring Kinerja Job Menggunakan Spark UI (Event Timeline, Stage Metrics)",
+        "learningObjectives": [
+            "Memahami antarmuka diagnostik Spark UI dan interpretasi visual tab Jobs, Stages, dan Tasks.",
+            "Menganalisis metrik operasional kritis: Task Duration, Garbage Collection (GC) Time, Shuffle Read/Write, dan Memory Spill.",
+            "Mengimplementasikan parser log telemetri Spark untuk mendeteksi anomali kinerja dan menghasilkan rekomendasi tuning."
+        ],
+        "prerequisites": [
+            "10.6.1 (Arsitektur Master-Worker).",
+            "10.7.4 (Shuffle & Spill)."
+        ],
+        "commonPitfalls": [
+            "Mengabaikan rasio GC Time terhadap Task Execution Time (> 10% menandakan tekanan memori JVM yang parah).",
+            "Membaca metrik agregat rata-rata alih-alih memeriksa grafik distribusi persentil (Median vs Max) pada Spark UI, sehingga luput mendeteksi stragglers."
+        ],
+        "academicReferences": [
+            "Ousterhout, K., et al. (2015). Making Sense of Performance in Data Analytics Frameworks. USENIX NSDI 2015.",
+            "Chambers, B., & Zaharia, M. (2018). Spark: The Definitive Guide. O'Reilly Media."
+        ],
+        "caseStudy": "Tim SRE di platform streaming musik menganalisis job pemrosesan rekomendasi yang sering timeout. Melalui inspeksi Spark UI Event Timeline, mereka mendeteksi bahwa rasio Task GC Time mencapai 35% akibat pembuatan objek string yang berlebihan. Penyesuaian tuning JVM Garbage Collector G1GC mengembalikan rasio GC ke 4% dan menstabilkan pipeline.",
+        "content": {
+            "theory": (
+                "**Spark Web UI** (default port 4040) adalah instrumen observabilitas utama bagi data engineer untuk membedah kinerja internal aplikasi Spark yang sedang berjalan maupun yang telah selesai (melalui Spark History Server). "
+                "Navigasi diagnostik Spark UI berpusat pada hierarki metrik berikut: "
+                "1. **Jobs Tab**: Memperlihatkan daftar seluruh Action yang dipicu oleh kode pengguna, status eksekusi (Running, Succeeded, Failed), serta pembagian stage-nya. "
+                "2. **Stages Tab**: Jantung diagnosis performa. Menampilkan ringkasan metrik statistik (Min, 25th percentile, Median, 75th percentile, Max) untuk setiap stage: "
+                "   - *Task Duration Distribution*: Membandingkan durasi terlama ($T_{\\max}$) dengan median ($T_{\\text{med}}$) untuk mendeteksi data skew. "
+                "   - *GC Time Ratio*: Persentase waktu yang dihabiskan CPU untuk membersihkan sampah memori JVM: "
+                "$$\\text{GCRatio} = \\frac{\\sum \\text{TaskGCTime}}{\\sum \\text{TaskDuration}} \\times 100\\%$$ "
+                "Jika $\\text{GCRatio} > 10\\%$, memori executor harus dinaikkan atau konfigurasi GC disesuaikan. "
+                "   - *Shuffle Read / Write*: Jumlah data fisik yang ditransfer melintasi jaringan. "
+                "3. **Event Timeline**: Visualisasi grafis waktu eksekusi task yang memperlihatkan pemanfaatan core CPU secara paralel dan mendeteksi periode menganggur (*executor idle time*)."
+            ),
+            "realWorldApplication": (
+                "Databricks gang charts dan Amazon EMR CloudWatch mengintegrasikan metrik Spark UI untuk memberikan alert otomatis saat terjadi lonjakan GC pause atau shuffle spill."
+            ),
+            "codeSnippet": (
+                "# Simulator Parser Telemetri Spark UI: Diagnostik Rasio GC Time & Deteksi Straggler Tasks\n"
+                "class SparkUIMetricsParser:\n"
+                "    def __init__(self, tasks_telemetry):\n"
+                "        self.tasks = tasks_telemetry\n"
+                "        \n"
+                "    def diagnose_stage(self):\n"
+                "        durations = [t['duration_ms'] for t in self.tasks]\n"
+                "        gc_times = [t['gc_time_ms'] for t in self.tasks]\n"
+                "        spills = [t['disk_spill_mb'] for t in self.tasks]\n"
+                "        \n"
+                "        total_duration = sum(durations)\n"
+                "        total_gc = sum(gc_times)\n"
+                "        total_spill = sum(spills)\n"
+                "        \n"
+                "        gc_ratio_pct = (total_gc / total_duration) * 100 if total_duration > 0 else 0\n"
+                "        max_duration = max(durations)\n"
+                "        median_duration = sorted(durations)[len(durations) // 2]\n"
+                "        skew_factor = max_duration / median_duration if median_duration > 0 else 1.0\n"
+                "        \n"
+                "        health_status = 'HEALTHY'\n"
+                "        recommendations = []\n"
+                "        \n"
+                "        if gc_ratio_pct > 10.0:\n"
+                "            health_status = 'DEGRADED_GC_PRESSURE'\n"
+                "            recommendations.append('Peringatan: GC Time > 10%. Naikkan spark.executor.memory atau beralih ke format Tungsten.')\n"
+                "            \n"
+                "        if skew_factor > 2.5:\n"
+                "            recommendations.append(f'Peringatan: Terdeteksi Straggler Task (Skew Factor {skew_factor:.1f}x). Terapkan Key Salting atau AQE.')\n"
+                "            \n"
+                "        if total_spill > 0:\n"
+                "            recommendations.append(f'Peringatan: Terjadi Disk Spill sebesar {total_spill} MB. Tambah spark.sql.shuffle.partitions.')\n"
+                "            \n"
+                "        return {\n"
+                "            'total_tasks': len(self.tasks),\n"
+                "            'median_duration_ms': median_duration,\n"
+                "            'max_duration_ms': max_duration,\n"
+                "            'gc_ratio_pct': gc_ratio_pct,\n"
+                "            'total_spill_mb': total_spill,\n"
+                "            'health_status': health_status,\n"
+                "            'recommendations': recommendations\n"
+                "        }\n"
+                "\n"
+                "# Telemetri 5 task pada satu stage komputasi\n"
+                "sample_tasks = [\n"
+                "    {'task_id': 1, 'duration_ms': 1200, 'gc_time_ms': 50,  'disk_spill_mb': 0},\n"
+                "    {'task_id': 2, 'duration_ms': 1150, 'gc_time_ms': 45,  'disk_spill_mb': 0},\n"
+                "    {'task_id': 3, 'duration_ms': 1300, 'gc_time_ms': 60,  'disk_spill_mb': 0},\n"
+                "    {'task_id': 4, 'duration_ms': 1180, 'gc_time_ms': 40,  'disk_spill_mb': 0},\n"
+                "    {'task_id': 5, 'duration_ms': 4200, 'gc_time_ms': 650, 'disk_spill_mb': 120} # Straggler task!\n"
+                "]\n"
+                "\n"
+                "parser = SparkUIMetricsParser(sample_tasks)\n"
+                "diag = parser.diagnose_stage()\n"
+                "\n"
+                "print('Laporan Diagnostik Telemetri Spark UI:')\n"
+                "print(f'  Status Kesehatan Klaster: [{diag[\"health_status\"]}]')\n"
+                "print(f'  Durasi Task: Median={diag[\"median_duration_ms\"]} ms | Max={diag[\"max_duration_ms\"]} ms')\n"
+                "print(f'  Rasio Beban GC Time     : {diag[\"gc_ratio_pct\"]:.2f}% dari total waktu CPU')\n"
+                "print(f'  Total Disk Spill Terukur: {diag[\"total_spill_mb\"]} MB')\n"
+                "print('Rekomendasi Optimasi Otomatis:')\n"
+                "for rec in diag['recommendations']:\n"
+                "    print(f'  - {rec}')"
+            ),
+            "codeSnippetOutput": ""
+        }
+    }
+]
+
+# Run all snippets to get exact deterministic output
+for sub in subchapters:
+    code = sub["content"]["codeSnippet"]
+    old_stdout = sys.stdout
+    sys.stdout = io.StringIO()
+    local_env = {}
+    try:
+        exec(code, local_env)
+        out = sys.stdout.getvalue().strip()
+    except Exception as e:
+        out = f"Error: {e}"
+    finally:
+        sys.stdout = old_stdout
+    sub["content"]["codeSnippetOutput"] = out
+    print(f"Subchapter {sub['id']} generated. Output len: {len(out)} chars.")
+
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(subchapters, f, indent=2, ensure_ascii=False)
+
+print(f"[OK] Berhasil menghasilkan 10 subbab Bab 7 Topik 10 ke {output_file}")

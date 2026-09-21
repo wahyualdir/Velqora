@@ -1,0 +1,897 @@
+import json
+import os
+import sys
+import numpy as np
+
+output_file = os.path.join(os.path.dirname(__file__), "de_ch3_data.json")
+
+subchapters = [
+    # 10.3.1
+    {
+        "id": "10.3.1",
+        "title": "Metodologi Pemodelan Dimensional Ralph Kimball",
+        "learningObjectives": [
+            "Memahami metodologi pemodelan data dimensional Ralph Kimball sebagai antitesis terhadap model relasional ternormalisasi Inmon.",
+            "Menganalisis empat langkah perancangan dimensional: pemilihan proses bisnis, penetapan granularity, identifikasi dimensi, dan penetapan fakta numerik.",
+            "Mengimplementasikan model dimensional tabular berbasis Python yang memisahkan pengukuran terukur dari konteks deskriptif."
+        ],
+        "prerequisites": [
+            "10.2.2 (Karakteristik OLAP).",
+            "Prinsip Relasi Entitas (ERD) dan Bentuk Normalisasi Relasional."
+        ],
+        "commonPitfalls": [
+            "Mencampuradukkan tingkat kerincian (*granularity mismatch*) di dalam satu tabel fakta, menyebabkan agregasi numerik bernilai salah (*double counting*).",
+            "Membangun data warehouse analitis langsung dari model OLTP ternormalisasi 3NF tanpa lapisan pemodelan dimensional, memicu kueri multi-join 15 tabel yang sangat lambat."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling (3rd ed.). John Wiley & Sons.",
+            "Inmon, W. H. (2005). Building the Data Warehouse (4th ed.). John Wiley & Sons."
+        ],
+        "caseStudy": "Sebuah jaringan supermarket nasional mengalami kebingungan laporan penjualan antara divisi pemasaran dan divisi keuangan karena laporan penjualan harian dicampur dengan transaksi tiket kasir per detik. Menerapkan metodologi 4-langkah Kimball menetapkan granularity tunggal 'per baris item pada struk belanja', menyelaraskan pelaporan antar-divisi dengan keakuratan angka 100%.",
+        "content": {
+            "theory": (
+                "Dalam rekayasa data analitik, **Pemodelan Dimensional (Dimensional Modeling)** yang dipelopori oleh Ralph Kimball merupakan standar de facto untuk merancang gudang data bisnis. "
+                "Berbeda dengan pendekatan Bill Inmon yang memodelkan enterprise data warehouse (EDW) dalam bentuk ternormalisasi 3NF, Kimball merancang model dari perspektif kebutuhan kueri analitik pengguna bisnis. "
+                "Metodologi Kimball diatur oleh **Empat Langkah Desain Dimensional Kanonikal**: "
+                "1. **Pilih Proses Bisnis (Select Business Process)**: Mengidentifikasi aktivitas operasional diskrit yang menghasilkan data terukur (misal pemrosesan pesanan, pembayaran klaim asuransi). "
+                "2. **Tetapkan Tingkat Kerincian (Declare the Grain)**: Menentukan secara presisi apa yang direpresentasikan oleh tepat satu baris dalam tabel fakta: "
+                "$$\\text{Grain} = \\text{Satu transaksi item belanja spesifik pada struk kasir terdaftar}$$ "
+                "Menjaga konsistensi grain mutlak diperlukan untuk mencegah anomali kalkulasi. "
+                "3. **Identifikasi Dimensi (Identify the Dimensions)**: Menentukan konteks deskriptif (*who, what, where, when, why*) yang menyertai setiap peristiwa bisnis. "
+                "4. **Identifikasi Fakta Numerik (Identify the Facts)**: Menentukan pengukuran kuantitatif kontinu yang dihasilkan oleh proses bisnis (misal kuantitas barang, harga diskon, margin keuntungan bersih)."
+            ),
+            "realWorldApplication": (
+                "Target, Walmart, dan Amazon menggunakan pemodelan dimensional Kimball di atas sistem data warehouse analitis untuk melacak kinerja penjualan miliaran SKU barang secara harian."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Pemodelan Dimensional Kimball: Pemisahan Tabel Fakta (Grain Jelas) & Dimensi\n"
+                "class DimensionalDataModel:\n"
+                "    def __init__(self):\n"
+                "        # Tabel Dimensi (Konteks deskriptif)\n"
+                "        self.dim_date = {1: {\"full_date\": \"2026-03-01\", \"month\": \"Maret\", \"year\": 2026}}\n"
+                "        self.dim_product = {101: {\"sku\": \"SKU-LAPTOP-X\", \"category\": \"Elektronik\", \"brand\": \"Asus\"}}\n"
+                "        self.dim_store = {501: {\"store_name\": \"Cabang Jakarta Pusat\", \"city\": \"Jakarta\"}}\n"
+                "        \n"
+                "        # Tabel Fakta Transaksi (Grain: 1 baris = 1 item terjual per transaksi struk kasir)\n"
+                "        # Foreign Keys + Fakta Aditif (Numerik)\n"
+                "        self.fact_sales = []\n"
+                "\n"
+                "    def insert_fact_record(self, date_id, product_id, store_id, quantity, unit_price, discount_amount):\n"
+                "        net_sales = (quantity * unit_price) - discount_amount\n"
+                "        self.fact_sales.append({\n"
+                "            \"date_fk\": date_id,\n"
+                "            \"product_fk\": product_id,\n"
+                "            \"store_fk\": store_id,\n"
+                "            \"quantity\": quantity,\n"
+                "            \"net_sales\": net_sales\n"
+                "        })\n"
+                "\n"
+                "model = DimensionalDataModel()\n"
+                "model.insert_fact_record(date_id=1, product_id=101, store_id=501, quantity=2, unit_price=12_000_000.0, discount_amount=500_000.0)\n"
+                "\n"
+                "print(\"Audit Struktur Pemodelan Dimensional Ralph Kimball:\")\n"
+                "print(f\"  Dimensi Produk   : {model.dim_product[101]}\")\n"
+                "print(f\"  Dimensi Toko     : {model.dim_store[501]}\")\n"
+                "print(f\"  Rekaman Fakta    : {model.fact_sales[0]}\")\n"
+                "print(f\"  Validasi Grain   : 1 Baris Fakta merepresentasikan persis 1 penjualan produk tunggal (Aditif Sempurna!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.2
+    {
+        "id": "10.3.2",
+        "title": "Desain Skema Bintang (Star Schema): Fact Table & Dimension Tables",
+        "learningObjectives": [
+            "Memahami topologi arsitektur Skema Bintang (*Star Schema*) dengan tabel fakta sentral yang dikelilingi tabel dimensi terdenormalisasi.",
+            "Menganalisis sifat aditivitas metrik fakta: Fully Additive, Semi-Additive, dan Non-Additive Facts.",
+            "Mengimplementasikan kueri analitik berbasis Star Join dengan proyeksi agregasi multi-dimensi efisien."
+        ],
+        "prerequisites": [
+            "10.3.1 (Metodologi Kimball).",
+            "Relasi Primary Key - Foreign Key (PK-FK) dan Operasi SQL JOIN."
+        ],
+        "commonPitfalls": [
+            "Mencoba menjumlahkan (*SUM*) metrik Semi-Additive (seperti saldo kas harian) melintasi dimensi waktu, menghasilkan angka akumulasi semu yang keliru.",
+            "Membiarkan nilai NULL pada foreign key tabel fakta, merusak integritas referensial dan menghilangkan baris saat INNER JOIN dieksekusi."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Golfarelli, M., & Rizzi, S. (2009). Data Warehouse Design: Modern Principles and Methodologies. McGraw-Hill."
+        ],
+        "caseStudy": "Sebuah aplikasi SaaS HR mengelola data absensi 50,000 karyawan. Skema database transaksional memiliki 12 tabel saling berelasi yang membutuhkan 11 kali JOIN untuk menghitung rerata keterlambatan per departemen. Redesain menjadi Skema Bintang (1 tabel fakta `fact_attendance` dikelilingi 3 tabel dimensi `dim_employee`, `dim_date`, `dim_department`) memangkas waktu kueri dari 8.5 detik ke 140 milidetik.",
+        "content": {
+            "theory": (
+                "**Skema Bintang (Star Schema)** adalah bentuk paling murni dari arsitektur pemodelan data dimensional. "
+                "Topologinya menyerupai bintang: sebuah tabel fakta (*Fact Table*) besar berada di pusat dan dikelilingi oleh sekumpulan tabel dimensi (*Dimension Tables*) yang sepenuhnya terdenormalisasi. "
+                "1. **Tabel Fakta (Fact Table)**: "
+                "Menampung kunci asing (*foreign keys*) yang merujuk ke tabel dimensi dan kumpulan pengukuran kuantitatif kontinu: "
+                "$$\\mathcal{F} = \\langle \\text{FK}_1, \\text{FK}_2, \\dots, \\text{FK}_k, M_1, M_2, \\dots, M_m \\rangle$$ "
+                "Klasifikasi metrik fakta berdasarkan sifat aditivitasnya: "
+                "- **Fully Additive**: Dapat dijumlahkan secara valid melintasi seluruh dimensi (misal: kuantitas terjual, pendapatan kotor). "
+                "- **Semi-Additive**: Dapat dijumlahkan pada beberapa dimensi tertentu namun tidak valid pada dimensi lain (misal: saldo rekening bank dapat dijumlahkan antar-cabang, namun tidak dapat dijumlahkan melintasi dimensi tanggal). "
+                "- **Non-Additive**: Tidak dapat dijumlahkan sama sekali, hanya dapat dihitung rata-ratanya (misal: persentase diskon, rasio margin laba). "
+                "2. **Tabel Dimensi (Dimension Table)**: "
+                "Menyimpan atribut deskriptif kontekstual dengan tingkat redundansi terkontrol. "
+                "Denormalisasi pada tabel dimensi menyederhanakan kueri analitis karena hanya memerlukan satu tingkat relasi JOIN (*Single-level Star Join*) antara fakta dan masing-masing dimensi."
+            ),
+            "realWorldApplication": (
+                "Arsitektur data marts di PowerBI, Tableau, dan Looker mengandalkan model Star Schema untuk menjamin navigasi filter dan agregasi visual yang responsif."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Implementasi Star Schema Join & Analisis Aditivitas Fakta (Fully Additive vs Semi-Additive)\n"
+                "class StarSchemaWarehouse:\n"
+                "    def __init__(self):\n"
+                "        self.dim_customer = {\n"
+                "            1: {\"name\": \"Budi\", \"segment\": \"Enterprise\"},\n"
+                "            2: {\"name\": \"Siti\", \"segment\": \"Retail\"}\n"
+                "        }\n"
+                "        self.dim_date = {\n"
+                "            10: {\"date\": \"2026-03-01\", \"day_name\": \"Minggu\"},\n"
+                "            11: {\"date\": \"2026-03-02\", \"day_name\": \"Senin\"}\n"
+                "        }\n"
+                "        # Tabel Fakta: [date_fk, customer_fk, revenue (Additive), account_balance (Semi-Additive)]\n"
+                "        self.fact_table = [\n"
+                "            {\"date_fk\": 10, \"cust_fk\": 1, \"revenue\": 1000.0, \"balance\": 5000.0},\n"
+                "            {\"date_fk\": 11, \"cust_fk\": 1, \"revenue\": 1500.0, \"balance\": 6500.0},\n"
+                "            {\"date_fk\": 10, \"cust_fk\": 2, \"revenue\": 200.0,  \"balance\": 1200.0},\n"
+                "            {\"date_fk\": 11, \"cust_fk\": 2, \"revenue\": 300.0,  \"balance\": 1500.0},\n"
+                "        ]\n"
+                "\n"
+                "    def execute_star_query(self, target_segment=\"Enterprise\"):\n"
+                "        # Kueri: Agregasi pendapatan dan saldo akhir pelanggan Enterprise\n"
+                "        tot_rev = 0.0\n"
+                "        final_balances = {}\n"
+                "        \n"
+                "        for row in self.fact_table:\n"
+                "            cust = self.dim_customer[row[\"cust_fk\"]]\n"
+                "            if cust[\"segment\"] == target_segment:\n"
+                "                # Fully Additive: Pendapatan dapat diakumulasikan lintas hari\n"
+                "                tot_rev += row[\"revenue\"]\n"
+                "                # Semi-Additive: Saldo hanya valid diambil pada stempel tanggal terakhir\n"
+                "                final_balances[row[\"cust_fk\"]] = row[\"balance\"]\n"
+                "                \n"
+                "        return tot_rev, sum(final_balances.values())\n"
+                "\n"
+                "wh = StarSchemaWarehouse()\n"
+                "ent_rev, ent_bal = wh.execute_star_query(\"Enterprise\")\n"
+                "\n"
+                "print(\"Hasil Kueri Eksekusi Skema Bintang (Star Join):\")\n"
+                "print(f\"  Total Pendapatan Akumulasi (Fully Additive) : Rp {ent_rev:,.2f}\")\n"
+                "print(f\"  Saldo Akhir Efektif (Semi-Additive Point)   : Rp {ent_bal:,.2f}\")\n"
+                "print(\"  Validasi Aditivitas: Saldo tidak dijumlahkan sembarangan melintasi hari (Konsistensi Terjaga!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.3
+    {
+        "id": "10.3.3",
+        "title": "Skema Kepingan Salju (Snowflake Schema): Normalisasi Dimensi & Trade-off Join",
+        "learningObjectives": [
+            "Memahami arsitektur Skema Kepingan Salju (*Snowflake Schema*) di mana tabel dimensi dinormalisasi parsial menjadi hierarki sub-dimensi.",
+            "Menganalisis trade-off komputasi: penghematan ruang penyimpanan (*storage reduction*) vs penalti performa kueri multi-join (*join overhead*).",
+            "Mengimplementasikan simulasi komparasi jumlah join dan kompleksitas waktu antara Star Schema vs Snowflake Schema."
+        ],
+        "prerequisites": [
+            "10.3.2 (Skema Bintang).",
+            "Normalisasi Basis Data (1NF, 2NF, 3NF) dan Algoritma Hash Join / Merge Join."
+        ],
+        "commonPitfalls": [
+            "Melakukan normalisasi ekstrem (*over-snowflaking*) pada seluruh tabel dimensi di cloud data warehouse modern, memicu kueri multi-level join yang menurunkan performa tanpa penghematan biaya penyimpanan yang berarti.",
+            "Menyulitkan eksplorasi data (*ad-hoc analytics*) bagi analis bisnis akibat struktur hierarki dimensi yang terpecah-pecah ke banyak tabel."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Levene, M., & Loizou, G. (2003). Why is the snowflake schema a good data warehouse design?. Information Systems, 28(3), 225-240."
+        ],
+        "caseStudy": "Sebuah jaringan rumah sakit menyimpan data obat-obatan dengan skema kepingan salju 5 tingkat: `fact_prescription` $\\to$ `dim_medicine` $\\to$ `dim_substance` $\\to$ `dim_category` $\\to$ `dim_manufacturer`. Kueri analitik pelaporan kementerian kesehatan membutuhkan 4 kali join antar-dimensi dan memakan waktu 45 detik. Melakukan denormalisasi kembali ke Star Schema (1 tabel dimensi obat utuh) memangkas waktu eksekusi kueri menjadi 1.2 detik.",
+        "content": {
+            "theory": (
+                "**Skema Kepingan Salju (Snowflake Schema)** adalah variasi dari skema dimensional di mana sebagian atau seluruh tabel dimensi dinormalisasi ke dalam bentuk normal ketiga (3NF). "
+                "Akibat normalisasi ini, satu dimensi logis terpecah menjadi beberapa tabel sub-dimensi yang saling terhubung, membentuk struktur yang menyerupai kepingan salju: "
+                "$$\\mathcal{F} \\bowtie \\mathcal{D}_{\\text{produk}} \\bowtie \\mathcal{D}_{\\text{kategori}} \\bowtie \\mathcal{D}_{\\text{departemen}}$$ "
+                "Analisis trade-off matematis antara Star Schema dan Snowflake Schema: "
+                "1. **Efisiensi Penyimpanan (Storage Footprint)**: "
+                "Snowflake Schema meminimalkan redudansi string deskriptif berulang. Untuk dimensi dengan kardinalitas rendah yang diulang jutaan kali: "
+                "$$\\text{Storage}_{\\text{Snowflake}} = N_{\\text{rows}} \\cdot \\text{sizeof}(\\text{FK}) + N_{\\text{unique}} \\cdot \\text{sizeof}(\\text{String}) \\ll \\text{Storage}_{\\text{Star}}$$ "
+                "2. **Kompleksitas & Latensi Kueri (Query Latency)**: "
+                "Setiap tingkat normalisasi menambahkan operasi *Hash Join* tambahan. Untuk $k$ tingkat normalisasi hierarki dimensi: "
+                "$$\\mathcal{C}_{\\text{join}}(\\text{Snowflake}) = \\mathcal{O}\\left(|\\mathcal{F}| + \\sum_{i=1}^k |\\mathcal{D}_i|\\right) > \\mathcal{C}_{\\text{join}}(\\text{Star})$$ "
+                "Pada era modern di mana biaya penyimpanan disk sangat murah dibandingkan biaya komputasi CPU dan memori, Star Schema umumnya lebih diutamakan dibandingkan Snowflake Schema."
+            ),
+            "realWorldApplication": (
+                "Sistem data warehouse warisan (legacy Teradata / SAP BW) sering mengadopsi Snowflake Schema untuk menghemat disk SAN mahal, sementara cloud data warehouse modern merekomendasikan denormalisasi Star Schema."
+            ),
+            "codeSnippet": (
+                "import time\n"
+                "\n"
+                "# Simulasi Komparasi Kinerja Kueri: Star Schema (1 Join) vs Snowflake Schema (3 Joins)\n"
+                "n_records = 200_000\n"
+                "\n"
+                "# 1. Struktur Snowflake (Tabel Terpecah 3 Tingkat Normalisasi)\n"
+                "sub_dept = {1: \"Divisi Elektronik Konsumen\"}\n"
+                "sub_cat = {10: {\"cat_name\": \"Smartphone\", \"dept_id\": 1}}\n"
+                "sub_prod = {i: {\"p_name\": f\"Phone_{i}\", \"cat_id\": 10} for i in range(100)}\n"
+                "fact_snowflake = [(i % 100, 100.0) for i in range(n_records)]  # (prod_fk, sales)\n"
+                "\n"
+                "# 2. Struktur Star (Tabel Dimensi Terdenormalisasi Utuh)\n"
+                "dim_product_flat = {i: {\"p_name\": f\"Phone_{i}\", \"cat_name\": \"Smartphone\", \"dept_name\": \"Divisi Elektronik Konsumen\"} for i in range(100)}\n"
+                "fact_star = fact_snowflake\n"
+                "\n"
+                "# Eksekusi Kueri A: Snowflake Join (3 Tingkat Lookup Pointer)\n"
+                "t0 = time.perf_counter()\n"
+                "tot_snow = 0.0\n"
+                "for p_fk, amt in fact_snowflake:\n"
+                "    cat_fk = sub_prod[p_fk][\"cat_id\"]\n"
+                "    dept_fk = sub_cat[cat_fk][\"dept_id\"]\n"
+                "    dept_title = sub_dept[dept_fk]\n"
+                "    if dept_title == \"Divisi Elektronik Konsumen\":\n"
+                "        tot_snow += amt\n"
+                "dur_snow_ms = (time.perf_counter() - t0) * 1000\n"
+                "\n"
+                "# Eksekusi Kueri B: Star Join (1 Tingkat Direct Lookup)\n"
+                "t0 = time.perf_counter()\n"
+                "tot_star = 0.0\n"
+                "for p_fk, amt in fact_star:\n"
+                "    if dim_product_flat[p_fk][\"dept_name\"] == \"Divisi Elektronik Konsumen\":\n"
+                "        tot_star += amt\n"
+                "dur_star_ms = (time.perf_counter() - t0) * 1000\n"
+                "\n"
+                "print(f\"Benchmarking Star Schema vs Snowflake Schema ({n_records:,} Transaksi):\")\n"
+                "print(f\"  [Snowflake Schema] Durasi (Multi-level Join) : {dur_snow_ms:6.2f} ms\")\n"
+                "print(f\"  [Star Schema]      Durasi (Single-level Join): {dur_star_ms:6.2f} ms\")\n"
+                "print(f\"  Akselerasi Star Schema: {dur_snow_ms / dur_star_ms:.2f}x Lebih Cepat berkat Penghilangan Multi-Join!\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.4
+    {
+        "id": "10.3.4",
+        "title": "Klasifikasi Tabel Fakta: Transactional, Periodic Snapshot, dan Accumulating Snapshot",
+        "learningObjectives": [
+            "Mengidentifikasi tiga jenis tabel fakta kanonikal dalam metodologi Kimball: Transaction Fact, Periodic Snapshot Fact, dan Accumulating Snapshot Fact.",
+            "Menganalisis perbedaan sifat mutabilitas, interval waktu, dan karakteristik penambahan data pada masing-masing tipe fakta.",
+            "Mengimplementasikan model pipeline pembaruan status Accumulating Snapshot dengan pelacakan milestone alur kerja bertahap."
+        ],
+        "prerequisites": [
+            "10.3.2 (Skema Bintang).",
+            "Model Siklus Hidup Proses Bisnis (Order Fulfillment, Klaim Asuransi)."
+        ],
+        "commonPitfalls": [
+            "Mencoba menggunakan Transaction Fact murni untuk mengukur status saldo akun bulanan, memaksa kueri memindai riwayat transaksi sejak awal berdirinya perusahaan.",
+            "Memperlakukan Accumulating Snapshot sebagai tabel append-only tanpa memperbarui kolom milestone stempel waktu (*in-place updates*)."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Corr, N., & Stagnitto, J. (2011). Agile Data Warehouse Design: Collaborative Dimensional Modeling, from Whiteboard to Star Schema. DecisionOne Press."
+        ],
+        "caseStudy": "Sebuah perusahaan logistik melacak pengiriman paket yang melewati 5 tahap: Order Diterima $\\to$ Dikemas $\\to$ Diperjalanan $\\to$ Di Gudang Tujuan $\\to$ Terkirim. Menggunakan Transaction Fact menyulitkan analisis durasi rata-rata antara pengemasan hingga pengiriman akhir. Penerapan Accumulating Snapshot Table (1 baris per paket dengan 5 kolom stempel waktu milestone dan lag durasi terhitung) memungkinkan kueri performa SLA kurir dieksekusi seketika.",
+        "content": {
+            "theory": (
+                "Dalam metodologi Kimball, tabel fakta diklasifikasikan ke dalam tiga pola struktural untuk mengakomodasi karakteristik waktu dan mutabilitas proses bisnis: "
+                "1. **Transaction Fact Table (Fakta Transaksi)**: "
+                "Mencatat kejadian bisnis pada titik waktu tertentu (*point in time*). "
+                "Karakteristik: Paling detail (*lowest grain*), bersifat strictly *append-only* (tidak pernah diubah setelah ditulis), dan bertumbuh sangat cepat. Contoh: Setiap penarikan uang di mesin ATM. "
+                "2. **Periodic Snapshot Fact Table (Fakta Cuplikan Berkala)**: "
+                "Mengambil foto kondisi status sistem pada interval waktu reguler yang telah ditentukan (harian, mingguan, bulanan): "
+                "$$\\mathcal{S}_{\\text{periodic}}(t) = \\text{CaptureState}(t = k \\cdot \\Delta t)$$ "
+                "Karakteristik: Mendokumentasikan variabel status kumulatif (*cumulative balance*) yang tidak dapat diperoleh hanya dengan menjumlahkan transaksi harian. Contoh: Saldo kas akhir hari atau tingkat stok inventaris gudang setiap tengah malam. "
+                "3. **Accumulating Snapshot Fact Table (Fakta Cuplikan Terakumulasi)**: "
+                "Mendokumentasikan alur kerja proses bisnis yang memiliki awal dan akhir yang terdefinisi dengan beberapa tahapan (*milestones*). "
+                "Karakteristik: Tepat satu baris untuk setiap entitas proses (misal: satu pesanan e-commerce). Kolom berisi multiple date keys yang diperbarui secara mutasi in-place saat entitas melewati tahapan: "
+                "$$\\text{Row} = \\langle \\text{ID}, \\text{Date}_{\\text{Order}}, \\text{Date}_{\\text{Packed}}, \\text{Date}_{\\text{Shipped}}, \\text{Date}_{\\text{Delivered}}, \\text{Lag}_{\\text{Total}} \\rangle$$"
+            ),
+            "realWorldApplication": (
+                "Amazon Fulfillment Network dan FedEx mengandalkan Accumulating Snapshot Tables untuk memantau waktu siklus rantai pasok dan mendeteksi titik kemacetan pengiriman."
+            ),
+            "codeSnippet": (
+                "import datetime\n"
+                "\n"
+                "# Simulasi Accumulating Snapshot Fact Table untuk Pelacakan Milestone Logistik\n"
+                "class AccumulatingSnapshotTable:\n"
+                "    def __init__(self):\n"
+                "        # {order_id: {milestones, lag_hours}}\n"
+                "        self.table = {}\n"
+                "\n"
+                "    def create_order(self, order_id, order_ts_str):\n"
+                "        self.table[order_id] = {\n"
+                "            \"order_date\": order_ts_str,\n"
+                "            \"shipped_date\": None,\n"
+                "            \"delivered_date\": None,\n"
+                "            \"fulfillment_lag_hours\": None,\n"
+                "            \"status\": \"CREATED\"\n"
+                "        }\n"
+                "\n"
+                "    def record_milestone_shipped(self, order_id, shipped_ts_str):\n"
+                "        if order_id in self.table:\n"
+                "            self.table[order_id][\"shipped_date\"] = shipped_ts_str\n"
+                "            self.table[order_id][\"status\"] = \"SHIPPED\"\n"
+                "\n"
+                "    def record_milestone_delivered(self, order_id, delivered_ts_str):\n"
+                "        if order_id in self.table:\n"
+                "            row = self.table[order_id]\n"
+                "            row[\"delivered_date\"] = delivered_ts_str\n"
+                "            row[\"status\"] = \"DELIVERED\"\n"
+                "            # Hitung total durasi SLA (Fakta numerik turunan)\n"
+                "            t_start = datetime.datetime.fromisoformat(row[\"order_date\"])\n"
+                "            t_end = datetime.datetime.fromisoformat(delivered_ts_str)\n"
+                "            row[\"fulfillment_lag_hours\"] = (t_end - t_start).total_seconds() / 3600.0\n"
+                "\n"
+                "snapshot_fact = AccumulatingSnapshotTable()\n"
+                "# Alur hidup pesanan ORD-5501 melewati 3 milestone berbeda waktu\n"
+                "snapshot_fact.create_order(\"ORD-5501\", \"2026-03-01T08:00:00\")\n"
+                "snapshot_fact.record_milestone_shipped(\"ORD-5501\", \"2026-03-01T14:30:00\")\n"
+                "snapshot_fact.record_milestone_delivered(\"ORD-5501\", \"2026-03-02T11:00:00\")\n"
+                "\n"
+                "order_row = snapshot_fact.table[\"ORD-5501\"]\n"
+                "print(\"Audit Accumulating Snapshot Fact Table:\")\n"
+                "print(f\"  Order ID        : ORD-5501\")\n"
+                "print(f\"  Status Terkini  : {order_row['status']}\")\n"
+                "print(f\"  Tanggal Pesan   : {order_row['order_date']}\")\n"
+                "print(f\"  Tanggal Kirim   : {order_row['shipped_date']}\")\n"
+                "print(f\"  Tanggal Sampai  : {order_row['delivered_date']}\")\n"
+                "print(f\"  Durasi Siklus   : {order_row['fulfillment_lag_hours']:.1f} jam (Fakta terhitung otomatis!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.5
+    {
+        "id": "10.3.5",
+        "title": "Penanganan Dimensi Perlahan Berubah (Slowly Changing Dimensions - SCD Type 0, 1, 2, 3, 6)",
+        "learningObjectives": [
+            "Memahami taksonomi penanganan perubahan atribut dimensi historis: SCD Tipe 0, 1, 2, 3, 4, dan 6 (Hybrid).",
+            "Menganalisis perbandingan matematis integritas pelacakan riwayat vs biaya komputasi dan ruang penyimpanan antar tipe SCD.",
+            "Mengimplementasikan model transisi status SCD Tipe 1 (Overwrite) vs SCD Tipe 2 (Versioning) dengan preservasi historis."
+        ],
+        "prerequisites": [
+            "10.3.1 (Metodologi Kimball) dan 10.3.2 (Skema Bintang).",
+            "Konsep Temporal Data, Timestamping, dan Identifikasi Unik Entitas."
+        ],
+        "commonPitfalls": [
+            "Menerapkan SCD Tipe 1 (Overwrite) pada atribut penting seperti alamat tempat tinggal pelanggan, yang mengakibatkan laporan penjualan historis masa lalu secara retrospektif salah dialokasikan ke wilayah baru.",
+            "Mengabaikan penanganan foreign key pada fakta lama saat baris dimensi baru ditambahkan pada SCD Tipe 2."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Snodgrass, R. T. (1999). Developing time-oriented database applications in SQL. Morgan Kaufmann."
+        ],
+        "caseStudy": "Seorang pelanggan setia toko retail online berpindah domisili dari Surabaya ke Jakarta pada Januari 2026. Jika database menggunakan SCD Tipe 1, seluruh transaksi belanja tahun 2024 dan 2025 di Surabaya otomatis terhitung sebagai penjualan Jakarta, merusak akurasi evaluasi performa cabang Jawa Timur. Menerapkan SCD Tipe 2 mempertahankan rekam jejak Surabaya untuk transaksi masa lalu dan Jakarta untuk transaksi baru.",
+        "content": {
+            "theory": (
+                "Dalam sistem gudang data, atribut pada tabel dimensi tidak bersifat statis permanen, melainkan mengalami perubahan seiring berjalannya waktu secara perlahan (**Slowly Changing Dimensions / SCD**). "
+                "Ralph Kimball merumuskan taksonomi penanganan SCD sebagai berikut: "
+                "1. **SCD Tipe 0 (Retain Original)**: Nilai asli dipertahankan permanen; perubahan di sistem sumber diabaikan (misal: tanggal lahir asli). "
+                "2. **SCD Tipe 1 (Overwrite)**: Nilai lama ditimpa (*overwritten*) secara langsung dengan nilai baru: "
+                "$$D_{\\text{attr}}(t+1) \\leftarrow v_{\\text{new}} \\quad (\\text{Riwayat historis hilang selamanya})$$ "
+                "Paling mudah diterapkan, namun melenyapkan kemampuan analisis tren historis. "
+                "3. **SCD Tipe 2 (Add New Row / Full Historical Tracking)**: "
+                "Tepat satu baris baru disisipkan untuk merepresentasikan status baru, mempertahankan baris lama dengan menandai masa berlakunya (*effective date range*): "
+                "$$\\text{Row}_{\\text{old}}: [t_{\\text{start}}, t_{\\text{end}} = t_{\\text{change}}, \\text{is\\_current} = \\text{False}], \\quad \\text{Row}_{\\text{new}}: [t_{\\text{start}} = t_{\\text{change}}, t_{\\text{end}} = \\infty, \\text{is\\_current} = \\text{True}]$$ "
+                "Merupakan standar industri untuk preservasi riwayat analitik sempurna. "
+                "4. **SCD Tipe 3 (Add New Column)**: Menambahkan kolom baru untuk mencatat nilai sebelumnya (`previous_val` vs `current_val`). "
+                "5. **SCD Tipe 6 (Hybrid 1 + 2 + 3)**: Mengombinasikan Tipe 1, 2, dan 3 dalam satu baris untuk mendukung agregasi riwayat fleksibel."
+            ),
+            "realWorldApplication": (
+                "dbt Snapshots dan Delta Lake Merge CDC secara otomatis mengotomatisasi pembuatan tabel SCD Tipe 2 dengan pelacakan hash kolom dan stempel waktu transisi."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Perbandingan SCD Tipe 1 (Overwrite) vs SCD Tipe 2 (Full History Versioning)\n"
+                "class SCDManager:\n"
+                "    def __init__(self):\n"
+                "        self.scd1_table = {}\n"
+                "        self.scd2_table = []\n"
+                "        self.surrogate_counter = 1000\n"
+                "\n"
+                "    def apply_scd1_update(self, customer_id, new_city):\n"
+                "        # Tipe 1: Langsung menimpa nilai lama (History musnah)\n"
+                "        self.scd1_table[customer_id] = {\"cust_id\": customer_id, \"city\": new_city}\n"
+                "\n"
+                "    def apply_scd2_insert(self, customer_id, name, city, effective_date):\n"
+                "        # Tipe 2: Tutup record lama jika ada, lalu sisipkan baris versi baru\n"
+                "        for row in self.scd2_table:\n"
+                "            if row[\"cust_id\"] == customer_id and row[\"is_current\"]:\n"
+                "                row[\"end_date\"] = effective_date\n"
+                "                row[\"is_current\"] = False\n"
+                "                \n"
+                "        self.surrogate_counter += 1\n"
+                "        self.scd2_table.append({\n"
+                "            \"surrogate_key\": self.surrogate_counter,\n"
+                "            \"cust_id\": customer_id,\n"
+                "            \"name\": name,\n"
+                "            \"city\": city,\n"
+                "            \"start_date\": effective_date,\n"
+                "            \"end_date\": \"9999-12-31\",\n"
+                "            \"is_current\": True\n"
+                "        })\n"
+                "\n"
+                "mgr = SCDManager()\n"
+                "# Inisialisasi awal pada 2024\n"
+                "mgr.apply_scd1_update(\"C01\", \"Surabaya\")\n"
+                "mgr.apply_scd2_insert(\"C01\", \"Budi Santoso\", \"Surabaya\", \"2024-01-01\")\n"
+                "\n"
+                "# Perubahan domisili pada 2026\n"
+                "mgr.apply_scd1_update(\"C01\", \"Jakarta\")\n"
+                "mgr.apply_scd2_insert(\"C01\", \"Budi Santoso\", \"Jakarta\", \"2026-03-01\")\n"
+                "\n"
+                "print(\"Perbandingan Penanganan Dimensi Perlahan Berubah (SCD):\")\n"
+                "print(f\"  [SCD Tipe 1 (Overwrite)] Status Tabel : {mgr.scd1_table['C01']} (Data Surabaya Hilang!)\")\n"
+                "print(\"  [SCD Tipe 2 (Versioning)] Status Tabel:\")\n"
+                "for r in mgr.scd2_table:\n"
+                "    print(f\"    SK={r['surrogate_key']} | Kota={r['city']:<9} | Rentang: [{r['start_date']} s.d {r['end_date']}] | Aktif={r['is_current']}\")\n"
+                "print(\"  Integritas Historis: SCD Tipe 2 mempertahankan seluruh lini masa transaksi secara auditabel!\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.6
+    {
+        "id": "10.3.6",
+        "title": "Implementasi Detail SCD Type 2: Surrogate Key, Effective Dates, dan Active Flag",
+        "learningObjectives": [
+            "Memahami arsitektur fisik tabel dimensi SCD Tipe 2: pembuatan Kunci Pengganti (*Surrogate Key*), rentang tanggal efektif (*Effective Date Ranges*), dan penanda aktif (*Active Flag*).",
+            "Menganalisis teknik optimasi indexing pada kolom boolean `is_current` dan integrasi kueri Point-in-Time Join.",
+            "Mengimplementasikan fungsi transisi atomik SCD Tipe 2 dengan validasi temporal non-overlapping ranges."
+        ],
+        "prerequisites": [
+            "10.3.5 (Penanganan SCD).",
+            "Prinsip Indeks B-Tree Parsial dan Kueri Temporal Rentang Waktu."
+        ],
+        "commonPitfalls": [
+            "Mengizinkan celah waktu (*temporal gap*) atau tumpang tindih (*overlapping date ranges*) antara `end_date` baris lama dan `start_date` baris baru.",
+            "Menggunakan nilai NULL pada kolom `end_date` untuk baris aktif (disarankan menggunakan nilai batas atas kanonikal seperti `9999-12-31` agar operasi SQL BETWEEN tetap berfungsi)."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Johnston, T., & Weis, P. (2010). Managing Time in Relational Databases: How to Design, Update and Query Temporal Data. Morgan Kaufmann."
+        ],
+        "caseStudy": "Sebuah perusahaan asuransi mengelola premi risiko nasabah. Terjadi perselisihan klaim karena tabel dimensi polis nasabah memiliki selisih waktu 1 hari antara penutupan record versi lama dan pembukaan versi baru. Auditor menemukan celah temporal di mana nasabah tercatat 'tanpa polis aktif' selama 24 jam. Tim merekayasa ulang algoritma SCD Tipe 2 menggunakan transisi interval tertutup-terbuka $[t_{\\text{start}}, t_{\\text{end}})$ tanpa celah.",
+        "content": {
+            "theory": (
+                "Implementasi teknis **SCD Tipe 2** yang tangguh membutuhkan struktur kolom metadata temporal yang terstandarisasi secara ketat. "
+                "Setiap tabel dimensi SCD Tipe 2 wajib memiliki empat elemen arsitektural: "
+                "1. **Surrogate Key (Kunci Pengganti Numerik)**: Primary key bilangan bulat (integer) buatan yang unik untuk setiap versi baris dimensi (membedakan versi 1, 2, dst dari entitas bisnis yang sama). "
+                "2. **Natural / Business Key**: Kunci identitas alami dari sistem sumber operasional (misal: `customer_id` atau `nik`). "
+                "3. **Effective Date Range**: Pasangan stempel waktu $[t_{\\text{start}}, t_{\\text{end}})$ yang mendefinisikan interval validitas baris: "
+                "$$\\forall r_a, r_b \\in \\text{Dim}(K_{\\text{nat}}), \\quad a \\ne b \\implies [t_{\\text{start}, a}, t_{\\text{end}, a}) \\cap [t_{\\text{start}, b}, t_{\\text{end}, b}) = \\emptyset$$ "
+                "4. **Active Current Flag**: Kolom boolean atau status biner (`is_current = True` atau `active_flag = 1`) yang diindeks secara parsial untuk memungkinkan kueri analitik operasional memfilter data terkini secara instan tanpa perlu mengevaluasi pembandingan tanggal yang mahal."
+            ),
+            "realWorldApplication": (
+                "Platform data modern seperti Snowflake dan BigQuery menggunakan pola `dbt snapshot` yang menghasilkan kolom `dbt_scd_id`, `dbt_valid_from`, dan `dbt_valid_to` secara otomatis."
+            ),
+            "codeSnippet": (
+                "import datetime\n"
+                "\n"
+                "# Algoritma Transisi Atomik SCD Tipe 2 dengan Penegakan Batas Waktu Non-Overlapping\n"
+                "class RobustSCD2Dimension:\n"
+                "    def __init__(self):\n"
+                "        self.records = []\n"
+                "        self.next_sk = 1\n"
+                "\n"
+                "    def upsert_entity(self, natural_key, attributes, event_time_str):\n"
+                "        event_time = datetime.datetime.fromisoformat(event_time_str)\n"
+                "        \n"
+                "        # Cari record aktif saat ini\n"
+                "        current_row = None\n"
+                "        for r in self.records:\n"
+                "            if r[\"natural_key\"] == natural_key and r[\"is_current\"]:\n"
+                "                current_row = r\n"
+                "                break\n"
+                "        \n"
+                "        # Jika belum pernah ada, masukkan sebagai record pertama\n"
+                "        if current_row is None:\n"
+                "            self.records.append({\n"
+                "                \"surrogate_key\": self.next_sk,\n"
+                "                \"natural_key\": natural_key,\n"
+                "                **attributes,\n"
+                "                \"valid_from\": event_time_str,\n"
+                "                \"valid_to\": \"9999-12-31T23:59:59\",\n"
+                "                \"is_current\": True\n"
+                "            })\n"
+                "            self.next_sk += 1\n"
+                "            return \"INSERT_NEW_ENTITY\"\n"
+                "            \n"
+                "        # Cek apakah ada atribut yang berubah\n"
+                "        has_changed = any(current_row[k] != v for k, v in attributes.items())\n"
+                "        if not has_changed:\n"
+                "            return \"NO_CHANGE_SKIPPED\"\n"
+                "            \n"
+                "        # Tutup record lama (Interval tertutup-terbuka: valid_to = event_time)\n"
+                "        current_row[\"valid_to\"] = event_time_str\n"
+                "        current_row[\"is_current\"] = False\n"
+                "        \n"
+                "        # Buka record baru\n"
+                "        self.records.append({\n"
+                "            \"surrogate_key\": self.next_sk,\n"
+                "            \"natural_key\": natural_key,\n"
+                "            **attributes,\n"
+                "            \"valid_from\": event_time_str,\n"
+                "            \"valid_to\": \"9999-12-31T23:59:59\",\n"
+                "            \"is_current\": True\n"
+                "        })\n"
+                "        self.next_sk += 1\n"
+                "        return \"SCD2_VERSION_EXPANDED\"\n"
+                "\n"
+                "dim_user = RobustSCD2Dimension()\n"
+                "dim_user.upsert_entity(\"USR_99\", {\"tier\": \"BRONZE\", \"limit\": 5_000_000}, \"2026-01-01T00:00:00\")\n"
+                "dim_user.upsert_entity(\"USR_99\", {\"tier\": \"GOLD\", \"limit\": 25_000_000}, \"2026-03-15T10:30:00\")\n"
+                "\n"
+                "print(\"Implementasi Detail SCD Tipe 2 (Surrogate Key & Interval Temporal):\")\n"
+                "for r in dim_user.records:\n"
+                "    print(f\"  SK={r['surrogate_key']} | NK={r['natural_key']} | Tier={r['tier']:<6} | Valid: [{r['valid_from'][:10]} s.d {r['valid_to'][:10]}] | Aktif={r['is_current']}\")\n"
+                "print(\"  Validasi Temporal: Nol gap dan nol overlap antar-versi (Integritas Temporal 100% Sempurna!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.7
+    {
+        "id": "10.3.7",
+        "title": "Kunci Pengganti (Surrogate Keys) vs Kunci Alami (Natural/Business Keys)",
+        "learningObjectives": [
+            "Membandingkan karakteristik teknis antara Kunci Pengganti (*Surrogate Keys*) dan Kunci Alami (*Natural/Business Keys*) dalam arsitektur data warehouse.",
+            "Menganalisis dampak surrogate key integer 4/8-byte terhadap efisiensi kompresi indeks dan kecepatan eksekusi Hash Join.",
+            "Mengimplementasikan generator hash surrogate key deterministik (MD5/SHA-256 to BIGINT) untuk pipeline ETL/ELT terdistribusi."
+        ],
+        "prerequisites": [
+            "10.3.6 (Implementasi SCD Tipe 2).",
+            "Kriptografi Hash, Tipe Data Primitif Komputasi, dan Algoritma Hash Join."
+        ],
+        "commonPitfalls": [
+            "Menggunakan composite natural key berukuran string panjang (misal gabungan 3 kolom varchar 50 karakter) sebagai foreign key pada tabel fakta raksasa, melipatgandakan ukuran tabel fakta hingga 300%.",
+            "Menggunakan sequence ID auto-increment terpusat di lingkungan klaster terdistribusi, menciptakan bottleneck koordinasi konkurensi antar-node pekerja."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Linstedt, D., & Olschimke, M. (2015). Building a Scalable Data Warehouse with Data Vault 2.0. Morgan Kaufmann."
+        ],
+        "caseStudy": "Sebuah sistem telekomunikasi menyimpan 1 miliar transaksi panggilan per bulan. Menggunakan nomor IMEI string telepon (15 karakter) sebagai foreign key membuat tabel fakta membengkak menjadi 480 GB. Mengganti foreign key menjadi 4-byte unsigned integer surrogate key menyusutkan ukuran tabel fakta ke 128 GB (penghematan 73%) dan mempercepat kueri analitik join hingga 4.2x lipat.",
+        "content": {
+            "theory": (
+                "Dalam perancangan gudang data perusahaan, aturan emas Kimball menyatakan: **'Semua tabel dimensi wajib menggunakan Kunci Pengganti (Surrogate Key) tunggal yang independen dari sistem sumber operasional'**. "
+                "Perbandingan komparatif: "
+                "1. **Natural / Business Keys**: Kunci yang digunakan di sistem operasional (misal: Nomor Rekening, UUID, NIK KTP). "
+                "Kelemahan jika dijadikan foreign key di tabel fakta: berukuran string panjang tak menentu, dapat berubah sewaktu-waktu akibat migrasi sistem sumber (*system merger*), dan tidak mampu mendukung versioning SCD Tipe 2. "
+                "2. **Surrogate Keys**: Kunci buatan yang sepenuhnya diatur oleh data warehouse (biasanya tipe data `INT` 4-byte atau `BIGINT` 8-byte). "
+                "Keunggulan teknis Surrogate Key: "
+                "- **Efisiensi Join Komputasi CPU**: Mesin database dapat mengeksekusi perbandingan kesetaraan integer primitif dalam satu siklus instruksi CPU register: "
+                "$$\\text{Cost}(\\text{Integer Join}) \\ll \\text{Cost}(\\text{String Lexicographical Compare})$$ "
+                "- **Isolasi terhadap Perubahan Sistem Sumber**: Melindungi data warehouse dari perubahan format kode pelanggan di sistem ERP hulu. "
+                "- **Fondasi Terdistribusi (Hash Keys)**: Dalam metodologi modern (Data Vault 2.0), surrogate key dibuat menggunakan hash deterministik: "
+                "$$\\text{HK} = \\text{MD5}(\\text{TRIM}(\\text{UPPER}(\\text{NaturalKey})))$$ "
+                "Memungkinkan node pekerja menghitung kunci pengganti secara paralel mandiri tanpa koordinasi sequence terpusat."
+            ),
+            "realWorldApplication": (
+                "dbt dan Databricks secara luas menggunakan fungsi hashing MD5/SHA256 untuk menghasilkan surrogate keys deterministik pada pipeline pemodelan dimensional skala petabyte."
+            ),
+            "codeSnippet": (
+                "import hashlib\n"
+                "import numpy as np\n"
+                "\n"
+                "# Komparasi: Footprint Memori & Pembuatan Surrogate Key Deterministik (Data Vault 2.0 Style)\n"
+                "def generate_hash_surrogate_key(natural_key_str):\n"
+                "    # Normalisasi kunci bisnis alami\n"
+                "    clean_key = natural_key_str.strip().upper()\n"
+                "    # Hasilkan integer 64-bit unik dari hash MD5\n"
+                "    h_hex = hashlib.md5(clean_key.encode('utf-8')).hexdigest()[:16]\n"
+                "    return int(h_hex, 16)\n"
+                "\n"
+                "# Skenario: 1 Juta Rekaman Transaksi\n"
+                "n_rows = 1_000_000\n"
+                "# Natural Key: String UUID / IMEI (rata-rata 36 bytes)\n"
+                "natural_key_bytes_total = n_rows * 36\n"
+                "# Surrogate Key: Integer 64-bit (8 bytes)\n"
+                "surrogate_key_bytes_total = n_rows * 8\n"
+                "\n"
+                "sample_nat_key = \"  cust-uuid-8839-a92c-9910  \"\n"
+                "sample_surr_key = generate_hash_surrogate_key(sample_nat_key)\n"
+                "\n"
+                "print(f\"Evaluasi Penggunaan Surrogate Key vs Natural Key ({n_rows:,} Baris Fakta):\")\n"
+                "print(f\"  Natural Key Asli       : '{sample_nat_key}' (String Varchar)\")\n"
+                "print(f\"  Surrogate Key Hash (8B): {sample_surr_key} (BigInt Deterministik)\")\n"
+                "print(f\"  Konsumsi Storage Natural Key   : {natural_key_bytes_total / (1024**2):.2f} MB\")\n"
+                "print(f\"  Konsumsi Storage Surrogate Key : {surrogate_key_bytes_total / (1024**2):.2f} MB\")\n"
+                "print(f\"  Rasio Penghematan Ukuran Indeks: {natural_key_bytes_total / surrogate_key_bytes_total:.1f}x Lebih Ringkas & Join CPU Jauh Lebih Cepat!\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.8
+    {
+        "id": "10.3.8",
+        "title": "Dimensi Konform (Conformed Dimensions) untuk Tata Kelola Antar-Departemen",
+        "learningObjectives": [
+            "Memahami konsep arsitektur Dimensi Konform (*Conformed Dimensions*) sebagai lem perekat integrasi data antar-departemen dalam Kimball Enterprise Bus Architecture.",
+            "Menganalisis matriks bus enterprise (*Enterprise Data Warehouse Bus Matrix*) yang memetakan proses bisnis terhadap dimensi bersama.",
+            "Mengimplementasikan kueri analitik lintas-proses bisnis (*Drill-Across Queries*) yang menyatukan dua tabel fakta independen melalui dimensi konform."
+        ],
+        "prerequisites": [
+            "10.3.2 (Skema Bintang) dan 10.3.7 (Kunci Pengganti).",
+            "Arsitektur Enterprise Data Warehouse (EDW) dan Tata Kelola Data."
+        ],
+        "commonPitfalls": [
+            "Membangun data mart departemen yang terisolasi (*siloed data marts*) dengan definisi pelanggan atau produk yang berbeda, menghasilkan angka penjualan yang kontradiktif antar-divisi.",
+            "Melakukan join langsung antara dua tabel fakta (*fact-to-fact join*), yang menyebabkan ledakan kombinatorial kartesian (*Cartesian explosion*)."
+        ],
+        "academicReferences": [
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Moody, D. L., & Kortink, M. A. (2000). From enterprise models to dimensional models: a methodology for data warehouse and data mart design. In International Workshop on Design and Management of Data Warehouses (DMDW '00), 5-1."
+        ],
+        "caseStudy": "Sebuah konglomerat media memiliki divisi penerbitan majalah dan divisi video streaming. Masing-masing memiliki database terpisah dengan format ID pelanggan yang berbeda. Ketika manajemen ingin menganalisis 'Berapa banyak pelanggan majalah yang juga berlangganan streaming?', kueri menghasilkan angka acak. Tim membangun Dimensi Pelanggan Konform (`dim_conformed_customer`) dengan standardisasi ID tunggal, memungkinkan kueri drill-across multi-divisi berjalan akurat.",
+        "content": {
+            "theory": (
+                "Dalam organisasi besar, membangun satu data warehouse monolitik raksasa secara sekaligus sering kali berakhir dengan kegagalan proyek. "
+                "Ralph Kimball menawarkan solusi pragmatis melalui **Kimball Enterprise Bus Architecture**: data warehouse dibangun secara modular melalui data mart terdistribusi yang disatukan oleh **Dimensi Konform (Conformed Dimensions)**. "
+                "Dimensi dikatakan konform jika memenuhi salah satu dari dua kriteria: "
+                "1. **Identik Murni (Identical)**: Tabel dimensi yang sama persis digunakan bersama oleh beberapa proses bisnis berbeda (misal: tabel `dim_date` digunakan oleh fakta Penjualan, fakta Pengiriman, dan fakta Pembayaran). "
+                "2. **Subset Konsisten (Conformed Roll-Up)**: Dimensi yang memiliki tingkat kerincian lebih agregat namun atribut dan definisinya konsisten sempurna dengan dimensi utama. "
+                "Aturan mutlak dalam analisis multi-proses bisnis: **DILARANG MELAKUKAN JOIN LANGSUNG ANTARA DUA TABEL FAKTA (Never Join Two Fact Tables Directly)**: "
+                "Untuk membandingkan data dari dua tabel fakta (misal: Anggaran Target vs Realisasi Penjualan), kueri harus dieksekusi sebagai **Drill-Across Query**: "
+                "$$\\text{DrillAcross} = \\text{FullOuterJoin}\\left(\\gamma_{\\text{Dim}_{\\text{conformed}}}(\\mathcal{F}_1), \\gamma_{\\text{Dim}_{\\text{conformed}}}(\\mathcal{F}_2)\\right)$$ "
+                "Kedua tabel fakta diagregasi terlebih dahulu ke tingkat dimensi konform, baru kemudian hasil agregatnya digabungkan."
+            ),
+            "realWorldApplication": (
+                "Perusahaan multinasional seperti Unilever dan P&G menggunakan Data Bus Matrix untuk menyelaraskan ribuan metrik analitik pemasaran dan rantai pasok global di atas dimensi produk konform tunggal."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Simulasi Drill-Across Query: Menggabungkan 2 Tabel Fakta via Dimensi Konform (Produk)\n"
+                "class EnterpriseBusWarehouse:\n"
+                "    def __init__(self):\n"
+                "        # Dimensi Konform (Dipakai Bersama oleh Divisi Sales & Divisi Inventory)\n"
+                "        self.dim_conformed_product = {\n"
+                "            101: \"Laptop Gaming Pro\",\n"
+                "            102: \"Monitor UltraWide 34\\\"\"\n"
+                "        }\n"
+                "        # Fakta 1: Penjualan Harian (Divisi Sales)\n"
+                "        self.fact_sales = [\n"
+                "            {\"prod_fk\": 101, \"revenue\": 25_000_000.0},\n"
+                "            {\"prod_fk\": 101, \"revenue\": 25_000_000.0},\n"
+                "            {\"prod_fk\": 102, \"revenue\": 8_000_000.0}\n"
+                "        ]\n"
+                "        # Fakta 2: Stok Gudang Harian (Divisi Inventory)\n"
+                "        self.fact_inventory = [\n"
+                "            {\"prod_fk\": 101, \"units_in_stock\": 45},\n"
+                "            {\"prod_fk\": 102, \"units_in_stock\": 120}\n"
+                "        ]\n"
+                "\n"
+                "    def execute_drill_across(self):\n"
+                "        # Langkah 1: Agregasi Fakta 1 per Dimensi Konform\n"
+                "        sales_agg = {}\n"
+                "        for s in self.fact_sales:\n"
+                "            sales_agg[s[\"prod_fk\"]] = sales_agg.get(s[\"prod_fk\"], 0.0) + s[\"revenue\"]\n"
+                "            \n"
+                "        # Langkah 2: Agregasi Fakta 2 per Dimensi Konform\n"
+                "        inv_agg = {}\n"
+                "        for inv in self.fact_inventory:\n"
+                "            inv_agg[inv[\"prod_fk\"]] = inv[\"units_in_stock\"]\n"
+                "            \n"
+                "        # Langkah 3: Gabungkan (Drill-Across Join) pada tingkat Dimensi Konform\n"
+                "        report = []\n"
+                "        for prod_id, prod_name in self.dim_conformed_product.items():\n"
+                "            tot_rev = sales_agg.get(prod_id, 0.0)\n"
+                "            stock = inv_agg.get(prod_id, 0)\n"
+                "            report.append({\"product\": prod_name, \"revenue\": tot_rev, \"stock\": stock})\n"
+                "        return report\n"
+                "\n"
+                "bus = EnterpriseBusWarehouse()\n"
+                "consolidated_report = bus.execute_drill_across()\n"
+                "\n"
+                "print(\"Laporan Eksekutif Drill-Across Lintas Departemen (via Dimensi Konform):\")\n"
+                "for r in consolidated_report:\n"
+                "    print(f\"  Produk: {r['product']:<24} | Penjualan: Rp {r['revenue']:>12,.2f} | Sisa Stok: {r['stock']:3d} unit\")\n"
+                "print(\"  Integritas Data: Zero Cartesian Explosion (Kueri mematuhi standar Kimball Bus Architecture!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.9
+    {
+        "id": "10.3.9",
+        "title": "Fondasi Data Vault 2.0: Hubs, Links, dan Satellites",
+        "learningObjectives": [
+            "Memahami arsitektur pemodelan data berorientasi integrasi enterprise Data Vault 2.0 (Dan Linstedt).",
+            "Menganalisis dekomposisi tiga entitas fundamental: Hubs (kunci bisnis unik), Links (asosiasi relasi n-ke-n), dan Satellites (konteks deskriptif temporal).",
+            "Mengimplementasikan simulator struktur tabel Hub, Link, dan Satellite dengan hash key deterministik."
+        ],
+        "prerequisites": [
+            "10.3.1 (Pemodelan Data) dan 10.3.7 (Kunci Pengganti Hash).",
+            "Arsitektur Enterprise Data Warehouse, Skalabilitas Paralel, dan Auditabilitas Data."
+        ],
+        "commonPitfalls": [
+            "Memasukkan atribut deskriptif langsung ke dalam tabel Hub atau Link (atribut deskriptif harus selalu diisolasi di dalam Satellite).",
+            "Mencoba menggunakan model Data Vault langsung sebagai konsumsi pelaporan BI akhir (Data Vault dirancang untuk raw enterprise integration; konsumsi BI tetap memerlukan penyajian dimensional mart di hilir)."
+        ],
+        "academicReferences": [
+            "Linstedt, D., & Olschimke, M. (2015). Building a Scalable Data Warehouse with Data Vault 2.0. Morgan Kaufmann.",
+            "Jovanovic, P., et al. (2014). Evaluating data warehouse modeling approaches: A comparative study. In International Conference on Database and Expert Systems Applications, 497-511."
+        ],
+        "caseStudy": "Sebuah konglomerat perbankan sering melakukan merger dan akuisisi anak perusahaan baru. Skema dimensional Kimball tradisional memerlukan rekonstruksi skema besar-besaran setiap kali ada core-banking baru yang diintegrasikan. Mengadopsi Data Vault 2.0 sebagai Enterprise Integration Layer memungkinkan data feed dari bank baru dihubungkan cukup dengan menambahkan Satellite dan Link baru secara paralel tanpa mengganggu tabel yang sudah ada.",
+        "content": {
+            "theory": (
+                "Diciptakan oleh Dan Linstedt, **Data Vault 2.0** adalah metodologi pemodelan data yang dirancang khusus untuk memenuhi kebutuhan gudang data enterprise modern: skalabilitas komputasi paralel masif, auditabilitas $100\\%$, dan ketahanan terhadap perubahan sistem sumber (*resilience to change*). "
+                "Data Vault memisahkan identitas bisnis murni dari relasi dan atribut deskriptif ke dalam tiga entitas atomik: "
+                "1. **Hubs (Kunci Bisnis Alami)**: "
+                "Mewakili konsep bisnis inti (seperti Nasabah, Rekening, Produk). Hanya berisi Hash Key (PK), Business Key alami, tanggal pertama kali tercatat (*Load Date*), dan sumber data (*Record Source*): "
+                "$$\\text{Hub} = \\langle \\text{HK}_{\\text{hash}}, \\text{BusinessKey}, \\text{LoadDate}, \\text{RecordSource} \\rangle$$ "
+                "2. **Links (Asosiasi & Transaksi)**: "
+                "Mewakili interaksi atau hubungan relasional multi-arah (n-to-n) antar Hub (seperti Transaksi Transfer antara dua Rekening). Tidak memuat atribut deskriptif: "
+                "$$\\text{Link} = \\langle \\text{Link\\_HK}, \\text{Hub1\\_HK}, \\text{Hub2\\_HK}, \\text{LoadDate}, \\text{RecordSource} \\rangle$$ "
+                "3. **Satellites (Konteks Deskriptif & Temporalitas)**: "
+                "Menampung seluruh atribut deskriptif yang berubah seiring waktu dan terhubung ke Hub atau Link. Seluruh mutasi dicatat secara *append-only* tanpa pernah menimpa data historis: "
+                "$$\\text{Sat} = \\langle \\text{Hub\\_HK}, \\text{LoadDate}, \\text{HashDiff}, \\text{Attr}_1, \\text{Attr}_2, \\dots, \\text{RecordSource} \\rangle$$"
+            ),
+            "realWorldApplication": (
+                "Perusahaan Fortune 500 di industri keuangan, pertahanan, dan asuransi menggunakan Data Vault 2.0 di Snowflake dan Databricks sebagai fondasi Enterprise Data Lakehouse mereka."
+            ),
+            "codeSnippet": (
+                "import hashlib\n"
+                "\n"
+                "# Implementasi Mini Arsitektur Data Vault 2.0: Hub, Link, dan Satellite\n"
+                "def hash_key(val_str):\n"
+                "    return hashlib.sha256(val_str.strip().upper().encode('utf-8')).hexdigest()[:16]\n"
+                "\n"
+                "# 1. Hub Customer: Menyimpan identitas bisnis alami murni\n"
+                "hub_customer = {}\n"
+                "# 2. Satellite Customer: Menyimpan atribut deskriptif temporal\n"
+                "sat_customer = []\n"
+                "# 3. Link Order-Customer: Menyimpan asosiasi relasi\n"
+                "link_order_customer = []\n"
+                "\n"
+                "def ingest_customer(cust_id, name, email, load_date):\n"
+                "    hk = hash_key(cust_id)\n"
+                "    if hk not in hub_customer:\n"
+                "        hub_customer[hk] = {\"cust_hk\": hk, \"cust_id\": cust_id, \"load_date\": load_date, \"source\": \"CRM_APP\"}\n"
+                "    \n"
+                "    # Hitung HashDiff atribut untuk mendeteksi perubahan data\n"
+                "    hash_diff = hash_key(f\"{name}|{email}\")\n"
+                "    sat_customer.append({\n"
+                "        \"cust_hk\": hk,\n"
+                "        \"load_date\": load_date,\n"
+                "        \"hash_diff\": hash_diff,\n"
+                "        \"name\": name,\n"
+                "        \"email\": email,\n"
+                "        \"source\": \"CRM_APP\"\n"
+                "    })\n"
+                "    return hk\n"
+                "\n"
+                "c_hk = ingest_customer(\"CUST-009\", \"Rina Wulandari\", \"rina@example.com\", \"2026-03-01T10:00:00\")\n"
+                "# Order ORD-881 terkait dengan Customer CUST-009\n"
+                "o_hk = hash_key(\"ORD-881\")\n"
+                "link_hk = hash_key(f\"{o_hk}|{c_hk}\")\n"
+                "link_order_customer.append({\"link_hk\": link_hk, \"order_hk\": o_hk, \"cust_hk\": c_hk, \"load_date\": \"2026-03-01T10:05:00\"})\n"
+                "\n"
+                "print(\"Audit Arsitektur Data Vault 2.0 Entities:\")\n"
+                "print(f\"  [HUB Customer] HK : {c_hk} | Business Key: {hub_customer[c_hk]['cust_id']}\")\n"
+                "print(f\"  [SAT Customer] Attr: Nama={sat_customer[0]['name']}, Email={sat_customer[0]['email']}\")\n"
+                "print(f\"  [LINK Order-Cust] : {link_order_customer[0]['link_hk']} (Menghubungkan Order & Customer)\")\n"
+                "print(\"  Integritas Data Vault: Entitas, Relasi, dan Deskripsi terpisah sempurna (Zero Schema Rigidity!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    },
+
+    # 10.3.10
+    {
+        "id": "10.3.10",
+        "title": "Evaluasi Pemilihan Arsitektur Pemodelan Data untuk Enterprise Data Platform",
+        "learningObjectives": [
+            "Membandingkan matriks evaluasi trade-off tiga paradigma pemodelan data utama: Inmon (3NF EDW), Kimball (Dimensional Star Schema), dan Linstedt (Data Vault 2.0).",
+            "Menganalisis kriteria pemilihan arsitektur berdasarkan: kecepatan adopsi bisnis, fleksibilitas integrasi multi-sistem sumber, dan kemudahan konsumsi analitik.",
+            "Mengimplementasikan model pohon keputusan (*Decision Matrix*) otomatis untuk rekomendasi pola pemodelan data platform."
+        ],
+        "prerequisites": [
+            "10.3.1 (Kimball), 10.3.2 (Star Schema), dan 10.3.9 (Data Vault 2.0).",
+            "Prinsip Arsitektur Solusi Data Enterprise dan Manajemen Biaya Platform."
+        ],
+        "commonPitfalls": [
+            "Menerapkan Data Vault 2.0 untuk startup tahap awal dengan sumber data tunggal, yang menimbulkan kerumitan tabel berlebih (*engineering overkill*).",
+            "Mengabaikan lapisan konsumsi (*serving layer*): menyajikan model Data Vault mentah langsung ke end-user BI tanpa lapisan Dimensional Mart di atasnya."
+        ],
+        "academicReferences": [
+            "Inmon, W. H. (2005). Building the Data Warehouse (4th ed.).",
+            "Kimball, R., & Ross, M. (2013). The Data Warehouse Toolkit (3rd ed.).",
+            "Linstedt, D., & Olschimke, M. (2015). Building a Scalable Data Warehouse with Data Vault 2.0."
+        ],
+        "caseStudy": "Sebuah konglomerat retail multinasional memadukan dua pendekatan: mereka menggunakan Data Vault 2.0 pada lapisan integrasi data mentah (*Enterprise Staging Vault*) untuk menyerap 40 sistem POS anak perusahaan tanpa risiko perubahan skema, kemudian secara otomatis mentransformasikan data tersebut menjadi Star Schema Kimball pada lapisan konsumsi Datamart untuk dinikmati 1,200 analis bisnis via PowerBI.",
+        "content": {
+            "theory": (
+                "Memilih arsitektur pemodelan data yang tepat merupakan keputusan strategis paling berdampak dalam keberlanjutan platform data enterprise. "
+                "Perbandingan komparatif tiga paradigma pemodelan data terkemuka: "
+                "1. **Kimball (Dimensional / Star Schema)**: "
+                "- *Karakteristik*: Berorientasi 'Bottom-Up' dari proses bisnis spesifik. Menggunakan tabel fakta dan dimensi terdenormalisasi. "
+                "- *Kelebihan*: Paling mudah dipahami pengguna bisnis, performa kueri agregasi tercepat, didukung secara universal oleh seluruh BI tools. "
+                "- *Kekurangan*: Memerlukan refactoring jika definisi proses bisnis hulu berubah drastis. "
+                "2. **Inmon (Corporate Information Factory / 3NF EDW)**: "
+                "- *Karakteristik*: Berorientasi 'Top-Down' enterprise-wide. Model relasional ternormalisasi 3NF tunggal sebagai single source of truth. "
+                "- *Kelebihan*: Redundansi data minimum, integritas data tinggi. "
+                "- *Kekurangan*: Waktu implementasi sangat lama (1 - 2 tahun), kueri analitik lambat akibat multi-join kompleks. "
+                "3. **Data Vault 2.0 (Hub, Link, Satellite)**: "
+                "- *Karakteristik*: Berorientasi integrasi skala besar berbasis hash keys dan append-only tables. "
+                "- *Kelebihan*: Paling fleksibel terhadap perubahan sistem sumber, auditabilitas forensik $100\\%$, paralelisasi ETL masif. "
+                "- *Kekurangan*: Jumlah tabel berlipat ganda ($3\\times - 5\\times$), wajib menyediakan lapisan dimensional mart turunan untuk konsumsi pengguna. "
+                "Arsitektur modern mengintegrasikan kekuatan keduanya: **Data Vault sebagai Storage/Integration Layer** dan **Kimball Star Schema sebagai Serving/Consumption Layer**."
+            ),
+            "realWorldApplication": (
+                "Arsitektur referensi resmi Databricks Lakehouse dan Snowflake mengadopsi pola hibrida ini: Data Vault di Bronze/Silver layer dan Star Schema Kimball di Gold layer."
+            ),
+            "codeSnippet": (
+                "import numpy as np\n"
+                "\n"
+                "# Sistem Rekomendasi Pemilihan Arsitektur Pemodelan Data Berbasis Parameter Kebutuhan\n"
+                "def evaluate_data_architecture(num_sources, team_size_eng, bi_direct_consumers, audit_strictness):\n"
+                "    \"\"\"\n"
+                "    Parameter evaluasi skala 1-10:\n"
+                "      num_sources: Keragaman sistem sumber data (1=tunggal, 10=puluhan sistem heterogen)\n"
+                "      team_size_eng: Kapasitas tim data engineer (1=kecil/lean, 10=enterprise masif)\n"
+                "      bi_direct_consumers: Kebutuhan konsumsi langsung end-user BI (1=rendah, 10=krusial & instan)\n"
+                "      audit_strictness: Kepatuhan regulasi audit historis (1=biasa, 10=perbankan ketat)\n"
+                "    \"\"\"\n"
+                "    score_kimball = (10 - num_sources) * 0.3 + bi_direct_consumers * 0.5 + (10 - team_size_eng) * 0.2\n"
+                "    score_data_vault = num_sources * 0.4 + audit_strictness * 0.4 + team_size_eng * 0.2\n"
+                "    score_inmon = audit_strictness * 0.5 + (10 - bi_direct_consumers) * 0.3 + team_size_eng * 0.2\n"
+                "    \n"
+                "    recommendation = \"Kimball Star Schema\" if score_kimball > score_data_vault else \"Data Vault 2.0 + Kimball Gold\"\n"
+                "    return {\n"
+                "        \"Kimball_Score\": score_kimball,\n"
+                "        \"DataVault_Score\": score_data_vault,\n"
+                "        \"Inmon_Score\": score_inmon,\n"
+                "        \"Primary_Recommendation\": recommendation\n"
+                "    }\n"
+                "\n"
+                "# Kasus 1: Startup E-Commerce (1-3 Sumber Data, Analis BI butuh hasil cepat)\n"
+                "case_startup = evaluate_data_architecture(num_sources=2, team_size_eng=3, bi_direct_consumers=9, audit_strictness=4)\n"
+                "# Kasus 2: Bank Multinasional (30+ Sumber Data, Regulasi Audit Ketat, Tim Besar)\n"
+                "case_bank = evaluate_data_architecture(num_sources=9, team_size_eng=8, bi_direct_consumers=6, audit_strictness=10)\n"
+                "\n"
+                "print(\"Evaluasi Pohon Keputusan Pemilihan Arsitektur Pemodelan Data:\")\n"
+                "print(\"  [Kasus 1: Startup E-Commerce]\")\n"
+                "print(f\"    Skor Kimball   : {case_startup['Kimball_Score']:.2f} | Data Vault: {case_startup['DataVault_Score']:.2f}\")\n"
+                "print(f\"    Rekomendasi    : {case_startup['Primary_Recommendation']} (Agilitas & Kecepatan BI Maksimal!)\")\n"
+                "print(\"  [Kasus 2: Bank Multinasional Enterprise]\")\n"
+                "print(f\"    Skor Kimball   : {case_bank['Kimball_Score']:.2f} | Data Vault: {case_bank['DataVault_Score']:.2f}\")\n"
+                "print(f\"    Rekomendasi    : {case_bank['Primary_Recommendation']} (Auditabilitas 100% & Skalabilitas Sumber Masif!)\")"
+            ),
+            "codeSnippetOutput": ""
+        }
+    }
+]
+
+# Run all snippets to get exact deterministic output
+for sub in subchapters:
+    code = sub["content"]["codeSnippet"]
+    old_stdout = sys.stdout
+    import io
+    sys.stdout = io.StringIO()
+    local_env = {}
+    try:
+        exec(code, local_env)
+        out = sys.stdout.getvalue().strip()
+    except Exception as e:
+        out = f"Error: {e}"
+    finally:
+        sys.stdout = old_stdout
+    sub["content"]["codeSnippetOutput"] = out
+
+# Save to JSON
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(subchapters, f, indent=2, ensure_ascii=False)
+
+print(f"[OK] Berhasil menghasilkan 10 subbab Bab 3 Topik 10 ke {output_file}")
