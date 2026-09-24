@@ -29,6 +29,11 @@ import {
   CheckCircle2,
   AlertTriangle,
   Clock,
+  Target,
+  Layers,
+  ExternalLink,
+  FileText,
+  Sparkles,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { NoteRenderer } from "@/components/notes/note-renderer";
@@ -43,11 +48,13 @@ import {
   NotebookSourceList,
   NotebookNavigation,
 } from "./notebook";
+import { ExerciseCard } from "./exercise-card";
 import {
   notebookUnitsToMarkdown,
   type DocSectionItem,
   type AcademicLesson,
   type LessonFlow,
+  type ExerciseItem,
 } from "@/lib/curriculum/types";
 
 export type { DocSectionItem };
@@ -175,7 +182,7 @@ export function DocReaderLayout({
     return flatSections[0]?.id || sections[0]?.id || "";
   });
 
-  // Track expanded accordion chapters
+  // Track expanded accordion chapters (Level 1)
   const [expandedChapters, setExpandedChapters] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     sections.forEach((sec, idx) => {
@@ -189,6 +196,30 @@ export function DocReaderLayout({
     });
     return init;
   });
+
+  // Track expanded subchapters (Level 2 -> Level 3 units)
+  const [expandedSubchapters, setExpandedSubchapters] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    sections.forEach((sec) => {
+      sec.subsections?.forEach((sub) => {
+        init[sub.id] = Boolean(
+          sub.id === activeSectionId ||
+            sub.subsections?.some((u) => u.id === activeSectionId)
+        );
+      });
+    });
+    return init;
+  });
+
+  // Active unit tab selection when viewing a subchapter
+  const [activeUnitTab, setActiveUnitTab] = useState<string>("all");
+
+  const toggleSubchapter = (subchapterId: string) => {
+    setExpandedSubchapters((prev) => ({
+      ...prev,
+      [subchapterId]: !prev[subchapterId],
+    }));
+  };
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -209,20 +240,26 @@ export function DocReaderLayout({
     }
   }, [activeSectionId, selectedId]);
 
-  // Expand parent chapter automatically
+  // Expand parent chapter & parent subchapter automatically
   useEffect(() => {
     for (const sec of sections) {
       if (sec.id === selectedId) {
         setExpandedChapters((prev) => ({ ...prev, [sec.id]: true }));
         break;
       }
-      if (
-        sec.subsections?.some(
-          (sub) => sub.id === selectedId || sub.subsections?.some((u) => u.id === selectedId)
-        )
-      ) {
-        setExpandedChapters((prev) => ({ ...prev, [sec.id]: true }));
-        break;
+      if (sec.subsections) {
+        for (const sub of sec.subsections) {
+          if (sub.id === selectedId) {
+            setExpandedChapters((prev) => ({ ...prev, [sec.id]: true }));
+            setExpandedSubchapters((prev) => ({ ...prev, [sub.id]: true }));
+            break;
+          }
+          if (sub.subsections?.some((u) => u.id === selectedId)) {
+            setExpandedChapters((prev) => ({ ...prev, [sec.id]: true }));
+            setExpandedSubchapters((prev) => ({ ...prev, [sub.id]: true }));
+            break;
+          }
+        }
       }
     }
   }, [selectedId, sections]);
@@ -233,6 +270,7 @@ export function DocReaderLayout({
       contentRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
     setActiveHeadingId("");
+    setActiveUnitTab("all");
   }, [selectedId]);
 
   // Active section item
@@ -245,14 +283,26 @@ export function DocReaderLayout({
     );
   }, [flatSections, sections, selectedId]);
 
-  // Parent chapter for breadcrumbs
-  const parentChapter = useMemo(() => {
-    if (!currentSection) return null;
-    return sections.find(
-      (sec) =>
-        sec.id === currentSection.id ||
-        sec.subsections?.some((sub) => sub.id === currentSection.id)
-    );
+  // Parent chapter and parent subchapter for breadcrumbs (3-level traversal)
+  const { parentChapter, parentSubchapter } = useMemo(() => {
+    if (!currentSection) return { parentChapter: null, parentSubchapter: null };
+
+    for (const sec of sections) {
+      if (sec.id === currentSection.id) {
+        return { parentChapter: sec, parentSubchapter: null };
+      }
+      if (sec.subsections) {
+        for (const sub of sec.subsections) {
+          if (sub.id === currentSection.id) {
+            return { parentChapter: sec, parentSubchapter: sub };
+          }
+          if (sub.subsections?.some((u) => u.id === currentSection.id)) {
+            return { parentChapter: sec, parentSubchapter: sub };
+          }
+        }
+      }
+    }
+    return { parentChapter: null, parentSubchapter: null };
   }, [sections, currentSection]);
 
   // Previous & Next navigation targets
@@ -368,11 +418,26 @@ export function DocReaderLayout({
       const matchesChapter =
         ch.title.toLowerCase().includes(q) ||
         (ch.description || "").toLowerCase().includes(q);
-      const matchingSubs = (ch.subsections || []).filter(
-        (sub) =>
+
+      const matchingSubs: DocSectionItem[] = [];
+      for (const sub of ch.subsections || []) {
+        const matchesSub =
           sub.title.toLowerCase().includes(q) ||
-          (sub.description || "").toLowerCase().includes(q)
-      );
+          (sub.description || "").toLowerCase().includes(q);
+        const matchingUnits = (sub.subsections || []).filter(
+          (u) =>
+            u.title.toLowerCase().includes(q) ||
+            (u.description || "").toLowerCase().includes(q) ||
+            (u.content_markdown || "").toLowerCase().includes(q)
+        );
+
+        if (matchesSub || matchingUnits.length > 0) {
+          matchingSubs.push({
+            ...sub,
+            subsections: matchingUnits.length > 0 ? matchingUnits : sub.subsections,
+          });
+        }
+      }
 
       if (matchesChapter || matchingSubs.length > 0) {
         result.push({
@@ -613,37 +678,91 @@ export function DocReaderLayout({
                     )}
                   </div>
 
-                  {/* Subchapters */}
+                  {/* Subchapters & Level 3 Units */}
                   {hasSubsections && isExpanded && (
                     <div className="pl-3 ml-2 border-l border-border/80 space-y-0.5 my-0.5">
                       {chapter.subsections!.map((sub) => {
                         const isSubActive = sub.id === selectedId;
+                        const hasUnits = Boolean(sub.subsections && sub.subsections.length > 0);
+                        const isSubExpanded = expandedSubchapters[sub.id] ?? false;
 
                         return (
-                          <button
-                            key={sub.id}
-                            type="button"
-                            onClick={() => {
-                              if (sub.id.includes("#")) {
-                                const [parentId, anchor] = sub.id.split("#");
-                                handleSelect(parentId);
-                                setTimeout(() => scrollToHeading(anchor), 120);
-                              } else {
-                                handleSelect(sub.id);
-                              }
-                            }}
-                            className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer ${
-                              isSubActive
-                                ? "bg-white dark:bg-[#1e1e22] font-bold shadow-2xs"
-                                : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
-                            }`}
-                            style={isSubActive ? { color: themeColor } : undefined}
-                          >
-                            <span className="leading-snug line-clamp-2">{sub.title}</span>
-                            {isSubActive && (
-                              <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
+                          <div key={sub.id} className="space-y-0.5">
+                            <div
+                              onClick={() => {
+                                if (sub.id.includes("#")) {
+                                  const [parentId, anchor] = sub.id.split("#");
+                                  handleSelect(parentId);
+                                  setTimeout(() => scrollToHeading(anchor), 120);
+                                } else {
+                                  handleSelect(sub.id);
+                                }
+                                if (hasUnits && !isSubExpanded) {
+                                  toggleSubchapter(sub.id);
+                                }
+                              }}
+                              className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] font-sans transition-all flex items-start justify-between gap-1.5 cursor-pointer ${
+                                isSubActive
+                                  ? "bg-white dark:bg-[#1e1e22] font-bold shadow-2xs"
+                                  : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
+                              }`}
+                              style={isSubActive ? { color: themeColor } : undefined}
+                            >
+                              <span className="leading-snug line-clamp-2 truncate">{sub.title}</span>
+                              <div className="flex items-center gap-1 shrink-0 ml-1">
+                                {hasUnits && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleSubchapter(sub.id);
+                                    }}
+                                    className="p-0.5 text-text-tertiary hover:text-text-primary rounded transition-colors"
+                                    aria-label="Perluas atau ciutkan unit materi"
+                                    title={`${sub.subsections!.length} Unit Materi`}
+                                  >
+                                    <ChevronDown
+                                      className={`w-3 h-3 transition-transform duration-200 ${
+                                        isSubExpanded ? "transform rotate-0" : "transform -rotate-90"
+                                      }`}
+                                    />
+                                  </button>
+                                )}
+                                {isSubActive && !hasUnits && (
+                                  <ChevronRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: themeColor }} />
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Level 3: Sub-subchapters / Units */}
+                            {hasUnits && isSubExpanded && (
+                              <div className="pl-2.5 ml-2 border-l border-border/60 space-y-0.5 my-0.5">
+                                {sub.subsections!.map((unit, uIdx) => {
+                                  const isUnitActive = unit.id === selectedId;
+
+                                  return (
+                                    <button
+                                      key={unit.id || uIdx}
+                                      type="button"
+                                      onClick={() => handleSelect(unit.id)}
+                                      className={`w-full text-left px-2 py-1 rounded text-[10.5px] font-sans transition-all flex items-center gap-1.5 cursor-pointer ${
+                                        isUnitActive
+                                          ? "bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 font-bold shadow-2xs"
+                                          : "text-text-tertiary hover:text-text-primary hover:bg-surface/40"
+                                      }`}
+                                    >
+                                      <span
+                                        className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${
+                                          isUnitActive ? "bg-brand-600 dark:bg-brand-400" : "bg-text-tertiary/40"
+                                        }`}
+                                      />
+                                      <span className="truncate leading-tight">{unit.title}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
                             )}
-                          </button>
+                          </div>
                         );
                       })}
                     </div>
@@ -692,7 +811,35 @@ export function DocReaderLayout({
               {parentChapter && (
                 <>
                   <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
-                  <span className="truncate max-w-[200px]">{parentChapter.title}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(parentChapter.id)}
+                    className="hover:text-text-primary transition-colors truncate max-w-[160px] cursor-pointer"
+                  >
+                    {parentChapter.title}
+                  </button>
+                </>
+              )}
+              {parentSubchapter && (
+                <>
+                  <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(parentSubchapter.id)}
+                    className={`hover:text-text-primary transition-colors truncate max-w-[160px] cursor-pointer ${
+                      currentSection?.id === parentSubchapter.id ? "font-semibold text-text-primary" : ""
+                    }`}
+                  >
+                    {parentSubchapter.title}
+                  </button>
+                </>
+              )}
+              {parentSubchapter && currentSection && currentSection.id !== parentSubchapter.id && (
+                <>
+                  <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+                  <span className="font-semibold truncate max-w-[160px]" style={{ color: themeColor }}>
+                    {currentSection.title}
+                  </span>
                 </>
               )}
             </nav>
@@ -700,6 +847,27 @@ export function DocReaderLayout({
             {/* Current Section / Lesson Article */}
             {currentSection ? (
               <article className="space-y-8">
+                {/* 0. Parent Subchapter Back-Link Banner (if reading an individual Unit) */}
+                {parentSubchapter && currentSection.id !== parentSubchapter.id && (
+                  <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-brand-200/60 dark:border-brand-900/40 bg-brand-50/50 dark:bg-brand-950/20 text-xs">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Layers className="w-4 h-4 shrink-0 text-brand-600 dark:text-brand-400" />
+                      <span className="text-text-secondary truncate">
+                        Materi Unit dari Subbab: <strong className="text-text-primary">{parentSubchapter.title}</strong>
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleSelect(parentSubchapter.id)}
+                      className="inline-flex items-center gap-1 font-semibold hover:underline cursor-pointer text-xs"
+                      style={{ color: themeColor }}
+                    >
+                      <span>Lihat Seluruh Subbab</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
                 {/* 1. Lesson Header */}
                 <NotebookLessonHeader
                   number={currentSection.orderIndex ? `${currentSection.chapterNumber || 1}.${currentSection.orderIndex}` : undefined}
@@ -827,17 +995,178 @@ export function DocReaderLayout({
                   </div>
                 )}
 
-                {/* 5. Key Takeaways / Summary */}
+                {/* 4.5. LEVEL 3: UNIT PEMBELAJARAN (SUB-SUBBAB) TRAVERSAL */}
+                {currentSection.subsections && currentSection.subsections.length > 0 && (
+                  <section className="space-y-6 pt-6 border-t border-border/80">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="space-y-1">
+                        <h3 className="text-base sm:text-lg font-bold text-text-primary font-display flex items-center gap-2">
+                          <Layers className="w-5 h-5" style={{ color: themeColor }} />
+                          <span>Unit Pembelajaran Terperinci</span>
+                          <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+                            {currentSection.subsections.length} Unit
+                          </span>
+                        </h3>
+                        <p className="text-xs text-text-secondary">
+                          Materi terperinci di bawah subbab ini. Anda dapat membaca seluruh unit berurutan atau memilih unit spesifik.
+                        </p>
+                      </div>
+
+                      {/* View Switcher: All Continuous vs Specific Tabs */}
+                      <div className="flex items-center gap-1.5 p-1 rounded-lg border border-border bg-surface-secondary/40 shrink-0 text-xs">
+                        <button
+                          type="button"
+                          onClick={() => setActiveUnitTab("all")}
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                            activeUnitTab === "all"
+                              ? "bg-surface text-text-primary shadow-2xs font-semibold"
+                              : "text-text-tertiary hover:text-text-primary"
+                          }`}
+                        >
+                          Semua Unit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveUnitTab(currentSection.subsections![0].id)}
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                            activeUnitTab !== "all"
+                              ? "bg-surface text-text-primary shadow-2xs font-semibold"
+                              : "text-text-tertiary hover:text-text-primary"
+                          }`}
+                        >
+                          Per Tab Unit
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Unit Tabs Bar if in Per-Unit Tab Mode */}
+                    {activeUnitTab !== "all" && (
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                        {currentSection.subsections.map((unit, uIdx) => {
+                          const isTabActive = activeUnitTab === unit.id;
+                          return (
+                            <button
+                              key={unit.id || uIdx}
+                              type="button"
+                              onClick={() => setActiveUnitTab(unit.id)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-mono shrink-0 transition-all cursor-pointer border ${
+                                isTabActive
+                                  ? "bg-brand-600 text-white border-brand-600 font-bold shadow-2xs"
+                                  : "border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary"
+                              }`}
+                            >
+                              Unit {uIdx + 1}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Render Units: Either the selected Unit Tab OR all Units continuously */}
+                    <div className="space-y-6">
+                      {currentSection.subsections
+                        .filter((unit) => activeUnitTab === "all" || unit.id === activeUnitTab)
+                        .map((unit, uIdx) => (
+                          <div
+                            key={unit.id || uIdx}
+                            id={`unit-${unit.id}`}
+                            className="rounded-xl border border-border/80 bg-surface dark:bg-[#131418] shadow-2xs overflow-hidden transition-all duration-200"
+                          >
+                            {/* Unit Header */}
+                            <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-5 py-3 border-b border-border/80 bg-surface-secondary/40 dark:bg-white/[0.02]">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <span
+                                  className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 shadow-2xs"
+                                  style={{ backgroundColor: themeColor }}
+                                >
+                                  Unit {uIdx + 1}
+                                </span>
+                                <h4 className="text-xs sm:text-sm font-bold text-text-primary truncate font-display">
+                                  {unit.title}
+                                </h4>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelect(unit.id)}
+                                  className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                                  title="Fokus membaca unit ini saja"
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                  <span className="hidden sm:inline">Fokus Unit</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Unit Markdown Body */}
+                            <div className="p-4 sm:p-6 prose dark:prose-invert max-w-none text-xs sm:text-sm">
+                              <NoteRenderer content={unit.content_markdown || ""} />
+                            </div>
+
+                            {/* Unit Code Snippets if any */}
+                            {unit.codeSnippets && unit.codeSnippets.length > 0 && (
+                              <div className="px-4 sm:px-6 pb-4 space-y-3">
+                                <span className="text-[11px] font-mono uppercase tracking-wider text-text-tertiary block font-semibold">
+                                  Praktikum Kode Unit:
+                                </span>
+                                {unit.codeSnippets.map((snip, sIdx) => (
+                                  <div
+                                    key={snip.id || sIdx}
+                                    className="rounded-lg overflow-hidden border border-border/80 bg-[#0d1117] text-[#e6edf3] p-3 font-mono text-xs overflow-x-auto whitespace-pre"
+                                  >
+                                    <code>{snip.code}</code>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* 5. LATIHAN TERSTRUKTUR & TANTANGAN PRAKTIKUM (FASE 2) */}
+                {currentSection.exercises && currentSection.exercises.length > 0 && (
+                  <section className="space-y-4 pt-6 border-t border-border/80">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h3 className="text-base sm:text-lg font-bold text-text-primary font-display flex items-center gap-2">
+                          <Target className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                          <span>Latihan Terstruktur & Tantangan Praktikum</span>
+                        </h3>
+                        <p className="text-xs text-text-secondary">
+                          Tantangan bertingkat (Level 1 Pemahaman s.d. Level 4 Mini-Project) dengan evaluasi objektif dan kode starter.
+                        </p>
+                      </div>
+                      <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+                        {currentSection.exercises.length} Tantangan
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      {currentSection.exercises.map((exercise, exIdx) => (
+                        <ExerciseCard
+                          key={exercise.id || exIdx}
+                          exercise={exercise}
+                          index={exIdx}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* 6. Key Takeaways / Summary */}
                 {currentSection.summary && (
                   <NotebookSummary summary={currentSection.summary} />
                 )}
 
-                {/* 6. Academic Sources / Citations */}
+                {/* 7. Academic Sources / Citations */}
                 {currentSection.lesson?.furtherReading && currentSection.lesson.furtherReading.length > 0 && (
                   <NotebookSourceList sources={currentSection.lesson.furtherReading} />
                 )}
 
-                {/* 7. Previous / Next Lesson Navigation */}
+                {/* 8. Previous / Next Lesson Navigation */}
                 <NotebookNavigation
                   prev={prevSection ? { id: prevSection.id, title: prevSection.title } : null}
                   next={nextSection ? { id: nextSection.id, title: nextSection.title } : null}

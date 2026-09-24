@@ -1,7 +1,30 @@
 import { ModuleSection } from "@/types/module-drive";
+import { normalizeSubchapterExercises, parseExercisesFromMarkdown } from "./exercise-parser";
+
+export { normalizeSubchapterExercises, parseExercisesFromMarkdown };
 
 // ============================================================================
-// LAYER 0: DOC SECTION ITEM (REPRESENTASI KONSUMEN READER)
+// LAYER 0: EXERCISE & EVALUATION SCHEMA
+// ============================================================================
+
+export interface ExerciseTestCase {
+  input: any;
+  expectedOutput: any;
+  description?: string;
+}
+
+export interface ExerciseItem {
+  id: string;
+  level: 1 | 2 | 3 | 4; // 1: Pemahaman Konseptual, 2: Implementasi Standar, 3: Debugging & Edge Cases, 4: Mini-Project Terapan
+  task: string;
+  hint?: string;
+  starterCode?: string;
+  solution: string;
+  testCase?: ExerciseTestCase;
+}
+
+// ============================================================================
+// LAYER 0.5: DOC SECTION ITEM (REPRESENTASI KONSUMEN READER)
 // ============================================================================
 
 export interface DocSectionItem {
@@ -29,6 +52,8 @@ export interface DocSectionItem {
   flow?: LessonFlow;
   lesson?: AcademicLesson;
   executionGroups?: NotebookExecutionGroup[];
+  exercises?: ExerciseItem[];
+  level?: number;
 }
 
 // ============================================================================
@@ -577,8 +602,10 @@ export interface AcademicSubchapter {
   lesson?: AcademicLesson;
   executionGroups?: NotebookExecutionGroup[];
   codeExamples?: AcademicCodeExample[];
-  exercises?: Array<{ level: number; task: string; hint?: string; solution?: string } | string>;
+  exercises?: Array<ExerciseItem | { level: number; task: string; hint?: string; solution?: string } | string>;
+  structuredExercises?: ExerciseItem[];
   references?: AcademicCitation[];
+  subsections?: AcademicDiscussionUnit[] | AcademicSubchapter[];
   subSubchapters?: AcademicDiscussionUnit[];
   dataset?: AcademicDatasetMetadata;
   commonPitfalls?: string[];
@@ -654,6 +681,8 @@ export function curriculumToDocSectionItems(curriculum: AcademicCurriculum): Doc
           ? notebookUnitsToMarkdown(sub.units)
           : sub.content_markdown;
 
+      const structuredExercises = normalizeSubchapterExercises(sub);
+
       return {
         id: sub.id,
         slug: sub.slug,
@@ -671,22 +700,25 @@ export function curriculumToDocSectionItems(curriculum: AcademicCurriculum): Doc
         learningObjectives: sub.learningObjectives,
         sourceRefIds: sub.sourceRefIds,
         reviewStatus: sub.reviewStatus,
+        exercises: structuredExercises,
         codeSnippets: allSnippets.map((c) => ({
           id: c.id,
           language: c.language,
           code: c.code,
           caption: c.filename,
         })),
-        subsections: (sub.subSubchapters || []).map((unit) => ({
+        subsections: ((sub.subsections || sub.subSubchapters || []) as any[]).map((unit: any) => ({
           id: unit.id,
           slug: unit.slug,
           title: unit.title,
           orderIndex: unit.orderIndex,
-          description: "",
+          description: unit.description || "",
           content_markdown: unit.content_markdown,
           parentTitle: sub.title,
           chapterNumber: chapter.orderIndex,
-          codeSnippets: (unit.codeExamples || []).map((c) => ({
+          level: 3 as const,
+          exercises: [],
+          codeSnippets: ((unit.codeExamples || []) as any[]).map((c: any) => ({
             id: c.id,
             language: c.language,
             code: c.code,
@@ -729,6 +761,8 @@ export function curriculumToFlatDocSectionItems(curriculum: AcademicCurriculum):
             ? notebookUnitsToMarkdown(sub.units)
             : sub.content_markdown;
 
+        const structuredExercises = normalizeSubchapterExercises(sub);
+
         flatList.push({
           id: sub.id,
           slug: sub.slug,
@@ -743,6 +777,7 @@ export function curriculumToFlatDocSectionItems(curriculum: AcademicCurriculum):
           learningObjectives: sub.learningObjectives,
           sourceRefIds: sub.sourceRefIds,
           reviewStatus: sub.reviewStatus,
+          exercises: structuredExercises,
           codeSnippets: allSnippets.map((c) => ({
             id: c.id,
             language: c.language,

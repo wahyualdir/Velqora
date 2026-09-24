@@ -7,3 +7,4 @@ export * from "./module-list-item";
 export * from "./smart-module-sorter-modal";
 export * from "./unified-content-form";
 export * from "./owner-module-import-modal";
+export * from "./exercise-card";
