@@ -95,8 +95,8 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     return {
       status: "verified",
       badgeLabel: "Terverifikasi 100%",
-      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (22 Bab).",
-      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis.",
+      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (22 Bab / 200 Subbab SOTA).",
+      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis berbasis Hastie (ESL), Bishop (PRML), Mitchell, dan scikit-learn SOTA.",
       isVerified: true,
       priorityOrder: 3,
     };
