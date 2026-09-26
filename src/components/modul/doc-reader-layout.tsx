@@ -211,9 +211,6 @@ export function DocReaderLayout({
     return init;
   });
 
-  // Active unit tab selection when viewing a subchapter
-  const [activeUnitTab, setActiveUnitTab] = useState<string>("all");
-
   const toggleSubchapter = (subchapterId: string) => {
     setExpandedSubchapters((prev) => ({
       ...prev,
@@ -270,7 +267,6 @@ export function DocReaderLayout({
       contentRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
     setActiveHeadingId("");
-    setActiveUnitTab("all");
   }, [selectedId]);
 
   // Active section item
@@ -343,6 +339,12 @@ export function DocReaderLayout({
 
     return md;
   }, [currentSection, categoryName]);
+
+  // Strip duplicate top-level H1 when rendered with NotebookLessonHeader
+  const cleanMarkdown = useMemo(() => {
+    if (!currentMarkdown) return "";
+    return currentMarkdown.replace(/^#\s+[^\n]+\n+/, "");
+  }, [currentMarkdown]);
 
   // In-Page TOC items
   const tocItems = useMemo(() => {
@@ -515,6 +517,53 @@ export function DocReaderLayout({
 
         {/* Right: Quick Actions, TOC Toggle, Theme, Fullscreen */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Quick Contextual Actions */}
+          {currentSection && (
+            <>
+              <Link
+                href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(
+                  `Halo AI Tutor, saya sedang mempelajari "${currentSection.title}" pada kurikulum ${categoryName}. Bisakah Anda menjelaskan konsep intinya, membimbing penurunan matematisnya, dan memberikan contoh kode interaktif?`
+                )}`}
+                className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 transition-colors cursor-pointer"
+                title="Tanya AI Tutor"
+              >
+                <Bot className="w-4 h-4" />
+              </Link>
+
+              <Link
+                href={`/dashboard/kuis-ai?topic=${encodeURIComponent(`${categoryName} - ${currentSection.title}`)}`}
+                className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-amber-500 transition-colors cursor-pointer"
+                title="Kuis Pemahaman AI"
+              >
+                <BrainCircuit className="w-4 h-4" />
+              </Link>
+            </>
+          )}
+
+          <Link
+            href="/dashboard/playground"
+            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-emerald-500 transition-colors cursor-pointer"
+            title="Buka Playground Python"
+          >
+            <Code2 className="w-4 h-4" />
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success("Tautan materi berhasil disalin.");
+              }
+            }}
+            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            title="Salin Tautan"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+
+          <div className="h-4 w-px bg-border/60 mx-0.5 hidden sm:block" />
+
           {/* In-Page Outline Toggle (Collapsible Right Panel) */}
           <button
             type="button"
@@ -789,55 +838,36 @@ export function DocReaderLayout({
           className="flex-1 overflow-y-auto min-w-0 scrollbar-thin px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 lg:py-10"
         >
           <div className="mx-auto w-full max-w-3xl xl:max-w-4xl space-y-8">
-            {/* Breadcrumb Navigation */}
+            {/* Breadcrumb Navigation - 1 baris tipis */}
             <nav
               aria-label="Breadcrumb"
-              className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary flex-wrap"
+              className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary truncate py-1 border-b border-border/40 pb-2.5"
             >
-              <Link
-                href="/dashboard"
-                className="hover:text-text-primary transition-colors flex items-center gap-1 shrink-0"
-              >
-                <Home className="w-3.5 h-3.5 opacity-80" />
-              </Link>
-              <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
               <Link href="/dashboard/modul" className="hover:text-text-primary transition-colors shrink-0">
                 Modul AI
               </Link>
-              <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+              <span className="opacity-40">/</span>
               <span className="hover:text-text-primary transition-colors shrink-0 font-medium" style={{ color: themeColor }}>
                 {categoryName}
               </span>
               {parentChapter && (
                 <>
-                  <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+                  <span className="opacity-40">/</span>
                   <button
                     type="button"
                     onClick={() => handleSelect(parentChapter.id)}
-                    className="hover:text-text-primary transition-colors truncate max-w-[160px] cursor-pointer"
+                    className="hover:text-text-primary transition-colors truncate max-w-[200px] cursor-pointer"
                   >
-                    {parentChapter.title}
+                    {parentChapter.title.startsWith("BAB ") || parentChapter.title.startsWith("Bab ")
+                      ? parentChapter.title.split(":")[0]
+                      : `Bab ${parentChapter.orderIndex || 1}`}
                   </button>
                 </>
               )}
-              {parentSubchapter && (
+              {currentSection && (
                 <>
-                  <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(parentSubchapter.id)}
-                    className={`hover:text-text-primary transition-colors truncate max-w-[160px] cursor-pointer ${
-                      currentSection?.id === parentSubchapter.id ? "font-semibold text-text-primary" : ""
-                    }`}
-                  >
-                    {parentSubchapter.title}
-                  </button>
-                </>
-              )}
-              {parentSubchapter && currentSection && currentSection.id !== parentSubchapter.id && (
-                <>
-                  <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
-                  <span className="font-semibold truncate max-w-[160px]" style={{ color: themeColor }}>
+                  <span className="opacity-40">/</span>
+                  <span className="font-semibold text-text-primary truncate" style={{ color: themeColor }}>
                     {currentSection.title}
                   </span>
                 </>
@@ -869,16 +899,27 @@ export function DocReaderLayout({
                 )}
 
                 {/* 1. Lesson Header */}
-                <NotebookLessonHeader
-                  number={currentSection.orderIndex ? `${currentSection.chapterNumber || 1}.${currentSection.orderIndex}` : undefined}
-                  title={currentSection.title}
-                  subtitle={currentSection.parentTitle}
-                  description={currentSection.description}
-                  flow={currentSection.flow || (currentSection.units?.some((u) => u.type === "code") ? "computational" : "conceptual")}
-                  estimatedMinutes={currentSection.units ? Math.max(10, currentSection.units.length * 2) : 15}
-                  categoryName={categoryName}
-                  chapterTitle={parentChapter?.title}
-                />
+                <div className="space-y-2">
+                  <NotebookLessonHeader
+                    number={currentSection.orderIndex ? `${currentSection.chapterNumber || 1}.${currentSection.orderIndex}` : undefined}
+                    title={currentSection.title}
+                    subtitle={currentSection.parentTitle}
+                    description={currentSection.description}
+                    flow={currentSection.flow || (currentSection.units?.some((u) => u.type === "code") ? "computational" : "conceptual")}
+                    estimatedMinutes={currentSection.units ? Math.max(10, currentSection.units.length * 2) : 15}
+                    categoryName={categoryName}
+                    chapterTitle={parentChapter?.title}
+                  />
+
+                  {/* Micro-badge status verifikasi */}
+                  {statusMeta.status === "verified" && (
+                    <div className="flex items-center gap-2 pt-1">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        <CheckCircle2 className="w-3 h-3" /> Terverifikasi
+                      </span>
+                    </div>
+                  )}
+                </div>
 
                 {/* Status Transparansi Kualitas Kurikulum */}
                 {statusMeta.status === "under_review" && (
@@ -895,20 +936,6 @@ export function DocReaderLayout({
                         Kurikulum topik ini sedang dalam proses peninjauan ulang dan perombakan materi ke standar industri/universitas (pengisian kode substantif, formulasi analitis KaTeX, dan rujukan kanonikal terverifikasi). Anda tetap dapat mempelajari silabus draf saat ini.
                       </p>
                     </div>
-                  </div>
-                )}
-
-                {statusMeta.status === "verified" && (
-                  <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-800 dark:text-emerald-200 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                      <span className="font-medium text-text-primary text-[12px]">
-                        Kurikulum Akademik Terverifikasi 100% — Seluruh bab memuat formulasi matematis, kode runnable mandiri, dan rujukan kanonikal resmi.
-                      </span>
-                    </div>
-                    <span className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shrink-0">
-                      Terverifikasi Penuh
-                    </span>
                   </div>
                 )}
 
@@ -929,58 +956,6 @@ export function DocReaderLayout({
                   </div>
                 )}
 
-                {/* 2. Contextual Quick Actions (Unobtrusive) */}
-                <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-surface/40 backdrop-blur-xs text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/40">
-                      <GraduationCap className="w-3.5 h-3.5" />
-                      <span>Standar Kurikulum Akademik</span>
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <Link
-                      href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(
-                        `Halo AI Tutor, saya sedang mempelajari "${currentSection.title}" pada kurikulum ${categoryName}. Bisakah Anda menjelaskan konsep intinya, membimbing penurunan matematisnya, dan memberikan contoh kode interaktif?`
-                      )}`}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white shadow-2xs transition-colors"
-                    >
-                      <Bot className="w-3.5 h-3.5" />
-                      <span>Tanya Tutor</span>
-                    </Link>
-
-                    <Link
-                      href={`/dashboard/kuis-ai?topic=${encodeURIComponent(`${categoryName} - ${currentSection.title}`)}`}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors"
-                    >
-                      <BrainCircuit className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Kuis</span>
-                    </Link>
-
-                    <Link
-                      href="/dashboard/playground"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border border-border bg-surface hover:bg-surface-secondary text-text-primary transition-colors"
-                    >
-                      <Code2 className="w-3.5 h-3.5 text-emerald-500" />
-                      <span>Playground</span>
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (typeof window !== "undefined") {
-                          navigator.clipboard.writeText(window.location.href);
-                          toast.success("Tautan materi berhasil disalin.");
-                        }
-                      }}
-                      className="p-1 rounded-md border border-border bg-surface hover:bg-surface-secondary text-text-tertiary hover:text-text-primary transition-colors"
-                      title="Salin tautan"
-                    >
-                      <Share2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-
                 {/* 3. Learning Objectives */}
                 {currentSection.learningObjectives && currentSection.learningObjectives.length > 0 && (
                   <NotebookObjectives objectives={currentSection.learningObjectives} />
@@ -991,139 +966,63 @@ export function DocReaderLayout({
                   <NotebookUnitRenderer units={currentSection.units} />
                 ) : (
                   <div className="py-2 prose dark:prose-invert max-w-none">
-                    <NoteRenderer content={currentMarkdown} />
+                    <NoteRenderer content={cleanMarkdown} />
                   </div>
                 )}
 
-                {/* 4.5. LEVEL 3: UNIT PEMBELAJARAN (SUB-SUBBAB) TRAVERSAL */}
+                {/* 4.5. LEVEL 3: UNIT PEMBELAJARAN (FLAT LINEAR FLOW) */}
                 {currentSection.subsections && currentSection.subsections.length > 0 && (
-                  <section className="space-y-6 pt-6 border-t border-border/80">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="space-y-1">
-                        <h3 className="text-base sm:text-lg font-bold text-text-primary font-display flex items-center gap-2">
-                          <Layers className="w-5 h-5" style={{ color: themeColor }} />
-                          <span>Unit Pembelajaran Terperinci</span>
-                          <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-                            {currentSection.subsections.length} Unit
-                          </span>
-                        </h3>
-                        <p className="text-xs text-text-secondary">
-                          Materi terperinci di bawah subbab ini. Anda dapat membaca seluruh unit berurutan atau memilih unit spesifik.
-                        </p>
-                      </div>
-
-                      {/* View Switcher: All Continuous vs Specific Tabs */}
-                      <div className="flex items-center gap-1.5 p-1 rounded-lg border border-border bg-surface-secondary/40 shrink-0 text-xs">
-                        <button
-                          type="button"
-                          onClick={() => setActiveUnitTab("all")}
-                          className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
-                            activeUnitTab === "all"
-                              ? "bg-surface text-text-primary shadow-2xs font-semibold"
-                              : "text-text-tertiary hover:text-text-primary"
-                          }`}
-                        >
-                          Semua Unit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setActiveUnitTab(currentSection.subsections![0].id)}
-                          className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
-                            activeUnitTab !== "all"
-                              ? "bg-surface text-text-primary shadow-2xs font-semibold"
-                              : "text-text-tertiary hover:text-text-primary"
-                          }`}
-                        >
-                          Per Tab Unit
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Unit Tabs Bar if in Per-Unit Tab Mode */}
-                    {activeUnitTab !== "all" && (
-                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
-                        {currentSection.subsections.map((unit, uIdx) => {
-                          const isTabActive = activeUnitTab === unit.id;
-                          return (
-                            <button
-                              key={unit.id || uIdx}
-                              type="button"
-                              onClick={() => setActiveUnitTab(unit.id)}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-mono shrink-0 transition-all cursor-pointer border ${
-                                isTabActive
-                                  ? "bg-brand-600 text-white border-brand-600 font-bold shadow-2xs"
-                                  : "border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary"
-                              }`}
-                            >
-                              Unit {uIdx + 1}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Render Units: Either the selected Unit Tab OR all Units continuously */}
-                    <div className="space-y-6">
-                      {currentSection.subsections
-                        .filter((unit) => activeUnitTab === "all" || unit.id === activeUnitTab)
-                        .map((unit, uIdx) => (
-                          <div
-                            key={unit.id || uIdx}
-                            id={`unit-${unit.id}`}
-                            className="rounded-xl border border-border/80 bg-surface dark:bg-[#131418] shadow-2xs overflow-hidden transition-all duration-200"
+                  <div className="space-y-10 pt-8 border-t border-border/40">
+                    {currentSection.subsections.map((unit, uIdx) => (
+                      <section
+                        key={unit.id || uIdx}
+                        id={`unit-${unit.id}`}
+                        className="space-y-4 pt-6 first:pt-0"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span
+                            className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 shadow-2xs"
+                            style={{ backgroundColor: themeColor }}
                           >
-                            {/* Unit Header */}
-                            <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-5 py-3 border-b border-border/80 bg-surface-secondary/40 dark:bg-white/[0.02]">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <span
-                                  className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 shadow-2xs"
-                                  style={{ backgroundColor: themeColor }}
-                                >
-                                  Unit {uIdx + 1}
-                                </span>
-                                <h4 className="text-xs sm:text-sm font-bold text-text-primary truncate font-display">
-                                  {unit.title}
-                                </h4>
-                              </div>
+                            Unit {uIdx + 1}
+                          </span>
+                          <h3 className="text-lg sm:text-xl font-bold text-text-primary font-display tracking-tight">
+                            {unit.title}
+                          </h3>
+                        </div>
 
-                              <div className="flex items-center gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => handleSelect(unit.id)}
-                                  className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-                                  title="Fokus membaca unit ini saja"
-                                >
-                                  <ExternalLink className="w-3 h-3" />
-                                  <span className="hidden sm:inline">Fokus Unit</span>
-                                </button>
-                              </div>
-                            </div>
+                        {unit.description && (
+                          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                            {unit.description}
+                          </p>
+                        )}
 
-                            {/* Unit Markdown Body */}
-                            <div className="p-4 sm:p-6 prose dark:prose-invert max-w-none text-xs sm:text-sm">
-                              <NoteRenderer content={unit.content_markdown || ""} />
-                            </div>
-
-                            {/* Unit Code Snippets if any */}
-                            {unit.codeSnippets && unit.codeSnippets.length > 0 && (
-                              <div className="px-4 sm:px-6 pb-4 space-y-3">
-                                <span className="text-[11px] font-mono uppercase tracking-wider text-text-tertiary block font-semibold">
-                                  Praktikum Kode Unit:
-                                </span>
-                                {unit.codeSnippets.map((snip, sIdx) => (
-                                  <div
-                                    key={snip.id || sIdx}
-                                    className="rounded-lg overflow-hidden border border-border/80 bg-[#0d1117] text-[#e6edf3] p-3 font-mono text-xs overflow-x-auto whitespace-pre"
-                                  >
-                                    <code>{snip.code}</code>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                        {/* Unit Markdown Body without duplicate H1 */}
+                        {unit.content_markdown && (
+                          <div className="py-1 prose dark:prose-invert max-w-none">
+                            <NoteRenderer content={unit.content_markdown.replace(/^#\s+[^\n]+\n+/, "")} />
                           </div>
-                        ))}
-                    </div>
-                  </section>
+                        )}
+
+                        {/* Unit Code Snippets if any */}
+                        {unit.codeSnippets && unit.codeSnippets.length > 0 && (
+                          <div className="space-y-3 pt-2">
+                            <span className="text-[11px] font-mono uppercase tracking-wider text-text-tertiary block font-semibold">
+                              Praktikum Kode Unit:
+                            </span>
+                            {unit.codeSnippets.map((snip, sIdx) => (
+                              <div
+                                key={snip.id || sIdx}
+                                className="rounded-lg overflow-hidden border border-border/80 bg-[#0d1117] text-[#e6edf3] p-3 font-mono text-xs overflow-x-auto whitespace-pre"
+                              >
+                                <code>{snip.code}</code>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </section>
+                    ))}
+                  </div>
                 )}
 
                 {/* 5. LATIHAN TERSTRUKTUR & TANTANGAN PRAKTIKUM (FASE 2) */}

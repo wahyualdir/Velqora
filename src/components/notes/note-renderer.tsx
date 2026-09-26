@@ -7,6 +7,13 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
+import {
+  AlertTriangle,
+  Lightbulb,
+  Bookmark,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { CodeBlock } from "@/components/ui/code-block";
 import { slugify } from "@/lib/utils";
 import type { NoteLinkItem } from "@/actions/study/notes";
@@ -18,9 +25,79 @@ interface NoteRendererProps {
   className?: string;
 }
 
+interface CalloutProps {
+  type: "warning" | "tip" | "note" | "important" | "caution";
+  title?: string;
+  children: React.ReactNode;
+}
+
+export function Callout({ type, title, children }: CalloutProps) {
+  const config = {
+    warning: {
+      border: "border-l-amber-500",
+      bg: "bg-amber-500/5 dark:bg-amber-500/10",
+      titleColor: "text-amber-800 dark:text-amber-300",
+      icon: <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />,
+      defaultTitle: "Peringatan Teknis",
+    },
+    tip: {
+      border: "border-l-sky-500",
+      bg: "bg-sky-500/5 dark:bg-sky-500/10",
+      titleColor: "text-sky-800 dark:text-sky-300",
+      icon: <Lightbulb className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />,
+      defaultTitle: "Wawasan Praktisi",
+    },
+    note: {
+      border: "border-l-brand-500",
+      bg: "bg-brand-500/5 dark:bg-brand-500/10",
+      titleColor: "text-brand-700 dark:text-brand-300",
+      icon: <Bookmark className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />,
+      defaultTitle: "Catatan Teori",
+    },
+    important: {
+      border: "border-l-purple-500",
+      bg: "bg-purple-500/5 dark:bg-purple-500/10",
+      titleColor: "text-purple-700 dark:text-purple-300",
+      icon: <AlertCircle className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />,
+      defaultTitle: "Poin Penting",
+    },
+    caution: {
+      border: "border-l-rose-500",
+      bg: "bg-rose-500/5 dark:bg-rose-500/10",
+      titleColor: "text-rose-700 dark:text-rose-300",
+      icon: <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />,
+      defaultTitle: "Perhatian Kritis",
+    },
+  }[type] || {
+    border: "border-l-brand-500",
+    bg: "bg-brand-500/5 dark:bg-brand-500/10",
+    titleColor: "text-brand-600 dark:text-brand-400",
+    icon: <Bookmark className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />,
+    defaultTitle: "Catatan",
+  };
+
+  return (
+    <div
+      className={`my-5 rounded-r-xl border-l-[3px] ${config.border} ${config.bg} p-4 transition-colors select-text not-prose`}
+    >
+      <div className="flex items-start gap-3">
+        {config.icon}
+        <div className="flex-1 min-w-0 space-y-1">
+          <div className={`text-xs sm:text-sm font-bold tracking-tight font-display ${config.titleColor}`}>
+            {title || config.defaultTitle}
+          </div>
+          <div className="text-[14px] sm:text-[15px] leading-relaxed text-text-secondary">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
- * Preprocesses markdown to convert [[Wiki-Link]] and #tag into special link tokens,
- * while safely preserving fenced code blocks and inline code spans.
+ * Preprocesses markdown to convert [[Wiki-Link]], #tag, and raw emoticons
+ * into modern alert blockquotes, while safely preserving fenced code blocks and inline code spans.
  */
 function preprocessObsidianMarkdown(
   raw: string,
@@ -29,7 +106,7 @@ function preprocessObsidianMarkdown(
 ): string {
   if (!raw) return "";
 
-  // Resilience: normalize literal '\n' into actual newlines if string lacks actual line breaks (e.g. unescaped SQL seed)
+  // Resilience: normalize literal '\n' into actual newlines if string lacks actual line breaks
   const normalizedRaw =
     !raw.includes("\n") && raw.includes("\\n")
       ? raw.replace(/\\n/g, "\n")
@@ -48,7 +125,38 @@ function preprocessObsidianMarkdown(
 
       let text = part;
 
-      // 1. Transform [[Target Title]] or [[Target Title|Custom Alias]]
+      // 1. Transform raw bullet emoticons into standard GitHub Alert blockquotes
+      // Transform: - ⚠️ **Peringatan Teknis:** or ⚠️ **Peringatan Teknis:**
+      text = text.replace(/(?:^|\n)[ \t]*[-*]?[ \t]*⚠️[ \t]*(?:\*\*([^*]+)\*\*[:\s]*(.*)|([^\n]+))/g, (_, boldTitle, restWithBold, plainText) => {
+        if (boldTitle) {
+          const cleanTitle = boldTitle.replace(/:\s*$/, "").trim();
+          const cleanRest = (restWithBold || "").trim();
+          return `\n\n> [!WARNING] **${cleanTitle}**\n> ${cleanRest}\n\n`;
+        }
+        return `\n\n> [!WARNING]\n> ${(plainText || "").trim()}\n\n`;
+      });
+
+      // Transform: - 💡 **Wawasan Praktisi:** or 💡 **Wawasan Praktisi:**
+      text = text.replace(/(?:^|\n)[ \t]*[-*]?[ \t]*💡[ \t]*(?:\*\*([^*]+)\*\*[:\s]*(.*)|([^\n]+))/g, (_, boldTitle, restWithBold, plainText) => {
+        if (boldTitle) {
+          const cleanTitle = boldTitle.replace(/:\s*$/, "").trim();
+          const cleanRest = (restWithBold || "").trim();
+          return `\n\n> [!TIP] **${cleanTitle}**\n> ${cleanRest}\n\n`;
+        }
+        return `\n\n> [!TIP]\n> ${(plainText || "").trim()}\n\n`;
+      });
+
+      // Transform: - 📌 **Catatan Teori:** or 📌 **Catatan Teori:**
+      text = text.replace(/(?:^|\n)[ \t]*[-*]?[ \t]*📌[ \t]*(?:\*\*([^*]+)\*\*[:\s]*(.*)|([^\n]+))/g, (_, boldTitle, restWithBold, plainText) => {
+        if (boldTitle) {
+          const cleanTitle = boldTitle.replace(/:\s*$/, "").trim();
+          const cleanRest = (restWithBold || "").trim();
+          return `\n\n> [!NOTE] **${cleanTitle}**\n> ${cleanRest}\n\n`;
+        }
+        return `\n\n> [!NOTE]\n> ${(plainText || "").trim()}\n\n`;
+      });
+
+      // 2. Transform [[Target Title]] or [[Target Title|Custom Alias]]
       text = text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, rawTarget, rawAlias) => {
         const target = rawTarget.trim();
         const label = (rawAlias || target).trim();
@@ -62,7 +170,7 @@ function preprocessObsidianMarkdown(
         return `[${label}](wikilink:${encodeURIComponent(resolvedSlug)}?title=${encodeURIComponent(target)})`;
       });
 
-      // 2. Transform #tag (avoiding headers like # Heading)
+      // 3. Transform #tag (avoiding headers like # Heading)
       text = text.replace(/(^|[^\w#])#([a-zA-Z0-9_-]+)(?=[^\w#]|$)/g, (_, prefix, tag) => {
         return `${prefix}[#${tag}](taglink:${encodeURIComponent(tag.toLowerCase())})`;
       });
@@ -90,6 +198,61 @@ function generateHeadingId(children: React.ReactNode): string {
     .replace(/[^\w\s.-]/g, "")
     .replace(/[\s.]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function parseAlertBlock(children: React.ReactNode): {
+  type: "warning" | "note" | "tip" | "important" | "caution";
+  title?: string;
+  content: React.ReactNode;
+} | null {
+  const fullText = extractTextFromChildren(children).trim();
+  const match = fullText.match(/^\[!(WARNING|NOTE|TIP|IMPORTANT|CAUTION)\](?:\s*\*\*([^*]+)\*\*[:\s]*)?/i);
+  if (!match) return null;
+
+  const rawType = match[1].toLowerCase();
+  const type = (rawType === "caution" ? "warning" : rawType) as "warning" | "note" | "tip" | "important" | "caution";
+  const explicitTitle = match[2] ? match[2].replace(/:\s*$/, "").trim() : undefined;
+
+  let alertStripped = false;
+  function cleanNodes(node: React.ReactNode): React.ReactNode {
+    if (typeof node === "string") {
+      if (!alertStripped) {
+        const clean = node.replace(/^\[!(WARNING|NOTE|TIP|IMPORTANT|CAUTION)\]\s*/i, "");
+        if (clean !== node) {
+          alertStripped = true;
+          return clean;
+        }
+      }
+      return node;
+    }
+    if (Array.isArray(node)) {
+      return node.map((child, idx) => <React.Fragment key={idx}>{cleanNodes(child)}</React.Fragment>);
+    }
+    if (React.isValidElement(node)) {
+      const props = node.props as any;
+      if (node.type === "strong" && explicitTitle) {
+        const strongText = extractTextFromChildren(node).replace(/:\s*$/, "").trim();
+        if (strongText.toLowerCase() === explicitTitle.toLowerCase()) {
+          return null;
+        }
+      }
+      if (props && props.children) {
+        return React.cloneElement(node, {
+          ...props,
+          children: cleanNodes(props.children),
+        });
+      }
+    }
+    return node;
+  }
+
+  const cleanedContent = cleanNodes(children);
+
+  return {
+    type,
+    title: explicitTitle,
+    content: cleanedContent,
+  };
 }
 
 export function NoteRenderer({
@@ -137,7 +300,7 @@ export function NoteRenderer({
             if (isInline) {
               return (
                 <code
-                  className="px-1.5 py-0.5 rounded font-mono text-[12px] bg-surface-secondary text-brand-700 dark:text-brand-400 border border-border"
+                  className="px-1.5 py-0.5 rounded font-mono text-[13px] bg-surface-secondary text-brand-700 dark:text-brand-400 border border-border"
                   {...props}
                 >
                   {children}
@@ -150,7 +313,7 @@ export function NoteRenderer({
                 code={codeString}
                 language={match ? match[1] : "python"}
                 title={match ? `snippet.${match[1]}` : undefined}
-                className="my-3"
+                className="my-4"
               />
             );
           },
@@ -234,11 +397,11 @@ export function NoteRenderer({
             );
           },
 
-          // Typography Styling adhering to Velqora Academic Theme & Sphinx Anchor Links
+          // Typography Styling adhering to Stripe Docs / GitBook Minimalist Standards
           h1({ children }) {
             const id = generateHeadingId(children);
             return (
-              <h1 id={id} className="group relative text-2xl sm:text-3xl font-extrabold font-display text-text-primary mt-8 mb-4 tracking-tight border-b border-border/60 pb-3 scroll-mt-20">
+              <h1 id={id} className="group relative text-2xl sm:text-3xl font-extrabold font-display text-text-primary mt-8 mb-4 tracking-tight border-b border-border/40 pb-3 scroll-mt-20">
                 <span>{children}</span>
                 <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
               </h1>
@@ -256,7 +419,7 @@ export function NoteRenderer({
           h3({ children }) {
             const id = generateHeadingId(children);
             return (
-              <h3 id={id} className="group relative text-base sm:text-lg font-bold text-text-primary mt-5 mb-2.5 scroll-mt-20">
+              <h3 id={id} className="group relative text-lg sm:text-xl font-bold font-display text-text-primary mt-6 mb-2.5 scroll-mt-20">
                 <span>{children}</span>
                 <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
               </h3>
@@ -265,7 +428,7 @@ export function NoteRenderer({
           h4({ children }) {
             const id = generateHeadingId(children);
             return (
-              <h4 id={id} className="group relative text-sm sm:text-base font-semibold text-text-primary mt-4 mb-2 scroll-mt-20">
+              <h4 id={id} className="group relative text-base font-semibold text-text-primary mt-4 mb-2 scroll-mt-20">
                 <span>{children}</span>
                 <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 ml-2 text-text-tertiary hover:text-brand-600 transition-opacity" title="Link to this heading" aria-label={`Tautan langsung ke ${id}`}>#</a>
               </h4>
@@ -273,50 +436,58 @@ export function NoteRenderer({
           },
           p({ children }) {
             return (
-              <p className="text-xs sm:text-sm text-text-secondary leading-relaxed my-2.5">
+              <p className="text-[15px] sm:text-base leading-[1.8] text-text-secondary my-4">
                 {children}
               </p>
             );
           },
           ul({ children }) {
             return (
-              <ul className="list-disc list-inside space-y-1 my-2.5 text-xs sm:text-sm text-text-secondary pl-1">
+              <ul className="list-disc list-inside space-y-1.5 my-4 text-[15px] sm:text-base leading-[1.8] text-text-secondary pl-2">
                 {children}
               </ul>
             );
           },
           ol({ children }) {
             return (
-              <ol className="list-decimal list-inside space-y-1 my-2.5 text-xs sm:text-sm text-text-secondary pl-1">
+              <ol className="list-decimal list-inside space-y-1.5 my-4 text-[15px] sm:text-base leading-[1.8] text-text-secondary pl-2">
                 {children}
               </ol>
             );
           },
           blockquote({ children }) {
+            const alert = parseAlertBlock(children);
+            if (alert) {
+              return (
+                <Callout type={alert.type} title={alert.title}>
+                  {alert.content}
+                </Callout>
+              );
+            }
             return (
-              <blockquote className="border-l-3 border-brand-500 bg-surface-secondary/40 pl-3.5 pr-2 py-1.5 my-3 italic text-xs sm:text-sm text-text-secondary">
+              <blockquote className="border-l-2 border-brand-500/60 dark:border-brand-400/50 bg-surface-secondary/30 dark:bg-surface-secondary/20 pl-4 py-2.5 my-4 italic text-[14px] sm:text-[15px] text-text-secondary rounded-r-lg">
                 {children}
               </blockquote>
             );
           },
           hr() {
-            return <hr className="border-border my-6" />;
+            return <hr className="border-border/60 my-6" />;
           },
           table({ children }) {
             return (
-              <div className="overflow-x-auto my-3 border border-border">
-                <table className="w-full text-xs text-left border-collapse">{children}</table>
+              <div className="overflow-x-auto my-4 border border-border/80 rounded-lg">
+                <table className="w-full text-xs sm:text-sm text-left border-collapse">{children}</table>
               </div>
             );
           },
           thead({ children }) {
-            return <thead className="bg-surface-secondary border-b border-border font-mono">{children}</thead>;
+            return <thead className="bg-surface-secondary/60 border-b border-border/80 font-mono text-xs">{children}</thead>;
           },
           th({ children }) {
-            return <th className="p-2.5 text-text-primary font-bold">{children}</th>;
+            return <th className="p-3 text-text-primary font-bold">{children}</th>;
           },
           td({ children }) {
-            return <td className="p-2.5 border-b border-border/50 text-text-secondary">{children}</td>;
+            return <td className="p-3 border-b border-border/40 text-text-secondary">{children}</td>;
           },
         }}
       >

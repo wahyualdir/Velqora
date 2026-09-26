@@ -1,18 +1,20 @@
 import { AcademicCurriculum } from "../types";
 import { chunk1Foundations } from "./machine-learning/chunk1-foundations";
 import { chunk2LinearModels } from "./machine-learning/chunk2-linear-models";
-import { chunk3TreeEnsembles } from "./machine-learning/chunk3-tree-ensembles";
-import { chunk4Unsupervised } from "./machine-learning/chunk4-unsupervised";
-import { chunk5ValidationProduction } from "./machine-learning/chunk5-validation-production";
+import { chunk3GenerativeSvmKnn } from "./machine-learning/chunk3-generative-svm-knn";
+import { chunk4TreeEnsembles } from "./machine-learning/chunk4-tree-ensembles";
+import { chunk5Unsupervised } from "./machine-learning/chunk5-unsupervised";
+import { chunk6EvaluationEngineering } from "./machine-learning/chunk6-evaluation-engineering";
+import { chunk7XaiMlops } from "./machine-learning/chunk7-xai-mlops";
 
 /**
  * KURIKULUM AKADEMIK: MACHINE LEARNING
- * Standar: University-Grade / Advanced Engineering Curriculum
+ * Standar: University-Grade / Advanced Engineering Curriculum (Stripe Docs / GitBook / Mintlify standard)
  * Single Source of Truth terintegrasi untuk platform Velqora.
  * 
- * Versi 3.1.0 (Regenerasi Substantif Berbasis 16 Dimensi Pedagogis & Latihan Terstruktur)
- * Memuat 22 Bab & 220 Subbab dengan 100% Latihan Terstruktur Level 1-2,
- * Intuisi & Analogi Dunia Nyata, Formulasi Matematis KaTeX, dan Pencegahan Overfitting.
+ * Versi 4.0.0 (32 BAB Mandiri & 200+ Subbab Kanonikal)
+ * Memuat 32 Bab lengkap dengan Grounding Tautan Ilmiah Primer, Visualisasi Diagram Arsitektur Mermaid,
+ * Multi-Code Snippet (NumPy Scratch + SOTA Library + Diagnostik), dan Latihan Terstruktur.
  */
 export const machineLearningCurriculum: AcademicCurriculum = {
   "id": "machine-learning",
@@ -20,9 +22,9 @@ export const machineLearningCurriculum: AcademicCurriculum = {
   "title": "Machine Learning",
   "category": "Kecerdasan Buatan",
   "level": "menengah",
-  "description": "Kurikulum akademik komprehensif Machine Learning berstandar universitas internasional dan industri: 22 BAB lengkap dengan penurunan matematis formal KaTeX, pembuktian teorema Gauss-Markov, dekomposisi bias-varians, implementasi algoritma dari nol (NumPy) dan Scikit-Learn API, serta pencegahan kebocoran data mutlak.",
-  "estimatedHours": 90,
-  "version": "3.0.0",
+  "description": "Kurikulum akademik komprehensif Machine Learning berstandar universitas internasional dan industri: 32 BAB lengkap dengan 200+ subbab kanonikal, penurunan matematis formal KaTeX, pembuktian teorema analitis, implementasi multi-code (NumPy Scratch + SOTA Library + Diagnostik), diagram arsitektur Mermaid, dan pencegahan kebocoran data mutlak.",
+  "estimatedHours": 120,
+  "version": "4.0.0",
   "primaryReferences": [
     {
       "title": "scikit-learn: Machine Learning in Python",
@@ -178,8 +180,10 @@ export const machineLearningCurriculum: AcademicCurriculum = {
   "chapters": [
     ...chunk1Foundations,
     ...chunk2LinearModels,
-    ...chunk3TreeEnsembles,
-    ...chunk4Unsupervised,
-    ...chunk5ValidationProduction,
+    ...chunk3GenerativeSvmKnn,
+    ...chunk4TreeEnsembles,
+    ...chunk5Unsupervised,
+    ...chunk6EvaluationEngineering,
+    ...chunk7XaiMlops,
   ]
 };
