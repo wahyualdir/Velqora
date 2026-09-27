@@ -27,23 +27,12 @@ import { roboticsEmbodiedAiCurriculum } from "./topics/25-robotics-embodied-ai";
 import { speechAudioAiCurriculum } from "./topics/26-speech-audio-ai";
 import { timeSeriesForecastingCurriculum } from "./topics/27-time-series-forecasting";
 import { vectorDatabaseRetrievalCurriculum } from "./topics/28-vector-database-retrieval";
-import {
-  substantiveMachineLearningChapter1,
-  substantiveMachineLearningChapter6,
-} from "./pilot-content";
-
 // AI Fundamentals kini telah diremediasi penuh menjadi kurikulum substantif mandiri
 export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = aiFundamentalsCurriculum;
 
-export const enrichedMachineLearningCurriculum: AcademicCurriculum = {
-  ...machineLearningCurriculum,
-  chapters: [
-    substantiveMachineLearningChapter1,
-    ...machineLearningCurriculum.chapters.slice(1, 5),
-    substantiveMachineLearningChapter6,
-    ...machineLearningCurriculum.chapters.slice(6),
-  ],
-};
+// Machine Learning kini telah diremediasi penuh menjadi kurikulum substantif mandiri (32 Bab Lengkap)
+export const enrichedMachineLearningCurriculum: AcademicCurriculum = machineLearningCurriculum;
+
 
 /**
  * Registri Terpusat Seluruh 28 Kurikulum Akademik Kecerdasan Buatan Velqora.

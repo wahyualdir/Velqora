@@ -63,7 +63,9 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const isProtectedRoute = pathname.startsWith("/dashboard");
+  // Halaman modul kategori bersifat katalog kurikulum publik yang dapat dibaca tanpa login
+  const isPublicCategoryRoute = pathname.startsWith("/dashboard/modul/kategori");
+  const isProtectedRoute = pathname.startsWith("/dashboard") && !isPublicCategoryRoute;
 
   // Jika belum login dan mengakses halaman yang dilindungi, wajibkan login terlebih dahulu
   if (!user && isProtectedRoute) {

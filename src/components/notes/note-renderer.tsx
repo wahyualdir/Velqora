@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { CodeBlock } from "@/components/ui/code-block";
+import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
 import { slugify } from "@/lib/utils";
 import type { NoteLinkItem } from "@/actions/study/notes";
 
@@ -306,6 +307,10 @@ export function NoteRenderer({
                   {children}
                 </code>
               );
+            }
+
+            if (match && (match[1] === "mermaid" || match[1] === "diagram")) {
+              return <MermaidDiagram chart={codeString} />;
             }
 
             return (
