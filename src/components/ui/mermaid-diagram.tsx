@@ -4,6 +4,53 @@ import React, { useEffect, useRef, useState, useId } from "react";
 import { useTheme } from "next-themes";
 import { GitBranch, AlertTriangle, Check, Copy } from "lucide-react";
 
+/**
+ * Membersihkan dan menormalisasi sintaks Mermaid chart dari karakter yang berbenturan
+ * dengan lexer Mermaid v12 (tanda kurung pada edge label, operator perbandingan, pipa bersyarat, norma matriks).
+ */
+export function sanitizeMermaidChart(chart: string): string {
+  if (!chart) return "";
+
+  return chart
+    .split("\n")
+    .map((line) => {
+      let cleaned = line;
+
+      // 0. Normalisasi probabilitas bersyarat internal di dalam tanda kurung misal P(Y|X)
+      // agar delimiter pipa tidak memotong label edge secara prematur
+      while (/\(([^)\n]*?)\|([^)\n]*?)\)/.test(cleaned)) {
+        cleaned = cleaned.replace(/\(([^)\n]*?)\|([^)\n]*?)\)/g, "$1 given $2");
+      }
+
+      // 1. Amankan label edge (-->|...|, -.->|...|, ==>|...|, ---|...|, --|...|) yang belum diapit tanda kutip ganda
+      cleaned = cleaned.replace(/(-->|-\.->|==>|---|--)\s*\|([^"|\n]+)\|/g, (match, arrow, label) => {
+        let safe = label.trim();
+        // Ganti pipa internal yang tersisa
+        safe = safe.replace(/([A-Z])\|([A-Z])/g, "$1 given $2");
+        safe = safe.replace(/\|/g, " / ");
+        // Normalisasi simbol perbandingan matematis
+        safe = safe.replace(/<=/g, "≤").replace(/>=/g, "≥");
+        // Jika terdapat tanda kurung, koma, perbandingan, atau ekspresi matematika, bungkus kutip
+        if (/[()<>,<=|:+*\/]/.test(safe)) {
+          return `${arrow}|"${safe}"|`;
+        }
+        return `${arrow}|${safe}|`;
+      });
+
+      // 2. Normalisasi dobel pipa norma matriks ||...|| di dalam string teks node
+      cleaned = cleaned.replace(/\|\|([^|\n]+)\|\|/g, "Norm($1)");
+
+      // 3. Normalisasi nilai mutlak sederhana |...| di dalam teks deskripsi node
+      cleaned = cleaned.replace(/\|([A-Za-z0-9_().\s\^*/+-]+)\|/g, (m, val) => {
+        if (m.startsWith("-->|") || m.endsWith("|") || m.startsWith("-.->|") || m.startsWith("==>|")) return m;
+        return `Abs(${val.trim()})`;
+      });
+
+      return cleaned;
+    })
+    .join("\n");
+}
+
 interface MermaidDiagramProps {
   chart: string;
   className?: string;
@@ -64,7 +111,8 @@ export function MermaidDiagram({ chart, className = "", title }: MermaidDiagramP
 
         // Clean any previous temp render elements if mermaid left any
         const tempId = `temp-${uniqueId}-${Date.now()}`;
-        const { svg } = await mermaid.render(tempId, chart.trim());
+        const sanitized = sanitizeMermaidChart(chart.trim());
+        const { svg } = await mermaid.render(tempId, sanitized);
 
         if (!isCancelled) {
           setSvgContent(svg);
