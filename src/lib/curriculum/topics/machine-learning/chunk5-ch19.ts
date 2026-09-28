@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter19: AcademicChapter = {
   "id": "machine-learning-ch-19",
   "slug": "bab-19-reduksi-dimensi-linier-pca-svd-factor-analysis",
-  "title": "BAB 19: Reduksi Dimensi Linier: PCA, SVD, & Factor Analysis",
+  "title": "Bab 19: Reduksi Dimensi Linier: PCA, SVD, & Factor Analysis",
   "orderIndex": 19,
   "description": "Landasan analitis reduksi dimensi linier: maksimisasi varians proyeksi vs minimisasi rekonstruksi, penurunan analitis PCA via pengali Lagrange, dualitas SVD dan dekomposisi spektral kovarians, evaluasi komponen via Scree Plot dan EVR, deteksi anomali SPE, Incremental dan Randomized PCA skala terabyte, serta model variabel laten Factor Analysis.",
   "coreConcepts": [

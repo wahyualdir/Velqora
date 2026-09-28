@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter20: AcademicChapter = {
   "id": "machine-learning-ch-20",
   "slug": "bab-20-reduksi-dimensi-manifold-non-linier-kernel-pca-tsne-umap",
-  "title": "BAB 20: Reduksi Dimensi Manifold Non-Linier: Kernel PCA, t-SNE, & UMAP",
+  "title": "Bab 20: Reduksi Dimensi Manifold Non-Linier: Kernel PCA, t-SNE, & UMAP",
   "orderIndex": 20,
   "description": "Eksplorasi reduksi dimensi non-linier dan manifold learning: keterbatasan proyeksi linier dan Teorema Manifold Hypothesis (Swiss Roll), Kernel PCA berbasis Gram centering, Multidimensional Scaling (MDS) dan Isomap via jarak geodesik Dijkstra, t-SNE probabilitas ketetanggaan Gaussian dan penyelesaian Crowding Problem via t-Student, UMAP berbasis geometri Riemannian dan Fuzzy Sets, serta analisis parameter kritis dan jebakan interpretasi.",
   "coreConcepts": [

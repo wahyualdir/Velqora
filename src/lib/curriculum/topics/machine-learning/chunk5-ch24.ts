@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter24: AcademicChapter = {
   "id": "machine-learning-ch-24",
   "slug": "bab-24-deteksi-anomali-estimasi-densitas-kde-lof-isolation-forest-one-class-svm",
-  "title": "BAB 24: Deteksi Anomali & Estimasi Densitas: KDE, LOF, Isolation Forest, & One-Class SVM",
+  "title": "Bab 24: Deteksi Anomali & Estimasi Densitas: KDE, LOF, Isolation Forest, & One-Class SVM",
   "orderIndex": 24,
   "description": "Landasan komprehensif deteksi anomali dan estimasi kepadatan probabilistik: taksonomi operasional 3 paradigma (Supervised, Semi-Supervised Novelty Detection, dan Unsupervised Outlier Detection), estimasi densitas non-parametrik Kernel Density Estimation (KDE) dengan optimasi bandwidth Silverman, Local Outlier Factor (LOF) berbasis rasio kerapatan lokal keterjangkauan k-distance, arsitektur isolasi cepat Isolation Forest berbasis pohon partisi acak iTree berkemampuan linear O(n), formulasi matematis skor anomali eksponensial Euler, One-Class SVM pemisahan titik asal (origin) di ruang Hilbert RKHS dengan penafsiran ganda parameter nu, serta metodologi kalibrasi ambang batas kontaminasi dan evaluasi ketidakseimbangan ekstrem via PR-AUC dan F2-Score.",
   "coreConcepts": [

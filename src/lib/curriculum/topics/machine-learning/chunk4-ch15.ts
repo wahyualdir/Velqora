@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter15: AcademicChapter = {
   "id": "machine-learning-ch-15",
   "slug": "bab-15-ensemble-learning-bagging-pasting-random-forests-oob",
-  "title": "BAB 15: Ensemble Learning: Bagging, Pasting, & Random Forests OOB",
+  "title": "Bab 15: Ensemble Learning: Bagging, Pasting, & Random Forests OOB",
   "orderIndex": 15,
   "description": "Teori dan implementasi Ensemble Learning berbasis perata-rataan: reduksi varians melalui independensi estimator, Bagging vs Pasting, evaluasi Out-Of-Bag (OOB 63.2%), Random Forests dan Random Subspace Method, Extra-Trees, metrologi MDI vs MDA, serta analisis Proximity Matrix.",
   "coreConcepts": [

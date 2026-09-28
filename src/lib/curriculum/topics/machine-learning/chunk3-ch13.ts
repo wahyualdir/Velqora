@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter13: AcademicChapter = {
   "id": "machine-learning-ch-13",
   "slug": "bab-13-k-nearest-neighbors-metrik-jarak-indeks-spasial-hnsw",
-  "title": "BAB 13: k-Nearest Neighbors, Metrik Jarak, & Indeks Spasial HNSW",
+  "title": "Bab 13: k-Nearest Neighbors, Metrik Jarak, & Indeks Spasial HNSW",
   "orderIndex": 13,
   "description": "Landasan non-parametrik instance-based learning: Teorema Cover-Hart, taksonomi metrik jarak spasial, analisis patologi Curse of Dimensionality, partisi spasial KD-Tree dan Ball-Tree, indeks graf ANN HNSW untuk pencarian vektor skala masif, serta k-NN regresi terbobot.",
   "coreConcepts": [

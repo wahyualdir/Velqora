@@ -6,11 +6,11 @@ import { chapter09 } from "./chunk2-ch09";
 
 /**
  * CHUNK 2: MODEL LINIER, REGULARISASI, KLASIFIKASI & GLM
- * Cakupan: Bab 06 s/d Bab 09 (Tepat 23 Subbab Kanonikal)
- * - Bab 06: Regresi Linier OLS, Teorema Gauss-Markov, & Diagnostik Residual (6 Subbab)
- * - Bab 07: Regularisasi Linier Lanjut: Ridge, Lasso, ElasticNet, LARS, & SCAD (6 Subbab)
- * - Bab 08: Model Klasifikasi Linier: Regresi Logistik, Softmax, & IRLS (6 Subbab)
- * - Bab 09: Generalized Linear Models (GLM) & Exponential Family (5 Subbab)
+ * Cakupan: Bab 6 s/d Bab 9 (Tepat 23 Subbab Kanonikal)
+ * - Bab 6: Regresi Linier OLS, Teorema Gauss-Markov, & Diagnostik Residual (6 Subbab)
+ * - Bab 7: Regularisasi Linier Lanjut: Ridge, Lasso, ElasticNet, LARS, & SCAD (6 Subbab)
+ * - Bab 8: Model Klasifikasi Linier: Regresi Logistik, Softmax, & IRLS (6 Subbab)
+ * - Bab 9: Generalized Linear Models (GLM) & Exponential Family (5 Subbab)
  */
 export const chunk2LinearModels: AcademicChapter[] = [
   chapter06,

@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter11: AcademicChapter = {
   "id": "machine-learning-ch-11",
   "slug": "bab-11-support-vector-machines-hard-soft-margin-dualitas-wolfe",
-  "title": "BAB 11: Support Vector Machines: Hard/Soft Margin & Dualitas Wolfe",
+  "title": "Bab 11: Support Vector Machines: Hard/Soft Margin & Dualitas Wolfe",
   "orderIndex": 11,
   "description": "Landasan analitis Support Vector Machines (SVM): formulasi primal Hard-Margin pemisah maksimum, relaksasi Soft-Margin dan Hinge Loss, transformasi dualitas Lagrange dan Wolfe, karakterisasi Support Vectors, serta algoritma optimasi analitis SMO.",
   "coreConcepts": [

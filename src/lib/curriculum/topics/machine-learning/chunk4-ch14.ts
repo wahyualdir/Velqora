@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter14: AcademicChapter = {
   "id": "machine-learning-ch-14",
   "slug": "bab-14-pohon-keputusan-cart-impuritas-pruning-surrogate-splits",
-  "title": "BAB 14: Pohon Keputusan (CART): Impuritas, Pruning, & Surrogate Splits",
+  "title": "Bab 14: Pohon Keputusan (CART): Impuritas, Pruning, & Surrogate Splits",
   "orderIndex": 14,
   "description": "Landasan analitis algoritma pohon keputusan CART: topologi partisi ortogonal, kriteria impuritas Gini dan Entropi, kriteria pembagian regresi MSE, algoritma greedy split-finding, strategi pre-pruning dan post-pruning Cost-Complexity, penanganan data hilang via surrogate splits, serta analisis varians tinggi pendorong ensemble.",
   "coreConcepts": [

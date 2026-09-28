@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter12: AcademicChapter = {
   "id": "machine-learning-ch-12",
   "slug": "bab-12-kernel-methods-teorema-mercer-rkhs-rbf-kernel-ridge",
-  "title": "BAB 12: Kernel Methods & Teorema Mercer (RKHS, RBF, & Kernel Ridge)",
+  "title": "Bab 12: Kernel Methods & Teorema Mercer (RKHS, RBF, & Kernel Ridge)",
   "orderIndex": 12,
   "description": "Teori dan aplikasi metode kernel: pemetaan ruang Hilbert dimensi tinggi, Kernel Trick, Teorema Mercer dan matriks Gram PSD, taksonomi kernel standar (RBF, Polinomial), Support Vector Regression (SVR), dan skalabilitas kernel via Nyström dan Random Fourier Features (RFF).",
   "coreConcepts": [

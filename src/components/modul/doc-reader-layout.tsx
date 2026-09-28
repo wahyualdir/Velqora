@@ -301,6 +301,51 @@ export function DocReaderLayout({
     return { parentChapter: null, parentSubchapter: null };
   }, [sections, currentSection]);
 
+  // Determine if active section is a main Chapter (Bab Utama)
+  const isChapter = useMemo(() => {
+    if (!currentSection) return false;
+    return sections.some((sec) => sec.id === currentSection.id);
+  }, [sections, currentSection]);
+
+  // Compute clean header number and title (prevent duplication and remove leading zeroes)
+  const { headerNumber, headerTitle } = useMemo(() => {
+    if (!currentSection) return { headerNumber: undefined, headerTitle: "" };
+
+    // 1. Chapter (Bab Utama): number={undefined} so title is purely "Bab X: ..." without "1.1" prefix
+    if (isChapter) {
+      const cleanedChapterTitle = currentSection.title.replace(
+        /^BAB\s+0*(\d+):/i,
+        (_, num) => `Bab ${parseInt(num, 10)}:`
+      );
+      return {
+        headerNumber: undefined,
+        headerTitle: cleanedChapterTitle,
+      };
+    }
+
+    // 2. Subchapter (Subbab): number formatted without leading zeroes (e.g. "1.1", "2.1")
+    let numStr: string | undefined = undefined;
+    const titleMatch = currentSection.title.match(/^0*(\d+)\.(\d+)/);
+
+    if (titleMatch) {
+      const chNum = parseInt(titleMatch[1], 10);
+      const subNum = parseInt(titleMatch[2], 10);
+      numStr = `${chNum}.${subNum}`;
+    } else if (currentSection.orderIndex) {
+      const rawCh = currentSection.chapterNumber ?? parentChapter?.orderIndex ?? 1;
+      const chNum = typeof rawCh === "number" ? rawCh : parseInt(String(rawCh).replace(/\D/g, "") || "1", 10);
+      numStr = `${chNum}.${currentSection.orderIndex}`;
+    }
+
+    // Clean number prefix from title text to prevent duplicate numbering
+    const cleanedSubTitle = currentSection.title.replace(/^0*\d+\.\d+[:\s.-]*/, "").trim();
+
+    return {
+      headerNumber: numStr,
+      headerTitle: cleanedSubTitle || currentSection.title,
+    };
+  }, [currentSection, isChapter, parentChapter]);
+
   // Previous & Next navigation targets
   const currentIndex = flatSections.findIndex((s) => s.id === currentSection?.id);
   const prevSection = currentIndex > 0 ? flatSections[currentIndex - 1] : null;
@@ -850,7 +895,7 @@ export function DocReaderLayout({
               <span className="hover:text-text-primary transition-colors shrink-0 font-medium" style={{ color: themeColor }}>
                 {categoryName}
               </span>
-              {parentChapter && (
+              {parentChapter && parentChapter.id !== currentSection.id && (
                 <>
                   <span className="opacity-40">/</span>
                   <button
@@ -868,7 +913,7 @@ export function DocReaderLayout({
                 <>
                   <span className="opacity-40">/</span>
                   <span className="font-semibold text-text-primary truncate" style={{ color: themeColor }}>
-                    {currentSection.title}
+                    {isChapter ? headerTitle : (headerNumber ? `${headerNumber} ${headerTitle}` : currentSection.title)}
                   </span>
                 </>
               )}
@@ -901,8 +946,8 @@ export function DocReaderLayout({
                 {/* 1. Lesson Header */}
                 <div className="space-y-2">
                   <NotebookLessonHeader
-                    number={currentSection.orderIndex ? `${currentSection.chapterNumber || 1}.${currentSection.orderIndex}` : undefined}
-                    title={currentSection.title}
+                    number={headerNumber}
+                    title={headerTitle}
                     subtitle={currentSection.parentTitle}
                     description={currentSection.description}
                     flow={currentSection.flow || (currentSection.units?.some((u) => u.type === "code") ? "computational" : "conceptual")}

@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter16: AcademicChapter = {
   "id": "machine-learning-ch-16",
   "slug": "bab-16-gradient-boosting-lanjut-teori-friedman-shrinkage-trees",
-  "title": "BAB 16: Gradient Boosting Lanjut: Teori Friedman, Shrinkage, & Trees",
+  "title": "Bab 16: Gradient Boosting Lanjut: Teori Friedman, Shrinkage, & Trees",
   "orderIndex": 16,
   "description": "Formulasi analitis Gradient Tree Boosting: paradigma AdaBoost.M1, optimasi Gradient Descent pada ruang fungsi oleh Jerome Friedman, residu semu untuk berbagai fungsi loss diferensiabel, regularisasi laju belajar (shrinkage), Stochastic Gradient Boosting, GBDT klasifikasi probabilitas via langkah Newton-Raphson, dan pencegahan overfitting melalui early stopping.",
   "coreConcepts": [

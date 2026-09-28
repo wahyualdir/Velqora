@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter18: AcademicChapter = {
   "id": "machine-learning-ch-18",
   "slug": "bab-18-meta-learning-ensemble-lanjut-stacking-blending-voting",
-  "title": "BAB 18: Meta-Learning & Ensemble Lanjut: Stacking, Blending, & Voting",
+  "title": "Bab 18: Meta-Learning & Ensemble Lanjut: Stacking, Blending, & Voting",
   "orderIndex": 18,
   "description": "Arsitektur ensemble meta-learning tingkat lanjut: Teorema Juri Condorcet dan Hard vs Soft Voting, arsitektur Stacking multi-tier, protokol validasi Out-Of-Fold (OOF) bebas kebocoran, Blending ensemble berbasis holdout, Teori Super Learner dan batas Oracle Inequality, serta desain ensembel heterogen multi-paradigma skala industri.",
   "coreConcepts": [

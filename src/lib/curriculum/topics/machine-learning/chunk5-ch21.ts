@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter21: AcademicChapter = {
   "id": "machine-learning-ch-21",
   "slug": "bab-21-klusterisasi-partisi-k-means-batas-lloyd-kmeans-plus-plus-medoids",
-  "title": "BAB 21: Klusterisasi Partisi & K-Means: Batas Lloyd, K-Means++, & Medoids",
+  "title": "Bab 21: Klusterisasi Partisi & K-Means: Batas Lloyd, K-Means++, & Medoids",
   "orderIndex": 21,
   "description": "Landasan komprehensif klusterisasi partisional: formulasi optimasi WCSS NP-Hard, algoritma iteratif Lloyd (alternating Voronoi assignment & centroid update), jaminan konvergensi monoton dan jebakan optimum lokal, inisialisasi cerdas K-Means++ Arthur-Vassilvitskii O(log k), ketahanan outlier K-Medoids (PAM), serta Mini-Batch K-Means untuk dataset berskala masif.",
   "coreConcepts": [

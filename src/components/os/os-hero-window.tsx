@@ -166,7 +166,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
         <div className="lg:col-span-5 flex flex-col">
           <OSWindow
             title="MONITOR.EXE"
-            statusText="POLYGLOT COMPUTE · 60FPS ACTIVE"
+            statusText="POLYGLOT SPHERE · PERSPECTIVE 3D ACTIVE"
             className="flex-1 shadow-md"
             bodyClassName="p-3.5 bg-[#1C1917] text-[#FAF8F5] flex flex-col justify-between"
           >
@@ -185,7 +185,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               </div>
             </div>
 
-            {/* 3D Animated Polyglot Orbit Constellation Canvas */}
+            {/* 3D Animated Polyglot Celestial Sphere Canvas */}
             <CanvasLanguageOrbit onNodeHover={setActiveLang} />
 
             {/* Telemetry Progress Bars & Metrics */}
@@ -224,7 +224,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
                 </div>
               </div>
 
-              {/* Terminal log snippet connected to Polyglot Orbit */}
+              {/* Terminal log snippet connected to Polyglot Celestial Sphere */}
               <div
                 className={`p-2 bg-[#120F0D] rounded-none border text-[10px] font-mono leading-tight transition-all duration-150 ${
                   activeLang
@@ -235,25 +235,27 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
                 {activeLang ? (
                   <>
                     <div className="text-amber-400 font-bold flex items-center justify-between">
-                      <span className="truncate">{activeLang.terminalInfo}</span>
+                      <span className="truncate">
+                        [$ {activeLang.name} {activeLang.version}] {activeLang.role}
+                      </span>
                       <span className="text-[9px] text-emerald-400 font-mono shrink-0 ml-1.5 animate-pulse">
                         ● ENGAGED
                       </span>
                     </div>
                     <div className="text-slate-300 truncate mt-0.5">
-                      &gt; Subsystem: {activeLang.role} · {activeLang.tag}
+                      &gt; {activeLang.telemetry}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-amber-400/90 font-bold flex items-center justify-between">
-                      <span>$ velqora status --polyglot: 6 ENGINES SYNCHRONIZED</span>
+                      <span>$ velqora status --sphere: 12 PERSPECTIVE COMPUTE ENGINES SYNCHRONIZED</span>
                       <span className="text-[9px] text-emerald-400 font-mono shrink-0 ml-1.5">
                         ● ACTIVE
                       </span>
                     </div>
                     <div className="text-[#A89F91] truncate mt-0.5">
-                      &gt; Python 3.12 · Rust 2024 · TS 5.7 · C++20 · Julia 1.10 · PyTorch 2.5 [READY]
+                      &gt; Python 3.12 · Rust · TS · C++20 · PyTorch · Julia · Go · R · SQL · Bash · TF · Docker
                     </div>
                   </>
                 )}

@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter17: AcademicChapter = {
   "id": "machine-learning-ch-17",
   "slug": "bab-17-ekosistem-boosting-modern-xgboost-lightgbm-catboost",
-  "title": "BAB 17: Ekosistem Boosting Modern: XGBoost, LightGBM, & CatBoost",
+  "title": "Bab 17: Ekosistem Boosting Modern: XGBoost, LightGBM, & CatBoost",
   "orderIndex": 17,
   "description": "Trilogi arsitektur SOTA gradient boosting modern: ekspansi Taylor orde kedua dan sparsity-aware XGBoost, Leaf-wise tree growth, GOSS dan EFB LightGBM, Ordered Boosting dan penanganan kategorial CatBoost, serta analisis benchmark komparatif kecepatan, memori, dan akurasi.",
   "coreConcepts": [

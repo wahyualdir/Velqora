@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter10: AcademicChapter = {
   "id": "machine-learning-ch-10",
   "slug": "bab-10-generative-classifiers-lda-qda-naive-bayes",
-  "title": "BAB 10: Generative Classifiers: LDA, QDA, & Naive Bayes",
+  "title": "Bab 10: Generative Classifiers: LDA, QDA, & Naive Bayes",
   "orderIndex": 10,
   "description": "Landasan klasifikasi generatif: paradigma generatif vs diskriminatif, Linear Discriminant Analysis (LDA) dan Rasio Rayleigh Fisher, Quadratic Discriminant Analysis (QDA), reduksi dimensi terawasi, serta keluarga Naive Bayes dan koreksi Laplace smoothing.",
   "coreConcepts": [

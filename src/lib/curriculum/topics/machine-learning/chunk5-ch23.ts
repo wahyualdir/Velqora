@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter23: AcademicChapter = {
   "id": "machine-learning-ch-23",
   "slug": "bab-23-gaussian-mixture-models-em-algorithm-soft-clustering",
-  "title": "BAB 23: Gaussian Mixture Models & Algoritma Expectation-Maximization (EM)",
+  "title": "Bab 23: Gaussian Mixture Models & Algoritma Expectation-Maximization (EM)",
   "orderIndex": 23,
   "description": "Landasan komprehensif Gaussian Mixture Models dan optimasi berbasis variabel laten: keterbatasan partisi keras dan paradigma soft clustering probabilistik, formulasi matematis distribusi campuran Gaussian multivariat dan matriks kovarians definit positif, non-keterbukaan analitis log-likelihood marjinal dan bahaya singularitas permukaan, penurunan analitis algoritma Expectation-Maximization (EM) melalui Pertidaksamaan Jensen dan batas bawah bukti (ELBO), komputasi tahap E-step via Teorema Bayes dengan stabilitas Log-Sum-Exp, penurunan pembaruan parameter analitis tahap M-step berbobot beserta reduksi kanonikal ke K-Means, serta taksonomi 4 tipe matriks kovarians dan seleksi model otomatis berbasis kriteria informasi BIC/AIC.",
   "coreConcepts": [

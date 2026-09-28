@@ -7,13 +7,13 @@ import { chapter05 } from "./chunk1-ch05";
 
 /**
  * CHUNK 1: FONDASI MATEMATIKA, PROBABILITAS, TEORI ESTIMASI & OPTIMASI NUMERIK
- * Cakupan: Bab 01 s/d Bab 05 (Tepat 38 Subbab Asimetris Kanonikal)
+ * Cakupan: Bab 1 s/d Bab 5 (Tepat 38 Subbab Asimetris Kanonikal)
  * 
- * - Bab 01: Paradigma Machine Learning & Perumusan Masalah Ilmiah (6 Subbab)
- * - Bab 02: Aljabar Linier Komputasional & Kalkulus Matriks (8 Subbab)
- * - Bab 03: Teori Probabilitas, Estimasi Parameter, & Bayesian Inference (8 Subbab)
- * - Bab 04: Teori Belajar Statistik & Dekomposisi Bias-Variance (7 Subbab)
- * - Bab 05: Optimasi Numerik untuk Machine Learning (9 Subbab)
+ * - Bab 1: Paradigma Machine Learning & Perumusan Masalah Ilmiah (6 Subbab)
+ * - Bab 2: Aljabar Linier Komputasional & Kalkulus Matriks (8 Subbab)
+ * - Bab 3: Teori Probabilitas, Estimasi Parameter, & Bayesian Inference (8 Subbab)
+ * - Bab 4: Teori Belajar Statistik & Dekomposisi Bias-Variance (7 Subbab)
+ * - Bab 5: Optimasi Numerik untuk Machine Learning (9 Subbab)
  * 
  * Rujukan Literatur Primer:
  * - [ESL] Hastie, Tibshirani, Friedman - The Elements of Statistical Learning (Springer)

@@ -3,7 +3,7 @@ import { AcademicChapter } from "../../types";
 export const chapter22: AcademicChapter = {
   "id": "machine-learning-ch-22",
   "slug": "bab-22-klusterisasi-hierarkis-densitas-dendrogram-linkage-dbscan-hdbscan",
-  "title": "BAB 22: Klusterisasi Hierarkis & Berbasis Densitas: Dendrogram, Linkage, DBSCAN, & HDBSCAN",
+  "title": "Bab 22: Klusterisasi Hierarkis & Berbasis Densitas: Dendrogram, Linkage, DBSCAN, & HDBSCAN",
   "orderIndex": 22,
   "description": "Eksplorasi mendalam klusterisasi hierarkis dan berbasis densitas: perbandingan paradigma aglomeratif dan divisif, kriteria keterkaitan (Single, Complete, Average, dan Linkage Ward) berbasis formula Lance-Williams, interpretasi pohon dendrogram dan validasi korelasi kofenetis, landasan matematis topologi densitas level set, algoritma DBSCAN dengan relasi keterjangkauan formal, heuristik k-distance graph untuk mengatasi sensitivitas parameter, serta terobosan algoritma HDBSCAN berbasis mutual reachability distance dan ekstraksi kluster stabil via condensed trees.",
   "coreConcepts": [
