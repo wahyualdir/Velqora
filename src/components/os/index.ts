@@ -4,6 +4,7 @@ export { OSTaskbar } from "./os-taskbar";
 export { OSDesktopIcons } from "./os-desktop-icons";
 export { OSHeroWindow } from "./os-hero-window";
 export { CanvasWireframeCube } from "./canvas-wireframe-cube";
+export { CanvasLanguageOrbit, type LanguageNode } from "./canvas-language-orbit";
 export { NotepadManifesto } from "./notepad-manifesto";
 export { CurriculumExplorer } from "./curriculum-explorer";
 export { SystemMonitorWindow } from "./system-monitor-window";

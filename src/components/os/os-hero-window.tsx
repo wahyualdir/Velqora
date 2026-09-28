@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { OSWindow } from "./os-window";
-import { CanvasWireframeCube } from "./canvas-wireframe-cube";
+import { CanvasLanguageOrbit, type LanguageNode } from "./canvas-language-orbit";
 import { 
   Folder, 
   FileText, 
@@ -24,6 +24,7 @@ interface OSHeroWindowProps {
 
 export function OSHeroWindow({ stats }: OSHeroWindowProps) {
   const [selectedIcon, setSelectedIcon] = useState<string>("koleksi");
+  const [activeLang, setActiveLang] = useState<LanguageNode | null>(null);
 
   const totalDisciplines = stats?.totalDisciplines || 28;
   const verifiedDisciplines = stats?.verifiedDisciplines ?? 5;
@@ -165,7 +166,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
         <div className="lg:col-span-5 flex flex-col">
           <OSWindow
             title="MONITOR.EXE"
-            statusText="RENDER: 60FPS · 3D ENGINE ACTIVE"
+            statusText="POLYGLOT COMPUTE · 60FPS ACTIVE"
             className="flex-1 shadow-md"
             bodyClassName="p-3.5 bg-[#1C1917] text-[#FAF8F5] flex flex-col justify-between"
           >
@@ -184,8 +185,8 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               </div>
             </div>
 
-            {/* 3D Animated Wireframe Cube Canvas */}
-            <CanvasWireframeCube />
+            {/* 3D Animated Polyglot Orbit Constellation Canvas */}
+            <CanvasLanguageOrbit onNodeHover={setActiveLang} />
 
             {/* Telemetry Progress Bars & Metrics */}
             <div className="mt-3 space-y-2 font-mono text-[11px]">
@@ -223,10 +224,39 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
                 </div>
               </div>
 
-              {/* Terminal log snippet */}
-              <div className="p-2 bg-[#120F0D] rounded-none border border-[#38312A] text-[10px] text-[#C2553A] font-mono leading-tight">
-                $ velqora status --curriculum: 7 TOPICS VERIFIED · LLM 72% (20 UNDER REVISION)<br />
-                &gt; Academic Notebook Engine: ACTIVE (Python 3.12 · KaTeX LaTeX)
+              {/* Terminal log snippet connected to Polyglot Orbit */}
+              <div
+                className={`p-2 bg-[#120F0D] rounded-none border text-[10px] font-mono leading-tight transition-all duration-150 ${
+                  activeLang
+                    ? "border-amber-500/60 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+                    : "border-[#38312A]"
+                }`}
+              >
+                {activeLang ? (
+                  <>
+                    <div className="text-amber-400 font-bold flex items-center justify-between">
+                      <span className="truncate">{activeLang.terminalInfo}</span>
+                      <span className="text-[9px] text-emerald-400 font-mono shrink-0 ml-1.5 animate-pulse">
+                        ● ENGAGED
+                      </span>
+                    </div>
+                    <div className="text-slate-300 truncate mt-0.5">
+                      &gt; Subsystem: {activeLang.role} · {activeLang.tag}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-amber-400/90 font-bold flex items-center justify-between">
+                      <span>$ velqora status --polyglot: 6 ENGINES SYNCHRONIZED</span>
+                      <span className="text-[9px] text-emerald-400 font-mono shrink-0 ml-1.5">
+                        ● ACTIVE
+                      </span>
+                    </div>
+                    <div className="text-[#A89F91] truncate mt-0.5">
+                      &gt; Python 3.12 · Rust 2024 · TS 5.7 · C++20 · Julia 1.10 · PyTorch 2.5 [READY]
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </OSWindow>
