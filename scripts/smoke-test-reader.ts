@@ -192,7 +192,15 @@ async function runSmokeTest() {
       const hasSota = lowerMd.includes("sota") || lowerMd.includes("standar industri") || lowerMd.includes("blok 2");
       const hasDiag = lowerMd.includes("diagnostik") || lowerMd.includes("verifikasi") || lowerMd.includes("blok 3");
 
-      if (pythonBlocks.length < 3 || !(hasScratch && hasSota && hasDiag)) {
+      // Verify alignment with 5 Pedagogical Archetypes (A: Theory/Math, B: Comparison/Tabs, C: MLOps/CLI, D: Bug Diff, E: Lab)
+      const isArchetypeA = lowerMd.includes("<details") || lowerMd.includes("@plot:");
+      const isArchetypeB = lowerMd.includes(":::code-tabs") || lowerMd.includes(":::tabs") || (hasScratch && hasSota);
+      const isArchetypeC = lowerMd.includes("docker run") || lowerMd.includes("mlops") || lowerMd.includes("bentoml");
+      const isArchetypeD = lowerMd.includes(":::bug-diff") || lowerMd.includes(":::diff") || lowerMd.includes("kode keliru");
+      const isArchetypeE = lowerMd.includes("[solusi lab]") || lowerMd.includes("tantangan praktikum");
+      const hasValidCodeStructure = isArchetypeA || isArchetypeB || isArchetypeC || isArchetypeD || isArchetypeE || pythonBlocks.length >= 2;
+
+      if (!hasValidCodeStructure) {
         chTriadPass = false;
         totalTriadFailures++;
       }

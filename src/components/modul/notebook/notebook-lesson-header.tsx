@@ -84,7 +84,7 @@ export function NotebookLessonHeader({
 
       {/* Main Title */}
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight font-display leading-tight">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight font-display leading-snug">
           {number && <span className="text-text-tertiary font-mono mr-2.5 font-bold">{number}</span>}
           {title}
         </h1>

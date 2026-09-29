@@ -189,7 +189,7 @@ export function MermaidDiagram({ chart, className = "", title }: MermaidDiagramP
           </div>
         ) : svgContent ? (
           <div
-            className="w-full flex justify-center [&>svg]:max-w-full [&>svg]:h-auto transition-transform"
+            className="w-full max-w-full overflow-x-auto flex justify-center [&>svg]:max-w-full [&>svg]:h-auto transition-transform scrollbar-thin"
             dangerouslySetInnerHTML={{ __html: svgContent }}
           />
         ) : (

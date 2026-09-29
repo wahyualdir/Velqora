@@ -161,6 +161,7 @@ export function DocReaderLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [outlineOpen, setOutlineOpen] = useState(false); // Collapsed by default for spacious reading
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Search filter inside navigation
@@ -880,28 +881,28 @@ export function DocReaderLayout({
            ───────────────────────────────────────────────────────────── */}
         <main
           ref={contentRef}
-          className="flex-1 overflow-y-auto min-w-0 scrollbar-thin px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 lg:py-10"
+          className="flex-1 overflow-y-auto w-full max-w-full min-w-0 overflow-x-hidden scrollbar-thin px-3.5 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-6 lg:py-8"
         >
-          <div className="mx-auto w-full max-w-3xl xl:max-w-4xl space-y-8">
-            {/* Breadcrumb Navigation - 1 baris tipis */}
+          <div className="mx-auto w-full max-w-3xl xl:max-w-4xl space-y-8 min-w-0 overflow-x-hidden">
+            {/* Breadcrumb Navigation - 1 baris tipis responsif */}
             <nav
               aria-label="Breadcrumb"
-              className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary truncate py-1 border-b border-border/40 pb-2.5"
+              className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary py-1 border-b border-border/40 pb-2.5 overflow-hidden flex-nowrap min-w-0"
             >
               <Link href="/dashboard/modul" className="hover:text-text-primary transition-colors shrink-0">
                 Modul AI
               </Link>
-              <span className="opacity-40">/</span>
-              <span className="hover:text-text-primary transition-colors shrink-0 font-medium" style={{ color: themeColor }}>
+              <span className="opacity-40 shrink-0">/</span>
+              <span className="hover:text-text-primary transition-colors shrink-0 font-medium truncate max-w-[100px] sm:max-w-none" style={{ color: themeColor }}>
                 {categoryName}
               </span>
               {parentChapter && parentChapter.id !== currentSection.id && (
                 <>
-                  <span className="opacity-40">/</span>
+                  <span className="opacity-40 shrink-0">/</span>
                   <button
                     type="button"
                     onClick={() => handleSelect(parentChapter.id)}
-                    className="hover:text-text-primary transition-colors truncate max-w-[200px] cursor-pointer"
+                    className="hover:text-text-primary transition-colors truncate max-w-[120px] sm:max-w-[200px] md:max-w-none cursor-pointer shrink-0"
                   >
                     {parentChapter.title.startsWith("BAB ") || parentChapter.title.startsWith("Bab ")
                       ? parentChapter.title.split(":")[0]
@@ -911,8 +912,8 @@ export function DocReaderLayout({
               )}
               {currentSection && (
                 <>
-                  <span className="opacity-40">/</span>
-                  <span className="font-semibold text-text-primary truncate" style={{ color: themeColor }}>
+                  <span className="opacity-40 shrink-0">/</span>
+                  <span className="font-semibold text-text-primary truncate max-w-[120px] sm:max-w-[200px] md:max-w-none shrink min-w-0" style={{ color: themeColor }}>
                     {isChapter ? headerTitle : (headerNumber ? `${headerNumber} ${headerTitle}` : currentSection.title)}
                   </span>
                 </>
@@ -1181,6 +1182,104 @@ export function DocReaderLayout({
           </aside>
         )}
       </div>
+
+      {/* ─── 3. FLOATING OUTLINE / TOC BUTTON ON MOBILE (< md) ─── */}
+      <div className="fixed bottom-6 right-5 z-30 md:hidden flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setMobileTocOpen(true)}
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-full shadow-lg border border-border/80 bg-white/95 dark:bg-[#1C1C20]/95 backdrop-blur-md text-text-primary hover:border-brand-500 font-sans text-xs font-bold transition-all active:scale-95 cursor-pointer"
+          style={{ borderColor: mobileTocOpen ? themeColor : undefined }}
+          aria-label="Buka Daftar Isi Halaman"
+        >
+          <ListFilter className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+          <span>Daftar Isi</span>
+          {tocItems.length > 0 && (
+            <span
+              className="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold text-white shadow-2xs"
+              style={{ backgroundColor: themeColor }}
+            >
+              {tocItems.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* ─── 4. MOBILE BOTTOM-SHEET TOC DRAWER ─── */}
+      {mobileTocOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex flex-col justify-end">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+            onClick={() => setMobileTocOpen(false)}
+          />
+
+          {/* Sheet Canvas */}
+          <div className="relative z-10 w-full max-h-[82vh] bg-white dark:bg-[#161619] rounded-t-2xl border-t border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-200">
+            {/* Sheet Handle */}
+            <div className="pt-2.5 pb-1 flex justify-center">
+              <div className="w-10 h-1.5 rounded-full bg-border-strong/60" />
+            </div>
+
+            {/* Sheet Header */}
+            <div className="px-4 py-2.5 border-b border-border/80 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ListFilter className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                <span className="font-bold text-xs sm:text-sm font-display text-text-primary">
+                  Daftar Isi & Navigasi Cepat
+                </span>
+                <span className="text-[10.5px] font-mono text-text-tertiary">
+                  ({tocItems.length} Subbab/Poin)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileTocOpen(false)}
+                className="p-1 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-secondary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Heading List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-1 text-xs scrollbar-thin">
+              {tocItems.map((item) => {
+                const isActive = activeHeadingId === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      scrollToHeading(item.id);
+                      setMobileTocOpen(false);
+                    }}
+                    className={`w-full text-left py-2 px-3 rounded-lg transition-colors flex items-start gap-2.5 cursor-pointer ${
+                      item.level === 3 ? "pl-5 text-[11px]" : "font-medium text-xs"
+                    } ${
+                      isActive
+                        ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold"
+                        : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/60"
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 transition-colors ${
+                        isActive ? "bg-brand-600 dark:bg-brand-400" : "bg-text-tertiary/40"
+                      }`}
+                    />
+                    <span className="leading-snug">{item.text}</span>
+                  </button>
+                );
+              })}
+
+              {tocItems.length === 0 && (
+                <div className="py-8 text-center text-xs text-text-tertiary font-mono">
+                  Tidak ada sub-heading pada bab ini.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

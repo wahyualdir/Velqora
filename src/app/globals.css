@@ -1380,3 +1380,41 @@ html.dark .vt-taskbar {
 .animate-shimmer {
   animation: shimmer 1.5s infinite linear;
 }
+
+/* ==========================================================================
+   Responsive Formula & Academic Display Rules (Zero Mobile Blowout Engine)
+   ========================================================================== */
+
+/* KaTeX Display Formula - Safe Horizontal Scroll on Mobile */
+.katex-display {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 0.5rem 0 !important;
+  margin: 0.75rem 0 !important;
+  touch-action: pan-x !important;
+  user-select: text !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.katex-display > .katex {
+  max-width: 100% !important;
+  text-align: center !important;
+}
+
+/* Ensure inline math does not cause line breaking overflows */
+.katex {
+  max-width: 100% !important;
+  user-select: text !important;
+}
+
+/* Academic details / math proof accordion */
+details.math-proof-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+details.math-proof-accordion > summary {
+  list-style: none;
+}
+

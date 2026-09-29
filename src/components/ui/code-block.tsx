@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { Copy, Check, Terminal, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { CodePlotVisualizer, type PlotType } from "./code-plot-visualizer";
 
 export interface CodeBlockProps {
   code: string;
@@ -13,6 +14,7 @@ export interface CodeBlockProps {
   showLineNumbers?: boolean;
   collapsible?: boolean;
   defaultExpanded?: boolean;
+  plotType?: PlotType;
 }
 
 function renderHighlightedLine(line: string, lineIndex: number): React.ReactNode {
@@ -99,6 +101,27 @@ function renderHighlightedLine(line: string, lineIndex: number): React.ReactNode
   );
 }
 
+function detectPlotFromCode(code: string, title?: string): PlotType | null {
+  const combined = `${title || ""} ${code}`;
+  const plotMatch = combined.match(/(?:@plot:|plot=|\[PLOT\]:|\[VISUAL_OUTPUT\]:)\s*["']?([\w-]+)["']?/i);
+  if (plotMatch) {
+    const matched = plotMatch[1].toLowerCase();
+    if (matched.includes("decision") || matched.includes("hyperplane") || matched.includes("boundary")) {
+      return "decision-boundary";
+    }
+    if (matched.includes("loss") || matched.includes("decay") || matched.includes("convergence") || matched.includes("kurva")) {
+      return "loss-curve";
+    }
+    if (matched.includes("confusion") || matched.includes("matrix") || matched.includes("konfusi")) {
+      return "confusion-matrix";
+    }
+    if (matched.includes("voronoi") || matched.includes("cluster") || matched.includes("klaster") || matched.includes("kmeans")) {
+      return "voronoi";
+    }
+  }
+  return null;
+}
+
 export function CodeBlock({
   code,
   language = "python",
@@ -107,9 +130,15 @@ export function CodeBlock({
   showLineNumbers = false,
   collapsible = false,
   defaultExpanded = true,
+  plotType,
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [activeTab, setActiveTab] = useState<"code" | "plot">("code");
+
+  const resolvedPlot = useMemo(() => {
+    return plotType || detectPlotFromCode(code, title);
+  }, [plotType, code, title]);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -131,28 +160,72 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        "rounded-lg overflow-hidden border border-zinc-700/80 dark:border-zinc-800 bg-[#18181B] !bg-[#18181B] text-[#FAF8F5] my-2 text-xs font-mono shadow-md",
+        "rounded-lg overflow-hidden border border-zinc-700/80 dark:border-zinc-800 bg-[#18181B] !bg-[#18181B] text-[#FAF8F5] my-3 text-xs font-mono shadow-md",
         className
       )}
       style={{ backgroundColor: "#18181B" }}
     >
-      {/* Titlebar Header */}
+      {/* Titlebar Header with Interactive Tab Switcher */}
       <div
         className={cn(
-          "flex items-center justify-between px-3.5 py-2 bg-[#27272A] !bg-[#27272A] border-b border-zinc-700/70 dark:border-zinc-800 text-zinc-400 select-none",
+          "flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 bg-[#27272A] !bg-[#27272A] border-b border-zinc-700/70 dark:border-zinc-800 text-zinc-400 select-none",
           collapsible && "cursor-pointer hover:bg-[#303036] transition-colors"
         )}
         style={{ backgroundColor: "#27272A" }}
         onClick={collapsible ? () => setIsExpanded((prev) => !prev) : undefined}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
-          <Terminal className="w-3.5 h-3.5 text-brand-400 shrink-0" />
-          <span className="font-bold text-zinc-200 truncate text-[11px]">
-            {title || `script.${language === "python" ? "py" : language}`}
-          </span>
-          <span className="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold bg-[#18181B] border border-zinc-700 text-zinc-300 shrink-0">
-            {language}
-          </span>
+          {/* If Plot is Available, render Tab Switcher */}
+          {resolvedPlot ? (
+            <div className="flex items-center gap-1 p-0.5 rounded-md bg-[#18181B] border border-zinc-700/80">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTab("code");
+                  if (!isExpanded) setIsExpanded(true);
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-bold transition-all cursor-pointer",
+                  activeTab === "code"
+                    ? "bg-[#3F3F46] text-white shadow-xs"
+                    : "text-zinc-400 hover:text-zinc-200"
+                )}
+              >
+                <Terminal className="w-3 h-3 text-brand-400" />
+                <span>Skrip {language === "python" ? "Python" : language.toUpperCase()}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTab("plot");
+                  if (!isExpanded) setIsExpanded(true);
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-bold transition-all cursor-pointer relative",
+                  activeTab === "plot"
+                    ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-xs"
+                    : "text-zinc-400 hover:text-sky-300"
+                )}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                <span>Hasil Visual / Grafik Plot</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              <Terminal className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+              <span className="font-bold text-zinc-200 truncate text-[11px]">
+                {title || `script.${language === "python" ? "py" : language}`}
+              </span>
+              <span className="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold bg-[#18181B] border border-zinc-700 text-zinc-300 shrink-0">
+                {language}
+              </span>
+            </>
+          )}
+
           <span className="text-[10.5px] text-zinc-500 font-mono hidden sm:inline">
             {lines.length} baris
           </span>
@@ -195,31 +268,37 @@ export function CodeBlock({
         </div>
       </div>
 
-      {/* Code Body */}
+      {/* Body: Render Code or Plot Visualizer */}
       {(!collapsible || isExpanded) && (
-        <div
-          className="p-3.5 sm:p-4 overflow-x-auto bg-[#18181B] !bg-[#18181B]"
-          style={{ backgroundColor: "#18181B" }}
-        >
-          <pre className="font-mono text-xs leading-relaxed text-[#F4F4F5] whitespace-pre">
-            {showLineNumbers ? (
-              <div className="table w-full">
-                {lines.map((line, idx) => (
-                  <div key={idx} className="table-row">
-                    <span className="table-cell pr-4 text-zinc-600 select-none text-right font-mono text-[11px] w-8">
-                      {idx + 1}
-                    </span>
-                    <span className="table-cell">
-                      {renderHighlightedLine(line, idx)}
-                    </span>
+        <>
+          {activeTab === "plot" && resolvedPlot ? (
+            <CodePlotVisualizer type={resolvedPlot} title={title} />
+          ) : (
+            <div
+              className="p-3.5 sm:p-4 overflow-x-auto bg-[#18181B] !bg-[#18181B]"
+              style={{ backgroundColor: "#18181B" }}
+            >
+              <pre className="font-mono text-xs leading-relaxed text-[#F4F4F5] whitespace-pre">
+                {showLineNumbers ? (
+                  <div className="table w-full">
+                    {lines.map((line, idx) => (
+                      <div key={idx} className="table-row">
+                        <span className="table-cell pr-4 text-zinc-600 select-none text-right font-mono text-[11px] w-8">
+                          {idx + 1}
+                        </span>
+                        <span className="table-cell">
+                          {renderHighlightedLine(line, idx)}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <code>{lines.map((line, idx) => renderHighlightedLine(line, idx))}</code>
-            )}
-          </pre>
-        </div>
+                ) : (
+                  <code>{lines.map((line, idx) => renderHighlightedLine(line, idx))}</code>
+                )}
+              </pre>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
