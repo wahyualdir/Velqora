@@ -30,8 +30,8 @@ import {
   substantiveMachineLearningChapter6,
 } from "../pilot-content";
 
-describe("Phase 2: Complete Academic Curriculum Reconstruction (All 28 Topics)", () => {
-  it("Harus memuat 30 kurikulum akademik topik AI & Data Science (termasuk Matematika & XAI)", () => {
+describe("Phase 2: Complete Academic Curriculum Reconstruction (All Topics)", () => {
+  it("Harus memuat seluruh kurikulum akademik topik AI & Data Science terdaftar (30 Kurikulum Fisik)", () => {
     assert.equal(ALL_ACADEMIC_CURRICULA.length, 30);
     const overview = getAllCurriculumOverview();
     assert.equal(overview.length, 30);

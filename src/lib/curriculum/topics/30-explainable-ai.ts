@@ -21,23 +21,56 @@ const chapterTitles = [
   "Bab 7: Framework SHAP & Atribusi Aksiomatik: TreeSHAP, KernelSHAP, & Integrated Gradients",
 ];
 
-export const xaiChapters: AcademicChapter[] = chapter31.subchapters.map((sub, idx) => ({
-  id: `xai-ch-0${idx + 1}`,
-  slug: sub.slug.replace(/^\d+-\d+-?/, ""),
-  title: chapterTitles[idx] || `Bab ${idx + 1}: ${sub.title.replace(/^31\.\d+\s*/, "")}`,
-  orderIndex: idx + 1,
-  description: sub.description,
-  coreConcepts: sub.learningObjectives || [],
+export const chapter08XaiOutline: AcademicChapter = {
+  id: "xai-ch-08",
+  slug: "bab-08-keadilan-algoritmik-audit-kepatuhan-regulasi-fairness-compliance",
+  title: "Bab 8: Keadilan Algoritmik, Audit Kepatuhan Regulasi, & Tata Kelola XAI (Fairness & Compliance)",
+  orderIndex: 8,
+  description: "Prinsip keadilan algoritma (Demographic Parity, Equalized Odds), audit bias sistemik, pemenuhan pasal 14 EU AI Act terkait pengawasan manusia (Human-in-the-Loop), serta dokumentasi model cards dan transparansi kepatuhan.",
   subchapters: [
     {
-      ...sub,
-      id: `xai-sub-0${idx + 1}-1`,
-      slug: `0${idx + 1}-1-${sub.slug.replace(/^\d+-\d+-?/, "")}`,
-      title: `${idx + 1}.1 ${sub.title.replace(/^31\.\d+\s*/, "")}`,
+      id: "xai-sub-08-1",
+      slug: "08-1-metrik-keadilan-algoritmik-demographic-parity-disparate-impact",
+      title: "8.1 Metrik Keadilan Algoritmik (Demographic Parity, Disparate Impact, & Equal Opportunity)",
       orderIndex: 1,
+      description: "Formulasi matematis disparate impact ratio, demographic parity difference, equality of odds, dan trade-off keadilan vs akurasi prediktif.",
+      content_markdown: `> ⏳ **Kerangka Silabus (Segera Hadir)**\n>\n> Materi bab ini telah terdaftar dalam kurikulum resmi dan silabus pembelajaran platform Velqora, dan sedang dalam tahap penulisan terverifikasi bebas data sintetis berdasarkan rujukan literatur akademik standar.`,
+      contentStatus: "legacy-synthetic",
+      reviewStatus: "legacy_synthetic",
+    },
+    {
+      id: "xai-sub-08-2",
+      slug: "08-2-audit-kepatuhan-regulasi-eu-ai-act-article-14",
+      title: "8.2 Audit Kepatuhan Regulasi: EU AI Act Article 14 & Kerangka Kepatuhan Transparansi",
+      orderIndex: 2,
+      description: "Persyaratan teknis sistem AI risiko tinggi (High-Risk AI Systems), hak penjelasan keputusan otomatis (Article 86), dan penyusunan Model Cards audit.",
+      content_markdown: `> ⏳ **Kerangka Silabus (Segera Hadir)**\n>\n> Materi bab ini telah terdaftar dalam kurikulum resmi dan silabus pembelajaran platform Velqora, dan sedang dalam tahap penulisan terverifikasi bebas data sintetis berdasarkan rujukan literatur akademik standar.`,
+      contentStatus: "legacy-synthetic",
+      reviewStatus: "legacy_synthetic",
     },
   ],
-}));
+};
+
+export const xaiChapters: AcademicChapter[] = [
+  ...chapter31.subchapters.map((sub, idx) => ({
+    id: `xai-ch-0${idx + 1}`,
+    slug: sub.slug.replace(/^\d+-\d+-?/, ""),
+    title: chapterTitles[idx] || `Bab ${idx + 1}: ${sub.title.replace(/^31\.\d+\s*/, "")}`,
+    orderIndex: idx + 1,
+    description: sub.description,
+    coreConcepts: sub.learningObjectives || [],
+    subchapters: [
+      {
+        ...sub,
+        id: `xai-sub-0${idx + 1}-1`,
+        slug: `0${idx + 1}-1-${sub.slug.replace(/^\d+-\d+-?/, "")}`,
+        title: `${idx + 1}.1 ${sub.title.replace(/^31\.\d+\s*/, "")}`,
+        orderIndex: 1,
+      },
+    ],
+  })),
+  chapter08XaiOutline,
+];
 
 export const explainableAiCurriculum: AcademicCurriculum = {
   id: "explainable-ai",

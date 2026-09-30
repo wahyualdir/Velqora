@@ -44,9 +44,10 @@ export function AiCategoryCard({ category }: AiCategoryCardProps) {
     }
   };
 
-  const isComingSoon = statusMeta.status === "coming_soon" || statusMeta.status === "under_review";
-  const isInProgress = statusMeta.status === "in_development" || statusMeta.status === "in_progress";
   const isVerified = statusMeta.status === "verified";
+  const isUnderReview = statusMeta.status === "under_review";
+  const isInProgress = statusMeta.status === "in_development" || statusMeta.status === "in_progress";
+  const isComingSoon = statusMeta.status === "coming_soon";
 
   return (
     <Link
@@ -113,6 +114,13 @@ export function AiCategoryCard({ category }: AiCategoryCardProps) {
               </span>
             )}
 
+            {isUnderReview && (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                <AlertTriangle className="w-2.5 h-2.5 shrink-0" />
+                <span>{statusMeta.badgeLabel || "Dalam Review"}</span>
+              </span>
+            )}
+
             {isInProgress && (
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30">
                 <Clock className="w-2.5 h-2.5 shrink-0" />
@@ -121,8 +129,8 @@ export function AiCategoryCard({ category }: AiCategoryCardProps) {
             )}
 
             {isComingSoon && (
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                <AlertTriangle className="w-2.5 h-2.5 shrink-0" />
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/30">
+                <Clock className="w-2.5 h-2.5 shrink-0" />
                 <span>{statusMeta.badgeLabel || "Segera Hadir"}</span>
               </span>
             )}

@@ -360,11 +360,12 @@ function ModulDanProjectContent() {
       ).length,
     [aiTopicOverview]
   );
+  const underReviewCount = useMemo(
+    () => aiTopicOverview.filter((t) => t.statusMeta?.status === "under_review").length,
+    [aiTopicOverview]
+  );
   const comingSoonCount = useMemo(
-    () =>
-      aiTopicOverview.filter(
-        (t) => t.statusMeta?.status === "coming_soon" || t.statusMeta?.status === "under_review"
-      ).length,
+    () => aiTopicOverview.filter((t) => t.statusMeta?.status === "coming_soon").length,
     [aiTopicOverview]
   );
 
@@ -534,8 +535,12 @@ function ModulDanProjectContent() {
                 <Clock className="w-3 h-3 shrink-0" />
                 <span>{inProgressCount} Progres</span>
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-semibold">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold">
                 <AlertTriangle className="w-3 h-3 shrink-0" />
+                <span>{underReviewCount} Dalam Review</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/30 font-semibold">
+                <Clock className="w-3 h-3 shrink-0" />
                 <span>{comingSoonCount} Segera Hadir</span>
               </span>
             </div>
