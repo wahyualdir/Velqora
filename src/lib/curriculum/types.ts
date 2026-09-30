@@ -610,7 +610,7 @@ export interface AcademicSubchapter {
   dataset?: AcademicDatasetMetadata;
   commonPitfalls?: string[];
   caseStudy?: string;
-  contentStatus?: "legacy-synthetic" | "substantive-verified" | "migrated";
+  contentStatus?: "legacy-synthetic" | "substantive-verified" | "migrated" | "imported-unverified";
 }
 
 export interface AcademicChapter {
