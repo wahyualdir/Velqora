@@ -187,34 +187,39 @@ export const SYSTEM_PRIMARY_CATEGORIES: SystemCategoryPreset[] = [
     icon: "machine_learning",
     color: "#8b5cf6",
     subcategories: [
-      { name: "AI Agent", icon: "robotics", color: "#EF4444" },
-      { name: "AI Ethics & Responsible AI", icon: "ethics", color: "#10B981" },
-      { name: "AI Governance & Regulasi", icon: "governance", color: "#06B6D4" },
-      { name: "AI Security & Adversarial Machine Learning", icon: "security", color: "#EF4444" },
-      { name: "Artificial Intelligence Fundamentals", icon: "machine_learning", color: "#8B5CF6" },
-      { name: "AutoML & Neural Architecture Search", icon: "automl", color: "#EC4899" },
-      { name: "Computational Intelligence (Fuzzy Logic, Genetic Algorithm, Swarm Intelligence)", icon: "computational_intelligence", color: "#10B981" },
-      { name: "Computer Vision", icon: "computer_vision", color: "#3B82F6" },
+      // 1. Fondasi
+      { name: "Python untuk Data Science & AI", icon: "python", color: "#10B981" },
+      { name: "Matematika & Statistika untuk AI", icon: "math", color: "#10B981" },
+      { name: "SQL & Basis Data", icon: "database", color: "#10B981" },
+      { name: "Artificial Intelligence", icon: "machine_learning", color: "#10B981" },
+
+      // 2. Data
       { name: "Data Analyst", icon: "data_analyst", color: "#06B6D4" },
-      { name: "Data Engineering & Big Data untuk AI", icon: "data_engineering", color: "#F59E0B" },
       { name: "Data Science", icon: "data_science", color: "#06B6D4" },
-      { name: "Deep Learning", icon: "deep_learning", color: "#EC4899" },
-      { name: "Edge AI & TinyML", icon: "edge_ai", color: "#10B981" },
-      { name: "Expert System", icon: "expert_systems", color: "#14B8A6" },
-      { name: "Generative AI", icon: "generative_ai", color: "#F59E0B" },
-      { name: "Graph Neural Network (GNN)", icon: "gnn", color: "#8B5CF6" },
-      { name: "Knowledge Representation", icon: "knowledge_rep", color: "#06B6D4" },
-      { name: "Large Language Model", icon: "generative_ai", color: "#F59E0B" },
+      { name: "Data Engineering & Big Data", icon: "data_engineering", color: "#06B6D4" },
+      { name: "Time Series Forecasting", icon: "time_series", color: "#06B6D4" },
+      { name: "Recommendation System", icon: "machine_learning", color: "#06B6D4" },
+
+      // 3. Machine Learning
       { name: "Machine Learning", icon: "machine_learning", color: "#8B5CF6" },
-      { name: "MLOps & AI Deployment", icon: "mlops", color: "#0284C7" },
-      { name: "Multimodal AI", icon: "generative_ai", color: "#F59E0B" },
-      { name: "Natural Language Processing", icon: "nlp", color: "#10B981" },
-      { name: "Recommendation System", icon: "machine_learning", color: "#8B5CF6" },
+      { name: "Deep Learning", icon: "deep_learning", color: "#8B5CF6" },
+      { name: "Natural Language Processing", icon: "nlp", color: "#8B5CF6" },
+      { name: "Computer Vision", icon: "computer_vision", color: "#8B5CF6" },
       { name: "Reinforcement Learning", icon: "reinforcement", color: "#8B5CF6" },
-      { name: "Robotics & Embodied AI", icon: "robotics", color: "#EF4444" },
-      { name: "Speech & Audio AI", icon: "speech", color: "#6366F1" },
-      { name: "Time Series Forecasting & Anomaly Detection", icon: "time_series", color: "#06B6D4" },
-      { name: "Vector Database & Retrieval System", icon: "vector_db", color: "#8B5CF6" },
+      { name: "Explainable AI (XAI)", icon: "ethics", color: "#8B5CF6" },
+
+      // 4. AI Generatif
+      { name: "Prompt Engineering", icon: "prompt", color: "#F59E0B" },
+      { name: "Large Language Model", icon: "generative_ai", color: "#F59E0B" },
+      { name: "Generative AI", icon: "generative_ai", color: "#F59E0B" },
+      { name: "RAG & Vector Database", icon: "vector_db", color: "#F59E0B" },
+      { name: "AI Agent", icon: "robotics", color: "#F59E0B" },
+
+      // 5. Produksi & Tata Kelola
+      { name: "MLOps & AI Deployment", icon: "mlops", color: "#F43F5E" },
+      { name: "AI Security & Adversarial", icon: "security", color: "#F43F5E" },
+      { name: "Responsible AI", icon: "ethics", color: "#F43F5E" },
+      { name: "AI Klasik", icon: "expert_systems", color: "#F43F5E" },
     ],
   },
   {
@@ -438,6 +443,24 @@ export const ACTIVE_AI_SUBCATEGORY_NAMES = new Set(
   ) || [])
 );
 
+export const LEGACY_AI_SUBCATEGORY_NAMES = new Set([
+  "ai ethics & responsible ai",
+  "ai governance & regulasi",
+  "ai security & adversarial machine learning",
+  "artificial intelligence fundamentals",
+  "automl & neural architecture search",
+  "computational intelligence (fuzzy logic, genetic algorithm, swarm intelligence)",
+  "edge ai & tinyml",
+  "expert system",
+  "graph neural network (gnn)",
+  "knowledge representation",
+  "multimodal ai",
+  "robotics & embodied ai",
+  "speech & audio ai",
+  "time series forecasting & anomaly detection",
+  "vector database & retrieval system",
+]);
+
 export function isCategoryInActiveScope(
   categoryName?: string | null,
   parentName?: string | null
@@ -448,7 +471,8 @@ export function isCategoryInActiveScope(
   return (
     scopeLower.includes(name) ||
     scopeLower.includes(parent) ||
-    ACTIVE_AI_SUBCATEGORY_NAMES.has(name)
+    ACTIVE_AI_SUBCATEGORY_NAMES.has(name) ||
+    LEGACY_AI_SUBCATEGORY_NAMES.has(name)
   );
 }
 

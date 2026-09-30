@@ -31,10 +31,10 @@ import {
 } from "../pilot-content";
 
 describe("Phase 2: Complete Academic Curriculum Reconstruction (All 28 Topics)", () => {
-  it("Harus memuat tepat 28 kurikulum akademik topik AI & Data Science", () => {
-    assert.equal(ALL_ACADEMIC_CURRICULA.length, 28);
+  it("Harus memuat 30 kurikulum akademik topik AI & Data Science (termasuk Matematika & XAI)", () => {
+    assert.equal(ALL_ACADEMIC_CURRICULA.length, 30);
     const overview = getAllCurriculumOverview();
-    assert.equal(overview.length, 28);
+    assert.equal(overview.length, 30);
   });
 
   it("Setiap topik harus memiliki ID dan Slug unik tanpa duplikasi", () => {

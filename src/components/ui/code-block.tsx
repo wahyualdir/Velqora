@@ -101,24 +101,109 @@ function renderHighlightedLine(line: string, lineIndex: number): React.ReactNode
   );
 }
 
-function detectPlotFromCode(code: string, title?: string): PlotType | null {
+function detectPlotFromCode(code: string, title?: string, language?: string): PlotType | null {
   const combined = `${title || ""} ${code}`;
+
+  // 1. Explicit annotation match
   const plotMatch = combined.match(/(?:@plot:|plot=|\[PLOT\]:|\[VISUAL_OUTPUT\]:)\s*["']?([\w-]+)["']?/i);
   if (plotMatch) {
     const matched = plotMatch[1].toLowerCase();
-    if (matched.includes("decision") || matched.includes("hyperplane") || matched.includes("boundary")) {
+    if (matched.includes("decision") || matched.includes("hyperplane") || matched.includes("boundary") || matched.includes("svm")) {
       return "decision-boundary";
     }
-    if (matched.includes("loss") || matched.includes("decay") || matched.includes("convergence") || matched.includes("kurva")) {
+    if (matched.includes("loss") || matched.includes("decay") || matched.includes("convergence") || matched.includes("kurva") || matched.includes("epoch")) {
       return "loss-curve";
     }
-    if (matched.includes("confusion") || matched.includes("matrix") || matched.includes("konfusi")) {
+    if (matched.includes("confusion") || matched.includes("matrix") || matched.includes("konfusi") || matched.includes("eval")) {
       return "confusion-matrix";
     }
     if (matched.includes("voronoi") || matched.includes("cluster") || matched.includes("klaster") || matched.includes("kmeans")) {
       return "voronoi";
     }
   }
+
+  // 2. Intelligent semantic detection for Python code
+  const isPython = !language || language === "python" || /(?:import |def |np\.|plt\.|sklearn)/i.test(code);
+  if (!isPython) return null;
+
+  const lower = combined.toLowerCase();
+
+  // A. Confusion Matrix / Evaluation
+  if (
+    lower.includes("confusion_matrix") ||
+    lower.includes("classification_report") ||
+    lower.includes("f1_score") ||
+    lower.includes("precision_score") ||
+    lower.includes("recall_score") ||
+    lower.includes("matriks konfusi") ||
+    lower.includes("confusionmatrixdisplay")
+  ) {
+    return "confusion-matrix";
+  }
+
+  // B. Clustering / Voronoi Space
+  if (
+    lower.includes("kmeans") ||
+    lower.includes("dbscan") ||
+    lower.includes("agglomerativeclustering") ||
+    lower.includes("cluster_centers_") ||
+    lower.includes("silhouette_score") ||
+    lower.includes("voronoi") ||
+    lower.includes("n_clusters") ||
+    lower.includes("inertia_") ||
+    lower.includes("klasterisasi")
+  ) {
+    return "voronoi";
+  }
+
+  // C. Loss Convergence / Optimization / Epoch Training / Regression
+  if (
+    lower.includes("train_loss") ||
+    lower.includes("val_loss") ||
+    lower.includes("loss_history") ||
+    lower.includes("cost_history") ||
+    lower.includes("learning_rate") ||
+    lower.includes("gradient_descent") ||
+    lower.includes("double_descent") ||
+    lower.includes("grokking") ||
+    lower.includes("sgdregressor") ||
+    lower.includes("linearregression") ||
+    lower.includes("mean_squared_error") ||
+    lower.includes("adam") ||
+    lower.includes("epochs")
+  ) {
+    return "loss-curve";
+  }
+
+  // D. Decision Boundary / Classifiers / Hyperplane
+  if (
+    lower.includes("svc(") ||
+    lower.includes("linearsvc") ||
+    lower.includes("logisticregression") ||
+    lower.includes("decisiontreeclassifier") ||
+    lower.includes("randomforestclassifier") ||
+    lower.includes("gradientboostingclassifier") ||
+    lower.includes("xgbclassifier") ||
+    lower.includes("decision_function") ||
+    lower.includes("predict_proba") ||
+    lower.includes("hyperplane") ||
+    lower.includes("support_vectors_") ||
+    lower.includes("boundary")
+  ) {
+    return "decision-boundary";
+  }
+
+  // E. Generic fallback for model fitting code
+  if (lower.includes(".fit(") || lower.includes("fit_transform(")) {
+    if (lower.includes("regress") || lower.includes("loss") || lower.includes("mse")) {
+      return "loss-curve";
+    }
+    if (lower.includes("cluster") || lower.includes("centroid")) {
+      return "voronoi";
+    }
+    return "decision-boundary";
+  }
+
   return null;
 }
 
@@ -137,8 +222,8 @@ export function CodeBlock({
   const [activeTab, setActiveTab] = useState<"code" | "plot">("code");
 
   const resolvedPlot = useMemo(() => {
-    return plotType || detectPlotFromCode(code, title);
-  }, [plotType, code, title]);
+    return plotType || detectPlotFromCode(code, title, language);
+  }, [plotType, code, title, language]);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -160,7 +245,7 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        "rounded-lg overflow-hidden border border-zinc-700/80 dark:border-zinc-800 bg-[#18181B] !bg-[#18181B] text-[#FAF8F5] my-3 text-xs font-mono shadow-md",
+        "rounded-lg overflow-hidden border border-zinc-700/80 dark:border-zinc-800 bg-[#18181B] !bg-[#18181B] text-[#FAF8F5] my-3 text-xs font-mono shadow-md w-full max-w-full min-w-0 touch-pan-x",
         className
       )}
       style={{ backgroundColor: "#18181B" }}
@@ -275,7 +360,7 @@ export function CodeBlock({
             <CodePlotVisualizer type={resolvedPlot} title={title} />
           ) : (
             <div
-              className="p-3.5 sm:p-4 overflow-x-auto bg-[#18181B] !bg-[#18181B]"
+              className="p-3.5 sm:p-4 overflow-x-auto scrollbar-thin touch-pan-x max-w-full bg-[#18181B] !bg-[#18181B]"
               style={{ backgroundColor: "#18181B" }}
             >
               <pre className="font-mono text-xs leading-relaxed text-[#F4F4F5] whitespace-pre">

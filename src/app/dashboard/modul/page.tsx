@@ -3,7 +3,21 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus, Code2, Layers, RefreshCw, AlertCircle, ArrowRight, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
+import {
+  Plus,
+  Code2,
+  Layers,
+  RefreshCw,
+  AlertCircle,
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
+  Sparkles,
+  Compass,
+  Search as SearchIcon,
+  X,
+} from "lucide-react";
 import { PageContainer } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,6 +38,14 @@ import { ModuleDriveFile } from "@/types/module-drive";
 import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
 import { getAcademicCurriculum } from "@/lib/curriculum/registry";
 import { getTopicStatus } from "@/lib/curriculum/status";
+import {
+  CATALOG_GROUPS,
+  CATALOG_TOPICS,
+  CAREER_PATHS,
+  getCatalogChapterCount,
+  CareerPath,
+  TopicLevel,
+} from "@/lib/curriculum/catalog";
 import { toast } from "sonner";
 
 const AI_CATEGORY_PRESET = SYSTEM_PRIMARY_CATEGORIES.find((c) => c.name === "Kecerdasan Buatan");
@@ -96,6 +118,11 @@ function ModulDanProjectContent() {
   const [levelFilter, setLevelFilter] = useState(searchParams.get("level") || "");
   const [scope, setScope] = useState<"all" | "mine">("all");
   const [sortBy, setSortBy] = useState<string>("latest");
+
+  // Katalog 24 Topik: Career Path & Level Filters
+  const [selectedCareerPath, setSelectedCareerPath] = useState<string>("all");
+  const [selectedTopicLevel, setSelectedTopicLevel] = useState<string>("all");
+  const [topicSearchQuery, setTopicSearchQuery] = useState<string>("");
 
   // Modals
   const [showSorterModal, setShowSorterModal] = useState(false);
@@ -269,9 +296,8 @@ function ModulDanProjectContent() {
   }, [aiScopedModules, contentMode, search, selectedCategory, levelFilter, scope, sortBy, currentUserId]);
 
   const totalModulesCount = useMemo(() => {
-    return (AI_CATEGORY_PRESET?.subcategories || []).reduce((acc, sub) => {
-      const academicCurr = getAcademicCurriculum(sub.name);
-      const chCount = academicCurr?.chapters?.length || getDefaultAiSections(sub.name).length || 12;
+    return CATALOG_TOPICS.filter((t) => !t.hidden).reduce((acc, topic) => {
+      const chCount = getCatalogChapterCount(topic);
       return acc + chCount;
     }, 0);
   }, []);
@@ -280,41 +306,113 @@ function ModulDanProjectContent() {
     [aiScopedModules]
   );
 
-  // ─── 1. Ringkasan Topik AI (Kartu Besar) ───
+  // ─── 1. Ringkasan 24 Topik AI (Katalog Terstruktur per Jalur) ───
   const aiTopicOverview = useMemo<AiCategoryItem[]>(() => {
-    const subcats = [...(AI_CATEGORY_PRESET?.subcategories || [])].sort((a, b) =>
-      a.name.localeCompare(b.name, "id", { sensitivity: "base" })
-    );
-    return subcats.map((sub) => {
+    return CATALOG_TOPICS.filter((t) => !t.hidden).map((topic) => {
       const dbCat = categories.find(
-        (c) => (c.name || "").toLowerCase().trim() === sub.name.toLowerCase().trim()
+        (c) =>
+          (c.name || "").toLowerCase().trim() === topic.name.toLowerCase().trim() ||
+          (topic.legacyId && (c.name || "").toLowerCase().trim() === topic.legacyId.toLowerCase().trim())
       );
       const customCount = aiScopedModules.filter((m) => {
         const catName = (m.category?.name || "").toLowerCase().trim();
         return (
-          catName === sub.name.toLowerCase().trim() ||
-          (sub.name === "Artificial Intelligence Fundamentals" &&
-            (!catName || catName === "kecerdasan buatan"))
+          catName === topic.name.toLowerCase().trim() ||
+          (topic.legacyId && catName === topic.legacyId.toLowerCase().trim()) ||
+          (topic.id === "artificial-intelligence" && (!catName || catName === "kecerdasan buatan"))
         );
       }).length;
 
-      const academicCurr = getAcademicCurriculum(sub.name);
-      const academicChaptersCount = academicCurr?.chapters?.length || 0;
-      const syllabusSections = getDefaultAiSections(sub.name);
-      const syllabusCount = syllabusSections.length;
-      const count = Math.max(customCount, academicChaptersCount, syllabusCount, 10);
-      const statusMeta = getTopicStatus(sub.name);
+      const contentChapterCount = getCatalogChapterCount(topic);
+      const count = Math.max(customCount, contentChapterCount);
+      const statusMeta = getTopicStatus(topic.legacyId || topic.id || topic.name);
 
       return {
-        id: dbCat?.id || sub.name,
-        name: sub.name,
-        color: sub.color || "#8B5CF6",
-        icon: sub.icon || "machine_learning",
+        id: topic.id,
+        name: topic.name,
+        color: topic.color,
+        icon: topic.icon,
         moduleCount: count,
-        statusMeta,
+        statusMeta: {
+          ...statusMeta,
+          badgeLabel: topic.badgeLabel || statusMeta.badgeLabel,
+          shortDescription: topic.shortDescription || statusMeta.shortDescription,
+        },
+        level: topic.level,
+        careerPaths: topic.careerPaths,
+        isNew: topic.isNew,
+        absorbedTopics: topic.absorbedTopics,
+        mergedFrom: topic.mergedFrom,
+        group: topic.group,
       };
     });
   }, [aiScopedModules, categories]);
+
+  // Statistik Kesiapan Konten (Dihitung Dinamis dari 24 Topik Aktif)
+  const verifiedCount = useMemo(
+    () => aiTopicOverview.filter((t) => t.statusMeta?.status === "verified").length,
+    [aiTopicOverview]
+  );
+  const inProgressCount = useMemo(
+    () =>
+      aiTopicOverview.filter(
+        (t) => t.statusMeta?.status === "in_development" || t.statusMeta?.status === "in_progress"
+      ).length,
+    [aiTopicOverview]
+  );
+  const comingSoonCount = useMemo(
+    () =>
+      aiTopicOverview.filter(
+        (t) => t.statusMeta?.status === "coming_soon" || t.statusMeta?.status === "under_review"
+      ).length,
+    [aiTopicOverview]
+  );
+
+  // Filter Topik Katalog berdasarkan Jalur Karier, Level, & Pencarian
+  const filteredCatalogTopics = useMemo(() => {
+    let list = [...aiTopicOverview];
+
+    // Filter berdasarkan jalur karier
+    if (selectedCareerPath && selectedCareerPath !== "all") {
+      list = list.filter((t) =>
+        t.careerPaths?.includes(selectedCareerPath as CareerPath)
+      );
+    }
+
+    // Filter berdasarkan tingkat kesulitan
+    if (selectedTopicLevel && selectedTopicLevel !== "all") {
+      list = list.filter(
+        (t) => t.level?.toLowerCase() === selectedTopicLevel.toLowerCase()
+      );
+    }
+
+    // Filter pencarian teks
+    if (topicSearchQuery.trim()) {
+      const q = topicSearchQuery.toLowerCase().trim();
+      list = list.filter(
+        (t) =>
+          t.name.toLowerCase().includes(q) ||
+          t.statusMeta?.shortDescription.toLowerCase().includes(q) ||
+          t.absorbedTopics?.some((a) => a.toLowerCase().includes(q)) ||
+          t.mergedFrom?.some((m) => m.toLowerCase().includes(q)) ||
+          t.careerPaths?.some((p) => p.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [aiTopicOverview, selectedCareerPath, selectedTopicLevel, topicSearchQuery]);
+
+  const hasActiveCatalogFilters = Boolean(
+    (selectedCareerPath && selectedCareerPath !== "all") ||
+    (selectedTopicLevel && selectedTopicLevel !== "all") ||
+    topicSearchQuery.trim()
+  );
+
+  const handleResetCatalogFilters = () => {
+    setSelectedCareerPath("all");
+    setSelectedTopicLevel("all");
+    setTopicSearchQuery("");
+  };
 
   // ─── 2. Pengelompokan Modul yang Difilter per Kategori AI ───
   const groupedModulesByCategory = useMemo(() => {
@@ -397,56 +495,208 @@ function ModulDanProjectContent() {
         </div>
       )}
 
-      {/* ─── TAB 1: Topik Kurikulum AI (Hanya Grid 14 Kartu Tanpa Clutter) ─── */}
+      {/* ─── TAB 1: Topik Kurikulum AI (24 Topik Dikelompokkan per Jalur) ─── */}
       {viewTab === "categories" && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between px-1">
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
             <div>
-              <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
-                Topik Kurikulum Kecerdasan Buatan ({aiTopicOverview.length})
+              <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-2">
+                <span>Katalog Kurikulum AI & Data ({aiTopicOverview.length} Topik)</span>
               </h2>
               <p className="text-xs text-text-secondary font-mono">
-                Pilih kartu topik untuk meninjau silabus dan materi kode terstruktur
+                Struktur kurikulum terpadu 24 topik berstandar universitas & industri, dikelompokkan per jalur kompetensi
               </p>
             </div>
             <button
               type="button"
               onClick={() => setViewTab("all-content")}
-              className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+              className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1 shrink-0 self-start sm:self-auto"
             >
               <span>Eksplorasi Modul ({totalModulesCount + totalProjectsCount})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Banner Transparansi Audit Kualitas Kurikulum */}
-          <div className="p-3 sm:p-3.5 rounded-xl border border-border bg-surface/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          {/* Banner Transparansi Audit Kualitas Kurikulum (Dihitung Dinamis) */}
+          <div className="p-3 sm:p-3.5 rounded-xl border border-border bg-surface/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-xs">
             <div className="flex items-center gap-2 text-text-secondary min-w-0">
               <span className="font-semibold text-text-primary uppercase tracking-wide text-[11px] shrink-0">
                 Audit Mutu:
               </span>
-              <span className="truncate">Sinyal transparansi kesiapan konten 28 topik</span>
+              <span className="truncate">Sinyal transparansi kesiapan materi 24 topik kurikulum</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold">
                 <CheckCircle2 className="w-3 h-3 shrink-0" />
-                <span>3 Terverifikasi (DA, DS, ML)</span>
+                <span>{verifiedCount} Terverifikasi</span>
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30 font-semibold">
                 <Clock className="w-3 h-3 shrink-0" />
-                <span>1 Dalam Pengembangan (DL)</span>
+                <span>{inProgressCount} Progres</span>
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-semibold">
                 <AlertTriangle className="w-3 h-3 shrink-0" />
-                <span>24 Sedang Ditinjau Ulang</span>
+                <span>{comingSoonCount} Segera Hadir</span>
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-            {aiTopicOverview.map((topic) => (
-              <AiCategoryCard key={topic.id || topic.name} category={topic} />
-            ))}
+          {/* Console Filter Jalur Karier & Level */}
+          <div className="p-3 sm:p-4 rounded-xl border border-border bg-surface/80 backdrop-blur-xs space-y-3 shadow-xs">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+              {/* Filter Jalur Karier (Pills) */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] font-mono text-text-tertiary uppercase font-bold mr-1 flex items-center gap-1">
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Jalur:</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCareerPath("all")}
+                  className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                    selectedCareerPath === "all"
+                      ? "bg-brand-600 text-white border-brand-600 font-bold shadow-xs"
+                      : "bg-surface text-text-secondary border-border hover:bg-surface-secondary"
+                  }`}
+                >
+                  Semua Jalur ({aiTopicOverview.length})
+                </button>
+                {CAREER_PATHS.map((path) => {
+                  const countForPath = aiTopicOverview.filter((t) =>
+                    t.careerPaths?.includes(path)
+                  ).length;
+                  const isActive = selectedCareerPath === path;
+                  return (
+                    <button
+                      key={path}
+                      type="button"
+                      onClick={() => setSelectedCareerPath(path)}
+                      className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                        isActive
+                          ? "bg-brand-600 text-white border-brand-600 font-bold shadow-xs"
+                          : "bg-surface text-text-secondary border-border hover:bg-surface-secondary"
+                      }`}
+                    >
+                      {path} ({countForPath})
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Controls Kanan: Level & Search */}
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                {/* Level Dropdown */}
+                <select
+                  value={selectedTopicLevel}
+                  onChange={(e) => setSelectedTopicLevel(e.target.value)}
+                  className="px-2.5 py-1.5 text-xs font-mono rounded-lg border border-border bg-surface text-text-primary focus:outline-hidden cursor-pointer"
+                  aria-label="Filter level"
+                >
+                  <option value="all">Semua Level</option>
+                  <option value="pemula">Pemula</option>
+                  <option value="menengah">Menengah</option>
+                  <option value="lanjut">Lanjut</option>
+                </select>
+
+                {/* Search Input Topik */}
+                <div className="relative flex-1 sm:w-56">
+                  <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary pointer-events-none" />
+                  <input
+                    type="text"
+                    value={topicSearchQuery}
+                    onChange={(e) => setTopicSearchQuery(e.target.value)}
+                    placeholder="Cari topik..."
+                    className="w-full pl-8 pr-7 py-1.5 text-xs font-mono rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-hidden"
+                  />
+                  {topicSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setTopicSearchQuery("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary p-0.5 cursor-pointer"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Tombol Reset jika filter aktif */}
+                {hasActiveCatalogFilters && (
+                  <button
+                    type="button"
+                    onClick={handleResetCatalogFilters}
+                    className="px-2 py-1 text-xs font-mono text-rose-600 dark:text-rose-400 hover:underline cursor-pointer shrink-0"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Daftar Topik Dikelompokkan per Jalur (5 Grup) */}
+          <div className="space-y-8">
+            {CATALOG_GROUPS.map((group) => {
+              const groupTopics = filteredCatalogTopics.filter(
+                (topic) => topic.group === group.id
+              );
+
+              if (groupTopics.length === 0) return null;
+
+              return (
+                <div key={group.id} className="space-y-3.5">
+                  {/* Header Grup */}
+                  <div className="flex items-center justify-between border-b border-border/80 pb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: group.color }}
+                      />
+                      <div>
+                        <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-text-primary flex items-center gap-2">
+                          <span>{group.title}</span>
+                          <span
+                            className="px-2 py-0.2 rounded-full text-[10.5px] font-mono font-semibold"
+                            style={{
+                              backgroundColor: group.badgeBg,
+                              color: group.badgeText,
+                            }}
+                          >
+                            {groupTopics.length} Topik
+                          </span>
+                        </h3>
+                        <p className="text-xs text-text-tertiary font-mono">
+                          {group.subtitle}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Grid Kartu Topik */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+                    {groupTopics.map((topic) => (
+                      <AiCategoryCard key={topic.id || topic.name} category={topic} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Empty State jika tidak ada topik yang cocok */}
+            {filteredCatalogTopics.length === 0 && (
+              <div className="p-8 text-center rounded-xl border border-dashed border-border bg-surface/40 space-y-3">
+                <p className="text-xs font-mono text-text-tertiary">
+                  Tidak ditemukan topik kurikulum yang sesuai dengan kriteria filter.
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleResetCatalogFilters}
+                  className="text-xs font-mono"
+                >
+                  Reset Filter Topik
+                </Button>
+              </div>
+            )}
           </div>
         </section>
       )}

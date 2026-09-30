@@ -187,6 +187,8 @@ function getGeneralComputerScienceSections(topicName: string): ModuleSection[] {
   }));
 }
 
+import { findCatalogTopic } from "./curriculum/catalog";
+
 /**
  * Fallback Preset Silabus Materi Seluruh Kategori Velqora
  * Menyediakan silabus terstruktur otentik sesuai domain masing-masing
@@ -197,6 +199,18 @@ export function getDefaultSectionsForCategory(categoryName: string): ModuleSecti
   const academicCurr = getAcademicCurriculum(categoryName);
   if (academicCurr) {
     return curriculumToModuleSections(academicCurr);
+  }
+
+  // 0b. Prioritas Kedua: Outline Silabus Terstruktur dari Katalog 24 Topik
+  const catalogTopic = findCatalogTopic(categoryName);
+  if (catalogTopic?.outline && catalogTopic.outline.length > 0) {
+    return catalogTopic.outline.map((ch) => ({
+      id: `sec-${catalogTopic.id}-${ch.chapterNumber}`,
+      title: ch.title,
+      orderIndex: ch.chapterNumber,
+      isCompleted: false,
+      description: ch.description,
+    }));
   }
 
   const norm = categoryName.toLowerCase().trim();

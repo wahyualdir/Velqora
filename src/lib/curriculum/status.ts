@@ -6,7 +6,7 @@
  * memberikan sinyal jujur dan transparan bagi pengguna tanpa memodifikasi file data.
  */
 
-export type TopicStatus = "verified" | "under_review" | "in_development";
+export type TopicStatus = "verified" | "under_review" | "in_development" | "in_progress" | "coming_soon";
 
 export interface TopicStatusMeta {
   status: TopicStatus;
@@ -16,6 +16,7 @@ export interface TopicStatusMeta {
   isVerified: boolean;
   priorityOrder?: number;
 }
+
 
 // 7 Topik yang telah selesai ditulis ulang 100% dan lulus uji rujukan resmi
 const VERIFIED_PATTERNS = [
@@ -31,6 +32,8 @@ const VERIFIED_PATTERNS = [
   "ai-fundamentals",
   "aifundamentals",
   "artificialintelligencefundamentals",
+  "artificial-intelligence",
+  "artificialintelligence",
   "05-ai-fundamentals",
   "computer-vision",
   "computervision",
@@ -40,7 +43,7 @@ const VERIFIED_PATTERNS = [
   "22-natural-language-processing"
 ];
 
-// Topik dalam pengembangan berikutnya (Batch 1: LLM 72% / 130 Subbab)
+// Topik dalam pengembangan (Batch 1: LLM 72% / 130 Subbab)
 const IN_DEVELOPMENT_PATTERNS: string[] = [
   "large-language-model",
   "large-language-models",
@@ -59,7 +62,58 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     .replace(/[^a-z0-9]/g, "")
     .trim();
 
-  // 1. Cek Topik Terverifikasi (Prioritas 1-4)
+  // Cek Khusus Topik Baru: Python, Matematika, XAI, SQL, Prompt
+  if (norm.includes("python")) {
+    return {
+      status: "in_progress",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum fondasi komputasi Python dan alat kerja data dalam penulisan aktif.",
+      shortDescription: "Fondasi komputasi Python: sintaks, fungsi, OOP, modul NumPy/Pandas, serta alat kerja Git, Linux, dan Docker.",
+      isVerified: false,
+    };
+  }
+
+  if (norm.includes("matematika") || norm.includes("statistika") || norm.includes("mathstat")) {
+    return {
+      status: "in_progress",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum matematika analitis dan inferensi statistik AI dalam penulisan aktif.",
+      shortDescription: "Landasan matematis AI: Aljabar Linier, Kalkulus Matriks, Probabilitas, dan Optimasi Numerik.",
+      isVerified: false,
+    };
+  }
+
+  if (norm.includes("explainable") || norm.includes("xai")) {
+    return {
+      status: "in_progress",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum Explainable AI dan interpretabilitas model dalam penulisan aktif.",
+      shortDescription: "Interpretabilitas model: PFI, PDP/ICE curves, LIME, Shapley Values, SHAP (TreeSHAP, KernelSHAP), dan audit kepatuhan EU AI Act.",
+      isVerified: false,
+    };
+  }
+
+  if (norm.includes("prompt")) {
+    return {
+      status: "coming_soon",
+      badgeLabel: "Segera Hadir",
+      badgeDescription: "Kurikulum prompt engineering dan optimasi model bahasa segera hadir.",
+      shortDescription: "Teknik prompt engineering, in-context learning, CoT, ReAct, evaluasi prompt, dan guardrails keamanan LLM.",
+      isVerified: false,
+    };
+  }
+
+  if (norm.includes("sql") || norm.includes("basisdata")) {
+    return {
+      status: "coming_soon",
+      badgeLabel: "Segera Hadir",
+      badgeDescription: "Kurikulum SQL analitik dan basis data relasional segera hadir.",
+      shortDescription: "Sintaks SQL analitik (Window Functions, CTEs), perancangan skema relasional, indeks, dan transaksi ACID.",
+      isVerified: false,
+    };
+  }
+
+  // 1. Cek Topik Terverifikasi (Prioritas 1-7)
   if (
     norm.includes("dataanalyst") ||
     (norm.includes("analyst") && !norm.includes("kpi"))
@@ -68,7 +122,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
       status: "verified",
       badgeLabel: "Terverifikasi 100%",
       badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (10 Bab).",
-      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis.",
+      shortDescription: "Kurikulum standar akademik analitik data modern terverifikasi bebas data sintetis.",
       isVerified: true,
       priorityOrder: 1,
     };
@@ -81,8 +135,8 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     return {
       status: "verified",
       badgeLabel: "Terverifikasi 100%",
-      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (16 Bab).",
-      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis.",
+      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis.",
+      shortDescription: "Kurikulum standar akademik sains data empiris terverifikasi bebas data sintetis.",
       isVerified: true,
       priorityOrder: 2,
     };
@@ -95,7 +149,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     return {
       status: "verified",
       badgeLabel: "Terverifikasi 100%",
-      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (22 Bab / 200 Subbab SOTA).",
+      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (32 Bab SOTA).",
       shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis berbasis Hastie (ESL), Bishop (PRML), Mitchell, dan scikit-learn SOTA.",
       isVerified: true,
       priorityOrder: 3,
@@ -110,16 +164,18 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
       status: "verified",
       badgeLabel: "Terverifikasi 100%",
       badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (18 Bab).",
-      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis.",
+      shortDescription: "Kurikulum arsitektur deep learning terverifikasi bebas data sintetis berbasis Goodfellow dan literatur primer.",
       isVerified: true,
       priorityOrder: 4,
     };
   }
 
-  // 2. Cek AI Fundamentals (Prioritas 5: Terverifikasi Penuh 10 Bab / 100 Subbab)
+  // 2. Cek AI Fundamentals / Artificial Intelligence (Prioritas 5)
   if (
     norm.includes("aifundamentals") ||
     norm.includes("artificialintelligencefundamentals") ||
+    norm === "artificialintelligence" ||
+    norm === "ai" ||
     (norm.includes("fundamental") && norm.includes("ai")) ||
     norm.includes("05aifundamentals")
   ) {
@@ -133,7 +189,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     };
   }
 
-  // 3. Cek Computer Vision (Prioritas 6: Terverifikasi Penuh 18 Bab / 180 Subbab)
+  // 3. Cek Computer Vision (Prioritas 6)
   if (
     norm.includes("computervision") ||
     norm.includes("08computervision") ||
@@ -149,7 +205,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     };
   }
 
-  // 4. Cek Natural Language Processing (Prioritas 7: Terverifikasi Penuh 18 Bab / 180 Subbab)
+  // 4. Cek Natural Language Processing (Prioritas 7)
   if (
     norm.includes("naturallanguageprocessing") ||
     norm.includes("22naturallanguageprocessing") ||
@@ -166,7 +222,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     };
   }
 
-  // 5. Cek Large Language Models (Prioritas 8: Progres 130 / 180 Subbab Terverifikasi)
+  // 5. Cek Large Language Models (Prioritas 8: Progres 72%)
   if (
     norm.includes("largelanguagemodel") ||
     norm.includes("18largelanguagemodel") ||
@@ -182,12 +238,188 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     };
   }
 
-  // 6. Seluruh 20 Topik Cangkang Draf Lainnya
+  // 6. Topik yang bahannya sudah ada di repo dan siap diimpor (Status: Progres)
+  if (norm.includes("python") || norm.includes("pythondatascience")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum fondasi komputasi Python, NumPy, Pandas, dan alat kerja Git/Linux/Docker siap diimpor.",
+      shortDescription: "Fondasi pemrograman Python modern, NumPy, Pandas, serta alat kerja Git, Linux, dan Docker.",
+      isVerified: false,
+      priorityOrder: 9,
+    };
+  }
+
+  if (norm.includes("matematika") || norm.includes("statistika") || norm.includes("math")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Landasan matematis AI berbasis Machine Learning Foundations Chunk 1 (Aljabar Linier, Probabilitas, Optimasi).",
+      shortDescription: "Aljabar Linier, Kalkulus Matriks, Probabilitas, dan Optimasi Numerik berbasis Hastie, Boyd, & Murphy.",
+      isVerified: false,
+      priorityOrder: 10,
+    };
+  }
+
+  if (norm.includes("explainable") || norm.includes("xai") || norm.includes("interpretabilitas")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Materi interpretabilitas model (SHAP, LIME, PFI, EU AI Act) siap diimpor dari ML Bab 31.",
+      shortDescription: "Interpretabilitas model: PFI, PDP/ICE curves, LIME, Shapley Values, SHAP (TreeSHAP, KernelSHAP), dan audit EU AI Act.",
+      isVerified: false,
+      priorityOrder: 11,
+    };
+  }
+
+  if (norm.includes("timeseries") || norm.includes("deretwaktu") || norm.includes("forecasting")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum analisis deret waktu dan peramalan (15 Bab lengkap di repositori).",
+      shortDescription: "Dekomposisi deret waktu, ARIMA/SARIMA, Prophet, Deep Learning (LSTM, PatchTST), dan deteksi anomali.",
+      isVerified: false,
+      priorityOrder: 12,
+    };
+  }
+
+  if (norm.includes("recommendation") || norm.includes("rekomendasi")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum perancangan sistem rekomendasi enterprise (15 Bab lengkap di repositori).",
+      shortDescription: "Collaborative filtering, matrix factorization (SVD, ALS), neural recommender, two-tower models, dan ranking.",
+      isVerified: false,
+      priorityOrder: 13,
+    };
+  }
+
+  if (norm.includes("mlops") || (norm.includes("deployment") && !norm.includes("robotics"))) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum rekayasa MLOps dan deployment model produksi (18 Bab lengkap + ML Bab 32).",
+      shortDescription: "Siklus hidup MLOps: model registry, CI/CD pipeline, inference serving, monitoring drift, dan deployment Edge AI / TinyML.",
+      isVerified: false,
+      priorityOrder: 14,
+    };
+  }
+
+  if (norm.includes("reinforcement")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum pembelajaran penguatan mendalam (15 Bab lengkap di repositori).",
+      shortDescription: "Proses Keputusan Markov (MDP), persamaan Bellman, Dynamic Programming, Q-Learning, Policy Gradient, PPO, dan RLHF.",
+      isVerified: false,
+      priorityOrder: 15,
+    };
+  }
+
+  if (norm.includes("security") || norm.includes("adversarial")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum keamanan sistem AI dan pertahanan adversarial (15 Bab lengkap di repositori).",
+      shortDescription: "Keamanan AI: adversarial evasion attacks (FGSM/PGD), data poisoning, model stealing, prompt injection, dan pertahanan robust.",
+      isVerified: false,
+      priorityOrder: 16,
+    };
+  }
+
+  if (norm.includes("responsibleai") || norm.includes("ethics") || norm.includes("governance")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum gabungan etika, transparansi, keadilan algoritma, dan tata kelola regulasi AI.",
+      shortDescription: "Integrasi etika, fairness algoritma, transparansi, akuntabilitas, tata kelola AI, dan kepatuhan regulasi EU AI Act / NIST.",
+      isVerified: false,
+      priorityOrder: 17,
+    };
+  }
+
+  if (norm.includes("aiklasik") || norm.includes("expertsystem") || norm.includes("knowledge") || norm.includes("computational")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum gabungan paradigma AI klasik simbolik dan komputasi lunak (sistem pakar, ontologi, fuzzy & algoritma genetika).",
+      shortDescription: "Paradigma AI klasik: sistem pakar rule-based, logika deskripsi & ontologi knowledge graph, serta komputasi fuzzy dan genetika.",
+      isVerified: false,
+      priorityOrder: 18,
+    };
+  }
+
+  if (norm.includes("agent") || norm.includes("autonomous")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum arsitektur agen otonom dan multi-agent reasoning (15 Bab lengkap).",
+      shortDescription: "Arsitektur agen otonom: perencanaan (planning), memori hierarkis, tool execution, dan kolaborasi multi-agent.",
+      isVerified: false,
+      priorityOrder: 19,
+    };
+  }
+
+  if (norm.includes("generative") || norm.includes("genai")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum model generatif modern dan multimodal AI (18 Bab lengkap).",
+      shortDescription: "Model generatif modern: VAE, GAN, Model Difusi (DDPM, Stable Diffusion), dan bab lanjutan Multimodal AI.",
+      isVerified: false,
+      priorityOrder: 20,
+    };
+  }
+
+  if (norm.includes("vectordatabase") || norm.includes("rag") || norm.includes("retrieval")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum basis data vektor dan retrieval-augmented generation (15 Bab lengkap).",
+      shortDescription: "Retrieval-Augmented Generation: indexing vektor HNSW/IVF, dense & sparse retrieval, reranking, dan hybrid search.",
+      isVerified: false,
+      priorityOrder: 21,
+    };
+  }
+
+  if (norm.includes("dataengineering") || norm.includes("bigdata")) {
+    return {
+      status: "in_development",
+      badgeLabel: "Progres",
+      badgeDescription: "Kurikulum rekayasa data skala masif untuk kecerdasan buatan (18 Bab lengkap).",
+      shortDescription: "Arsitektur data pipeline skala besar: data lakehouse, streaming data (Kafka), Spark terdistribusi, dan Airflow.",
+      isVerified: false,
+      priorityOrder: 22,
+    };
+  }
+
+  // 7. Topik Baru Tanpa Konten di Repo (Status: Segera Hadir)
+  if (norm.includes("promptengineering") || (norm.includes("prompt") && !norm.includes("sqlite"))) {
+    return {
+      status: "coming_soon",
+      badgeLabel: "Segera Hadir",
+      badgeDescription: "Kerangka silabus 10 bab: rekayasa instruksi, CoT, ReAct, output terstruktur, dan mitigasi halusinasi.",
+      shortDescription: "Rekayasa instruksi terstruktur: zero/few-shot, Chain-of-Thought (CoT), ReAct framework, structured output, dan mitigasi halusinasi.",
+      isVerified: false,
+    };
+  }
+
+  if (norm.includes("sql") || norm.includes("basisdata") || norm.includes("database")) {
+    return {
+      status: "coming_soon",
+      badgeLabel: "Segera Hadir",
+      badgeDescription: "Kerangka silabus 12 bab: perancangan skema relasional, SQL analitik (Window Functions, CTEs), dan transaksi ACID.",
+      shortDescription: "Sintaks SQL analitik (Window Functions, CTEs), perancangan skema relasional, indeks, dan transaksi ACID.",
+      isVerified: false,
+    };
+  }
+
+  // 8. Default Fallback untuk topik lainnya
   return {
-    status: "under_review",
-    badgeLabel: "Sedang Ditinjau Ulang",
-    badgeDescription: "Draf kurikulum sedang dalam proses peninjauan ulang & perombakan materi ke standar industri.",
-    shortDescription: "Draf materi sedang ditinjau ulang & direvisi ke standar industri.",
+    status: "coming_soon",
+    badgeLabel: "Segera Hadir",
+    badgeDescription: "Silabus kurikulum berstandar industri siap dipelajari secara bertahap.",
+    shortDescription: "Modul kurikulum berstandar industri berbasis studi literatur resmi dan praktikum kode.",
     isVerified: false,
   };
 }

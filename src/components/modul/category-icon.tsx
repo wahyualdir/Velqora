@@ -18,6 +18,10 @@ import {
   Network,
   Server,
   TrendingUp,
+  Code2,
+  Calculator,
+  Terminal,
+  Binary,
   LucideIcon,
 } from "lucide-react";
 
@@ -82,6 +86,19 @@ export function getCategoryIconComponent(iconName?: string): LucideIcon {
     case "vector_db":
     case "vector_database":
       return Database;
+    case "python":
+      return Code2;
+    case "math":
+    case "mathematics":
+    case "statistika":
+      return Calculator;
+    case "sql":
+      return Database;
+    case "prompt":
+    case "prompt_engineering":
+      return Terminal;
+    case "xai":
+      return Scale;
     default:
       return Brain;
   }

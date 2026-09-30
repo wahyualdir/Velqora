@@ -29,6 +29,7 @@ import { SYSTEM_PRIMARY_CATEGORIES } from "@/lib/constants";
 import { getCategoryIconComponent } from "@/components/modul/category-icon";
 import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
 import { getAcademicCurriculum } from "@/lib/curriculum/registry";
+import { findCatalogTopic } from "@/lib/curriculum/catalog";
 import {
   curriculumToDocSectionItems,
   curriculumToFlatDocSectionItems,
@@ -146,7 +147,17 @@ export default function DedicatedCategoryModulesPage({
         }
 
         const academicMatch = getAcademicCurriculum(decodedId);
-        if (foundPreset) {
+        const catalogMatch = findCatalogTopic(decodedId);
+
+        if (catalogMatch) {
+          resolvedCat = {
+            id: catalogMatch.id,
+            name: catalogMatch.name,
+            color: catalogMatch.color || "#8B5CF6",
+            icon: catalogMatch.icon || "code",
+            description: catalogMatch.shortDescription,
+          };
+        } else if (foundPreset) {
           resolvedCat = {
             id: academicMatch?.id || foundPreset.name,
             name: academicMatch?.title || foundPreset.name,
@@ -176,10 +187,17 @@ export default function DedicatedCategoryModulesPage({
         }
       }
 
-      // Selalu periksa apakah nama kategori memiliki representasi di kurikulum akademik 28 topik
+      // Selalu selaraskan nama kategori dengan SSOT catalog.ts terlebih dahulu, lalu kurikulum akademik
       if (resolvedCat) {
+        const catalogMatch = findCatalogTopic(resolvedCat.name) || findCatalogTopic(decodedId);
         const academicMatch = getAcademicCurriculum(resolvedCat.name) || getAcademicCurriculum(decodedId);
-        if (academicMatch) {
+        if (catalogMatch) {
+          resolvedCat = {
+            ...resolvedCat,
+            name: catalogMatch.name,
+            description: catalogMatch.shortDescription || academicMatch?.description || resolvedCat.description,
+          };
+        } else if (academicMatch) {
           resolvedCat = {
             ...resolvedCat,
             name: academicMatch.title,

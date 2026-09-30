@@ -27,15 +27,19 @@ import { roboticsEmbodiedAiCurriculum } from "./topics/25-robotics-embodied-ai";
 import { speechAudioAiCurriculum } from "./topics/26-speech-audio-ai";
 import { timeSeriesForecastingCurriculum } from "./topics/27-time-series-forecasting";
 import { vectorDatabaseRetrievalCurriculum } from "./topics/28-vector-database-retrieval";
+import { matematikaStatistikaCurriculum } from "./topics/29-matematika-statistika";
+import { explainableAiCurriculum } from "./topics/30-explainable-ai";
+
 // AI Fundamentals kini telah diremediasi penuh menjadi kurikulum substantif mandiri
 export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = aiFundamentalsCurriculum;
 
 // Machine Learning kini telah diremediasi penuh menjadi kurikulum substantif mandiri (32 Bab Lengkap)
 export const enrichedMachineLearningCurriculum: AcademicCurriculum = machineLearningCurriculum;
 
+export { matematikaStatistikaCurriculum, explainableAiCurriculum };
 
 /**
- * Registri Terpusat Seluruh 28 Kurikulum Akademik Kecerdasan Buatan Velqora.
+ * Registri Terpusat Seluruh 30 Kurikulum Akademik Kecerdasan Buatan Velqora.
  * Menyediakan Single Source of Truth (SSOT) untuk navigasi modul, breadcrumbs,
  * dan rendering materi hierarkis tanpa redundansi generator sintetis.
  */
@@ -68,6 +72,8 @@ export const ALL_ACADEMIC_CURRICULA: readonly AcademicCurriculum[] = [
   speechAudioAiCurriculum,
   timeSeriesForecastingCurriculum,
   vectorDatabaseRetrievalCurriculum,
+  matematikaStatistikaCurriculum,
+  explainableAiCurriculum,
 ];
 
 /**
@@ -233,6 +239,21 @@ const topicAliases: Record<string, AcademicCurriculum> = {
   "vector database & retrieval system": vectorDatabaseRetrievalCurriculum,
   "vector database": vectorDatabaseRetrievalCurriculum,
   "basis data vektor": vectorDatabaseRetrievalCurriculum,
+  "rag & vector database": vectorDatabaseRetrievalCurriculum,
+  "rag": vectorDatabaseRetrievalCurriculum,
+
+  // Alias baru untuk kurikulum 24 topik
+  "artificial intelligence": enrichedAiFundamentalsCurriculum,
+  "ai": enrichedAiFundamentalsCurriculum,
+  "data engineering & big data": dataEngineeringAiCurriculum,
+  "ai security & adversarial": aiSecurityCurriculum,
+  "ai klasik": expertSystemCurriculum,
+  "explainable ai": explainableAiCurriculum,
+  "explainable ai (xai)": explainableAiCurriculum,
+  "xai": explainableAiCurriculum,
+  "matematika & statistika untuk ai": matematikaStatistikaCurriculum,
+  "matematika & statistika": matematikaStatistikaCurriculum,
+  "matematika statistika": matematikaStatistikaCurriculum,
 };
 
 for (const [alias, curr] of Object.entries(topicAliases)) {
@@ -260,7 +281,16 @@ export function getAcademicCurriculum(query: string): AcademicCurriculum | undef
     return curriculumLookupMap.get(normalized);
   }
   
-  // 2. Aturan pencegahan tabrakan spesifik AI Security vs Machine Learning
+  // 2. Cegah pencocokan parsial untuk topik yang memiliki outline mandiri (Python, SQL, Prompt)
+  if (
+    normalized.includes("python") ||
+    normalized.includes("sql") ||
+    normalized.includes("prompt")
+  ) {
+    return undefined;
+  }
+
+  // 3. Aturan pencegahan tabrakan spesifik AI Security vs Machine Learning
   if (
     normalized.includes("security") ||
     normalized.includes("adversarial") ||

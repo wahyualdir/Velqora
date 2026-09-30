@@ -354,49 +354,53 @@ function ConfusionMatrixSvg({ onHover }: { onHover: (info: string | null) => voi
       {/* 1. True Positive (TP) */}
       <g
         className="cursor-pointer"
-        onMouseEnter={() => onHover("True Positive (TP): 948 sampel benar diklasifikasikan sebagai Positif")}
+        onMouseEnter={() => onHover("True Positive (TP): 948 sampel benar diklasifikasikan sebagai Positif | Nilai Ternormalisasi: 0.992")}
         onMouseLeave={() => onHover(null)}
       >
         <rect x="60" y="65" width="105" height="95" rx="8" fill="#10B981" fillOpacity="0.32" stroke="#10B981" strokeWidth="1.5" />
-        <text x="75" y="92" fill="#34D399" fontSize="9" fontWeight="bold">TRUE POSITIVE</text>
-        <text x="90" y="125" fill="#FFFFFF" fontSize="22" fontWeight="bold">948</text>
-        <text x="85" y="145" fill="#A7F3D0" fontSize="9">TP Rate: 99.16%</text>
+        <text x="75" y="88" fill="#34D399" fontSize="9" fontWeight="bold">TRUE POSITIVE</text>
+        <text x="86" y="118" fill="#FFFFFF" fontSize="22" fontWeight="bold">948</text>
+        <text x="75" y="136" fill="#A7F3D0" fontSize="8.5">TP Rate: 99.16%</text>
+        <text x="75" y="150" fill="#6EE7B7" fontSize="8.5" fontWeight="bold">Norm: 0.992</text>
       </g>
 
       {/* 2. False Positive (FP - Type I Error) */}
       <g
         className="cursor-pointer"
-        onMouseEnter={() => onHover("False Positive (FP - Type I Error): 14 sampel negatif keliru diprediksi positif")}
+        onMouseEnter={() => onHover("False Positive (FP - Type I Error): 14 sampel negatif keliru diprediksi positif | Nilai Ternormalisasi: 0.015")}
         onMouseLeave={() => onHover(null)}
       >
         <rect x="175" y="65" width="105" height="95" rx="8" fill="#F59E0B" fillOpacity="0.18" stroke="#F59E0B" strokeWidth="1.2" />
-        <text x="188" y="92" fill="#FBBF24" fontSize="9" fontWeight="bold">FALSE POSITIVE</text>
-        <text x="215" y="125" fill="#FFFFFF" fontSize="22" fontWeight="bold">14</text>
-        <text x="194" y="145" fill="#FDE68A" fontSize="8.5">Type I (α Error)</text>
+        <text x="186" y="88" fill="#FBBF24" fontSize="9" fontWeight="bold">FALSE POSITIVE</text>
+        <text x="210" y="118" fill="#FFFFFF" fontSize="22" fontWeight="bold">14</text>
+        <text x="188" y="136" fill="#FDE68A" fontSize="8.5">Type I (α Error)</text>
+        <text x="188" y="150" fill="#FCD34D" fontSize="8.5" fontWeight="bold">Norm: 0.015</text>
       </g>
 
       {/* 3. False Negative (FN - Type II Error) */}
       <g
         className="cursor-pointer"
-        onMouseEnter={() => onHover("False Negative (FN - Type II Error): 8 sampel positif fatal lolos diprediksi negatif")}
+        onMouseEnter={() => onHover("False Negative (FN - Type II Error): 8 sampel positif fatal lolos diprediksi negatif | Nilai Ternormalisasi: 0.008")}
         onMouseLeave={() => onHover(null)}
       >
         <rect x="60" y="170" width="105" height="95" rx="8" fill="#EF4444" fillOpacity="0.22" stroke="#EF4444" strokeWidth="1.2" />
-        <text x="72" y="197" fill="#F87171" fontSize="9" fontWeight="bold">FALSE NEGATIVE</text>
-        <text x="105" y="230" fill="#FFFFFF" fontSize="22" fontWeight="bold">8</text>
-        <text x="78" y="250" fill="#FECACA" fontSize="8.5">Type II (β Error)</text>
+        <text x="72" y="193" fill="#F87171" fontSize="9" fontWeight="bold">FALSE NEGATIVE</text>
+        <text x="100" y="223" fill="#FFFFFF" fontSize="22" fontWeight="bold">8</text>
+        <text x="75" y="241" fill="#FECACA" fontSize="8.5">Type II (β Error)</text>
+        <text x="75" y="255" fill="#FCA5A5" fontSize="8.5" fontWeight="bold">Norm: 0.008</text>
       </g>
 
       {/* 4. True Negative (TN) */}
       <g
         className="cursor-pointer"
-        onMouseEnter={() => onHover("True Negative (TN): 930 sampel negatif benar diklasifikasikan sebagai Negatif")}
+        onMouseEnter={() => onHover("True Negative (TN): 930 sampel negatif benar diklasifikasikan sebagai Negatif | Nilai Ternormalisasi: 0.985")}
         onMouseLeave={() => onHover(null)}
       >
         <rect x="175" y="170" width="105" height="95" rx="8" fill="#10B981" fillOpacity="0.32" stroke="#10B981" strokeWidth="1.5" />
-        <text x="187" y="197" fill="#34D399" fontSize="9" fontWeight="bold">TRUE NEGATIVE</text>
-        <text x="205" y="230" fill="#FFFFFF" fontSize="22" fontWeight="bold">930</text>
-        <text x="198" y="250" fill="#A7F3D0" fontSize="9">TN Rate: 98.5%</text>
+        <text x="187" y="193" fill="#34D399" fontSize="9" fontWeight="bold">TRUE NEGATIVE</text>
+        <text x="200" y="223" fill="#FFFFFF" fontSize="22" fontWeight="bold">930</text>
+        <text x="190" y="241" fill="#A7F3D0" fontSize="8.5">TN Rate: 98.5%</text>
+        <text x="190" y="255" fill="#6EE7B7" fontSize="8.5" fontWeight="bold">Norm: 0.985</text>
       </g>
 
       {/* Side Summary Diagnostic Card */}
@@ -442,9 +446,9 @@ function ConfusionMatrixSvg({ onHover }: { onHover: (info: string | null) => voi
 function VoronoiSvg({ onHover }: { onHover: (info: string | null) => void }) {
   // Centroids coordinates
   const centroids = [
-    { x: 130, y: 120, label: "Centroid μ₁: [-1.42, 1.15] Cluster Emerald", color: "#10B981" },
-    { x: 330, y: 100, label: "Centroid μ₂: [1.85, 1.40] Cluster Sky Blue", color: "#38BDF8" },
-    { x: 230, y: 220, label: "Centroid μ₃: [0.12, -1.25] Cluster Terracotta", color: "#C2553A" },
+    { x: 130, y: 120, label: "Centroid μ₁: [-1.42, 1.15] Cluster Emerald (N=120)", color: "#10B981" },
+    { x: 330, y: 100, label: "Centroid μ₂: [1.85, 1.40] Cluster Sky Blue (N=120)", color: "#38BDF8" },
+    { x: 230, y: 220, label: "Centroid μ₃: [0.12, -1.25] Cluster Terracotta (N=120)", color: "#C2553A" },
   ];
 
   return (
@@ -486,6 +490,19 @@ function VoronoiSvg({ onHover }: { onHover: (info: string | null) => void }) {
         <line key={`vx-${x}`} x1={x} y1="30" x2={x} y2="290" stroke="#27272A" strokeDasharray="3 3" opacity="0.6" />
       ))}
 
+      {/* Concentric Gaussian Density Contour Rings around Centroids */}
+      {centroids.map((c, i) => (
+        <g key={`c-density-${i}`}>
+          {/* 3-sigma outer boundary */}
+          <circle cx={c.x} cy={c.y} r="54" fill="none" stroke={c.color} strokeWidth="0.8" strokeDasharray="4 4" opacity="0.25" />
+          {/* 2-sigma intermediate contour */}
+          <circle cx={c.x} cy={c.y} r="36" fill="none" stroke={c.color} strokeWidth="1.2" strokeDasharray="3 3" opacity="0.45" />
+          {/* 1-sigma core density contour */}
+          <circle cx={c.x} cy={c.y} r="20" fill={c.color} fillOpacity="0.12" stroke={c.color} strokeWidth="1.5" opacity="0.75" />
+          <text x={c.x + 22} y={c.y - 24} fill={c.color} fontSize="7" opacity="0.75">Kontur 2σ</text>
+        </g>
+      ))}
+
       {/* Cluster 1 Points (Emerald) */}
       {[
         { x: 90, y: 80 }, { x: 140, y: 90 }, { x: 110, y: 140 }, { x: 160, y: 130 },
@@ -513,13 +530,6 @@ function VoronoiSvg({ onHover }: { onHover: (info: string | null) => void }) {
         <circle key={`p3-${i}`} cx={p.x} cy={p.y} r="3.5" fill="#C2553A" stroke="#FAF8F5" strokeWidth="1" />
       ))}
 
-      {/* Variance Rings around Centroids */}
-      {centroids.map((c, i) => (
-        <g key={`c-ring-${i}`}>
-          <circle cx={c.x} cy={c.y} r="38" fill="none" stroke={c.color} strokeWidth="1.2" strokeDasharray="3 3" opacity="0.6" />
-          <circle cx={c.x} cy={c.y} r="18" fill={c.color} fillOpacity="0.15" />
-        </g>
-      ))}
 
       {/* Centroid Targets */}
       {centroids.map((c, i) => (
