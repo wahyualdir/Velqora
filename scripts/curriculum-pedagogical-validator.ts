@@ -143,8 +143,9 @@ export function auditCurriculumPedagogy(curr: AcademicCurriculum): TopicHealthMe
   let deepCitationsCount = 0;
   let genericCitationsCount = 0;
   for (const ref of curr.primaryReferences || []) {
-    if (ref.url) {
-      const isGeneric = GENERIC_ROOT_URLS.some((r) => r.test(ref.url.trim()));
+    const url = ref.url;
+    if (url) {
+      const isGeneric = GENERIC_ROOT_URLS.some((r) => r.test(url.trim()));
       if (isGeneric) {
         genericCitationsCount++;
       } else {

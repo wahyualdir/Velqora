@@ -1,4 +1,4 @@
-import { AcademicCurriculum, AcademicChapter } from "../types";
+import { AcademicCurriculum, AcademicChapter, AcademicCitation } from "../types";
 
 /**
  * KURIKULUM AKADEMIK RESMI: SQL & BASIS DATA
@@ -86,12 +86,31 @@ ditolak: FOREIGN KEY constraint failed
 == Rencana eksekusi ==
 SCAN pesanan`;
 
+export const bab1References: AcademicCitation[] = [
+  {
+    title: "A Relational Model of Data for Large Shared Data Banks",
+    authors: ["Codd, E. F."],
+    verified: false,
+  },
+  {
+    title: "Dokumentasi resmi PostgreSQL: bagian SQL Language dan Concepts",
+    authors: ["PostgreSQL"],
+    verified: false,
+  },
+  {
+    title: "Dokumentasi resmi SQLite: Foreign Key Support dan EXPLAIN QUERY PLAN",
+    authors: ["SQLite"],
+    verified: false,
+  },
+];
+
 export const chapter01Sql: AcademicChapter = {
   id: "sql-ch-01",
   slug: "bab-1-fondasi-basis-data-relasional-arsitektur-mesin-sql",
   title: "BAB 1: Fondasi Basis Data Relasional & Arsitektur Mesin SQL",
   orderIndex: 1,
   description: "Model relasional Codd, RDBMS kontemporer (PostgreSQL, MySQL, SQLite), urutan logis evaluasi kueri, dan eksekusi kueri praktikum pertama menggunakan SQLite in-memory.",
+  references: bab1References,
   learningObjectives: [
     "Menjelaskan apa itu relasi, tuple, atribut, primary key, dan foreign key.",
     "Menjelaskan tiga operasi dasar model relasional (selection, projection, join) dan memetakannya ke sintaks SQL.",
@@ -191,6 +210,7 @@ Akibatnya, **alias kolom yang dibuat di \`SELECT\` seharusnya belum bisa dipakai
       description: "Praktikum eksekusi nyata SQLite in-memory via modul Python sqlite3: pembuatan skema DDL berelasi, DML insersi, kueri filter, join, agregasi, pembuktian urutan evaluasi, dan analisis query plan.",
       contentStatus: "imported-unverified",
       reviewStatus: "verified_with_limitations",
+      references: bab1References,
       learningObjectives: [
         "Menginisialisasi basis data SQLite in-memory dari skrip Python",
         "Mendefinisikan skema tabel dengan PRIMARY KEY dan FOREIGN KEY constraints",
@@ -380,40 +400,9 @@ export const sqlBasisDataCurriculum: AcademicCurriculum = {
   description: "Kurikulum akademik terstandarisasi untuk manipulasi, pemodelan, dan analisis data relasional: mencakup teori relasional Codd, eksekusi deklaratif SQLite & PostgreSQL, DDL/DML, Window Functions, CTEs, normalisasi skema, hingga optimasi indeks performa tinggi.",
   estimatedHours: 45,
   version: "1.0.0",
-  verifiedSourcesCount: 3,
+  verifiedSourcesCount: 0,
   auditStatus: "VERIFIED_WITH_LIMITATIONS",
-  primaryReferences: [
-    {
-      title: "A Relational Model of Data for Large Shared Data Banks",
-      authors: ["E. F. Codd"],
-      type: "paper",
-      url: "https://dl.acm.org/doi/10.1145/362384.362685",
-      sourceType: "paper",
-      provider: "Communications of the ACM",
-      relevance: "Makalah kanonikal peletak fondasi model relasional, aljabar relasional, tuple, dan independensi data fisik.",
-      verified: true
-    },
-    {
-      title: "PostgreSQL Documentation: The SQL Language & Architecture",
-      authors: ["PostgreSQL Global Development Group"],
-      type: "documentation",
-      url: "https://www.postgresql.org/docs/current/tutorial-sql.html",
-      sourceType: "official-documentation",
-      provider: "PostgreSQL Community",
-      relevance: "Dokumentasi standar acuan arsitektur mesin RDBMS, standar ANSI SQL, tipe data terstruktur, dan isolasi transaksi.",
-      verified: true
-    },
-    {
-      title: "SQLite Documentation: Query Planner, Foreign Keys, & In-Memory Databases",
-      authors: ["D. Richard Hipp", "SQLite Development Team"],
-      type: "documentation",
-      url: "https://www.sqlite.org/docs.html",
-      sourceType: "official-documentation",
-      provider: "SQLite Consortium",
-      relevance: "Dokumentasi resmi mesin serverless SQL, arsitektur VDBE, penegakan foreign key pragmas, dan analisis EXPLAIN QUERY PLAN.",
-      verified: true
-    }
-  ],
+  primaryReferences: bab1References,
   chapters: [
     chapter01Sql,
     ...outlineChaptersSql

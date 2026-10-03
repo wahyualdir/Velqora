@@ -73,10 +73,10 @@ export interface AcademicCitation {
   id?: string;
   title: string;
   authors: string[];
-  type: "book" | "paper" | "documentation" | "standard" | "course";
-  url: string;
+  type?: "book" | "paper" | "documentation" | "standard" | "course";
+  url?: string;
   doi?: string;
-  relevance: string;
+  relevance?: string;
   year?: number;
   publisherOrVenue?: string;
   accessedAt?: string;
@@ -625,6 +625,7 @@ export interface AcademicChapter {
   coreConcepts?: string[];
   terminology?: Array<{ term: string; definition: string; enTerm?: string }>;
   subchapters: AcademicSubchapter[];
+  references?: AcademicCitation[];
   exercises?: string[];
   commonPitfalls?: string[];
   caseStudy?: string;

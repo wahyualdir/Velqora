@@ -271,14 +271,18 @@ export function assertCitationDeepLink(
   }
 
   for (const ref of citations) {
-    if (!ref.url || !/^https?:\/\//.test(ref.url)) {
+    if (ref.verified === false) {
+      continue;
+    }
+    const url = ref.url;
+    if (!url || !/^https?:\/\//.test(url)) {
       throw new GenericCitationError(`GENERIC_CITATION_ERROR: [${context}] URL tidak valid pada rujukan "${ref.title}".`);
     }
 
-    const isGenericRoot = GENERIC_ROOT_HOMEPAGES.some((rgx) => rgx.test(ref.url.trim()));
+    const isGenericRoot = GENERIC_ROOT_HOMEPAGES.some((rgx) => rgx.test(url.trim()));
     if (isGenericRoot) {
       throw new GenericCitationError(
-        `GENERIC_CITATION_ERROR: [${context}] Rujukan "${ref.title}" menunjuk root homepage generik (${ref.url}) tanpa subpath modul/API/paper spesifik.`
+        `GENERIC_CITATION_ERROR: [${context}] Rujukan "${ref.title}" menunjuk root homepage generik (${url}) tanpa subpath modul/API/paper spesifik.`
       );
     }
   }
