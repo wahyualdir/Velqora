@@ -185,11 +185,11 @@ export const CATALOG_TOPICS: readonly CatalogTopic[] = [
     icon: "database",
     color: "#10B981",
     status: "in_progress",
-    badgeLabel: "Progres 3/12 Bab",
+    badgeLabel: "Progres 4/12 Bab",
     shortDescription: "Sintaks SQL analitik (Window Functions, CTEs), perancangan skema relasional, indeks, dan transaksi ACID.",
     isNew: true,
     curriculumLookup: "sql-basis-data",
-    sourceNote: "Bab 1-3 sudah diimpor (status imported-unverified). Kode diuji di SQLite 3.45.1, belum diuji di PostgreSQL; rujukan belum diverifikasi.",
+    sourceNote: "Bab 1-4 sudah diimpor (status imported-unverified). Kode diuji di SQLite 3.45.1, belum diuji di PostgreSQL; rujukan belum diverifikasi.",
     outline: [
       { chapterNumber: 1, title: "Bab 1: Fondasi Basis Data Relasional & Arsitektur Mesin SQL", description: "Model relasional Codd, RDBMS kontemporer (PostgreSQL, MySQL, SQLite), dan eksekusi kueri." },
       { chapterNumber: 2, title: "Bab 2: Data Definition Language (DDL) & Integritas Data", description: "CREATE TABLE, ALTER, DROP, tipe data skalar, primary key, foreign key, dan check constraints." },
