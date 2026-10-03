@@ -105,9 +105,9 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
 
   if (norm.includes("sql") || norm.includes("basisdata")) {
     return {
-      status: "coming_soon",
-      badgeLabel: "Segera Hadir",
-      badgeDescription: "Kurikulum SQL analitik dan basis data relasional segera hadir.",
+      status: "in_progress",
+      badgeLabel: "Progres 2/12 Bab",
+      badgeDescription: "Kurikulum SQL analitik dan basis data relasional dalam impor dan verifikasi (Bab 1 dan Bab 2 terverifikasi).",
       shortDescription: "Sintaks SQL analitik (Window Functions, CTEs), perancangan skema relasional, indeks, dan transaksi ACID.",
       isVerified: false,
     };
