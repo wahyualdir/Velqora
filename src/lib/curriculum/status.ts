@@ -107,7 +107,7 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     return {
       status: "in_progress",
       badgeLabel: "Progres 2/12 Bab",
-      badgeDescription: "Kurikulum SQL analitik dan basis data relasional dalam impor dan verifikasi (Bab 1 dan Bab 2 terverifikasi).",
+      badgeDescription: "Bab 1-2 sudah diimpor (status imported-unverified). Kode diuji di SQLite 3.45.1, belum diuji di PostgreSQL; rujukan belum diverifikasi.",
       shortDescription: "Sintaks SQL analitik (Window Functions, CTEs), perancangan skema relasional, indeks, dan transaksi ACID.",
       isVerified: false,
     };
@@ -374,8 +374,8 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
   if (norm.includes("sql") || norm.includes("basisdata") || norm.includes("database")) {
     return {
       status: "in_progress",
-      badgeLabel: "Progres 1/12 Bab",
-      badgeDescription: "Kurikulum basis data relasional & SQL: Bab 1 terverifikasi (model relasional & SQLite praktikum), Bab 2-12 dalam penyusunan.",
+      badgeLabel: "Progres 2/12 Bab",
+      badgeDescription: "Bab 1-2 sudah diimpor (status imported-unverified). Kode diuji di SQLite 3.45.1, belum diuji di PostgreSQL; rujukan belum diverifikasi.",
       shortDescription: "Sintaks SQL analitik (Window Functions, CTEs), model relasional Codd, kueri praktikum SQLite, dan transaksi ACID.",
       isVerified: false,
     };
