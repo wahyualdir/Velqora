@@ -31,10 +31,10 @@ import {
 } from "../pilot-content";
 
 describe("Phase 2: Complete Academic Curriculum Reconstruction (All Topics)", () => {
-  it("Harus memuat seluruh kurikulum akademik topik AI & Data Science terdaftar (30 Kurikulum Fisik)", () => {
-    assert.equal(ALL_ACADEMIC_CURRICULA.length, 30);
+  it("Harus memuat seluruh kurikulum akademik topik AI & Data Science terdaftar (31 Kurikulum Fisik)", () => {
+    assert.equal(ALL_ACADEMIC_CURRICULA.length, 31);
     const overview = getAllCurriculumOverview();
-    assert.equal(overview.length, 30);
+    assert.equal(overview.length, 31);
   });
 
   it("Setiap topik harus memiliki ID dan Slug unik tanpa duplikasi", () => {
@@ -146,6 +146,7 @@ describe("Phase 2: Complete Academic Curriculum Reconstruction (All Topics)", ()
       { query: "Speech & Audio AI", expectedId: "speech-audio-ai" },
       { query: "Time Series Forecasting & Anomaly Detection", expectedId: "time-series-forecasting" },
       { query: "Vector Database & Retrieval System", expectedId: "vector-database-retrieval" },
+      { query: "SQL & Basis Data", expectedId: "sql-basis-data" },
     ];
 
     for (const { query, expectedId } of testCases) {

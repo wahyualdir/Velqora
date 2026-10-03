@@ -29,6 +29,7 @@ import { timeSeriesForecastingCurriculum } from "./topics/27-time-series-forecas
 import { vectorDatabaseRetrievalCurriculum } from "./topics/28-vector-database-retrieval";
 import { matematikaStatistikaCurriculum } from "./topics/29-matematika-statistika";
 import { explainableAiCurriculum } from "./topics/30-explainable-ai";
+import { sqlBasisDataCurriculum } from "./topics/31-sql-basis-data";
 
 // AI Fundamentals kini telah diremediasi penuh menjadi kurikulum substantif mandiri
 export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = aiFundamentalsCurriculum;
@@ -36,7 +37,7 @@ export const enrichedAiFundamentalsCurriculum: AcademicCurriculum = aiFundamenta
 // Machine Learning kini telah diremediasi penuh menjadi kurikulum substantif mandiri (32 Bab Lengkap)
 export const enrichedMachineLearningCurriculum: AcademicCurriculum = machineLearningCurriculum;
 
-export { matematikaStatistikaCurriculum, explainableAiCurriculum };
+export { matematikaStatistikaCurriculum, explainableAiCurriculum, sqlBasisDataCurriculum };
 
 /**
  * Registri Terpusat Seluruh 30 Kurikulum Akademik Kecerdasan Buatan Velqora.
@@ -74,6 +75,7 @@ export const ALL_ACADEMIC_CURRICULA: readonly AcademicCurriculum[] = [
   vectorDatabaseRetrievalCurriculum,
   matematikaStatistikaCurriculum,
   explainableAiCurriculum,
+  sqlBasisDataCurriculum,
 ];
 
 /**
@@ -254,6 +256,13 @@ const topicAliases: Record<string, AcademicCurriculum> = {
   "matematika & statistika untuk ai": matematikaStatistikaCurriculum,
   "matematika & statistika": matematikaStatistikaCurriculum,
   "matematika statistika": matematikaStatistikaCurriculum,
+  "sql & basis data": sqlBasisDataCurriculum,
+  "sql & basis data (baru)": sqlBasisDataCurriculum,
+  "sql and basis data": sqlBasisDataCurriculum,
+  "sql": sqlBasisDataCurriculum,
+  "basis data": sqlBasisDataCurriculum,
+  "basis data relasional": sqlBasisDataCurriculum,
+  "database": sqlBasisDataCurriculum,
 };
 
 for (const [alias, curr] of Object.entries(topicAliases)) {
