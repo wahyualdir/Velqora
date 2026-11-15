@@ -10,22 +10,13 @@ import { DesktopDashboardView } from "@/surfaces/web/dashboard/desktop-dashboard
 import { MobileDashboardView } from "@/surfaces/app/dashboard/mobile-dashboard-view";
 import { DashboardAnalyticsTab } from "@/surfaces/web/dashboard/dashboard-analytics-tab";
 import { SurfaceAdaptive } from "@/components/layout/surface-adaptive";
+import type { DashboardStatsData } from "@/surfaces/web/dashboard/dashboard-utils";
 import { cn } from "@/lib/utils";
-
-interface DashboardStatsState {
-  totalMateri: number;
-  totalTugas: number;
-  totalModul: number;
-  totalFile: number;
-  recentViews: any[];
-  recentTasks: any[];
-  recentModules: any[];
-}
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"overview" | "statistik">("overview");
-  const [stats, setStats] = useState<DashboardStatsState>({
+  const [stats, setStats] = useState<DashboardStatsData>({
     totalMateri: 0,
     totalTugas: 0,
     totalModul: 0,
@@ -33,11 +24,12 @@ export default function DashboardPage() {
     recentViews: [],
     recentTasks: [],
     recentModules: [],
+    todaySchedules: [],
+    upcomingSchedules: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Baca query parameter ?tab=statistik saat inisialisasi client
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
@@ -47,11 +39,21 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const handleTabChange = useCallback((nextTab: "overview" | "statistik") => {
+    setActiveTab(nextTab);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(
+        null,
+        "",
+        nextTab === "statistik" ? "/dashboard?tab=statistik" : "/dashboard"
+      );
+    }
+  }, []);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // 1. Fetch authenticated user profile for natural greeting
       const supabase = createClient();
       const {
         data: { user },
@@ -67,10 +69,13 @@ export default function DashboardPage() {
         setUserName(name);
       }
 
-      // 2. Fetch real dashboard stats and records
       const data = await getDashboardStats();
       if (data) {
-        setStats(data);
+        setStats({
+          ...data,
+          todaySchedules: data.todaySchedules || [],
+          upcomingSchedules: data.upcomingSchedules || [],
+        });
       }
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
@@ -94,58 +99,48 @@ export default function DashboardPage() {
 
   return (
     <PageContainer className="p-0 sm:p-0 lg:p-0 max-w-none">
-      {/* ─── Dashboard Tab Switcher: Ikhtisar vs Statistik Belajar ─── */}
-      <div className="mb-4 sm:mb-5 flex items-center justify-between gap-3 flex-wrap">
+      {/* ─── Compact Mobile Switcher ONLY (<768px). On Desktop/Tablet, tabs live inside DashboardHeader ─── */}
+      <div className="mb-4 flex md:hidden items-center justify-between gap-3 flex-wrap">
         <div
           role="tablist"
-          aria-label="Mode Tampilan Dashboard"
+          aria-label="Mode Tampilan Dashboard Mobile"
           className="inline-flex items-center gap-1.5 bg-[#F3EFE9] dark:bg-[#141210] p-1 rounded-xl border border-[#E4DDD4] dark:border-[#292524] text-xs font-mono select-none"
         >
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === "overview"}
-            onClick={() => {
-              setActiveTab("overview");
-              if (typeof window !== "undefined") {
-                window.history.replaceState(null, "", "/dashboard");
-              }
-            }}
+            onClick={() => handleTabChange("overview")}
             className={cn(
               "px-3.5 py-1.5 font-semibold transition-all cursor-pointer rounded-lg flex items-center gap-1.5",
               activeTab === "overview"
                 ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
-                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#FFFFFF]/60 dark:hover:bg-[#1C1917]"
+                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
             )}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Ikhtisar Belajar</span>
+            <span>Ikhtisar</span>
           </button>
 
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === "statistik"}
-            onClick={() => {
-              setActiveTab("statistik");
-              if (typeof window !== "undefined") {
-                window.history.replaceState(null, "", "/dashboard?tab=statistik");
-              }
-            }}
+            onClick={() => handleTabChange("statistik")}
             className={cn(
               "px-3.5 py-1.5 font-semibold transition-all cursor-pointer rounded-lg flex items-center gap-1.5",
               activeTab === "statistik"
                 ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
-                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#FFFFFF]/60 dark:hover:bg-[#1C1917]"
+                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
             )}
           >
             <BarChart3 className="w-3.5 h-3.5" />
-            <span>Statistik Belajar</span>
+            <span>Statistik</span>
           </button>
         </div>
       </div>
 
-      {/* ─── Error State (Humane & Actionable) ─── */}
+      {/* ─── Error State ─── */}
       {error && (
         <div className="mb-4 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 flex items-center justify-between gap-3 text-xs sm:text-sm text-rose-600 dark:text-rose-400">
           <div className="flex items-center gap-2">
@@ -164,29 +159,31 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ─── Tab View Rendering ─── */}
-      {activeTab === "statistik" ? (
-        <DashboardAnalyticsTab />
-      ) : (
-        <SurfaceAdaptive
-          web={
-            <DesktopDashboardView
-              userName={userName}
-              stats={stats}
-              loading={loading}
-              isBrandNewWorkspace={isBrandNewWorkspace}
-            />
-          }
-          app={
+      {/* ─── Surface Rendering ─── */}
+      <SurfaceAdaptive
+        web={
+          <DesktopDashboardView
+            userName={userName}
+            stats={stats}
+            loading={loading}
+            isBrandNewWorkspace={isBrandNewWorkspace}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
+        }
+        app={
+          activeTab === "statistik" ? (
+            <DashboardAnalyticsTab />
+          ) : (
             <MobileDashboardView
               userName={userName}
               stats={stats}
               loading={loading}
               onRefresh={loadData}
             />
-          }
-        />
-      )}
+          )
+        }
+      />
     </PageContainer>
   );
 }

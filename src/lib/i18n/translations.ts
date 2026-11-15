@@ -19,6 +19,8 @@ export const translations = {
 
     // Sidebar Links
     navDashboard: "Dashboard",
+    navJadwal: "Jadwal Belajar",
+    navTugas: "Tugas & Tenggat",
     navPanduan: "Panduan",
     navStatistik: "Statistik Belajar",
     navKatalogModul: "Katalog Modul",
@@ -109,6 +111,8 @@ export const translations = {
 
     // Sidebar Links
     navDashboard: "Dashboard",
+    navJadwal: "Study Schedule",
+    navTugas: "Tasks & Deadlines",
     navPanduan: "Guide",
     navStatistik: "Learning Statistics",
     navKatalogModul: "Module Catalog",

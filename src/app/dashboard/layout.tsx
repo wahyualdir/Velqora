@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileTopBar } from "@/surfaces/app/layout/mobile-top-bar";
 import { MobileBottomNav } from "@/surfaces/app/layout/mobile-bottom-nav";
+import { DesktopTopBar } from "@/surfaces/web/layout/desktop-top-bar";
 import { TechBackground } from "@/components/ui/tech-background";
 import { DashboardFooter, MinimalCopyright } from "@/components/layout/watermark-footer";
 import { CommandPalette } from "@/components/layout/command-palette";
@@ -26,6 +27,7 @@ export default function DashboardLayout({
   // Exact check: ONLY "/dashboard" gets full rich footer; every other route gets MinimalCopyright
   const isDashboardHome = pathname === "/dashboard";
   const isDocReader = pathname.includes("/dashboard/modul/kategori/");
+  const isPlayground = pathname.startsWith("/dashboard/playground");
 
   useEffect(() => {
     trackUserVisit();
@@ -65,7 +67,7 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="relative min-h-dvh flex bg-transparent overflow-x-hidden">
+    <div className="relative min-h-dvh flex bg-transparent overflow-x-clip">
       {/* Precision technical canvas background */}
       <TechBackground />
 
@@ -96,37 +98,51 @@ export default function DashboardLayout({
           isDocReader && "md:pl-0 lg:pl-0"
         )}
       >
-        {/* Responsive Header: Mobile Top Bar ONLY on Mobile (<768px). Hidden on Tablet+ & Doc Reader! */}
+        {/* Responsive Header: Mobile Top Bar on Mobile (<768px) + Desktop Top Workspace Bar on Tablet/Desktop (>=768px) */}
         {!isDocReader && (
-          isApp ? (
+          <>
             <div className="block md:hidden">
               <MobileTopBar
                 onOpenSearch={() => setCommandPaletteOpen(true)}
                 onOpenMenu={() => setSidebarOpen(true)}
               />
             </div>
-          ) : (
-            <div className="block md:hidden">
-              <MobileTopBar
-                onOpenSearch={() => setCommandPaletteOpen(true)}
-                onOpenMenu={() => setSidebarOpen(true)}
+            <div className="hidden md:block">
+              <DesktopTopBar
+                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+                onToggleSidebar={handleToggleCollapse}
+                onOpenDrawer={() => setSidebarOpen(true)}
+                isSidebarCollapsed={sidebarCollapsed}
               />
             </div>
-          )
+          </>
         )}
 
         <main
           className={cn(
-            "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-dvh",
-            isDocReader
-              ? "max-w-none p-0 m-0 w-full min-h-dvh"
-              : isApp
-              ? "max-w-2xl md:max-w-[1560px] px-3 sm:px-5 md:px-6 lg:px-8 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8"
-              : "max-w-[1560px] px-3 sm:px-5 md:px-6 lg:px-8 xl:px-10 py-3.5 sm:py-5 lg:py-7 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8"
+            "flex-1 w-full mx-auto animate-fade-in flex flex-col",
+            isPlayground
+              ? "max-w-none px-3 sm:px-4 lg:px-5 py-2.5 lg:py-3 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-3 lg:h-[calc(100dvh-3.5625rem)] lg:max-h-[calc(100dvh-3.5625rem)] lg:overflow-hidden"
+              : "justify-between min-h-dvh",
+            !isPlayground &&
+              (isDocReader
+                ? "max-w-none p-0 m-0 w-full min-h-dvh"
+                : isApp
+                ? "max-w-2xl md:max-w-[1560px] px-3 sm:px-5 md:px-6 lg:px-8 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8"
+                : "max-w-[1560px] px-3 sm:px-5 md:px-6 lg:px-8 xl:px-10 py-3.5 sm:py-5 lg:py-7 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8")
           )}
         >
-          <div className="flex-1 min-w-0">{children}</div>
-          {!isDocReader && (isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />)}
+          <div
+            className={cn(
+              "flex-1 min-w-0",
+              isPlayground && "flex flex-col min-h-0"
+            )}
+          >
+            {children}
+          </div>
+          {!isDocReader &&
+            !isPlayground &&
+            (isDashboardHome ? <DashboardFooter /> : <MinimalCopyright />)}
         </main>
       </div>
 

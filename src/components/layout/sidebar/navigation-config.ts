@@ -101,6 +101,9 @@ export const categoryTitleMap: Record<string, TranslationKey> = {
 
 export const linkLabelMap: Record<string, TranslationKey> = {
   Dashboard: "navDashboard",
+  "Jadwal Belajar": "navJadwal",
+  "Tugas & Tenggat": "navTugas",
+  "Catatan Belajar": "navCatatan",
   "Katalog Modul": "navKatalogModul",
   "Katalog Kode": "navKatalogKode",
   "Materi Pembelajaran": "navMateri",

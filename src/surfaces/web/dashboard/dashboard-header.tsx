@@ -1,71 +1,117 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, BookOpen, CheckSquare, Sparkles } from "lucide-react";
-import { OSWindow } from "@/components/os/os-window";
+import { Plus, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  DashboardCategoryFilter,
+  getCurrentAcademicPeriod,
+} from "./dashboard-utils";
 
 interface DashboardHeaderProps {
   userName?: string;
+  totalModul?: number;
+  activeFilter: DashboardCategoryFilter;
+  onFilterChange: (filter: DashboardCategoryFilter) => void;
 }
 
-export function DashboardHeader({ userName }: DashboardHeaderProps) {
+const FILTER_TABS: Array<{ id: DashboardCategoryFilter; label: string }> = [
+  { id: "semua", label: "Semua" },
+  { id: "modul", label: "Modul & Kelas" },
+  { id: "tugas", label: "Tugas dan Kuis" },
+  { id: "ujian", label: "Ujian & Lab" },
+  { id: "jadwal", label: "Jadwal" },
+  { id: "statistik", label: "Statistik" },
+];
+
+export function DashboardHeader({
+  userName,
+  totalModul = 0,
+  activeFilter,
+  onFilterChange,
+}: DashboardHeaderProps) {
+  const [semesterLabel, setSemesterLabel] = useState("Semester Ganjil 2026/2027");
   const displayName = userName?.trim() ? userName.trim() : null;
 
+  useEffect(() => {
+    setSemesterLabel(getCurrentAcademicPeriod(new Date()).semesterLabel);
+  }, []);
+
   return (
-    <OSWindow
-      title="WORKSPACE // SESI AKADEMIK AKTIF"
-      icon={<Sparkles className="w-4 h-4" />}
-      statusText="REPOSITORI & JADWAL DISINKRONISASI"
-      className="shadow-sm"
-      bodyClassName="p-5 sm:p-6 bg-[#FFFFFF] dark:bg-[#141210] text-[#1C1917] dark:text-[#F5F5F4] flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono"
-    >
-      <div className="space-y-1.5 font-mono">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#D4664A] border border-[#C2553A]/20 dark:border-[#D4664A]/30">
-            WORKSPACE // DASHBOARD KULIAH
-          </span>
+    <section className="space-y-4">
+      {/* Eyebrow + Title + Soft Counter Pill */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div className="space-y-1.5 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono font-bold uppercase tracking-[0.12em] text-[#5C554E] dark:text-[#A8A29E]">
+            <span>PORTAL AKADEMIK MAHASISWA</span>
+            <span aria-hidden="true">•</span>
+            <span className="text-[#C2553A] dark:text-[#D4664A]">{semesterLabel}</span>
+            {displayName && (
+              <>
+                <span aria-hidden="true" className="hidden md:inline">•</span>
+                <span className="hidden md:inline truncate max-w-[200px]">
+                  {displayName}
+                </span>
+              </>
+            )}
+          </div>
+
+          <h1 className="text-2xl sm:text-[28px] lg:text-[31px] font-extrabold font-display text-[#1C1917] dark:text-[#F5F5F4] tracking-tight leading-tight">
+            Ruang Pembelajaran Mahasiswa
+          </h1>
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold font-sans text-[#1C1917] dark:text-[#F5F5F4] tracking-tight">
-          {displayName ? `Selamat datang kembali, ${displayName}.` : "Selamat datang di Velqora."}
-        </h1>
-        <p className="text-xs text-[#524B42] dark:text-[#A8A29E] leading-relaxed max-w-2xl font-sans">
-          Lanjutkan modul perkuliahan aktif, pantau tenggat tugas semester, atau eksplorasi kode di playground.
-        </p>
+
+        {/* Counter Pill + Optional Quick Add */}
+        <div className="flex items-center gap-2 flex-wrap shrink-0">
+          <Link
+            href="/dashboard/modul"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FAF3EF] dark:bg-[#D4664A]/15 border border-[#C2553A]/20 dark:border-[#D4664A]/30 text-[#C2553A] dark:text-[#D4664A] text-xs font-bold font-mono hover:bg-[#F5E7DF] dark:hover:bg-[#D4664A]/22 transition-colors whitespace-nowrap"
+          >
+            <Layers className="w-3.5 h-3.5 shrink-0" />
+            <span>{totalModul} Modul &amp; Mata Kuliah Aktif</span>
+          </Link>
+
+          <Link
+            href="/dashboard/modul/baru"
+            className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:border-[#C2553A]/35 text-xs font-semibold transition-colors"
+            title="Tambah Modul / Mata Kuliah Baru"
+          >
+            <Plus className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+            <span>Baru</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Curated Primary Quick Actions */}
-      <div className="flex items-center gap-2 flex-wrap shrink-0 font-mono">
-        <Link href="/dashboard/modul/baru">
-          <button
-            type="button"
-            className="px-3.5 py-2 vt-btn-terracotta rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Tambah Modul</span>
-          </button>
-        </Link>
-
-        <Link href="/dashboard/materi/baru">
-          <button
-            type="button"
-            className="px-3.5 py-2 vt-btn-chrome rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
-            <span>Unggah Materi</span>
-          </button>
-        </Link>
-
-        <Link href="/dashboard/tugas/baru">
-          <button
-            type="button"
-            className="px-3.5 py-2 vt-btn-chrome rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
-          >
-            <CheckSquare className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
-            <span>Buat Tugas</span>
-          </button>
-        </Link>
+      {/* Segmented Category Filter Pill Bar matching reference portal tabs */}
+      <div className="overflow-x-auto scrollbar-none touch-pan-x -mx-1 px-1 pb-0.5">
+        <div
+          role="tablist"
+          aria-label="Filter Ruang Pembelajaran"
+          className="inline-flex items-center gap-1 p-1.5 rounded-2xl bg-[#F3EFE9] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] min-w-max select-none"
+        >
+          {FILTER_TABS.map((tab) => {
+            const isSelected = activeFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                onClick={() => onFilterChange(tab.id)}
+                className={cn(
+                  "px-3.5 sm:px-4 py-1.5 rounded-xl text-xs sm:text-[13px] font-sans transition-all cursor-pointer whitespace-nowrap",
+                  isSelected
+                    ? "bg-[#1C1917] text-[#FAF8F5] dark:bg-[#F5F5F4] dark:text-[#141210] font-bold shadow-xs"
+                    : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#FFFFFF]/70 dark:hover:bg-[#1C1917] font-medium"
+                )}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
-    </OSWindow>
+    </section>
   );
 }

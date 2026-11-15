@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SIDEBAR_CATEGORIES, NavItem } from "@/lib/constants";
 import {
-  ChevronLeft,
   ChevronRight,
   Crown,
   ShieldCheck,
@@ -375,10 +374,10 @@ export function Sidebar({
             isCollapsed ? "w-[68px]" : "w-[245px]"
           )}
         >
-          {/* Desktop Header: Brand + Quick Actions */}
+          {/* Desktop Header: Brand Aligned flush with DesktopTopBar (h-14) */}
           <div
             className={cn(
-              "h-12 px-3.5 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center shrink-0 bg-[#F3EFE9]/75 dark:bg-[#141210] transition-all duration-200",
+              "h-14 px-3.5 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center shrink-0 bg-[#FAF8F5] dark:bg-[#100E0D] transition-all duration-200",
               isCollapsed ? "justify-center" : "justify-between"
             )}
           >
@@ -388,44 +387,10 @@ export function Sidebar({
                 "flex items-center gap-2 focus-visible:outline-none rounded-lg p-0.5 min-w-0 overflow-hidden",
                 isCollapsed && "justify-center"
               )}
-              title="Velqora Dashboard"
+              title="Velqora — Portal Akademik Terpadu"
             >
               <Logo variant="sidebar" hideText={isCollapsed} />
             </Link>
-
-            {/* Actions when Expanded: Theme Toggle + Collapse Button */}
-            {!isCollapsed && (
-              <div className="flex items-center gap-1.5 shrink-0">
-                {mounted && (
-                  <button
-                    type="button"
-                    onClick={toggleTheme}
-                    className="vt-btn-chrome w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
-                    title={resolvedTheme === "dark" ? "Mode Terang (Light)" : "Mode Gelap (Dark)"}
-                    aria-label="Ganti Tema"
-                  >
-                    {resolvedTheme === "dark" ? (
-                      <Sun className="w-3.5 h-3.5 text-[#E5C194]" />
-                    ) : (
-                      <Moon className="w-3.5 h-3.5 text-[#C2553A]" />
-                    )}
-                  </button>
-                )}
-
-                {onToggleCollapse && (
-                  <button
-                    type="button"
-                    onClick={onToggleCollapse}
-                    aria-label="Toggle sidebar"
-                    aria-expanded={!isCollapsed}
-                    className="vt-btn-chrome w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
-                    title="Kecilkan Sidebar (Collapse)"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Toggle Expand Bar when Collapsed */}
@@ -436,7 +401,7 @@ export function Sidebar({
                 onClick={onToggleCollapse}
                 aria-label="Toggle sidebar"
                 aria-expanded={!isCollapsed}
-                className="vt-btn-chrome w-full flex items-center justify-center h-7 rounded-lg cursor-pointer"
+                className="vt-btn-chrome w-full flex items-center justify-center h-7.5 rounded-lg cursor-pointer"
                 title="Buka Penuh Sidebar (Expand)"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -444,58 +409,41 @@ export function Sidebar({
             </div>
           )}
 
-          {/* Desktop Search Trigger */}
-          {onOpenCommandPalette && (
-            <div className={cn("shrink-0", isCollapsed ? "px-2 pt-2" : "px-3 pt-2.5 pb-1")}>
-              {!isCollapsed ? (
-                <button
-                  type="button"
-                  onClick={onOpenCommandPalette}
-                  className="w-full flex items-center justify-between gap-2 px-3 h-8.5 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 transition-colors text-xs font-mono text-left cursor-pointer group"
-                  title="Pencarian Cepat (Ctrl + K)"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Search className="w-3.5 h-3.5 shrink-0 text-[#8A8378] dark:text-[#8C857F] group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] transition-colors" />
-                    <span className="truncate">Cari...</span>
-                  </div>
-                  <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9] dark:bg-[#1C1917] text-[9.5px] font-mono text-[#524B42] dark:text-[#A8A29E] shrink-0">
-                    <Command className="w-2.5 h-2.5" />
-                    <span>K</span>
-                  </div>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={onOpenCommandPalette}
-                  className="w-8.5 h-8.5 mx-auto rounded-xl flex items-center justify-center bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#8A8378] dark:text-[#8C857F] hover:text-[#C2553A] dark:hover:text-[#D4664A] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 transition-colors cursor-pointer"
-                  title="Pencarian Cepat (Ctrl + K)"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                </button>
-              )}
+          {/* Compact Search Trigger only when Collapsed (Expanded mode uses DesktopTopBar Spotlight Search) */}
+          {isCollapsed && onOpenCommandPalette && (
+            <div className="px-2 pt-2 shrink-0">
+              <button
+                type="button"
+                onClick={onOpenCommandPalette}
+                className="w-8.5 h-8.5 mx-auto rounded-xl flex items-center justify-center bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#8A8378] dark:text-[#8C857F] hover:text-[#C2553A] dark:hover:text-[#D4664A] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 transition-colors cursor-pointer"
+                title="Pencarian Cepat (Ctrl + K)"
+              >
+                <Search className="w-3.5 h-3.5" />
+              </button>
             </div>
           )}
 
-          {/* Desktop Navigation List (Flat structured per Category) */}
+          {/* Desktop Navigation List (Clean Editorial Academic Portal Grouping) */}
           <nav
             aria-label="Navigasi Utama Desktop"
-            className="flex-1 px-2.5 py-3 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain"
+            className="flex-1 px-3 py-3.5 space-y-4 overflow-y-auto sidebar-nav-scroll overscroll-contain"
           >
             {SIDEBAR_CATEGORIES.map((category) => {
               const catKey = categoryTitleMap[category.title];
               const translatedCatTitle =
                 catKey && t(catKey) && t(catKey) !== catKey ? t(catKey) : category.title;
+              const isTopPrimaryGroup = category.title === "Utama";
 
               return (
                 <div key={category.title} className="space-y-1">
-                  {/* Category Header */}
-                  {!isCollapsed && (
-                    <div className="px-2.5 pt-1 pb-0.5 font-mono text-[10px] font-semibold text-[#8A8378] dark:text-[#8C857F] uppercase tracking-wider">
+                  {/* Category Header (omit redundant label on top primary group to match reference cleanly) */}
+                  {!isCollapsed && !isTopPrimaryGroup && (
+                    <div className="px-2.5 pt-1 pb-1 font-mono text-[10px] font-bold text-[#8A8378] dark:text-[#8C857F] uppercase tracking-[0.14em]">
                       {translatedCatTitle}
                     </div>
                   )}
 
-                  {/* Flat Menu Items */}
+                  {/* Menu Items */}
                   <div className="space-y-0.5">
                     {category.links.map((link) => {
                       const Icon = iconMap[link.icon];
@@ -511,10 +459,10 @@ export function Sidebar({
                         <div key={link.href} className="relative group space-y-0.5">
                           <div
                             className={cn(
-                              "flex items-center rounded-lg transition-all duration-150",
+                              "flex items-center rounded-xl transition-all duration-150",
                               isActive
-                                ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
-                                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent font-medium"
+                                ? "bg-[#C2553A] dark:bg-[#D4664A] text-[#FFFBF8] shadow-xs font-semibold"
+                                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] font-medium"
                             )}
                           >
                             <Link
@@ -523,14 +471,14 @@ export function Sidebar({
                               className={cn(
                                 "relative flex items-center transition-all duration-150 flex-1 min-w-0 focus-visible:outline-none",
                                 isCollapsed
-                                  ? "justify-center w-8.5 h-8.5 mx-auto"
-                                  : "gap-2.5 px-2.5 h-8.5"
+                                  ? "justify-center w-9 h-9 mx-auto"
+                                  : "gap-2.5 px-3 h-9"
                               )}
                             >
                               {Icon && (
                                 <Icon
                                   className={cn(
-                                    "w-3.5 h-3.5 shrink-0 transition-colors",
+                                    "w-4 h-4 shrink-0 transition-colors",
                                     isActive
                                       ? "text-[#FFFBF8]"
                                       : isAiItem
@@ -541,7 +489,12 @@ export function Sidebar({
                               )}
 
                               {!isCollapsed && (
-                                <span className="truncate flex-1 font-sans text-[13px] font-medium leading-none">
+                                <span
+                                  className={cn(
+                                    "truncate flex-1 font-sans text-[13px] leading-none",
+                                    isActive ? "font-semibold" : "font-medium"
+                                  )}
+                                >
                                   {translatedLabel}
                                 </span>
                               )}
@@ -577,7 +530,7 @@ export function Sidebar({
             {(isAdmin || isOwner) && (
               <div className="pt-2.5 border-t border-[#E4DDD4] dark:border-[#292524] space-y-1">
                 {!isCollapsed && (
-                  <div className="px-2.5 pb-0.5 font-mono text-[10px] font-semibold text-[#C2553A] dark:text-[#D4664A] uppercase tracking-wider flex items-center justify-between">
+                  <div className="px-2.5 pb-0.5 font-mono text-[10px] font-bold text-[#C2553A] dark:text-[#D4664A] uppercase tracking-[0.14em] flex items-center justify-between">
                     <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
                     <Crown className="w-3 h-3 text-[#C2553A] dark:text-[#D4664A]" />
                   </div>
@@ -590,17 +543,17 @@ export function Sidebar({
                         href="/dashboard/kelola-role"
                         aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                         className={cn(
-                          "relative flex items-center transition-all duration-150 flex-1 min-w-0 rounded-lg font-sans text-[13px] font-medium",
+                          "relative flex items-center transition-all duration-150 flex-1 min-w-0 rounded-xl font-sans text-[13px]",
                           "focus-visible:outline-none",
                           isCollapsed
-                            ? "justify-center w-8.5 h-8.5 mx-auto"
-                            : "gap-2.5 px-2.5 h-8.5",
+                            ? "justify-center w-9 h-9 mx-auto"
+                            : "gap-2.5 px-3 h-9",
                           pathname.startsWith("/dashboard/kelola-role")
-                            ? "bg-[#C2553A] text-[#FFFBF8] font-semibold border border-[#D4664A]/40 shadow-xs"
-                            : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent"
+                            ? "bg-[#C2553A] dark:bg-[#D4664A] text-[#FFFBF8] font-semibold shadow-xs"
+                            : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] font-medium"
                         )}
                       >
-                        <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                        <ShieldCheck className="w-4 h-4 shrink-0" />
                         {!isCollapsed && (
                           <span className="truncate leading-snug">Kelola Hak Akses</span>
                         )}
@@ -619,17 +572,17 @@ export function Sidebar({
                       href="/dashboard/peta-pengguna"
                       aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                       className={cn(
-                        "relative flex items-center transition-all duration-150 flex-1 min-w-0 rounded-lg font-sans text-[13px] font-medium",
+                        "relative flex items-center transition-all duration-150 flex-1 min-w-0 rounded-xl font-sans text-[13px]",
                         "focus-visible:outline-none",
                         isCollapsed
-                          ? "justify-center w-8.5 h-8.5 mx-auto"
-                          : "gap-2.5 px-2.5 h-8.5",
+                          ? "justify-center w-9 h-9 mx-auto"
+                          : "gap-2.5 px-3 h-9",
                         pathname.startsWith("/dashboard/peta-pengguna")
-                          ? "bg-[#C2553A] text-[#FFFBF8] font-semibold border border-[#D4664A]/40 shadow-xs"
-                          : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent"
+                          ? "bg-[#C2553A] dark:bg-[#D4664A] text-[#FFFBF8] font-semibold shadow-xs"
+                          : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] font-medium"
                       )}
                     >
-                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      <MapPin className="w-4 h-4 shrink-0" />
                       {!isCollapsed && (
                         <span className="truncate leading-snug">Peta Pengguna</span>
                       )}
@@ -646,35 +599,14 @@ export function Sidebar({
             )}
           </nav>
 
-          {/* Desktop Footer: Notifications + Theme (when collapsed) + UserProfileMenu */}
+          {/* Desktop Footer: Contained Academic Profile Card (compact rail retains notification & theme controls) */}
           <div
             className={cn(
-              "border-t border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9]/75 dark:bg-[#141210] shrink-0 transition-all duration-200",
-              isCollapsed ? "p-2 space-y-2 flex flex-col items-center" : "p-3 space-y-2.5"
+              "border-t border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#100E0D] shrink-0 transition-all duration-200",
+              isCollapsed ? "p-2 space-y-2 flex flex-col items-center" : "p-3"
             )}
           >
-            {!isCollapsed ? (
-              <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-2">
-                  <NotificationCenter
-                    dropdownPosition="top"
-                    align="left"
-                    buttonClassName="vt-btn-chrome p-1.5 rounded-lg"
-                  />
-                  <span className="font-mono text-[10px] text-[#8A8378] dark:text-[#8C857F]">
-                    Notifikasi
-                  </span>
-                </div>
-
-                <div
-                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FFFFFF] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] text-[9.5px] font-mono text-emerald-700 dark:text-[#34D399] uppercase font-semibold"
-                  title="Sistem Terhubung"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#059669] dark:bg-[#34D399]" />
-                  Online
-                </div>
-              </div>
-            ) : (
+            {isCollapsed && (
               <div className="flex flex-col items-center gap-1.5 w-full">
                 <NotificationCenter
                   dropdownPosition="top"

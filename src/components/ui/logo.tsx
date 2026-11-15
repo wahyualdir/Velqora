@@ -122,6 +122,7 @@ export interface LogoProps {
   markVariant?: "primary" | "monochrome" | "white" | "dark" | "outline" | "tile";
   withTile?: boolean;
   showSubtitle?: boolean;
+  subtitle?: string;
   hideText?: boolean;
 }
 
@@ -132,6 +133,7 @@ export function Logo({
   markVariant = "primary",
   withTile = false,
   showSubtitle = true,
+  subtitle = "Portal Akademik Terpadu",
   hideText = false,
 }: LogoProps) {
   // Size tokens
@@ -170,18 +172,20 @@ export function Logo({
     );
   }
 
-  // Sidebar Header Variant (Calm, confident, perfectly proportioned 38-42px)
+  // Sidebar Header Variant (Calm, confident, Portal Akademik Identity)
   if (variant === "sidebar") {
     return (
       <div className={cn("flex items-center gap-2.5 min-w-0 select-none", className)}>
-        <VelqoraMark size={24} variant={markVariant} withTile={withTile} className="shrink-0" />
+        <div className="w-8 h-8 rounded-xl bg-[#FAF3EF] dark:bg-[#D4664A]/15 border border-[#C2553A]/20 dark:border-[#D4664A]/30 flex items-center justify-center shrink-0">
+          <VelqoraMark size={20} variant={markVariant} withTile={withTile} />
+        </div>
         <div className="flex flex-col min-w-0">
-          <span className="text-sm font-bold text-text-primary leading-tight font-display tracking-tight">
-            Vel<span className="text-brand-500">qora</span>
+          <span className="text-[15px] font-extrabold text-[#1C1917] dark:text-[#F5F5F4] leading-tight font-display tracking-tight">
+            Vel<span className="text-[#C2553A] dark:text-[#D4664A]">qora</span>
           </span>
           {showSubtitle && (
-            <span className="text-[8.5px] font-mono text-text-tertiary leading-none mt-0.5 uppercase tracking-[0.15em] font-semibold">
-              LEARNING PLATFORM
+            <span className="text-[10px] font-sans text-[#6B6560] dark:text-[#A8A29E] leading-tight truncate font-medium">
+              {subtitle}
             </span>
           )}
         </div>

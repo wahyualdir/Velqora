@@ -2,30 +2,53 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+const INDONESIAN_WEEKDAYS = [
+  "Minggu",
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+] as const;
+
 export async function getDashboardStats() {
+  const emptyResult = {
+    totalMateri: 0,
+    totalTugas: 0,
+    totalModul: 0,
+    totalFile: 0,
+    recentViews: [],
+    recentTasks: [],
+    recentModules: [],
+    todaySchedules: [],
+    upcomingSchedules: [],
+  };
+
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      return {
-        totalMateri: 0,
-        totalTugas: 0,
-        totalModul: 0,
-        totalFile: 0,
-        recentViews: [],
-        recentTasks: [],
-        recentModules: [],
-      };
+      return emptyResult;
     }
 
-    const [materiRes, tugasRes, modulRes, fileRes, recentRes, tasksPendingRes, modulesRecentRes] = await Promise.all([
+    const [
+      materiRes,
+      tugasRes,
+      modulRes,
+      fileRes,
+      recentRes,
+      tasksPendingRes,
+      modulesRecentRes,
+      schedulesRes,
+    ] = await Promise.all([
       supabase.from("materials").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       supabase.from("tasks").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       supabase.from("modules").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       supabase.from("files").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       supabase
         .from("recent_views")
-        .select("*, material:materials(*)")
+        .select("*, material:materials(*, category:categories(*))")
         .eq("user_id", user.id)
         .order("viewed_at", { ascending: false })
         .limit(5),
@@ -38,11 +61,36 @@ export async function getDashboardStats() {
         .limit(5),
       supabase
         .from("modules")
-        .select("*, category:categories(*)")
+        .select("*, category:categories(*), chapters:module_chapters(id, is_completed)")
         .eq("user_id", user.id)
         .order("updated_at", { ascending: false })
         .limit(5),
+      supabase
+        .from("schedules")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("start_time", { ascending: true, nullsFirst: false }),
     ]);
+
+    const todayName = INDONESIAN_WEEKDAYS[new Date().getDay()] || "Senin";
+    const rawSchedules = !schedulesRes.error && Array.isArray(schedulesRes.data) ? schedulesRes.data : [];
+    const formattedSchedules = rawSchedules.map((row: any) => ({
+      ...row,
+      isCompleted: !!row.is_completed,
+      time: row.time || (row.start_time && row.end_time ? `${row.start_time} - ${row.end_time}` : row.start_time || "--:--"),
+    }));
+
+    const sortByTime = (a: any, b: any) =>
+      String(a.start_time || a.time || "99:99").localeCompare(String(b.start_time || b.time || "99:99"));
+
+    const todaySchedules = formattedSchedules
+      .filter((s: any) => String(s.day || "").toLowerCase() === todayName.toLowerCase())
+      .sort(sortByTime);
+
+    const upcomingSchedules = formattedSchedules
+      .filter((s: any) => String(s.day || "").toLowerCase() !== todayName.toLowerCase() && !s.is_completed)
+      .sort(sortByTime)
+      .slice(0, 4);
 
     return {
       totalMateri: materiRes.count || 0,
@@ -52,18 +100,12 @@ export async function getDashboardStats() {
       recentViews: recentRes.data || [],
       recentTasks: tasksPendingRes.data || [],
       recentModules: modulesRecentRes.data || [],
+      todaySchedules,
+      upcomingSchedules,
     };
   } catch (error) {
     console.error("Dashboard stats error:", error);
-    return {
-      totalMateri: 0,
-      totalTugas: 0,
-      totalModul: 0,
-      totalFile: 0,
-      recentViews: [],
-      recentTasks: [],
-      recentModules: [],
-    };
+    return emptyResult;
   }
 }
 

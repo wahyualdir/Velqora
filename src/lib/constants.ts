@@ -70,6 +70,9 @@ export const SIDEBAR_CATEGORIES: readonly NavCategory[] = [
     title: "Utama",
     links: [
       { label: "Dashboard", href: "/dashboard", icon: "LayoutGrid", exact: true },
+      { label: "Jadwal Belajar", href: "/dashboard/jadwal", icon: "Calendar" },
+      { label: "Tugas & Tenggat", href: "/dashboard/tugas", icon: "CheckSquare" },
+      { label: "Catatan Belajar", href: "/dashboard/catatan", icon: "PenLine" },
     ],
   },
   {

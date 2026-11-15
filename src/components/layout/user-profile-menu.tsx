@@ -205,20 +205,22 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           title={isCollapsed ? userName : "Buka Menu Profil & Akun"}
-          className={`w-full flex items-center ${isCollapsed ? "justify-center p-1.5" : "justify-between p-2.5"} rounded-xl border border-border/50 hover:border-border bg-surface-secondary/40 hover:bg-surface-secondary transition-all duration-150 group text-left focus:outline-none focus:ring-1 focus:ring-brand-500/30`}
+          className={`w-full flex items-center ${
+            isCollapsed ? "justify-center p-1.5" : "justify-between p-2.5"
+          } rounded-2xl border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/35 dark:hover:border-[#D4664A]/40 bg-[#FFFFFF] dark:bg-[#141210] hover:bg-[#FAF8F5] dark:hover:bg-[#1C1917] shadow-2xs transition-all duration-150 group text-left focus:outline-none focus:ring-1 focus:ring-brand-500/30`}
         >
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className="relative shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center shadow-2xs">
-                <div className="w-full h-full rounded-xl flex items-center justify-center text-text-primary font-bold text-sm overflow-hidden">
+              <div className="w-9 h-9 rounded-xl bg-[#F3EFE9] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] flex items-center justify-center">
+                <div className="w-full h-full rounded-xl flex items-center justify-center text-[#1C1917] dark:text-[#F5F5F4] font-extrabold text-xs overflow-hidden">
                   {uploadingPhoto ? (
                     <Loader2 className="w-4 h-4 animate-spin text-brand-500" />
                   ) : avatarUrl ? (
                     <Image
                       src={avatarUrl}
                       alt={userName}
-                      width={40}
-                      height={40}
+                      width={36}
+                      height={36}
                       unoptimized
                       className="w-full h-full object-cover"
                     />
@@ -227,13 +229,13 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                   )}
                 </div>
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-surface" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#FFFFFF] dark:border-[#141210]" />
             </div>
 
             {!isCollapsed && (
               <div className="flex flex-col min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-[14px] font-semibold text-text-primary truncate">
+                  <span className="text-[13px] font-bold text-[#1C1917] dark:text-[#F5F5F4] truncate">
                     {userName}
                   </span>
                   {isOwner ? (
@@ -242,8 +244,8 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                     <Shield className="w-3.5 h-3.5 text-brand-500 shrink-0" />
                   ) : null}
                 </div>
-                <span className="text-[12px] text-text-tertiary truncate">
-                  {isOwner ? "Owner" : isAdmin ? "Admin" : isGoogleUser ? "Akun Google" : "Pelajar"}
+                <span className="text-[11px] font-medium text-[#6B6560] dark:text-[#A8A29E] truncate">
+                  {isOwner ? "Owner" : isAdmin ? "Admin" : "Mahasiswa"}
                 </span>
               </div>
             )}
@@ -251,8 +253,8 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
 
           {!isCollapsed && (
             <ChevronDown
-              className={`w-4 h-4 text-text-tertiary transition-transform duration-200 shrink-0 ${
-                isOpen ? "rotate-180 text-text-primary" : "group-hover:text-text-secondary"
+              className={`w-4 h-4 text-[#8A8378] dark:text-[#8C857F] transition-transform duration-200 shrink-0 ${
+                isOpen ? "rotate-180 text-[#1C1917] dark:text-[#F5F5F4]" : "group-hover:text-[#1C1917] dark:group-hover:text-[#F5F5F4]"
               }`}
             />
           )}

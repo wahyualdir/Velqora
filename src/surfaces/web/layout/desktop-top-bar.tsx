@@ -2,7 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Command, Crown, Download, CheckCircle2, Menu, Sun, Moon } from "lucide-react";
+import {
+  Search,
+  Command,
+  Crown,
+  Download,
+  CheckCircle2,
+  PanelLeft,
+  PanelLeftOpen,
+  Sun,
+  Moon,
+} from "lucide-react";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
 import { useExperience } from "@/context/experience-context";
@@ -10,12 +20,14 @@ import { useLanguage } from "@/context/language-context";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { isAdminUser } from "@/lib/utils";
+import { getCurrentAcademicPeriod } from "@/surfaces/web/dashboard/dashboard-utils";
 
 interface DesktopTopBarProps {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   onOpenCommandPalette: () => void;
   onToggleSidebar?: () => void;
+  onOpenDrawer?: () => void;
   isSidebarCollapsed?: boolean;
 }
 
@@ -23,6 +35,7 @@ export function DesktopTopBar({
   searchQuery = "",
   onOpenCommandPalette,
   onToggleSidebar,
+  onOpenDrawer,
   isSidebarCollapsed = false,
 }: DesktopTopBarProps) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -30,9 +43,11 @@ export function DesktopTopBar({
   const { isPwaStandalone, canInstallPwa, promptInstallPwa } = useExperience();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [academicBadge, setAcademicBadge] = useState("TA 2026/2027 GANJIL");
 
   useEffect(() => {
     setMounted(true);
+    setAcademicBadge(getCurrentAcademicPeriod(new Date()).badgeText);
   }, []);
 
   const toggleTheme = () => {
@@ -64,19 +79,35 @@ export function DesktopTopBar({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FAF8F5]/90 dark:bg-[#0B0A09]/88 backdrop-blur-md border-b border-[#E4DDD4] dark:border-[#292524] select-none transition-colors">
-      <div className="flex items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 max-w-[1600px] mx-auto w-full font-mono">
-        {/* Left: Menu Toggle Button & Search Box */}
+    <header className="sticky top-0 z-25 bg-[#FAF8F5]/95 dark:bg-[#0B0A09]/92 backdrop-blur-md border-b border-[#E4DDD4] dark:border-[#292524] select-none transition-colors">
+      <div className="flex items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 h-14 max-w-[1600px] mx-auto w-full">
+        {/* Left: Sidebar Toggle Button & Spotlight Search Input */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 max-w-xl">
+          {onOpenDrawer && (
+            <button
+              type="button"
+              onClick={onOpenDrawer}
+              aria-label="Buka menu navigasi"
+              className="lg:hidden h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center vt-btn-chrome rounded-xl cursor-pointer shrink-0"
+              title="Buka Menu Navigasi"
+            >
+              <PanelLeftOpen className="w-4 h-4 text-[#524B42] dark:text-[#A8A29E]" />
+            </button>
+          )}
+
           {onToggleSidebar && (
             <button
               type="button"
               onClick={onToggleSidebar}
               aria-label="Toggle menu sidebar"
-              className="h-8.5 w-8.5 min-h-[34px] min-w-[34px] flex items-center justify-center vt-btn-chrome rounded-lg cursor-pointer shrink-0"
+              className="hidden lg:flex h-9 w-9 min-h-[36px] min-w-[36px] items-center justify-center vt-btn-chrome rounded-xl cursor-pointer shrink-0"
               title={isSidebarCollapsed ? "Buka Menu Sidebar" : "Kecilkan Menu Sidebar"}
             >
-              <Menu className="w-4 h-4" />
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4 text-[#524B42] dark:text-[#A8A29E]" />
+              ) : (
+                <PanelLeft className="w-4 h-4 text-[#524B42] dark:text-[#A8A29E]" />
+              )}
             </button>
           )}
 
@@ -84,83 +115,73 @@ export function DesktopTopBar({
             onClick={onOpenCommandPalette}
             className="relative flex-1 min-w-0 cursor-pointer group"
           >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8A8378] dark:text-[#8C857F] group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] transition-colors pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8378] dark:text-[#8C857F] group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] transition-colors pointer-events-none" />
             <input
               type="text"
               readOnly
               value={searchQuery}
               onClick={onOpenCommandPalette}
-              placeholder="Cari materi, modul, tugas... (Ctrl + K)"
-              className="w-full pl-9 pr-14 h-8.5 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] group-hover:border-[#C2553A]/40 dark:group-hover:border-[#D4664A]/50 text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#8A8378] dark:placeholder:text-[#8C857F] text-xs font-mono transition-colors truncate focus:outline-none cursor-pointer"
+              placeholder="Cari kelas, materi, tugas, atau perintah... (Ctrl + K)"
+              className="w-full pl-10 pr-16 h-9.5 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] group-hover:border-[#C2553A]/40 dark:group-hover:border-[#D4664A]/50 text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#8A8378] dark:placeholder:text-[#8C857F] text-xs sm:text-[13px] font-sans transition-colors truncate focus:outline-none cursor-pointer shadow-2xs"
             />
-            <div className="flex items-center gap-0.5 absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-md border border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9] dark:bg-[#1C1917] text-[10px] font-mono text-[#524B42] dark:text-[#A8A29E]">
+            <div className="flex items-center gap-0.5 absolute right-2.5 top-1/2 -translate-y-1/2 px-2 py-0.5 rounded-lg border border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9] dark:bg-[#1C1917] text-[10.5px] font-mono font-semibold text-[#524B42] dark:text-[#A8A29E]">
               <Command className="w-2.5 h-2.5" />
               <span>K</span>
             </div>
           </div>
         </div>
 
-        {/* Right: Workspace Status & User Actions */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 text-xs">
-          {/* Install / Download App CTA */}
-          {!isPwaStandalone ? (
-            canInstallPwa ? (
-              <button
-                type="button"
-                onClick={handleInstallClick}
-                className="flex items-center gap-1.5 px-3 h-8.5 vt-btn-terracotta rounded-lg text-xs font-semibold cursor-pointer"
-                title="Pasang Velqora Desktop App"
-              >
-                <Download className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden xl:inline">Pasang App</span>
-              </button>
-            ) : (
-              <Link
-                href="/download"
-                className="flex items-center gap-1.5 px-3 h-8.5 vt-btn-chrome rounded-lg text-xs font-semibold"
-                title="Unduh & Pasang Aplikasi"
-              >
-                <Download className="w-3.5 h-3.5 shrink-0 text-[#C2553A] dark:text-[#D4664A]" />
-                <span className="hidden xl:inline">Unduh App</span>
-              </Link>
-            )
-          ) : (
-            <div className="flex items-center gap-1.5 px-2.5 h-8.5 rounded-lg bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-emerald-700 dark:text-[#34D399] text-[11px] font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xl:inline">App Mode</span>
-            </div>
-          )}
+        {/* Right: Quick Controls + Prominent Academic Period Pill */}
+        <div className="flex items-center gap-2 shrink-0 text-xs">
+          {/* Online Indicator (compact, calm) */}
+          <div
+            className="hidden xl:flex items-center gap-1.5 px-2.5 h-9 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#1C1917] dark:text-[#F5F5F4]"
+            title="Sistem Terhubung & Sinkron"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#059669] dark:bg-[#34D399] shrink-0" />
+            <span className="font-mono text-[10px] font-semibold text-emerald-700 dark:text-[#34D399] uppercase">
+              {t("statusOnline")}
+            </span>
+          </div>
 
-          {/* Admin Badge */}
+          {/* Admin Badge (if admin/owner) */}
           {isAdmin && (
             <div
-              className="flex items-center gap-1.5 px-2.5 h-8.5 rounded-lg bg-[#FAF3EF] dark:bg-[#D4664A]/15 border border-[#C2553A]/25 dark:border-[#D4664A]/35 text-[#C2553A] dark:text-[#D4664A] text-xs font-semibold"
+              className="hidden 2xl:flex items-center gap-1.5 px-2.5 h-9 rounded-xl bg-[#FAF3EF] dark:bg-[#D4664A]/15 border border-[#C2553A]/25 dark:border-[#D4664A]/35 text-[#C2553A] dark:text-[#D4664A] text-xs font-semibold"
               title="Akses Administrator"
             >
               <Crown className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xl:inline font-mono text-[10px] uppercase tracking-wider">
+              <span className="font-mono text-[10px] uppercase tracking-wider">
                 {t("adminAccess")}
               </span>
             </div>
           )}
 
-          {/* Online Health Indicator */}
-          <div
-            className="flex items-center gap-1.5 px-2.5 h-8.5 rounded-lg bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-xs text-[#1C1917] dark:text-[#F5F5F4]"
-            title="Sistem Terhubung & Sinkron"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#059669] dark:bg-[#34D399] shrink-0" />
-            <span className="hidden sm:inline font-mono text-[10px] font-semibold text-emerald-700 dark:text-[#34D399] uppercase">
-              {t("statusOnline")}
-            </span>
-          </div>
+          {/* Install PWA CTA when available */}
+          {isPwaStandalone ? (
+            <div
+              className="hidden xl:flex items-center gap-1.5 px-2.5 h-9 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-emerald-700 dark:text-[#34D399] text-[11px] font-semibold"
+              title="App Mode"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+            </div>
+          ) : canInstallPwa ? (
+            <button
+              type="button"
+              onClick={handleInstallClick}
+              className="hidden xl:flex items-center gap-1.5 px-2.5 h-9 vt-btn-chrome rounded-xl text-xs font-semibold cursor-pointer"
+              title="Pasang Velqora Desktop App"
+            >
+              <Download className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+            </button>
+          ) : null}
 
-          {/* Quick Theme Switcher */}
+          {/* Theme Switcher */}
           {mounted && (
             <button
               type="button"
               onClick={toggleTheme}
-              className="vt-btn-chrome h-8.5 w-8.5 min-w-[34px] rounded-lg flex items-center justify-center cursor-pointer"
+              className="vt-btn-chrome h-9 w-9 min-w-[36px] rounded-xl flex items-center justify-center cursor-pointer"
               title={resolvedTheme === "dark" ? "Beralih ke Mode Terang (Light)" : "Beralih ke Mode Gelap (Dark)"}
               aria-label="Ganti Tema"
             >
@@ -173,12 +194,21 @@ export function DesktopTopBar({
           )}
 
           {/* Notifications Center */}
-          <div className="vt-btn-chrome h-8.5 rounded-lg flex items-center justify-center px-1">
+          <div className="vt-btn-chrome h-9 rounded-xl flex items-center justify-center px-1">
             <NotificationCenter />
           </div>
 
-          {/* User Profile Menu */}
-          <div className="vt-btn-chrome h-8.5 rounded-lg flex items-center px-1">
+          {/* Academic Period Badge (Signature Terracotta Pill matching reference top-right CTA) */}
+          <Link
+            href="/dashboard/jadwal"
+            className="flex items-center gap-1.5 px-3.5 h-9 rounded-xl bg-[#C2553A] hover:bg-[#A34530] dark:bg-[#D4664A] dark:hover:bg-[#C2553A] text-[#FFFBF8] font-mono text-[11px] font-bold tracking-wider uppercase whitespace-nowrap shadow-xs transition-colors"
+            title="Lihat Kalender & Periode Akademik"
+          >
+            <span>{academicBadge}</span>
+          </Link>
+
+          {/* Compact User Avatar Menu on Tablet (where expanded sidebar footer is collapsed) */}
+          <div className="hidden md:flex lg:hidden vt-btn-chrome h-9 rounded-xl items-center px-1">
             <UserProfileMenu variant="navbar" />
           </div>
         </div>
