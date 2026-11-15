@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useRef } from "react";
+import { Database } from "lucide-react";
 import { JavaScriptIcon, PythonIcon } from "@/components/ui/brand-logos";
+
+export type PlaygroundLanguage = "javascript" | "python" | "sql";
 
 export interface CodeTemplate {
   label: string;
@@ -15,11 +18,11 @@ export interface LanguagePreset {
 }
 
 interface PlaygroundEditorProps {
-  lang: "javascript" | "python";
-  onChangeLang: (l: "javascript" | "python") => void;
+  lang: PlaygroundLanguage;
+  onChangeLang: (l: PlaygroundLanguage) => void;
   code: string;
   onChangeCode: (c: string) => void;
-  presets: Record<string, LanguagePreset>;
+  presets: Record<PlaygroundLanguage, LanguagePreset>;
   onSelectTemplate: (templateCode: string) => void;
   selectedTemplateLabel: string;
 }
@@ -69,6 +72,19 @@ export function PlaygroundEditor({
           >
             <PythonIcon className="w-3.5 h-3.5" />
             <span>Python (.py)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onChangeLang("sql")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+              lang === "sql"
+                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 shadow-2xs"
+                : "text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            <Database className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>SQL (.sql)</span>
           </button>
         </div>
 

@@ -35,9 +35,9 @@ export function ModuleHeader({
 }: ModuleHeaderProps) {
   return (
     <PageHeader
-      eyebrow="Kurikulum Kecerdasan Buatan"
+      eyebrow="Kurikulum & Teori Kecerdasan Buatan"
       title="Katalog Modul AI"
-      description="Jelajahi kurikulum terstruktur serta proyek praktikum Kecerdasan Buatan (AI) yang terorganisir per topik."
+      description="Fokus pada pemahaman konseptual, intuisi matematis, arsitektur, serta studi kasus per topik. Skrip implementasi dan praktikum tersedia terpadu di Katalog Kode."
       actions={
         <>
           {onOpenImport && (

@@ -14,8 +14,6 @@ import {
   Sun,
   Moon,
   ListFilter,
-  Check,
-  Home,
   Menu,
   X,
   Maximize2,
@@ -25,25 +23,25 @@ import {
   Bot,
   BrainCircuit,
   Code2,
-  GraduationCap,
   CheckCircle2,
   AlertTriangle,
   Clock,
   Target,
   Layers,
-  ExternalLink,
-  FileText,
-  Sparkles,
+  FileCode2,
+  Play,
+  Eye,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { NoteRenderer } from "@/components/notes/note-renderer";
 import { toast } from "sonner";
 import { getTopicStatus } from "@/lib/curriculum/status";
+import { extractTheoryAndCodeFromMarkdown } from "@/lib/curriculum/theory-extractor";
+import type { CodeCatalogEntry } from "@/lib/curriculum/code-catalog";
 import {
   NotebookUnitRenderer,
   NotebookLessonHeader,
   NotebookObjectives,
-  NotebookPrerequisites,
   NotebookSummary,
   NotebookSourceList,
   NotebookNavigation,
@@ -52,9 +50,6 @@ import { ExerciseCard } from "./exercise-card";
 import {
   notebookUnitsToMarkdown,
   type DocSectionItem,
-  type AcademicLesson,
-  type LessonFlow,
-  type ExerciseItem,
 } from "@/lib/curriculum/types";
 
 export type { DocSectionItem };
@@ -147,15 +142,19 @@ export function DocReaderLayout({
   categoryName,
   categoryId,
   themeColor = "#0284C7",
-  categoryIcon = "machine_learning",
+  categoryIcon: _categoryIcon = "machine_learning",
   sections,
   activeSectionId,
   onSelectSection,
   onToggleViewMode,
-  viewMode = "doc",
+  viewMode: _viewMode = "doc",
 }: DocReaderLayoutProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const statusMeta = useMemo(() => getTopicStatus(categoryName || categoryId), [categoryName, categoryId]);
+  const kodeTopicId = categoryId || categoryName;
+
+  // Mode Fokus Teori (default aktif agar bacaan konseptual terpisah rapi dari kode praktikum)
+  const [theoryFocusMode, setTheoryFocusMode] = useState(true);
 
   // Sidebar & Outline Adaptive State
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -273,8 +272,8 @@ export function DocReaderLayout({
   // Active section item
   const currentSection = useMemo(() => {
     return (
-      flatSections.find((s) => s.id === selectedId) ||
-      sections.find((s) => s.id === selectedId) ||
+      flatSections.find((s) => s.id === selectedId || s.slug === selectedId) ||
+      sections.find((s) => s.id === selectedId || s.slug === selectedId) ||
       flatSections[0] ||
       null
     );
@@ -392,10 +391,79 @@ export function DocReaderLayout({
     return currentMarkdown.replace(/^#\s+[^\n]+\n+/, "");
   }, [currentMarkdown]);
 
+  // Ekstraksi teori murni vs blok kode praktikum tertanam
+  const theoryExtraction = useMemo(() => {
+    return extractTheoryAndCodeFromMarkdown(cleanMarkdown);
+  }, [cleanMarkdown]);
+
+  const displayMarkdown = useMemo(() => {
+    if (!theoryFocusMode) return cleanMarkdown;
+    return theoryExtraction.theoryMarkdown || cleanMarkdown;
+  }, [theoryFocusMode, cleanMarkdown, theoryExtraction]);
+
+  // Entri Katalog Kode yang berkorespondensi dengan subbab aktif (dimuat ringan via API)
+  const [relatedCodeEntries, setRelatedCodeEntries] = useState<CodeCatalogEntry[]>([]);
+
+  useEffect(() => {
+    const topicQuery = kodeTopicId;
+    if (!topicQuery || !currentSection) {
+      setRelatedCodeEntries([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const candidateSubs = Array.from(
+      new Set(
+        [currentSection.id, currentSection.slug, parentSubchapter?.id].filter(
+          (v): v is string => Boolean(v && v.trim())
+        )
+      )
+    );
+
+    async function loadRelatedCode() {
+      for (const subId of candidateSubs) {
+        try {
+          const res = await fetch(
+            `/api/kode?topic=${encodeURIComponent(topicQuery)}&sub=${encodeURIComponent(subId)}&limit=12`,
+            { signal: controller.signal }
+          );
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (Array.isArray(data?.entries) && data.entries.length > 0) {
+            setRelatedCodeEntries(data.entries);
+            return;
+          }
+        } catch (err) {
+          if (err instanceof DOMException && err.name === "AbortError") return;
+        }
+      }
+      setRelatedCodeEntries([]);
+    }
+
+    loadRelatedCode();
+    return () => controller.abort();
+  }, [kodeTopicId, currentSection, parentSubchapter?.id]);
+
+  const kodeSubParam = parentSubchapter?.id || currentSection?.id || "";
+  const kodeCatalogHref = useMemo(() => {
+    const params = new URLSearchParams();
+    if (kodeTopicId) params.set("topic", kodeTopicId);
+    if (kodeSubParam && relatedCodeEntries.length > 0) {
+      params.set("sub", kodeSubParam);
+    }
+    return `/dashboard/kode?${params.toString()}`;
+  }, [kodeTopicId, kodeSubParam, relatedCodeEntries.length]);
+
+  const filteredUnits = useMemo(() => {
+    if (!currentSection?.units) return [];
+    if (!theoryFocusMode) return currentSection.units;
+    return currentSection.units.filter((u) => u.type !== "code" && u.type !== "output");
+  }, [currentSection, theoryFocusMode]);
+
   // In-Page TOC items
   const tocItems = useMemo(() => {
-    return extractTocFromMarkdown(currentMarkdown);
-  }, [currentMarkdown]);
+    return extractTocFromMarkdown(displayMarkdown);
+  }, [displayMarkdown]);
 
   // ScrollSpy listener
   useEffect(() => {
@@ -586,10 +654,42 @@ export function DocReaderLayout({
             </>
           )}
 
+          <button
+            type="button"
+            onClick={() => setTheoryFocusMode((prev) => !prev)}
+            className={`hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono font-medium transition-colors cursor-pointer ${
+              theoryFocusMode
+                ? "border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-300"
+                : "border-border bg-surface text-text-secondary hover:bg-surface-secondary"
+            }`}
+            title={
+              theoryFocusMode
+                ? "Sedang menampilkan Teori Murni (klik untuk pratinjau kode inline)"
+                : "Menampilkan Teori + Kode inline (klik untuk fokus teori)"
+            }
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>{theoryFocusMode ? "Fokus Teori" : "Teori + Kode"}</span>
+          </button>
+
           <Link
-            href="/dashboard/playground"
+            href={kodeCatalogHref}
+            className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer inline-flex items-center gap-1.5 text-[11px] font-mono font-medium"
+            title="Buka Katalog Kode untuk subbab ini"
+          >
+            <FileCode2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden lg:inline">Katalog Kode</span>
+            {relatedCodeEntries.length > 0 && (
+              <span className="hidden sm:inline-flex items-center justify-center px-1.5 py-0.2 rounded-full bg-brand-500/15 text-brand-700 dark:text-brand-300 text-[10px] font-bold">
+                {relatedCodeEntries.length}
+              </span>
+            )}
+          </Link>
+
+          <Link
+            href={relatedCodeEntries[0]?.playgroundHref || "/dashboard/playground"}
             className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-emerald-500 transition-colors cursor-pointer"
-            title="Buka Playground Python"
+            title="Jalankan di Ruang Praktik Kode"
           >
             <Code2 className="w-4 h-4" />
           </Link>
@@ -1008,67 +1108,186 @@ export function DocReaderLayout({
                 )}
 
                 {/* 4. Main Lesson Units / Markdown Content */}
-                {currentSection.units && currentSection.units.length > 0 ? (
-                  <NotebookUnitRenderer units={currentSection.units} />
+                {filteredUnits.length > 0 ? (
+                  <NotebookUnitRenderer units={filteredUnits} />
                 ) : (
                   <div className="py-2 prose dark:prose-invert max-w-none">
-                    <NoteRenderer content={cleanMarkdown} />
+                    <NoteRenderer content={displayMarkdown} />
                   </div>
                 )}
 
                 {/* 4.5. LEVEL 3: UNIT PEMBELAJARAN (FLAT LINEAR FLOW) */}
                 {currentSection.subsections && currentSection.subsections.length > 0 && (
                   <div className="space-y-10 pt-8 border-t border-border/40">
-                    {currentSection.subsections.map((unit, uIdx) => (
-                      <section
-                        key={unit.id || uIdx}
-                        id={`unit-${unit.id}`}
-                        className="space-y-4 pt-6 first:pt-0"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span
-                            className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 shadow-2xs"
-                            style={{ backgroundColor: themeColor }}
-                          >
-                            Unit {uIdx + 1}
+                    {currentSection.subsections.map((unit, uIdx) => {
+                      const rawUnitMd = unit.content_markdown
+                        ? unit.content_markdown.replace(/^#\s+[^\n]+\n+/, "")
+                        : "";
+                      const unitDisplayMd =
+                        theoryFocusMode && rawUnitMd
+                          ? extractTheoryAndCodeFromMarkdown(rawUnitMd).theoryMarkdown
+                          : rawUnitMd;
+
+                      return (
+                        <section
+                          key={unit.id || uIdx}
+                          id={`unit-${unit.id}`}
+                          className="space-y-4 pt-6 first:pt-0"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span
+                              className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 shadow-2xs"
+                              style={{ backgroundColor: themeColor }}
+                            >
+                              Unit {uIdx + 1}
+                            </span>
+                            <h3 className="text-lg sm:text-xl font-bold text-text-primary font-display tracking-tight">
+                              {unit.title}
+                            </h3>
+                          </div>
+
+                          {unit.description && (
+                            <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                              {unit.description}
+                            </p>
+                          )}
+
+                          {/* Unit Markdown Body without duplicate H1 */}
+                          {unitDisplayMd && (
+                            <div className="py-1 prose dark:prose-invert max-w-none">
+                              <NoteRenderer content={unitDisplayMd} />
+                            </div>
+                          )}
+
+                          {/* Unit Code Snippets (ditampilkan saat mode Teori + Kode aktif) */}
+                          {!theoryFocusMode && unit.codeSnippets && unit.codeSnippets.length > 0 && (
+                            <div className="space-y-3 pt-2">
+                              <span className="text-[11px] font-mono uppercase tracking-wider text-text-tertiary block font-semibold">
+                                Praktikum Kode Unit:
+                              </span>
+                              {unit.codeSnippets.map((snip, sIdx) => (
+                                <div
+                                  key={snip.id || sIdx}
+                                  className="rounded-lg overflow-hidden border border-border/80 bg-[#0d1117] text-[#e6edf3] p-3 font-mono text-xs overflow-x-auto whitespace-pre"
+                                >
+                                  <code>{snip.code}</code>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </section>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 4.8. BRIDGE CARD: LAB KODE & PRAKTIKUM TERKAIT (MENU 2 CROSS-LINK) */}
+                {(relatedCodeEntries.length > 0 ||
+                  theoryExtraction.hasExtractedCode ||
+                  (currentSection.codeSnippets?.length ?? 0) > 0) && (
+                  <section
+                    aria-label="Lab Kode Terkait"
+                    className="rounded-xl border border-border bg-surface-secondary/50 p-4 sm:p-5 space-y-4 shadow-2xs"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300 border border-brand-500/20">
+                            <FileCode2 className="w-4 h-4" />
                           </span>
-                          <h3 className="text-lg sm:text-xl font-bold text-text-primary font-display tracking-tight">
-                            {unit.title}
+                          <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">
+                            Lab Kode &amp; Praktikum Terkait Subbab Ini
                           </h3>
                         </div>
+                        <p className="text-xs text-text-secondary leading-relaxed">
+                          Agar bacaan ini berfokus pada teori, intuisi matematis, dan konsep inti, skrip implementasi lengkap &amp; output praktikum ditempatkan secara terstruktur di{" "}
+                          <span className="font-semibold text-text-primary">Katalog Kode</span>.
+                        </p>
+                      </div>
 
-                        {unit.description && (
-                          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
-                            {unit.description}
-                          </p>
-                        )}
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-border bg-surface text-[11px] font-mono font-semibold text-text-secondary shrink-0 self-start">
+                        {relatedCodeEntries.length > 0
+                          ? `${relatedCodeEntries.length} Skrip Tersedia`
+                          : `${Math.max(
+                              theoryExtraction.extractedCount,
+                              currentSection.codeSnippets?.length ?? 1
+                            )} Blok Kode`}
+                      </span>
+                    </div>
 
-                        {/* Unit Markdown Body without duplicate H1 */}
-                        {unit.content_markdown && (
-                          <div className="py-1 prose dark:prose-invert max-w-none">
-                            <NoteRenderer content={unit.content_markdown.replace(/^#\s+[^\n]+\n+/, "")} />
-                          </div>
-                        )}
-
-                        {/* Unit Code Snippets if any */}
-                        {unit.codeSnippets && unit.codeSnippets.length > 0 && (
-                          <div className="space-y-3 pt-2">
-                            <span className="text-[11px] font-mono uppercase tracking-wider text-text-tertiary block font-semibold">
-                              Praktikum Kode Unit:
+                    {relatedCodeEntries.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {relatedCodeEntries.slice(0, 4).map((entry) => (
+                          <Link
+                            key={entry.id}
+                            href={entry.playgroundHref}
+                            className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border bg-surface hover:border-brand-500/40 hover:bg-surface-secondary text-xs font-mono transition-colors group"
+                            title={`Jalankan ${entry.title} di Ruang Praktik`}
+                          >
+                            <span className="uppercase text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-700 dark:text-brand-300">
+                              {entry.language}
                             </span>
-                            {unit.codeSnippets.map((snip, sIdx) => (
-                              <div
-                                key={snip.id || sIdx}
-                                className="rounded-lg overflow-hidden border border-border/80 bg-[#0d1117] text-[#e6edf3] p-3 font-mono text-xs overflow-x-auto whitespace-pre"
-                              >
-                                <code>{snip.code}</code>
-                              </div>
-                            ))}
-                          </div>
+                            <span className="text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 truncate max-w-[220px]">
+                              {entry.filename}
+                            </span>
+                          </Link>
+                        ))}
+                        {relatedCodeEntries.length > 4 && (
+                          <Link
+                            href={kodeCatalogHref}
+                            className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-dashed border-border text-xs font-mono text-text-secondary hover:text-text-primary"
+                          >
+                            +{relatedCodeEntries.length - 4} lainnya
+                          </Link>
                         )}
-                      </section>
-                    ))}
-                  </div>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                      <Link
+                        href={kodeCatalogHref}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-mono font-semibold transition-colors shadow-2xs"
+                      >
+                        <FileCode2 className="w-3.5 h-3.5" />
+                        <span>Buka di Katalog Kode</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+
+                      <Link
+                        href={
+                          relatedCodeEntries[0]?.playgroundHref ||
+                          (theoryExtraction.extractedSnippets[0]
+                            ? `/dashboard/playground?code=${encodeURIComponent(
+                                theoryExtraction.extractedSnippets[0].code
+                              )}&lang=${encodeURIComponent(
+                                theoryExtraction.extractedSnippets[0].language
+                              )}`
+                            : currentSection.codeSnippets?.[0]
+                              ? `/dashboard/playground?code=${encodeURIComponent(
+                                  currentSection.codeSnippets[0].code
+                                )}&lang=${encodeURIComponent(
+                                  currentSection.codeSnippets[0].language || "python"
+                                )}`
+                              : "/dashboard/playground")
+                        }
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-medium text-text-primary transition-colors"
+                      >
+                        <Play className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span>Jalankan di Ruang Praktik</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => setTheoryFocusMode((prev) => !prev)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-surface/60 hover:bg-surface text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>
+                          {theoryFocusMode ? "Pratinjau Kode di Halaman Ini" : "Sembunyikan Kode Inline"}
+                        </span>
+                      </button>
+                    </div>
+                  </section>
                 )}
 
                 {/* 5. LATIHAN TERSTRUKTUR & TANTANGAN PRAKTIKUM (FASE 2) */}

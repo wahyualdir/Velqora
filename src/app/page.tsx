@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { 
+import {
   OSTopBar,
   OSTaskbar,
   OSHeroWindow,
@@ -10,16 +10,17 @@ import {
   MarqueeTicker,
   RunDialogCTA,
   OSDesktopIcons,
+  VelqoraMotionProvider,
 } from "@/components/os";
 import { getLandingCurriculumData } from "@/actions/study/landing";
 
 export const metadata: Metadata = {
-  title: "Velqora — Academic Learning OS & Computational Notebook",
+  title: "Velqora — Platform Pembelajaran & Computational Notebook Akademik",
   description:
-    "Velqora Retro Learning OS: Kurikulum akademik Kecerdasan Buatan (AI), Machine Learning, Sains Data, dan Sistem Komputasi Lanjut berbasis rujukan kanonikal ber-DOI (7 dari 28 topik terverifikasi penuh, LLM 72%, sisanya dalam proses revisi substantif).",
+    "Workspace perkuliahan modern dan computational notebook akademik untuk Kecerdasan Buatan, Machine Learning, Sains Data, dan Rekayasa Sistem berbasis rujukan primer ber-DOI.",
   keywords: [
     "Velqora",
-    "Learning OS",
+    "Learning Platform",
     "Computational Notebook",
     "Kecerdasan Buatan",
     "Sains Data",
@@ -37,45 +38,51 @@ export default async function LandingPage() {
   const curriculumData = await getLandingCurriculumData();
 
   return (
-    <div className="min-h-screen vt-desktop-bg text-[#1C1917] font-sans antialiased relative selection:bg-[#C2553A] selection:text-white pb-16">
-      {/* 1. CRT Scanlines Overlay */}
-      <div className="fixed inset-0 vt-scanlines pointer-events-none z-40" />
-
-      {/* 2. Classic OS Top Navigation Bar with pulldown menus */}
-      <OSTopBar />
-
-      {/* 3. Main Desktop Area */}
-      <main className="relative z-10 space-y-4 pt-2">
-        {/* Hero Window: Left OS Hero + Center Desktop Icons + Right MONITOR.EXE with 3D Wireframe Canvas */}
-        <OSHeroWindow stats={curriculumData.stats} />
-
-        {/* Live Marquee Ticker: Real Specs & Features */}
-        <MarqueeTicker />
-
-        {/* Desktop Quick Launch Shortcuts */}
-        <OSDesktopIcons />
-
-        {/* Notepad Window: README.TXT Manifesto */}
-        <NotepadManifesto />
-
-        {/* Explorer Window: C:\VELQORA\CURRICULUM_EXPLORER (28 Disiplin Akademik, 7 Terverifikasi, 1 Proses Lanjut [LLM]) */}
-        <CurriculumExplorer 
-          disciplines={curriculumData.allDisciplines}
-          clusters={curriculumData.clusters}
-          collections={curriculumData.collections}
-          allModules={curriculumData.allModules}
-          activeDisciplines={curriculumData.activeDisciplines}
+    <VelqoraMotionProvider>
+      <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#0B0A09] text-[#1C1917] dark:text-[#F5F5F4] font-sans antialiased relative flex flex-col selection:bg-[#D4664A]/20 selection:text-[#F5F5F4]">
+        {/* Subtle Ambient Warm Obsidian Glow (Restrained <= 7.5%) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-x-0 top-0 h-[460px] bg-[radial-gradient(ellipse_75%_55%_at_50%_-12%,rgba(194,85,58,0.07),transparent_70%)] dark:bg-[radial-gradient(ellipse_75%_55%_at_50%_-12%,rgba(212,102,74,0.075),transparent_70%)]"
         />
 
-        {/* Telemetry Window: SYSTEM_MONITOR.EXE & VELQORA_COMPANION.EXE */}
-        <SystemMonitorWindow stats={curriculumData.stats} />
+        {/* Sticky Top Navigation */}
+        <OSTopBar />
 
-        {/* Command Window: RUN.EXE Dialog */}
-        <RunDialogCTA />
-      </main>
+        {/* Main Content */}
+        <main className="relative z-10 flex-1 space-y-12 sm:space-y-16 pb-16 sm:pb-20">
+          {/* Hero Section & Interactive 3D Compute Sphere */}
+          <OSHeroWindow stats={curriculumData.stats} />
 
-      {/* 4. Windows 98 Style Bottom Taskbar with Start Menu & Real-time Clock */}
-      <OSTaskbar />
-    </div>
+          {/* Calm Capabilities Strip */}
+          <MarqueeTicker stats={curriculumData.stats} />
+
+          {/* Quick Navigation Feature Cards */}
+          <OSDesktopIcons stats={curriculumData.stats} />
+
+          {/* Academic Approach & Manifesto */}
+          <NotepadManifesto />
+
+          {/* Interactive Curriculum Explorer */}
+          <CurriculumExplorer
+            disciplines={curriculumData.allDisciplines}
+            clusters={curriculumData.clusters}
+            stats={curriculumData.stats}
+            collections={curriculumData.collections}
+            allModules={curriculumData.allModules}
+            activeDisciplines={curriculumData.activeDisciplines}
+          />
+
+          {/* Audit Transparency & Companion Showcase */}
+          <SystemMonitorWindow stats={curriculumData.stats} />
+
+          {/* Final Call to Action */}
+          <RunDialogCTA stats={curriculumData.stats} />
+        </main>
+
+        {/* Clean Grounded Footer */}
+        <OSTaskbar />
+      </div>
+    </VelqoraMotionProvider>
   );
 }

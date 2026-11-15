@@ -247,60 +247,52 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between vt-desktop-bg text-[#1C1917] overflow-x-hidden selection:bg-[#C2553A]/20 selection:text-[#C2553A]">
+    <div className="relative min-h-screen flex flex-col justify-between vt-desktop-bg text-[#1C1917] dark:text-[#F5F5F4] overflow-x-hidden selection:bg-[#D4664A]/20 selection:text-[#C2553A] dark:selection:text-[#D4664A]">
 
       {/* Subtle Ambient Background */}
       <TechBackground />
 
-      {/* Main Single Centered Window Login Layout */}
+      {/* Main Single Centered Warm Obsidian Card */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 w-full">
-        <div className="w-full max-w-[430px] mx-auto text-left space-y-3">
+        <div className="w-full max-w-[440px] mx-auto text-left space-y-3.5">
 
-          {/* Primary Window: LOGIN.EXE with Walking Cat at the bottom */}
+          {/* Primary Auth Surface with Companion */}
           <div
-            className={`vt-window rounded-none overflow-hidden shadow-md text-left ${
+            className={`vt-window rounded-2xl overflow-hidden text-left transition-all ${
               isShaking ? "animate-shake" : isSuccess ? "animate-success-pulse" : ""
             }`}
           >
-            {/* Window Titlebar */}
-            <div className="vt-titlebar px-2.5 py-1.5 flex items-center justify-between select-none">
-              <div className="flex items-center gap-2 min-w-0 pr-2">
-                <VelqoraMark size={16} />
-                <span className="font-mono text-xs font-bold tracking-wide text-white truncate uppercase">
-                  LOGIN.EXE — VELQORA ACADEMIC AUTH
+            {/* Editorial Card Header */}
+            <div className="px-5 py-3.5 bg-[#F3EFE9]/75 dark:bg-[#1C1917]/85 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between select-none">
+              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                <VelqoraMark size={18} />
+                <span className="font-mono text-[11px] font-semibold tracking-[0.08em] text-[#524B42] dark:text-[#A8A29E] truncate uppercase">
+                  VELQORA // ACADEMIC PORTAL
                 </span>
               </div>
-              {/* Controls */}
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <button type="button" className="vt-window-btn" title="Minimize">_</button>
-                <button type="button" className="vt-window-btn font-sans" title="Maximize">□</button>
-                <Link href="/" className="vt-window-btn vt-window-btn-close flex items-center justify-center" title="Close">×</Link>
-              </div>
-            </div>
-
-            {/* Retro Window Menu Bar */}
-            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-b border-[#7A756D] dark:border-zinc-800 flex items-center gap-3 text-[11px] font-mono text-[#1C1917] dark:text-zinc-300 select-none">
-              <span className="cursor-pointer hover:underline">File</span>
-              <span className="cursor-pointer hover:underline">Edit</span>
-              <span className="cursor-pointer hover:underline">View</span>
-              <span className="cursor-pointer hover:underline">Help</span>
+              <Link
+                href="/"
+                className="text-[11px] font-mono font-medium text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] transition-colors shrink-0"
+              >
+                ← Beranda
+              </Link>
             </div>
 
             {/* Inner Content Body */}
-            <div className="p-5 sm:p-6 bg-[#FAF8F5] dark:bg-[#141416] space-y-4">
+            <div className="p-6 sm:p-7 bg-[#FFFFFF] dark:bg-[#141210] space-y-5">
               {/* Header Title & Subtitle */}
               <div className="space-y-1.5 text-center">
-                <div className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FAF3EF] dark:bg-brand-950/40 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-500/30">
+                <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#D4664A] border border-[#C2553A]/20 dark:border-[#D4664A]/30">
                   WORKSPACE // AUTHENTICATION
                 </div>
-                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-zinc-100 tracking-tight font-sans">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-[#F5F5F4] tracking-tight font-sans">
                   {isForgotPassword
                     ? resetSent
                       ? "Cek Email Anda"
                       : "Reset Password"
                     : "Masuk ke Akun"}
                 </h1>
-                <p className="text-xs text-[#524B42] dark:text-zinc-400 leading-relaxed max-w-xs mx-auto font-sans">
+                <p className="text-xs text-[#524B42] dark:text-[#A8A29E] leading-relaxed max-w-xs mx-auto font-sans">
                   {isForgotPassword ? (
                     resetSent ? (
                       `Instruksi pemulihan telah dikirim ke ${email}`
@@ -316,8 +308,8 @@ export default function LoginPage() {
               {isForgotPassword ? (
                 resetSent ? (
                   <div className="space-y-3.5 text-center py-2 animate-fade-in-up">
-                    <div className="p-3.5 border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214] text-emerald-800 dark:text-emerald-400 text-xs sm:text-sm leading-relaxed flex items-center justify-center gap-2 font-mono">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <div className="p-3.5 rounded-xl border border-emerald-600/25 dark:border-[#34D399]/30 bg-emerald-50/70 dark:bg-[#34D399]/10 text-emerald-800 dark:text-[#34D399] text-xs sm:text-sm leading-relaxed flex items-center justify-center gap-2 font-mono">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
                       <span>Tautan pemulihan dikirim ke <strong>{email}</strong></span>
                     </div>
                     <button
@@ -326,19 +318,19 @@ export default function LoginPage() {
                         setIsForgotPassword(false);
                         setResetSent(false);
                       }}
-                      className="w-full py-2 px-4 vt-btn-chrome text-xs font-mono font-bold"
+                      className="w-full py-2.5 px-4 vt-btn-chrome text-xs font-mono font-semibold"
                     >
                       Kembali ke Halaman Masuk
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleResetPassword} className="space-y-3.5 animate-fade-in-up">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
+                  <form onSubmit={handleResetPassword} className="space-y-4 animate-fade-in-up">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-mono font-semibold text-[#524B42] dark:text-[#A8A29E] uppercase tracking-wider block">
                         Email Akun
                       </label>
-                      <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
-                        <Mail className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
+                      <div className="relative flex items-center rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] focus-within:border-[#C2553A] dark:focus-within:border-[#D4664A] focus-within:ring-2 focus-within:ring-[#D4664A]/20 transition-all">
+                        <Mail className="absolute left-3.5 w-4 h-4 text-[#8A8378] dark:text-[#8C857F]" />
                         <input
                           type="email"
                           value={email}
@@ -349,7 +341,7 @@ export default function LoginPage() {
                           disabled={loading}
                           required
                           autoComplete="email"
-                          className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50"
+                          className="w-full bg-transparent pl-10 pr-3.5 py-2.5 text-sm font-sans text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#8A8378] dark:placeholder:text-[#8C857F] focus:outline-hidden disabled:opacity-50"
                         />
                       </div>
                     </div>
@@ -357,7 +349,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 vt-btn-terracotta text-xs font-mono font-bold"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 vt-btn-terracotta text-xs font-mono font-semibold"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
@@ -376,7 +368,7 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={() => setIsForgotPassword(false)}
-                        className="text-xs font-mono text-[#853827] dark:text-brand-400 hover:underline cursor-pointer"
+                        className="text-xs font-mono text-[#C2553A] dark:text-[#D4664A] hover:underline cursor-pointer"
                       >
                         ← Kembali ke Halaman Masuk
                       </button>
@@ -392,7 +384,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={handleGoogleLogin}
                       disabled={loading}
-                      className="flex items-center justify-center gap-2 py-2 px-3 vt-btn-chrome text-xs font-mono font-bold disabled:opacity-50 cursor-pointer"
+                      className="flex items-center justify-center gap-2 py-2.5 px-3 vt-btn-chrome text-xs font-mono font-semibold disabled:opacity-50 cursor-pointer"
                     >
                       <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
                       <span>Google</span>
@@ -403,34 +395,34 @@ export default function LoginPage() {
                       type="button"
                       onClick={handleGithubLogin}
                       disabled={loading}
-                      className="flex items-center justify-center gap-2 py-2 px-3 vt-btn-chrome text-xs font-mono font-bold disabled:opacity-50 cursor-pointer text-[#1C1917] dark:text-zinc-200"
+                      className="flex items-center justify-center gap-2 py-2.5 px-3 vt-btn-chrome text-xs font-mono font-semibold disabled:opacity-50 cursor-pointer"
                     >
                       <GitHubIcon className="w-3.5 h-3.5 shrink-0" />
                       <span>GitHub</span>
                     </button>
                   </div>
 
-                  {/* Pembatas Or / Atau */}
+                  {/* Divider */}
                   <div className="relative my-3">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-[#7A756D]/30 dark:border-zinc-700" />
+                      <div className="w-full border-t border-[#E4DDD4] dark:border-[#292524]" />
                     </div>
                     <div className="relative flex justify-center text-[10px] uppercase tracking-wider font-mono">
-                      <span className="bg-[#FAF8F5] dark:bg-[#18181B] px-2.5 py-0.5 text-[#853827] dark:text-brand-400 font-bold">
+                      <span className="bg-[#FFFFFF] dark:bg-[#141210] px-3 py-0.5 text-[#8A8378] dark:text-[#8C857F] font-semibold">
                         atau masuk via email
                       </span>
                     </div>
                   </div>
 
                   {/* Form Input Email & Password */}
-                  <form onSubmit={handleSubmit} className="space-y-3.5 pt-0.5">
+                  <form onSubmit={handleSubmit} className="space-y-4 pt-0.5">
                     {/* Email Field */}
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-mono font-semibold text-[#524B42] dark:text-[#A8A29E] uppercase tracking-wider block">
                         Email
                       </label>
-                      <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
-                        <Mail className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
+                      <div className="relative flex items-center rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] focus-within:border-[#C2553A] dark:focus-within:border-[#D4664A] focus-within:ring-2 focus-within:ring-[#D4664A]/20 transition-all">
+                        <Mail className="absolute left-3.5 w-4 h-4 text-[#8A8378] dark:text-[#8C857F]" />
                         <input
                           id="login-email-input"
                           type="email"
@@ -442,18 +434,18 @@ export default function LoginPage() {
                           disabled={loading}
                           required
                           autoComplete="email"
-                          className="w-full bg-transparent pl-9 pr-3 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
+                          className="w-full bg-transparent pl-10 pr-3.5 py-2.5 text-sm font-sans text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#8A8378] dark:placeholder:text-[#8C857F] focus:outline-hidden disabled:opacity-50 font-medium"
                         />
                       </div>
                     </div>
 
                     {/* Password Field */}
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-mono font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider block">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-mono font-semibold text-[#524B42] dark:text-[#A8A29E] uppercase tracking-wider block">
                         Password
                       </label>
-                      <div className="relative flex items-center border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46] bg-[#FFFFFF] dark:bg-[#121214]">
-                        <Lock className="absolute left-3 w-4 h-4 text-[#8A8378] dark:text-zinc-500" />
+                      <div className="relative flex items-center rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] focus-within:border-[#C2553A] dark:focus-within:border-[#D4664A] focus-within:ring-2 focus-within:ring-[#D4664A]/20 transition-all">
+                        <Lock className="absolute left-3.5 w-4 h-4 text-[#8A8378] dark:text-[#8C857F]" />
                         <input
                           id="login-password-input"
                           type={showPassword ? "text" : "password"}
@@ -465,19 +457,19 @@ export default function LoginPage() {
                           disabled={loading}
                           required
                           autoComplete="current-password"
-                          className="w-full bg-transparent pl-9 pr-10 py-2 text-sm font-sans text-[#1C1917] dark:text-zinc-100 placeholder:text-[#8A8378] dark:placeholder:text-zinc-500 focus:outline-hidden disabled:opacity-50 font-medium"
+                          className="w-full bg-transparent pl-10 pr-10 py-2.5 text-sm font-sans text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#8A8378] dark:placeholder:text-[#8C857F] focus:outline-hidden disabled:opacity-50 font-medium"
                         />
                         <button
                           id="login-password-toggle"
                           type="button"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-2.5 p-1 text-[#8A8378] dark:text-zinc-500 hover:text-[#1C1917] dark:hover:text-zinc-200 cursor-pointer"
+                          className="absolute right-2.5 p-1 text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] cursor-pointer transition-colors"
                           tabIndex={-1}
                           aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                         >
                           {showPassword ? (
-                            <EyeOff className="w-4 h-4 text-[#C2553A]" />
+                            <EyeOff className="w-4 h-4 text-[#C2553A] dark:text-[#D4664A]" />
                           ) : (
                             <Eye className="w-4 h-4" />
                           )}
@@ -486,12 +478,12 @@ export default function LoginPage() {
 
                       {/* Remember Me & Forgot Password Row */}
                       <div className="flex items-center justify-between pt-1 text-xs font-mono">
-                        <label className="flex items-center gap-1.5 text-[#524B42] dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-zinc-200 cursor-pointer select-none">
+                        <label className="flex items-center gap-2 text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] cursor-pointer select-none">
                           <input
                             type="checkbox"
                             checked={rememberMe}
                             onChange={(e) => setRememberMe(e.target.checked)}
-                            className="w-3.5 h-3.5 accent-[#C2553A] cursor-pointer"
+                            className="w-3.5 h-3.5 accent-[#C2553A] dark:accent-[#D4664A] cursor-pointer rounded"
                           />
                           <span>Ingat saya</span>
                         </label>
@@ -501,7 +493,7 @@ export default function LoginPage() {
                             setIsForgotPassword(true);
                             setResetSent(false);
                           }}
-                          className="text-[11px] text-[#853827] dark:text-brand-400 hover:underline cursor-pointer"
+                          className="text-[11px] font-medium text-[#C2553A] dark:text-[#D4664A] hover:underline cursor-pointer"
                         >
                           Lupa password?
                         </button>
@@ -526,33 +518,33 @@ export default function LoginPage() {
               <MonsterCompanion focusedField={focusedField} loading={loading} />
             </div>
 
-            {/* Retro Inset Status Bar */}
-            <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t-2 border-[#FFFFFF] dark:border-t-zinc-800 flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-zinc-400 select-none">
-              <span className="flex items-center gap-1.5 truncate">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+            {/* Hairline Telemetry Bar */}
+            <div className="px-5 py-2.5 bg-[#FAF8F5] dark:bg-[#100E0D] border-t border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-[#A8A29E] select-none">
+              <span className="flex items-center gap-2 truncate">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#059669] dark:bg-[#34D399]" />
                 {loading ? "AUTHENTICATING..." : "SYSTEM READY · 256-BIT SECURE"}
               </span>
-              <span className="text-[#8A8378] dark:text-zinc-500 hidden sm:inline">VELQORA_KERNEL · 64-BIT</span>
+              <span className="text-[#8A8378] dark:text-[#8C857F] hidden sm:inline">VELQORA // TLS 1.3</span>
             </div>
           </div>
 
           {/* Secondary Switcher Box */}
-          <div className="vt-window rounded-none p-3 text-center text-xs font-mono text-[#524B42] bg-[#FAF8F5] shadow-xs">
+          <div className="vt-window rounded-xl p-3.5 text-center text-xs font-mono text-[#524B42] dark:text-[#A8A29E]">
             Belum memiliki akun?{" "}
             <Link
               href="/register"
-              className="font-bold text-[#C2553A] hover:underline inline-flex items-center gap-1"
+              className="font-semibold text-[#C2553A] dark:text-[#D4664A] hover:underline inline-flex items-center gap-1"
             >
-              <span>Daftar Akun Baru ▸</span>
+              <span>Daftar Akun Baru →</span>
             </Link>
           </div>
         </div>
       </main>
 
       {/* Clean Footer */}
-      <footer className="w-full py-4 px-4 border-t border-[#7A756D]/30 z-10 flex items-center justify-center max-w-4xl mx-auto text-center font-mono text-xs text-[#8A8378]">
+      <footer className="w-full py-4 px-4 border-t border-[#E4DDD4] dark:border-[#292524] z-10 flex items-center justify-center max-w-4xl mx-auto text-center font-mono text-xs text-[#8A8378] dark:text-[#8C857F]">
         <p>
-          &copy; 2026 VELQORA ACADEMIC OS. SEMUA HAK DILINDUNGI UNDANG-UNDANG.
+          &copy; 2026 VELQORA ACADEMIC PLATFORM. ALL RIGHTS RESERVED.
         </p>
       </footer>
 

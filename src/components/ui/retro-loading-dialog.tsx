@@ -114,83 +114,79 @@ export function RetroLoadingDialog({
       aria-labelledby="retro-loading-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none animate-in fade-in duration-150"
     >
-      {/* Retro 3D Beveled Dialog Window Frame */}
+      {/* Warm Obsidian Dialog Surface */}
       <div
         className={cn(
-          "w-full max-w-[480px] bg-[#ECE9D8] dark:bg-[#18181B]",
-          "border-t-2 border-l-2 border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46]",
-          "border-r-2 border-b-2 border-[#7A756D] dark:border-r-[#09090B] dark:border-b-[#09090B]",
+          "w-full max-w-[460px] rounded-2xl bg-[#FFFFFF] dark:bg-[#141210]",
+          "border border-[#E4DDD4] dark:border-[#292524]",
           "shadow-2xl overflow-hidden font-mono text-left",
           className
         )}
       >
-        {/* Titlebar with Velqora Signature Terracotta Gradient */}
-        <div className="vt-titlebar px-2.5 py-1 flex items-center justify-between select-none">
+        {/* Editorial Dialog Header */}
+        <div className="px-5 py-3 bg-[#F3EFE9]/80 dark:bg-[#1C1917] border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between select-none">
           <div className="flex items-center gap-2 min-w-0 pr-2">
-            <span className="inline-block w-2.5 h-2.5 bg-amber-300 shadow-xs" />
-            <span className="font-mono text-xs font-bold tracking-wide text-white uppercase truncate">
-              VELQORA_OS // LOADER.EXE
+            <span className="inline-block w-2 h-2 rounded-full bg-[#D4664A] shrink-0" />
+            <span className="font-mono text-[11px] font-semibold tracking-[0.06em] text-[#1C1917] dark:text-[#F5F5F4] uppercase truncate">
+              VELQORA // INITIALIZING WORKSPACE
             </span>
           </div>
 
-          {/* Close button [×] */}
+          {/* Close button */}
           <button
             type="button"
             onClick={onCancel}
             aria-label="Batalkan proses loading"
-            className="vt-window-btn vt-window-btn-close flex items-center justify-center cursor-pointer"
+            className="w-6 h-6 rounded-md inline-flex items-center justify-center text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#E4DDD4]/60 dark:hover:bg-[#2C2724] transition-colors cursor-pointer"
             title="Batal"
           >
-            ×
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <path d="M3 3l6 6M9 3l-6 6" />
+            </svg>
           </button>
         </div>
 
-        {/* Dialog Body (Exact Classic Layout Matching Reference Asset) */}
-        <div className="p-6 sm:p-8 space-y-6 bg-[#ECE9D8] dark:bg-[#18181B] text-[#1C1917] dark:text-zinc-100">
+        {/* Dialog Body */}
+        <div className="p-6 sm:p-7 space-y-5 bg-[#FFFFFF] dark:bg-[#141210] text-[#1C1917] dark:text-[#F5F5F4]">
           
-          {/* Centered Large "Loading..." Title */}
+          {/* Centered Loading Title */}
           <div className="text-center space-y-1">
             <h2
               id="retro-loading-title"
-              className="text-xl sm:text-2xl font-sans font-bold tracking-tight text-[#1C1917] dark:text-zinc-100"
+              className="text-xl sm:text-2xl font-sans font-bold tracking-tight text-[#1C1917] dark:text-[#F5F5F4]"
             >
               {title}
             </h2>
-            <p className="text-xs font-mono text-[#524B42] dark:text-zinc-400 truncate">
+            <p className="text-xs font-mono text-[#524B42] dark:text-[#A8A29E] truncate">
               {subtitle || currentStatus}
             </p>
           </div>
 
-          {/* Segmented Block Progress Bar Track (Classic Inset Groove) */}
-          <div className="space-y-1.5">
+          {/* Segmented Terracotta Progress Track */}
+          <div className="space-y-2">
             <div
               className={cn(
-                "w-full h-8 sm:h-9 p-1 flex items-center gap-1 overflow-hidden",
-                // Retro 3D Inset Groove Borders
-                "border-t-2 border-l-2 border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B]",
-                "border-b-2 border-r-2 border-[#FFFFFF] dark:border-b-[#3F3F46] dark:border-r-[#3F3F46]",
-                "bg-[#FAF8F5] dark:bg-[#121214]"
+                "w-full h-8 p-1 rounded-xl flex items-center gap-1 overflow-hidden",
+                "border border-[#E4DDD4] dark:border-[#292524]",
+                "bg-[#FAF8F5] dark:bg-[#0B0A09]"
               )}
             >
               {Array.from({ length: totalBlocks }).map((_, idx) => {
                 const isFilled = idx < filledCount;
-                const isLeadingEdge = idx === filledCount - 1;
 
                 return (
                   <div
                     key={idx}
                     className={cn(
-                      "flex-1 h-full transition-all duration-75 relative overflow-hidden",
+                      "flex-1 h-full rounded-[4px] transition-all duration-150 relative overflow-hidden",
                       isFilled
-                        ? "bg-gradient-to-b from-[#EE7257] via-[#C2553A] to-[#853827] border-t border-l border-[#FFA085]/60 border-r border-b border-[#5C1E12]/80 shadow-xs"
-                        : "bg-transparent",
-                      isFilled && isLeadingEdge && "animate-pulse"
+                        ? "bg-[#C2553A] dark:bg-[#D4664A]"
+                        : "bg-[#EFECE6]/60 dark:bg-[#1C1917]/60"
                     )}
                   >
-                    {/* Animated moving shimmer / light sheen over active terracotta blocks */}
                     {isFilled && (
                       <div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-80 animate-shimmer"
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-80 animate-shimmer"
                         style={{
                           animationDuration: "1.4s",
                           animationDelay: `${idx * 40}ms`,
@@ -202,65 +198,50 @@ export function RetroLoadingDialog({
               })}
             </div>
 
-            {/* Inset Sub-info: Percentage Indicator */}
-            <div className="flex items-center justify-between text-[11px] font-mono text-[#7A756D] dark:text-zinc-400 px-0.5">
+            {/* Sub-info Percentage Indicator */}
+            <div className="flex items-center justify-between text-[11px] font-mono text-[#8A8378] dark:text-[#8C857F] px-0.5">
               <span>STATUS: IN_PROGRESS</span>
-              <span className="font-bold text-[#C2553A] dark:text-brand-400">
-                [ {Math.round(progress)}% ]
+              <span className="font-semibold text-[#C2553A] dark:text-[#D4664A]">
+                {Math.round(progress)}%
               </span>
             </div>
           </div>
 
-          {/* Bottom Control Buttons (Exact Match: [ Done ] [ Cancel ]) */}
-          <div className="pt-2 flex items-center justify-center gap-4 select-none">
-            {/* "Done" Button (Disabled until 100% reached) */}
+          {/* Bottom Control Buttons */}
+          <div className="pt-1 flex items-center justify-center gap-3 select-none">
             <button
               type="button"
               disabled={progress < 100}
               onClick={onComplete}
               className={cn(
-                "min-w-[100px] sm:min-w-[110px] px-4 py-1.5 text-xs font-mono font-bold transition-all",
+                "min-w-[116px] px-4 py-2 text-xs font-mono font-semibold rounded-lg transition-all",
                 progress >= 100
-                  ? "vt-btn-terracotta cursor-pointer active:translate-y-0.5"
-                  : "bg-[#ECE9D8] dark:bg-[#27272A] text-[#8A8378] dark:text-zinc-500 cursor-not-allowed border border-[#B8B1A5] dark:border-zinc-700"
+                  ? "vt-btn-terracotta cursor-pointer"
+                  : "bg-[#F3EFE9] dark:bg-[#1C1917] text-[#8A8378] dark:text-[#8C857F] cursor-not-allowed border border-[#E4DDD4] dark:border-[#292524]"
               )}
             >
-              {/* Inner vintage dotted outline when focused/active */}
-              <span
-                className={cn(
-                  "block px-2 py-0.5 border border-dotted",
-                  progress >= 100
-                    ? "border-amber-200/50"
-                    : "border-transparent"
-                )}
-              >
-                Done
-              </span>
+              Masuk Workspace
             </button>
 
-            {/* "Cancel" Button (Classic Vintage Chrome Button with Dotted Inner Border) */}
             <button
               type="button"
               onClick={onCancel}
-              className="min-w-[100px] sm:min-w-[110px] px-4 py-1.5 vt-btn-chrome text-xs font-mono font-bold cursor-pointer active:translate-y-0.5 group"
+              className="min-w-[100px] px-4 py-2 vt-btn-chrome text-xs font-mono font-semibold cursor-pointer"
             >
-              {/* Inner vintage dotted outline box matching reference image */}
-              <span className="block px-2 py-0.5 border border-dotted border-[#7A756D]/50 dark:border-zinc-500/50 group-hover:border-[#1C1917] dark:group-hover:border-zinc-300">
-                Cancel
-              </span>
+              Batal
             </button>
           </div>
 
         </div>
 
-        {/* Retro Inset Status Bar */}
-        <div className="px-3 py-1 bg-[#ECE9D8] dark:bg-[#18181B] border-t-2 border-[#FFFFFF] dark:border-t-zinc-800 flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-zinc-400 select-none">
-          <span className="flex items-center gap-1.5 truncate">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981] shrink-0 animate-ping" />
-            <span>SESSION_ESTABLISHED · VELQORA_KERNEL</span>
+        {/* Hairline Telemetry Bar */}
+        <div className="px-5 py-2.5 bg-[#FAF8F5] dark:bg-[#100E0D] border-t border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-[#A8A29E] select-none">
+          <span className="flex items-center gap-2 truncate">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#059669] dark:bg-[#34D399] shrink-0" />
+            <span>SESSION_ESTABLISHED · VELQORA</span>
           </span>
-          <span className="text-[#8A8378] dark:text-zinc-500 hidden sm:inline shrink-0">
-            64-BIT RUNTIME
+          <span className="text-[#8A8378] dark:text-[#8C857F] hidden sm:inline shrink-0">
+            WORKSPACE READY
           </span>
         </div>
       </div>

@@ -23,7 +23,7 @@ export function ProjectCategoryCard({ category, onClick }: ProjectCategoryCardPr
   return (
     <div
       onClick={onClick}
-      className="group block p-4 sm:p-5 vt-window bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#FAF8F5] dark:hover:bg-[#202024] transition-all relative overflow-hidden border border-border cursor-pointer"
+      className="group block p-4 sm:p-5 vt-window rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] hover:bg-[#FAF8F5] dark:hover:bg-[#1C1917] transition-all relative overflow-hidden border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/35 dark:hover:border-[#3A3431] cursor-pointer"
       style={{
         borderTopWidth: "3px",
         borderTopColor: category.color,

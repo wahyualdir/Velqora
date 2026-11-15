@@ -250,7 +250,7 @@ export function NoteEditor({
               onKeyDown={handleKeyDown}
               placeholder="Tulis materi catatan Anda di sini... Gunakan [[Judul Catatan]] untuk membuat tautan wiki-link dan #tag untuk menambahkan label."
               rows={24}
-              className="w-full p-4 bg-surface dark:bg-[#18181B] border border-border text-xs sm:text-sm font-mono text-text-primary placeholder:text-text-tertiary leading-relaxed focus:outline-hidden focus:border-brand-500 rounded-none shadow-inner resize-y min-h-[500px]"
+              className="w-full p-4 bg-surface dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-xs sm:text-sm font-mono text-text-primary placeholder:text-text-tertiary leading-relaxed focus:outline-hidden focus:border-[#D4664A] rounded-xl shadow-inner resize-y min-h-[500px]"
             />
           </div>
         ) : (

@@ -38,8 +38,9 @@ const ACCENT_OPTIONS: {
   name: string;
   dotColor: string;
 }[] = [
+  { id: "terracotta", name: "Muted Terracotta", dotColor: "bg-[#D4664A]" },
   { id: "platinum", name: "Platinum Slate", dotColor: "bg-slate-400" },
-  { id: "indigo", name: "Cyber Indigo", dotColor: "bg-blue-600" },
+  { id: "indigo", name: "Classic Indigo", dotColor: "bg-indigo-500" },
   { id: "emerald", name: "Emerald Mint", dotColor: "bg-emerald-500" },
   { id: "violet", name: "Royal Violet", dotColor: "bg-purple-500" },
   { id: "amber", name: "Solar Amber", dotColor: "bg-amber-500" },

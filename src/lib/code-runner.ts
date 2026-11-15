@@ -265,3 +265,109 @@ export async function executePython(code: string): Promise<ExecutionResult> {
     };
   }
 }
+
+let cachedSqlModulePromise: Promise<import("sql.js").SqlJsStatic> | null = null;
+
+function formatSqlResultTable(
+  columns: string[],
+  values: Array<Array<number | string | Uint8Array | null>>
+): string {
+  const stringRows = values.map((row) =>
+    row.map((cell) => {
+      if (cell === null || cell === undefined) return "NULL";
+      if (cell instanceof Uint8Array) return `<BLOB ${cell.byteLength}B>`;
+      return String(cell);
+    })
+  );
+
+  const widths = columns.map((col, colIdx) => {
+    let maxW = col.length;
+    for (const row of stringRows) {
+      if (row[colIdx].length > maxW) maxW = row[colIdx].length;
+    }
+    return Math.min(maxW, 42);
+  });
+
+  const pad = (val: string, w: number) =>
+    val.length > w ? `${val.slice(0, Math.max(1, w - 1))}…` : val.padEnd(w, " ");
+
+  const header = `| ${columns.map((c, idx) => pad(c, widths[idx])).join(" | ")} |`;
+  const divider = `|-${widths.map((w) => "-".repeat(w)).join("-|-")}-|`;
+  const body = stringRows.map(
+    (row) => `| ${row.map((cell, idx) => pad(cell, widths[idx])).join(" | ")} |`
+  );
+
+  return [header, divider, ...body, `(${values.length} baris)`].join("\n");
+}
+
+/**
+ * Execute SQLite SQL scripts directly in browser/Node using sql.js WebAssembly.
+ */
+export async function executeSql(code: string): Promise<ExecutionResult> {
+  const startTime = performance.now();
+  const logs: { type: "log" | "error" | "warn" | "info"; text: string }[] = [];
+
+  try {
+    if (!cachedSqlModulePromise) {
+      cachedSqlModulePromise = (async () => {
+        const sqlModule = await import("sql.js");
+        const initSqlJs = sqlModule.default;
+        const config =
+          typeof window !== "undefined"
+            ? { locateFile: (file: string) => `/wasm/${file}` }
+            : undefined;
+        return initSqlJs(config);
+      })().catch((err) => {
+        cachedSqlModulePromise = null;
+        throw err;
+      });
+    }
+
+    const SQL = await cachedSqlModulePromise;
+    const db = new SQL.Database();
+
+    try {
+      db.run("PRAGMA foreign_keys = ON;");
+      const resultSets = db.exec(code);
+
+      if (resultSets.length > 0) {
+        resultSets.forEach((set, idx) => {
+          const tableText = formatSqlResultTable(set.columns, set.values);
+          logs.push({
+            type: "log",
+            text:
+              resultSets.length > 1
+                ? `-- Hasil Kueri #${idx + 1}\n${tableText}`
+                : tableText,
+          });
+        });
+      } else {
+        const modified = db.getRowsModified();
+        logs.push({
+          type: "info",
+          text:
+            modified > 0
+              ? `Kueri SQL berhasil dieksekusi (${modified} baris terpengaruh).`
+              : "Skrip SQL (DDL/DML) berhasil dieksekusi tanpa baris hasil SELECT.",
+        });
+      }
+
+      const endTime = performance.now();
+      return {
+        output: logs.map((l) => l.text).join("\n\n"),
+        executionTimeMs: Math.round(endTime - startTime),
+        logs,
+      };
+    } finally {
+      db.close();
+    }
+  } catch (err: any) {
+    const endTime = performance.now();
+    return {
+      output: logs.map((l) => l.text).join("\n\n"),
+      error: err?.message || String(err),
+      executionTimeMs: Math.round(endTime - startTime),
+      logs,
+    };
+  }
+}

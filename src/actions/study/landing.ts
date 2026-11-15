@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { ALL_ACADEMIC_CURRICULA } from "@/lib/curriculum/registry";
+import { getTopicStatus } from "@/lib/curriculum/status";
 
 export interface AcademicDisciplineItem {
   id: string;
@@ -131,8 +132,8 @@ function categorizeCluster(slug: string): {
     return {
       cluster: "ai",
       clusterLabel: "Kecerdasan Buatan & Sistem Cerdas",
-      badgeColor: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800",
-      accentColor: "#8B5CF6",
+      badgeColor: "bg-[#FDF2EE] text-[#C2553A] border-[#F5D0C5] dark:bg-[#D4664A]/12 dark:text-[#D4664A] dark:border-[#D4664A]/30",
+      accentColor: "#D4664A",
       targetRole: "AI Engineer, Intelligent Systems Researcher",
       code,
       credits: 4,
@@ -143,8 +144,8 @@ function categorizeCluster(slug: string): {
     return {
       cluster: "ml",
       clusterLabel: "Fondasi Machine & Deep Learning",
-      badgeColor: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800",
-      accentColor: "#3B82F6",
+      badgeColor: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-[#E5C194]/12 dark:text-[#E5C194] dark:border-[#E5C194]/30",
+      accentColor: "#E5C194",
       targetRole: "ML Engineer, Deep Learning Specialist",
       code,
       credits: 4,
@@ -155,8 +156,8 @@ function categorizeCluster(slug: string): {
     return {
       cluster: "data",
       clusterLabel: "Sains Data & Analitika Lanjutan",
-      badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800",
-      accentColor: "#10B981",
+      badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-[#34D399]/10 dark:text-[#34D399] dark:border-[#34D399]/30",
+      accentColor: "#34D399",
       targetRole: "Data Scientist, Quantitative Analyst",
       code,
       credits: 3,
@@ -166,8 +167,8 @@ function categorizeCluster(slug: string): {
   return {
     cluster: "systems",
     clusterLabel: "Rekayasa Perangkat Lunak & Sistem",
-    badgeColor: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800",
-    accentColor: "#F59E0B",
+    badgeColor: "bg-[#F3EFE9] text-[#57534E] border-[#E4DDD4] dark:bg-[#24201D] dark:text-[#A8A29E] dark:border-[#292524]",
+    accentColor: "#A8A29E",
     targetRole: "MLOps Architect, Distributed Systems Engineer",
     code,
     credits: 3,
@@ -208,12 +209,20 @@ export async function getLandingCurriculumData(): Promise<LandingCurriculumData>
     };
   });
 
-  const totalDisciplines = allDisciplines.length; // 28
-  const verifiedDisciplines = 7; // 7 terverifikasi penuh: Data Analyst, Data Science, Machine Learning, Deep Learning, AI Fundamentals, Computer Vision, NLP
-  const inProgressDisciplines = 1; // 1 dalam proses lanjut: Large Language Models (LLM) 72% (130/180 subbab)
-  const underReviewDisciplines = 20; // 20 draf silabus sedang dalam proses peninjauan ulang bertahap
-  const totalChapters = allDisciplines.reduce((acc, d) => acc + d.chaptersCount, 0); // 373
-  const totalSubchapters = allDisciplines.reduce((acc, d) => acc + d.subchaptersCount, 0); // 3,680
+  const totalDisciplines = allDisciplines.length;
+  const verifiedDisciplines = allDisciplines.filter(
+    (d) => getTopicStatus(d.slug).status === "verified"
+  ).length;
+  const inProgressDisciplines = allDisciplines.filter((d) => {
+    const status = getTopicStatus(d.slug).status;
+    return status === "in_development" || status === "in_progress";
+  }).length;
+  const underReviewDisciplines = Math.max(
+    0,
+    totalDisciplines - verifiedDisciplines - inProgressDisciplines
+  );
+  const totalChapters = allDisciplines.reduce((acc, d) => acc + d.chaptersCount, 0);
+  const totalSubchapters = allDisciplines.reduce((acc, d) => acc + d.subchaptersCount, 0);
   const totalSources = 102; // Canonical Source Registry
 
   let totalProjectsCount = 18;
@@ -234,7 +243,7 @@ export async function getLandingCurriculumData(): Promise<LandingCurriculumData>
     if (typeof noteCount === "number" && noteCount > 0) {
       totalNotesCount = noteCount;
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback
   }
 
@@ -242,42 +251,42 @@ export async function getLandingCurriculumData(): Promise<LandingCurriculumData>
     {
       id: "cluster-ai",
       title: "Kecerdasan Buatan & Agen Otonom",
-      tag: "01 // ARTIFICIAL INTELLIGENCE",
+      tag: "01 // KECERDASAN BUATAN",
       description:
         "Arsitektur AI Agent, Large Language Model, Generative AI, Computer Vision, NLP, hingga Etika & Keamanan AI.",
       count: allDisciplines.filter((d) => d.cluster === "ai").length,
       disciplines: allDisciplines.filter((d) => d.cluster === "ai").map((d) => d.title),
-      accentColor: "#8B5CF6",
+      accentColor: "#D4664A",
     },
     {
       id: "cluster-ml",
       title: "Machine Learning & Deep Learning",
-      tag: "02 // ADVANCED MACHINE LEARNING",
+      tag: "02 // MACHINE LEARNING",
       description:
         "Supervised & Unsupervised Learning, Arsitektur Jaringan Saraf Dalam, Reinforcement Learning, dan Graph Neural Networks.",
       count: allDisciplines.filter((d) => d.cluster === "ml").length,
       disciplines: allDisciplines.filter((d) => d.cluster === "ml").map((d) => d.title),
-      accentColor: "#3B82F6",
+      accentColor: "#E5C194",
     },
     {
       id: "cluster-data",
       title: "Sains Data & Analitika Tingkat Lanjut",
-      tag: "03 // DATA SCIENCE & ANALYTICS",
+      tag: "03 // SAINS DATA",
       description:
         "Inferensi Statistik, Time Series Forecasting, Vector Database & RAG, serta Rekayasa Data Skala Masif.",
       count: allDisciplines.filter((d) => d.cluster === "data").length,
       disciplines: allDisciplines.filter((d) => d.cluster === "data").map((d) => d.title),
-      accentColor: "#10B981",
+      accentColor: "#34D399",
     },
     {
       id: "cluster-systems",
       title: "Rekayasa Sistem & Infrastruktur Produksi",
-      tag: "04 // SYSTEMS & MLOPS",
+      tag: "04 // REKAYASA SISTEM",
       description:
         "Pipeline MLOps, Sistem Terdistribusi, Edge AI & TinyML, dan Representasi Pengetahuan Formal.",
       count: allDisciplines.filter((d) => d.cluster === "systems").length,
       disciplines: allDisciplines.filter((d) => d.cluster === "systems").map((d) => d.title),
-      accentColor: "#F59E0B",
+      accentColor: "#A8A29E",
     },
   ];
 

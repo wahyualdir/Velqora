@@ -5,8 +5,14 @@ export { OSDesktopIcons } from "./os-desktop-icons";
 export { OSHeroWindow } from "./os-hero-window";
 export { CanvasWireframeCube } from "./canvas-wireframe-cube";
 export { CanvasLanguageOrbit, type LanguageNode } from "./canvas-language-orbit";
+export {
+  LiveComputeCanvas,
+  COMPUTE_ENGINES,
+  type ComputeEngineSpec,
+} from "./live-compute-canvas";
 export { NotepadManifesto } from "./notepad-manifesto";
 export { CurriculumExplorer } from "./curriculum-explorer";
 export { SystemMonitorWindow } from "./system-monitor-window";
 export { MarqueeTicker } from "./marquee-ticker";
 export { RunDialogCTA } from "./run-dialog-cta";
+export { VelqoraMotionProvider } from "./motion-primitives";

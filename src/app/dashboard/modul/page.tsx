@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Clock,
-  Sparkles,
   Compass,
   Search as SearchIcon,
   X,
@@ -35,8 +34,6 @@ import { OwnerModuleImportModal } from "@/components/modul/owner-module-import-m
 import { AiCategoryCard, AiCategoryItem } from "@/components/modul/ai-category-card";
 import { CategoryModuleGroup } from "@/components/modul/category-module-group";
 import { ModuleDriveFile } from "@/types/module-drive";
-import { getDefaultAiSections } from "@/lib/fallback-syllabus-defaults";
-import { getAcademicCurriculum } from "@/lib/curriculum/registry";
 import { getTopicStatus } from "@/lib/curriculum/status";
 import {
   CATALOG_GROUPS,
@@ -44,7 +41,6 @@ import {
   CAREER_PATHS,
   getCatalogChapterCount,
   CareerPath,
-  TopicLevel,
 } from "@/lib/curriculum/catalog";
 import { toast } from "sonner";
 
@@ -309,11 +305,6 @@ function ModulDanProjectContent() {
   // ─── 1. Ringkasan 24 Topik AI (Katalog Terstruktur per Jalur) ───
   const aiTopicOverview = useMemo<AiCategoryItem[]>(() => {
     return CATALOG_TOPICS.filter((t) => !t.hidden).map((topic) => {
-      const dbCat = categories.find(
-        (c) =>
-          (c.name || "").toLowerCase().trim() === topic.name.toLowerCase().trim() ||
-          (topic.legacyId && (c.name || "").toLowerCase().trim() === topic.legacyId.toLowerCase().trim())
-      );
       const customCount = aiScopedModules.filter((m) => {
         const catName = (m.category?.name || "").toLowerCase().trim();
         return (
@@ -346,7 +337,7 @@ function ModulDanProjectContent() {
         group: topic.group,
       };
     });
-  }, [aiScopedModules, categories]);
+  }, [aiScopedModules]);
 
   // Statistik Kesiapan Konten (Dihitung Dinamis dari 24 Topik Aktif)
   const verifiedCount = useMemo(
@@ -508,14 +499,23 @@ function ModulDanProjectContent() {
                 Struktur kurikulum terpadu 24 topik berstandar universitas & industri, dikelompokkan per jalur kompetensi
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setViewTab("all-content")}
-              className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1 shrink-0 self-start sm:self-auto"
-            >
-              <span>Eksplorasi Modul ({totalModulesCount + totalProjectsCount})</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex flex-wrap items-center gap-3 shrink-0 self-start sm:self-auto">
+              <Link
+                href="/dashboard/kode"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-medium text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+              >
+                <Code2 className="w-3.5 h-3.5" />
+                <span>Katalog Kode</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setViewTab("all-content")}
+                className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1"
+              >
+                <span>Eksplorasi Modul ({totalModulesCount + totalProjectsCount})</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
           {/* Banner Transparansi Audit Kualitas Kurikulum (Dihitung Dinamis) */}

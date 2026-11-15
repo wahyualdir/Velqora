@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, AlertTriangle, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, AlertTriangle, Clock, Sparkles, FileCode2 } from "lucide-react";
 import { getCategoryIconComponent } from "./category-icon";
 import { getTopicStatus, TopicStatusMeta } from "@/lib/curriculum/status";
 import { CareerPath, TopicLevel } from "@/lib/curriculum/catalog";
@@ -48,17 +48,17 @@ export function AiCategoryCard({ category }: AiCategoryCardProps) {
   const isUnderReview = statusMeta.status === "under_review";
   const isInProgress = statusMeta.status === "in_development" || statusMeta.status === "in_progress";
   const isComingSoon = statusMeta.status === "coming_soon";
+  const kodeHref = `/dashboard/kode?topic=${encodeURIComponent(category.id || category.name)}`;
 
   return (
-    <Link
-      href={href}
-      className="group block p-4 sm:p-5 vt-window bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#FAF8F5] dark:hover:bg-[#202024] transition-all relative overflow-hidden border border-border flex flex-col justify-between h-full"
+    <div
+      className="group p-4 sm:p-5 vt-window rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] hover:bg-[#FAF8F5] dark:hover:bg-[#1C1917] transition-all relative overflow-hidden border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/35 dark:hover:border-[#3A3431] flex flex-col justify-between h-full"
       style={{
         borderTopWidth: "3px",
         borderTopColor: category.color,
       }}
     >
-      <div>
+      <Link href={href} className="block flex-1 focus:outline-none">
         {/* Header Baris 1: Icon & Badges */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div
@@ -175,23 +175,36 @@ export function AiCategoryCard({ category }: AiCategoryCardProps) {
             </div>
           )}
         </div>
-      </div>
+      </Link>
 
       {/* Footer Kartu */}
-      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-mono text-text-tertiary group-hover:text-brand-600 dark:group-hover:text-brand-400">
-        <div className="flex items-center gap-1 text-[10px]">
+      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between gap-2 text-xs font-mono text-text-tertiary">
+        <div className="flex items-center gap-1 text-[10px] min-w-0">
           {category.careerPaths && category.careerPaths.length > 0 && (
-            <span className="truncate max-w-[170px] text-text-tertiary">
+            <span className="truncate max-w-[140px] text-text-tertiary">
               {category.careerPaths.slice(0, 2).join(" • ")}
               {category.careerPaths.length > 2 ? ` +${category.careerPaths.length - 2}` : ""}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 font-medium shrink-0">
-          <span>Buka Topik</span>
-          <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href={kodeHref}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-border bg-surface-secondary/60 hover:bg-surface-secondary hover:border-brand-500/40 text-[10px] font-medium text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            title={`Buka Lab Kode ${category.name}`}
+          >
+            <FileCode2 className="w-3 h-3" />
+            <span>Lab Kode</span>
+          </Link>
+          <Link
+            href={href}
+            className="inline-flex items-center gap-1 font-medium text-text-secondary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"
+          >
+            <span>Buka Teori</span>
+            <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

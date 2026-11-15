@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   SiPython,
   SiRust,
@@ -32,28 +33,38 @@ export const POLYGLOT_LANGUAGES: LanguageNode[] = [
     id: "python",
     name: "Python",
     version: "3.12",
-    role: "AI/ML & Scientific Kernel",
-    telemetry: "Vectorized NumPy 2.0, SciPy 1.14 & Autograd JIT READY",
-    color: "#F59E0B",
-    accentGlow: "rgba(245, 158, 11, 0.75)",
+    role: "Kernel AI & Sains",
+    telemetry: "Komputasi vektor NumPy, SciPy, dan diferensiasi otomatis",
+    color: "#FBBF24",
+    accentGlow: "rgba(251, 191, 36, 0.75)",
     icon: SiPython,
+  },
+  {
+    id: "pytorch",
+    name: "PyTorch",
+    version: "2.5",
+    role: "Deep Learning",
+    telemetry: "Graf tensor dinamis dan akselerasi kompilasi JIT",
+    color: "#FB7185",
+    accentGlow: "rgba(251, 113, 133, 0.75)",
+    icon: SiPytorch,
   },
   {
     id: "rust",
     name: "Rust",
     version: "2024",
-    role: "WASM & Memory-Safe Accelerator",
-    telemetry: "WASM SIMD AVX-512 · Zero-Cost Memory Safety ACTIVE",
-    color: "#C2553A",
-    accentGlow: "rgba(194, 85, 58, 0.75)",
+    role: "Akselerator WASM",
+    telemetry: "Komputasi paralel aman memori tanpa beban runtime",
+    color: "#EA7A58",
+    accentGlow: "rgba(234, 122, 88, 0.75)",
     icon: SiRust,
   },
   {
     id: "typescript",
     name: "TypeScript",
     version: "5.7",
-    role: "Reactive UI & Type-Safe Client",
-    telemetry: "Strictly Typed Reactive Canvas & Realtime OS AST READY",
+    role: "Antarmuka Reaktif",
+    telemetry: "Visualisasi model interaktif dan notebook web type-safe",
     color: "#38BDF8",
     accentGlow: "rgba(56, 189, 248, 0.75)",
     icon: SiTypescript,
@@ -62,28 +73,18 @@ export const POLYGLOT_LANGUAGES: LanguageNode[] = [
     id: "cpp",
     name: "C++",
     version: "20/CUDA",
-    role: "Low-Latency GPU & BLAS Engine",
-    telemetry: "CUDA 12.6 Kernels · Low-Latency cuBLAS Matrix LINKED",
-    color: "#60A5FA",
-    accentGlow: "rgba(96, 165, 250, 0.75)",
+    role: "Mesin Matriks GPU",
+    telemetry: "Kernel CUDA latensi rendah dan operasi aljabar linear",
+    color: "#93C5FD",
+    accentGlow: "rgba(147, 197, 253, 0.75)",
     icon: SiCplusplus,
-  },
-  {
-    id: "pytorch",
-    name: "PyTorch",
-    version: "2.5",
-    role: "Deep Learning & TorchDynamo Compiler",
-    telemetry: "TorchDynamo JIT Graph & Inductor Triton Backends ONLINE",
-    color: "#F87171",
-    accentGlow: "rgba(248, 113, 113, 0.75)",
-    icon: SiPytorch,
   },
   {
     id: "julia",
     name: "Julia",
     version: "1.10",
-    role: "High-Throughput Matrix Science",
-    telemetry: "Multiple Dispatch Differential Equations & BLAS VERIFIED",
+    role: "Komputasi Ilmiah",
+    telemetry: "Simulasi persamaan diferensial dan numerik berkinerja tinggi",
     color: "#C084FC",
     accentGlow: "rgba(192, 132, 252, 0.75)",
     icon: SiJulia,
@@ -92,86 +93,89 @@ export const POLYGLOT_LANGUAGES: LanguageNode[] = [
     id: "go",
     name: "Go",
     version: "1.23",
-    role: "Distributed MLOps & High-Concurrency Pipelines",
-    telemetry: "Goroutines Pipeline Orchestrator & gRPC Streams SYNCED",
-    color: "#00ADD8",
-    accentGlow: "rgba(0, 173, 216, 0.75)",
+    role: "Pipeline MLOps",
+    telemetry: "Orkestrasi layanan konkurensi dan streaming gRPC",
+    color: "#22D3EE",
+    accentGlow: "rgba(34, 211, 238, 0.75)",
     icon: SiGo,
   },
   {
     id: "r",
     name: "R",
     version: "4.4",
-    role: "Advanced Econometrics & Statistical Inference",
-    telemetry: "CRAN Bioconductor Matrix · Linear Mixed-Effects VERIFIED",
-    color: "#276DC3",
-    accentGlow: "rgba(39, 109, 195, 0.75)",
+    role: "Statistika Formal",
+    telemetry: "Inferensi statistik, pemodelan linear, dan ekonometrika",
+    color: "#60A5FA",
+    accentGlow: "rgba(96, 165, 250, 0.75)",
     icon: SiR,
   },
   {
     id: "postgres",
     name: "PostgreSQL",
     version: "17",
-    role: "Vector Embeddings & pgvector Database",
-    telemetry: "HNSW Cosine Vector Indexing · Hybrid Search OK",
-    color: "#336791",
-    accentGlow: "rgba(51, 103, 145, 0.75)",
+    role: "Basis Data Vektor",
+    telemetry: "Indeks vektor pgvector dan pencarian semantik hibrida",
+    color: "#7DD3FC",
+    accentGlow: "rgba(125, 211, 252, 0.75)",
     icon: SiPostgresql,
   },
   {
     id: "bash",
     name: "Bash",
     version: "5.2",
-    role: "Unix Shell & Cloud AI Automation",
-    telemetry: "POSIX Pipelines · Slurm Cluster Dispatcher READY",
-    color: "#4EAA25",
-    accentGlow: "rgba(78, 170, 37, 0.75)",
+    role: "Otomasi Cluster",
+    telemetry: "Eksekusi skrip UNIX dan penjadwalan job komputasi",
+    color: "#4ADE80",
+    accentGlow: "rgba(74, 222, 128, 0.75)",
     icon: SiGnubash,
   },
   {
     id: "tensorflow",
     name: "TensorFlow",
     version: "2.18",
-    role: "Edge AI & Mobile TFLite Inference",
-    telemetry: "XLA Ahead-Of-Time Compiler & Quantized INT8 Models OK",
-    color: "#FF6F00",
-    accentGlow: "rgba(255, 111, 0, 0.75)",
+    role: "Edge & Mobile AI",
+    telemetry: "Kompilasi XLA dan inferensi model terkuantisasi",
+    color: "#FB923C",
+    accentGlow: "rgba(251, 146, 60, 0.75)",
     icon: SiTensorflow,
   },
   {
     id: "docker",
     name: "Docker",
     version: "27",
-    role: "Scientific Reproducibility Containers",
-    telemetry: "OCI Multi-Stage Sandbox · Reproducible Environment LOCKED",
-    color: "#2496ED",
-    accentGlow: "rgba(36, 150, 237, 0.75)",
+    role: "Sandbox Riset",
+    telemetry: "Isolasi lingkungan eksekusi kode yang dapat direproduksi",
+    color: "#38BDF8",
+    accentGlow: "rgba(56, 189, 248, 0.75)",
     icon: SiDocker,
   },
 ];
 
-// Pre-calculate 12 Fibonacci Sphere Unit Coordinates (Radius R = 72)
-const SPHERE_RADIUS = 72;
-const FIBONACCI_SPHERE_POINTS = (() => {
-  const points: { x: number; y: number; z: number }[] = [];
-  const N = POLYGLOT_LANGUAGES.length; // 12
-  const phiGolden = 1.618033988749895;
-
-  for (let i = 0; i < N; i++) {
-    const yUnit = 1 - (i / (N - 1)) * 2; // from 1 to -1
-    const radiusAtY = Math.sqrt(Math.max(0, 1 - yUnit * yUnit));
-    const theta = (2 * Math.PI * i) / phiGolden;
-
-    const xUnit = Math.cos(theta) * radiusAtY;
-    const zUnit = Math.sin(theta) * radiusAtY;
-
-    points.push({
-      x: xUnit * SPHERE_RADIUS,
-      y: yUnit * SPHERE_RADIUS,
-      z: zUnit * SPHERE_RADIUS,
-    });
-  }
-  return points;
+// 12 Platonic Regular Icosahedron vertices normalized onto R = 88
+// Ensures equal ~63.4 deg separation between every neighboring node (zero polar crowding)
+const SPHERE_RADIUS = 88;
+const ICOSAHEDRON_POINTS = (() => {
+  const phi = (1 + Math.sqrt(5)) / 2;
+  const raw: [number, number, number][] = [
+    [0, 1, phi],
+    [phi, 0, 1],
+    [-1, phi, 0],
+    [-phi, 0, 1],
+    [0, -1, phi],
+    [1, phi, 0],
+    [0, 1, -phi],
+    [1, -phi, 0],
+    [-phi, 0, -1],
+    [0, -1, -phi],
+    [-1, -phi, 0],
+    [phi, 0, -1],
+  ];
+  const invLen = 1 / Math.sqrt(1 + phi * phi);
+  return raw.map(([x, y, z]) => ({
+    x: x * invLen * SPHERE_RADIUS,
+    y: y * invLen * SPHERE_RADIUS,
+    z: z * invLen * SPHERE_RADIUS,
+  }));
 })();
 
 export interface CanvasLanguageOrbitProps {
@@ -185,53 +189,116 @@ export function CanvasLanguageOrbit({
 }: CanvasLanguageOrbitProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [hoveredNode, setHoveredNode] = useState<LanguageNode | null>(null);
-  const hoveredNodeIdRef = useRef<string | null>(null);
+  const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  // Mouse Drag & Physics Inertia States
+  const [hoveredNode, setHoveredNode] = useState<LanguageNode | null>(null);
+  const [spotlightNode, setSpotlightNode] = useState<LanguageNode>(
+    POLYGLOT_LANGUAGES[0]
+  );
+
+  const userHoverIdRef = useRef<string | null>(null);
+  const spotlightIdRef = useRef<string>(POLYGLOT_LANGUAGES[0].id);
+  const lastInteractionAtRef = useRef<number>(0);
+
+  // Physics & drag states (rad and rad/sec)
   const isDraggingRef = useRef<boolean>(false);
   const lastPointerPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const velocityRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // 3D Angles
-  const sphereRotXRef = useRef<number>(0.25);
-  const sphereRotYRef = useRef<number>(0.55);
-  const sphereRotZRef = useRef<number>(0.08);
+  // Balanced tilted 3D orientation
+  const sphereRotXRef = useRef<number>(0.26);
+  const sphereRotYRef = useRef<number>(0.42);
+  const sphereRotZRef = useRef<number>(0.12);
 
-  // Parallax Tilt States (±12 deg = ±0.209 rad)
+  // Subtle camera parallax tilt (±7 deg = ±0.12 rad)
   const targetParallaxXRef = useRef<number>(0);
   const targetParallaxYRef = useRef<number>(0);
   const currentParallaxXRef = useRef<number>(0);
   const currentParallaxYRef = useRef<number>(0);
 
-  // Speed regulation
-  const autoCruiseSpeedRef = useRef<number>(0.0075);
-  const targetCruiseSpeedRef = useRef<number>(0.0075);
+  // Angular cruise velocity in rad/sec
+  const autoCruiseSpeedRef = useRef<number>(0.26);
+  const targetCruiseSpeedRef = useRef<number>(0.26);
 
-  // Callback ref
+  // Per-node smooth lerped visual state + radial vector animation
+  const nodeScalesRef = useRef<number[]>(POLYGLOT_LANGUAGES.map(() => 0.95));
+  const nodeOpacitiesRef = useRef<number[]>(POLYGLOT_LANGUAGES.map(() => 0.85));
+  const frontNodesRef = useRef<{ id: string; z: number }[]>([]);
+  const beamProgressRef = useRef<number>(0);
+  const prevBeamNodeIdRef = useRef<string | null>(null);
+
+  const activeNode = hoveredNode ?? spotlightNode;
+
   const onNodeHoverRef = useRef(onNodeHover);
   useEffect(() => {
     onNodeHoverRef.current = onNodeHover;
   }, [onNodeHover]);
 
+  // Keep parent inspector in sync with whichever node is active (hovered or spotlit)
+  useEffect(() => {
+    onNodeHoverRef.current?.(activeNode);
+  }, [activeNode]);
+
+  // Smooth idle spotlight cycle restricted to crisp foreground nodes
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (userHoverIdRef.current || isDraggingRef.current) return;
+      if (performance.now() - lastInteractionAtRef.current < 1600) return;
+
+      const frontCandidates = frontNodesRef.current.filter(
+        (n) => n.id !== spotlightIdRef.current
+      );
+      let nextNode: LanguageNode | undefined;
+
+      if (frontCandidates.length > 0) {
+        // Pick a crisp foreground candidate cleanly cycling through the list order
+        const currentIdx = POLYGLOT_LANGUAGES.findIndex(
+          (n) => n.id === spotlightIdRef.current
+        );
+        for (let offset = 1; offset <= POLYGLOT_LANGUAGES.length; offset++) {
+          const cand =
+            POLYGLOT_LANGUAGES[(currentIdx + offset) % POLYGLOT_LANGUAGES.length];
+          if (frontCandidates.some((f) => f.id === cand.id)) {
+            nextNode = cand;
+            break;
+          }
+        }
+      }
+
+      if (!nextNode) {
+        const currentIdx = POLYGLOT_LANGUAGES.findIndex(
+          (n) => n.id === spotlightIdRef.current
+        );
+        nextNode =
+          POLYGLOT_LANGUAGES[(currentIdx + 1) % POLYGLOT_LANGUAGES.length];
+      }
+
+      spotlightIdRef.current = nextNode.id;
+      setSpotlightNode(nextNode);
+    }, 3200);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   const handleNodeMouseEnter = (node: LanguageNode) => {
-    hoveredNodeIdRef.current = node.id;
+    userHoverIdRef.current = node.id;
+    spotlightIdRef.current = node.id;
+    lastInteractionAtRef.current = performance.now();
     setHoveredNode(node);
-    targetCruiseSpeedRef.current = 0.0015; // Smooth slow motion on hover
-    onNodeHoverRef.current?.(node);
+    setSpotlightNode(node);
+    targetCruiseSpeedRef.current = 0.035;
   };
 
   const handleNodeMouseLeave = () => {
-    hoveredNodeIdRef.current = null;
+    userHoverIdRef.current = null;
+    lastInteractionAtRef.current = performance.now();
     setHoveredNode(null);
-    targetCruiseSpeedRef.current = 0.0075; // Restore normal cruise
-    onNodeHoverRef.current?.(null);
+    targetCruiseSpeedRef.current = 0.26;
   };
 
-  // Pointer drag event handlers
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     isDraggingRef.current = true;
+    lastInteractionAtRef.current = performance.now();
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
     velocityRef.current = { x: 0, y: 0 };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -245,9 +312,8 @@ export function CanvasLanguageOrbit({
       const normX = (mouseX - rect.width / 2) / (rect.width / 2);
       const normY = (mouseY - rect.height / 2) / (rect.height / 2);
 
-      // Parallax Tilt target (±12 deg = ~0.209 rad)
-      targetParallaxYRef.current = Math.max(-1, Math.min(1, normX)) * 0.209;
-      targetParallaxXRef.current = -Math.max(-1, Math.min(1, normY)) * 0.209;
+      targetParallaxYRef.current = Math.max(-1, Math.min(1, normX)) * 0.12;
+      targetParallaxXRef.current = -Math.max(-1, Math.min(1, normY)) * 0.12;
     }
 
     if (!isDraggingRef.current) return;
@@ -256,19 +322,23 @@ export function CanvasLanguageOrbit({
     const dy = e.clientY - lastPointerPosRef.current.y;
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
 
-    // Fluid sensitivity
-    const dragSensitivity = 0.008;
-    velocityRef.current = {
-      x: dx * dragSensitivity,
-      y: dy * dragSensitivity,
-    };
+    const dragSensitivity = 0.0075;
+    const stepX = dx * dragSensitivity;
+    const stepY = dy * dragSensitivity;
 
-    sphereRotYRef.current += dx * dragSensitivity;
-    sphereRotXRef.current -= dy * dragSensitivity;
+    sphereRotYRef.current += stepX;
+    sphereRotXRef.current -= stepY;
+
+    // Velocity smoothed in rad/sec (~60fps base scaled)
+    velocityRef.current = {
+      x: velocityRef.current.x * 0.5 + stepX * 52 * 0.5,
+      y: velocityRef.current.y * 0.5 + stepY * 52 * 0.5,
+    };
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     isDraggingRef.current = false;
+    lastInteractionAtRef.current = performance.now();
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {
@@ -279,6 +349,7 @@ export function CanvasLanguageOrbit({
   const handleContainerMouseLeave = () => {
     targetParallaxXRef.current = 0;
     targetParallaxYRef.current = 0;
+    handleNodeMouseLeave();
   };
 
   useEffect(() => {
@@ -290,15 +361,15 @@ export function CanvasLanguageOrbit({
     if (!ctx) return;
 
     let animationFrameId: number;
-    let width = container.clientWidth || 340;
-    let height = container.clientHeight || 195;
+    let width = container.clientWidth || 380;
+    let height = container.clientHeight || 288;
     let dpr = Math.min(3, window.devicePixelRatio || 1);
 
     const updateSize = () => {
       if (!container || !canvas) return;
       const rect = container.getBoundingClientRect();
-      width = Math.floor(rect.width) || 340;
-      height = Math.floor(rect.height) || 195;
+      width = Math.floor(rect.width) || 380;
+      height = Math.floor(rect.height) || 288;
       dpr = Math.min(3, window.devicePixelRatio || 1);
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -311,28 +382,22 @@ export function CanvasLanguageOrbit({
     });
     resizeObserver.observe(container);
 
-    const startTime = performance.now();
-
-    // 3D rotation mathematical transforms
     const rotatePoint3D = (
       p: { x: number; y: number; z: number },
       rx: number,
       ry: number,
       rz: number
     ) => {
-      // Rotate X
       const cosX = Math.cos(rx);
       const sinX = Math.sin(rx);
       const y1 = p.y * cosX - p.z * sinX;
       const z1 = p.y * sinX + p.z * cosX;
 
-      // Rotate Y
       const cosY = Math.cos(ry);
       const sinY = Math.sin(ry);
       const x2 = p.x * cosY + z1 * sinY;
       const z2 = -p.x * sinY + z1 * cosY;
 
-      // Rotate Z
       const cosZ = Math.cos(rz);
       const sinZ = Math.sin(rz);
       const x3 = x2 * cosZ - y1 * sinZ;
@@ -341,14 +406,12 @@ export function CanvasLanguageOrbit({
       return { x: x3, y: y3, z: z2 };
     };
 
-    // Camera Perspective projection (Focal Length fov = 220)
-    const fov = 220;
+    const fov = 340;
     const projectCamera = (
       p: { x: number; y: number; z: number },
       cx: number,
       cy: number
     ) => {
-      // p.z > 0 is closer to camera (Front), p.z < 0 is farther (Back)
       const scale = fov / (fov - p.z);
       return {
         px: cx + p.x * scale,
@@ -358,83 +421,95 @@ export function CanvasLanguageOrbit({
       };
     };
 
-    // Generate Celestial Sphere Rings (Equator, Tropics, and Longitude Meridians)
-    const RING_SAMPLES = 40;
+    // Generate crisp wireframe rings: Equator, 2 Tropics, 2 Orthogonal Meridians
+    const RING_SAMPLES = 64;
     const wireframeRings: { x: number; y: number; z: number }[][] = [];
 
-    // Ring 0: Equator (y = 0, R = 72)
-    const equator: { x: number; y: number; z: number }[] = [];
-    for (let s = 0; s < RING_SAMPLES; s++) {
-      const a = (s / RING_SAMPLES) * Math.PI * 2;
-      equator.push({ x: Math.cos(a) * SPHERE_RADIUS, y: 0, z: Math.sin(a) * SPHERE_RADIUS });
-    }
-    wireframeRings.push(equator);
-
-    // Ring 1: Tropic of Cancer (y = 36, r = sqrt(72^2 - 36^2) ≈ 62.35)
-    const rTropic = Math.sqrt(SPHERE_RADIUS * SPHERE_RADIUS - 36 * 36);
-    const tropicN: { x: number; y: number; z: number }[] = [];
-    for (let s = 0; s < RING_SAMPLES; s++) {
-      const a = (s / RING_SAMPLES) * Math.PI * 2;
-      tropicN.push({ x: Math.cos(a) * rTropic, y: -36, z: Math.sin(a) * rTropic });
-    }
-    wireframeRings.push(tropicN);
-
-    // Ring 2: Tropic of Capricorn (y = -36)
-    const tropicS: { x: number; y: number; z: number }[] = [];
-    for (let s = 0; s < RING_SAMPLES; s++) {
-      const a = (s / RING_SAMPLES) * Math.PI * 2;
-      tropicS.push({ x: Math.cos(a) * rTropic, y: 36, z: Math.sin(a) * rTropic });
-    }
-    wireframeRings.push(tropicS);
-
-    // Longitude Meridians at 0, 60, and 120 degrees
-    for (const mDeg of [0, 60, 120]) {
-      const mRad = (mDeg * Math.PI) / 180;
-      const meridian: { x: number; y: number; z: number }[] = [];
-      for (let s = 0; s < RING_SAMPLES; s++) {
-        const a = (s / RING_SAMPLES) * Math.PI * 2;
-        // In local X-Y, circle around Z, then rotated by mRad around Y
-        const lx = Math.cos(a) * SPHERE_RADIUS;
-        const ly = Math.sin(a) * SPHERE_RADIUS;
-        meridian.push({
-          x: lx * Math.cos(mRad),
-          y: ly,
-          z: lx * Math.sin(mRad),
-        });
+    const evalRingPoint = (ringIdx: number, angle: number) => {
+      const tropicY = SPHERE_RADIUS * 0.5;
+      const rTropic = Math.sqrt(
+        SPHERE_RADIUS * SPHERE_RADIUS - tropicY * tropicY
+      );
+      if (ringIdx === 0) {
+        return {
+          x: Math.cos(angle) * SPHERE_RADIUS,
+          y: 0,
+          z: Math.sin(angle) * SPHERE_RADIUS,
+        };
       }
-      wireframeRings.push(meridian);
+      if (ringIdx === 1) {
+        return {
+          x: Math.cos(angle) * rTropic,
+          y: -tropicY,
+          z: Math.sin(angle) * rTropic,
+        };
+      }
+      if (ringIdx === 2) {
+        return {
+          x: Math.cos(angle) * rTropic,
+          y: tropicY,
+          z: Math.sin(angle) * rTropic,
+        };
+      }
+      if (ringIdx === 3) {
+        return {
+          x: Math.cos(angle) * SPHERE_RADIUS,
+          y: Math.sin(angle) * SPHERE_RADIUS,
+          z: 0,
+        };
+      }
+      return {
+        x: 0,
+        y: Math.sin(angle) * SPHERE_RADIUS,
+        z: Math.cos(angle) * SPHERE_RADIUS,
+      };
+    };
+
+    for (let r = 0; r < 5; r++) {
+      const ring: { x: number; y: number; z: number }[] = [];
+      for (let s = 0; s < RING_SAMPLES; s++) {
+        ring.push(evalRingPoint(r, (s / RING_SAMPLES) * Math.PI * 2));
+      }
+      wireframeRings.push(ring);
     }
+
+    let lastFrameTime = performance.now();
+    let elapsed = 0;
 
     const render = () => {
       const now = performance.now();
-      const time = (now - startTime) * 0.001;
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastFrameTime) * 0.001));
+      lastFrameTime = now;
+      elapsed += dt;
 
-      // 1. Friction & Auto Cruise Physics
+      // 1. Frame-rate independent smooth cruise & inertia physics
       if (!isDraggingRef.current) {
-        // Friction damping 0.93
-        velocityRef.current.x *= 0.93;
-        velocityRef.current.y *= 0.93;
-        sphereRotYRef.current += velocityRef.current.x;
-        sphereRotXRef.current -= velocityRef.current.y;
+        const dragDecay = Math.pow(0.05, dt);
+        velocityRef.current.x *= dragDecay;
+        velocityRef.current.y *= dragDecay;
 
-        // Auto cruise rotation
+        sphereRotYRef.current += velocityRef.current.x * dt;
+        sphereRotXRef.current -= velocityRef.current.y * dt;
+
+        const speedEase = 1 - Math.exp(-5.5 * dt);
         autoCruiseSpeedRef.current +=
-          (targetCruiseSpeedRef.current - autoCruiseSpeedRef.current) * 0.06;
-        sphereRotYRef.current += autoCruiseSpeedRef.current;
-        sphereRotXRef.current += autoCruiseSpeedRef.current * 0.22;
-        sphereRotZRef.current += autoCruiseSpeedRef.current * 0.12;
+          (targetCruiseSpeedRef.current - autoCruiseSpeedRef.current) * speedEase;
+
+        sphereRotYRef.current += autoCruiseSpeedRef.current * dt;
+        sphereRotXRef.current +=
+          Math.cos(elapsed * 0.35) * autoCruiseSpeedRef.current * 0.16 * dt;
       }
 
-      // 2. Parallax Lerp Damping
+      // 2. Parallax camera damping
+      const parEase = 1 - Math.exp(-8 * dt);
       currentParallaxXRef.current +=
-        (targetParallaxXRef.current - currentParallaxXRef.current) * 0.08;
+        (targetParallaxXRef.current - currentParallaxXRef.current) * parEase;
       currentParallaxYRef.current +=
-        (targetParallaxYRef.current - currentParallaxYRef.current) * 0.08;
+        (targetParallaxYRef.current - currentParallaxYRef.current) * parEase;
 
       const rotX = sphereRotXRef.current;
       const rotY = sphereRotYRef.current;
       const rotZ = sphereRotZRef.current;
-
       const parX = currentParallaxXRef.current;
       const parY = currentParallaxYRef.current;
 
@@ -445,88 +520,53 @@ export function CanvasLanguageOrbit({
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, width, height);
 
-      // =========================================================================
-      // VANISHING-POINT FLOOR GRID (Perspective Floor with Terracotta #C2553A/10)
-      // =========================================================================
-      const vpY = cy + 20;
-      const floorBottom = height;
-      ctx.strokeStyle = "rgba(194, 85, 58, 0.10)";
-      ctx.lineWidth = 0.8;
-
-      // Radial grid rays fanning out from vanishing point to floor
-      const numRays = 9;
-      for (let r = 0; r < numRays; r++) {
-        const rayX = (width / (numRays - 1)) * r;
-        ctx.beginPath();
-        ctx.moveTo(cx, vpY);
-        ctx.lineTo(rayX, floorBottom);
-        ctx.stroke();
-      }
-
-      // Horizontal cross-lines with exponential depth perspective
-      const numLines = 5;
-      for (let l = 1; l <= numLines; l++) {
-        const factor = Math.pow(l / numLines, 1.8);
-        const lineY = vpY + factor * (floorBottom - vpY);
-        const lineHalfWidth = (width / 2) * factor * 1.05;
-        ctx.beginPath();
-        ctx.moveTo(cx - lineHalfWidth, lineY);
-        ctx.lineTo(cx + lineHalfWidth, lineY);
-        ctx.stroke();
-      }
-
-      // Background subtle crosshair reticle
-      ctx.strokeStyle = "rgba(61, 51, 42, 0.35)";
-      ctx.setLineDash([2, 5]);
+      // Gentle breathing ambient center warmth
+      const glowAlpha = 0.075 + Math.sin(elapsed * 1.8) * 0.018;
+      const ambientCore = ctx.createRadialGradient(
+        cx,
+        cy,
+        4,
+        cx,
+        cy,
+        SPHERE_RADIUS * 1.25
+      );
+      ambientCore.addColorStop(0, `rgba(212, 102, 74, ${glowAlpha.toFixed(3)})`);
+      ambientCore.addColorStop(1, "rgba(212, 102, 74, 0)");
+      ctx.fillStyle = ambientCore;
       ctx.beginPath();
-      ctx.moveTo(cx - 55, cy);
-      ctx.lineTo(cx + 55, cy);
-      ctx.moveTo(cx, cy - 40);
-      ctx.lineTo(cx, cy + 40);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.arc(cx, cy, SPHERE_RADIUS * 1.25, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Transform Helper: Sphere rotation -> Camera Parallax Tilt
       const transformPoint = (p: { x: number; y: number; z: number }) => {
         const pRot = rotatePoint3D(p, rotX, rotY, rotZ);
-        // Apply camera parallax
         const pCam = rotatePoint3D(pRot, parX, parY, 0);
         return projectCamera(pCam, cx, cy);
       };
 
-      // Transform all Wireframe Globe Rings
-      const projectedRings: { px: number; py: number; z: number }[][] = [];
-      for (let r = 0; r < wireframeRings.length; r++) {
-        const pts = wireframeRings[r];
-        const projPts: { px: number; py: number; z: number }[] = [];
-        for (let s = 0; s < pts.length; s++) {
-          projPts.push(transformPoint(pts[s]));
+      const projectedRings = wireframeRings.map((pts) => pts.map(transformPoint));
+      const projectedNodes = ICOSAHEDRON_POINTS.map((pt, index) => ({
+        ...transformPoint(pt),
+        index,
+      }));
+
+      // Track current crisp foreground candidates for idle auto-spotlight
+      const currentFront: { id: string; z: number }[] = [];
+      for (let i = 0; i < projectedNodes.length; i++) {
+        if (projectedNodes[i].z > 14) {
+          currentFront.push({
+            id: POLYGLOT_LANGUAGES[i].id,
+            z: projectedNodes[i].z,
+          });
         }
-        projectedRings.push(projPts);
       }
+      frontNodesRef.current = currentFront;
 
-      // Transform 12 Fibonacci Nodes
-      const projectedNodes: {
-        px: number;
-        py: number;
-        scale: number;
-        z: number;
-        index: number;
-      }[] = [];
-      for (let i = 0; i < FIBONACCI_SPHERE_POINTS.length; i++) {
-        const proj = transformPoint(FIBONACCI_SPHERE_POINTS[i]);
-        projectedNodes.push({ ...proj, index: i });
-      }
-
-      // =========================================================================
-      // PASS 1: DRAW BACKWARD GLOBE RINGS & LINES (Z < 0 - Atmospheric Depth)
-      // =========================================================================
-      ctx.lineWidth = 0.9;
-      ctx.strokeStyle = "rgba(194, 85, 58, 0.16)"; // Faint Terracotta
-      ctx.setLineDash([2, 4]);
-
+      // PASS 1: Back Hemisphere Wireframe (clear legible depth hairlines)
+      ctx.lineWidth = 0.95;
       for (let r = 0; r < projectedRings.length; r++) {
         const pts = projectedRings[r];
+        ctx.strokeStyle =
+          r === 0 ? "rgba(212, 102, 74, 0.16)" : "rgba(168, 162, 158, 0.14)";
         for (let s = 0; s < pts.length; s++) {
           const p1 = pts[s];
           const p2 = pts[(s + 1) % pts.length];
@@ -538,103 +578,41 @@ export function CanvasLanguageOrbit({
           }
         }
       }
-      ctx.setLineDash([]);
 
-      // Faint radial guide beams to backward nodes
-      for (let i = 0; i < projectedNodes.length; i++) {
-        const np = projectedNodes[i];
-        if (np.z >= 0) continue;
-
+      // PASS 2: Animated Architectural Center Core
+      const reticleAngle = elapsed * 0.45;
+      ctx.strokeStyle = "rgba(229, 193, 148, 0.28)";
+      ctx.lineWidth = 1;
+      for (let seg = 0; seg < 3; seg++) {
+        const startA = reticleAngle + (seg * Math.PI * 2) / 3;
         ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(np.px, np.py);
-        ctx.strokeStyle = "rgba(194, 85, 58, 0.12)";
-        ctx.lineWidth = 0.7;
-        ctx.setLineDash([2, 5]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // =========================================================================
-      // PASS 2: VELQORA CENTRAL CORE (Pulsing Glow - Amber #F59E0B & Terracotta #C2553A)
-      // =========================================================================
-      const pulse1 = Math.sin(time * 3.4);
-      const pulse2 = Math.cos(time * 2.8);
-      const rAura1 = 28 + pulse1 * 5;
-      const rAura2 = 42 + pulse2 * 6;
-
-      // Dual radiation pulse auras
-      // Aura 1: Amber radiation
-      const amberAura = ctx.createRadialGradient(cx, cy, 2, cx, cy, rAura1);
-      amberAura.addColorStop(0, "rgba(245, 158, 11, 0.50)");
-      amberAura.addColorStop(0.5, "rgba(245, 158, 11, 0.15)");
-      amberAura.addColorStop(1, "rgba(245, 158, 11, 0)");
-      ctx.fillStyle = amberAura;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rAura1, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Aura 2: Terracotta expanding ripple
-      const terraAura = ctx.createRadialGradient(cx, cy, 5, cx, cy, rAura2);
-      terraAura.addColorStop(0, "rgba(194, 85, 58, 0.35)");
-      terraAura.addColorStop(0.6, "rgba(194, 85, 58, 0.08)");
-      terraAura.addColorStop(1, "rgba(194, 85, 58, 0)");
-      ctx.fillStyle = terraAura;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rAura2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Sonar ripple rings propagating outward
-      for (let w = 0; w < 2; w++) {
-        const wave = (time * 19 + w * 18) % 40;
-        const waveAlpha = Math.max(0, 1 - wave / 40) * 0.35;
-        ctx.strokeStyle = `rgba(245, 158, 11, ${waveAlpha})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 8 + wave, 0, Math.PI * 2);
+        ctx.arc(cx, cy, 17, startA, startA + 1.15);
         ctx.stroke();
       }
 
-      // Central rotating micro-diamond crystal core
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(time * 0.85);
-
-      const dSize = 7 + pulse1 * 1.2;
-      ctx.fillStyle = "#C2553A"; // Terracotta
-      ctx.strokeStyle = "#F59E0B"; // Amber
-      ctx.lineWidth = 1.4;
-      ctx.shadowColor = "#F59E0B";
-      ctx.shadowBlur = 8;
-
+      const coreRadius = 8.5 + Math.sin(elapsed * 2.2) * 1.1;
+      ctx.strokeStyle = "rgba(212, 102, 74, 0.48)";
+      ctx.lineWidth = 1.15;
       ctx.beginPath();
-      ctx.moveTo(0, -dSize);
-      ctx.lineTo(dSize, 0);
-      ctx.lineTo(0, dSize);
-      ctx.lineTo(-dSize, 0);
-      ctx.closePath();
-      ctx.fill();
+      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.shadowBlur = 0;
-      ctx.restore();
-
-      // Pure white central nexus point
-      ctx.fillStyle = "#FFFFFF";
+      ctx.fillStyle = "#D4664A";
       ctx.beginPath();
-      ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 3, 0, Math.PI * 2);
       ctx.fill();
 
-      // =========================================================================
-      // PASS 3: FOREWARD GLOBE RINGS & LINES (Z >= 0 - Glowing Amber Front)
-      // =========================================================================
-      ctx.lineWidth = 1.3;
-      ctx.strokeStyle = "rgba(245, 158, 11, 0.50)"; // Luminous Amber
-      ctx.shadowColor = "rgba(245, 158, 11, 0.40)";
-      ctx.shadowBlur = 5;
+      ctx.fillStyle = "#F5F5F4";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 1.1, 0, Math.PI * 2);
+      ctx.fill();
 
+      // PASS 3: Front Hemisphere Wireframe (Equator Terracotta, Meridians/Tropics Sand)
       for (let r = 0; r < projectedRings.length; r++) {
         const pts = projectedRings[r];
+        ctx.lineWidth = r === 0 ? 1.3 : 1.0;
+        ctx.strokeStyle =
+          r === 0 ? "rgba(212, 102, 74, 0.36)" : "rgba(229, 193, 148, 0.22)";
         for (let s = 0; s < pts.length; s++) {
           const p1 = pts[s];
           const p2 = pts[(s + 1) % pts.length];
@@ -646,74 +624,109 @@ export function CanvasLanguageOrbit({
           }
         }
       }
-      ctx.shadowBlur = 0;
 
-      // Foreward radial laser beams & energy transmission
-      for (let i = 0; i < projectedNodes.length; i++) {
-        const np = projectedNodes[i];
-        if (np.z < 0) continue;
+      // PASS 4: Smooth 3D Orbital Tracer Beads gliding along Equator & Meridians
+      const tracers = [
+        { ringIdx: 0, headAngle: elapsed * 0.62, rgb: "212, 102, 74" },
+        { ringIdx: 3, headAngle: elapsed * 0.46 + 2.1, rgb: "229, 193, 148" },
+        { ringIdx: 4, headAngle: elapsed * 0.38 + 4.3, rgb: "224, 134, 107" },
+      ];
+      const TRAIL_STEPS = 12;
+      const TRAIL_SPAN = 0.48;
 
-        const isHovered = hoveredNodeIdRef.current === POLYGLOT_LANGUAGES[i].id;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(np.px, np.py);
-
-        if (isHovered) {
-          // Intense Laser Beam with Traveling Photons
-          ctx.strokeStyle = "rgba(245, 158, 11, 0.95)";
-          ctx.lineWidth = 2.2;
-          ctx.shadowColor = "#F59E0B";
-          ctx.shadowBlur = 10;
-          ctx.stroke();
-          ctx.shadowBlur = 0;
-
-          const packetT = (time * 3.0) % 1;
-          const pxT = cx + (np.px - cx) * packetT;
-          const pyT = cy + (np.py - cy) * packetT;
-          ctx.fillStyle = "#FFFFFF";
-          ctx.shadowColor = "#F59E0B";
-          ctx.shadowBlur = 6;
+      for (const tracer of tracers) {
+        const trailPts = [];
+        for (let t = 0; t <= TRAIL_STEPS; t++) {
+          const a = tracer.headAngle - (t / TRAIL_STEPS) * TRAIL_SPAN;
+          trailPts.push(transformPoint(evalRingPoint(tracer.ringIdx, a)));
+        }
+        ctx.lineWidth = 1.6;
+        for (let t = 0; t < TRAIL_STEPS; t++) {
+          const p1 = trailPts[t];
+          const p2 = trailPts[t + 1];
+          const fade = 1 - t / TRAIL_STEPS;
+          const depthMod = p1.z >= 0 ? 0.72 : 0.22;
+          ctx.strokeStyle = `rgba(${tracer.rgb}, ${(fade * depthMod).toFixed(3)})`;
           ctx.beginPath();
-          ctx.arc(pxT, pyT, 2.8, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        } else {
-          ctx.strokeStyle = "rgba(245, 158, 11, 0.22)";
-          ctx.lineWidth = 0.8;
-          ctx.setLineDash([2, 5]);
+          ctx.moveTo(p1.px, p1.py);
+          ctx.lineTo(p2.px, p2.py);
           ctx.stroke();
-          ctx.setLineDash([]);
+        }
+        const head = trailPts[0];
+        ctx.fillStyle = `rgba(${tracer.rgb}, ${head.z >= 0 ? 0.95 : 0.38})`;
+        ctx.beginPath();
+        ctx.arc(head.px, head.py, head.z >= 0 ? 2.5 : 1.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // PASS 5: Animated Radial Guide Vector to Active Node
+      const activeId = userHoverIdRef.current ?? spotlightIdRef.current;
+      if (activeId !== prevBeamNodeIdRef.current) {
+        beamProgressRef.current = 0;
+        prevBeamNodeIdRef.current = activeId;
+      }
+      const beamEase = 1 - Math.exp(-9 * dt);
+      beamProgressRef.current += (1 - beamProgressRef.current) * beamEase;
+
+      if (activeId) {
+        const activeIdx = POLYGLOT_LANGUAGES.findIndex((n) => n.id === activeId);
+        const np = activeIdx >= 0 ? projectedNodes[activeIdx] : undefined;
+        if (np) {
+          const tipX = cx + (np.px - cx) * beamProgressRef.current;
+          const tipY = cy + (np.py - cy) * beamProgressRef.current;
+
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(tipX, tipY);
+          ctx.strokeStyle = userHoverIdRef.current
+            ? "rgba(212, 102, 74, 0.72)"
+            : "rgba(212, 102, 74, 0.45)";
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+
+          if (beamProgressRef.current > 0.85) {
+            ctx.fillStyle = "#E5C194";
+            ctx.beginPath();
+            ctx.arc(np.px, np.py, 2.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       }
 
       ctx.restore();
 
-      // =========================================================================
-      // PASS 4: UPDATE REACT DOM NODES (True 3D Camera Perspective & DoF Scale)
-      // =========================================================================
+      // PASS 6: Lerped DOM Node Projection (silky scale & clarity)
+      const isUserHovering = userHoverIdRef.current !== null;
+      const nodeLerp = 1 - Math.exp(-12 * dt);
+
       for (let i = 0; i < projectedNodes.length; i++) {
         const el = nodeRefs.current[i];
         const np = projectedNodes[i];
         if (!el || !np) continue;
 
-        const isHovered = hoveredNodeIdRef.current === POLYGLOT_LANGUAGES[i].id;
+        const isNodeActive = activeId === POLYGLOT_LANGUAGES[i].id;
+        const depthFactor = Math.max(
+          0,
+          Math.min(1, (np.z + SPHERE_RADIUS) / (2 * SPHERE_RADIUS))
+        );
 
-        // Front (Z > 0): scale up to 1.35x, opacity 1.0, high z-index
-        // Back (Z < 0): scale down to 0.55x, atmospheric depth fade (opacity down to 0.35)
-        const depthFactor = (np.z + SPHERE_RADIUS) / (2 * SPHERE_RADIUS); // 0 at back, 1 at front
-
-        const targetScale = isHovered
-          ? Math.max(0.9, np.scale * 1.25)
-          : Math.max(0.55, Math.min(1.35, np.scale));
-
-        const targetOpacity = isHovered
+        const targetScale = isNodeActive ? 1.14 : 0.8 + depthFactor * 0.28;
+        const baseOpacity = 0.52 + depthFactor * 0.48;
+        const targetOpacity = isNodeActive
           ? 1.0
-          : Math.max(0.35, Math.min(1.0, 0.35 + depthFactor * 0.65));
+          : isUserHovering
+            ? baseOpacity * 0.62
+            : baseOpacity;
 
-        const zIndex = isHovered ? 200 : Math.round(50 + np.z);
+        nodeScalesRef.current[i] +=
+          (targetScale - nodeScalesRef.current[i]) * nodeLerp;
+        nodeOpacitiesRef.current[i] +=
+          (targetOpacity - nodeOpacitiesRef.current[i]) * nodeLerp;
 
-        el.style.transform = `translate3d(${np.px}px, ${np.py}px, 0px) translate(-50%, -50%) scale(${targetScale})`;
-        el.style.opacity = `${targetOpacity}`;
+        const zIndex = isNodeActive ? 200 : Math.round(50 + np.z);
+
+        el.style.transform = `translate3d(${np.px}px, ${np.py}px, 0px) translate(-50%, -50%) scale(${nodeScalesRef.current[i]})`;
+        el.style.opacity = `${nodeOpacitiesRef.current[i]}`;
         el.style.zIndex = `${zIndex}`;
       }
 
@@ -736,97 +749,65 @@ export function CanvasLanguageOrbit({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onMouseLeave={handleContainerMouseLeave}
-      className={`relative w-full h-[195px] sm:h-[205px] bg-[#14110F] rounded-xs border border-[#3D332A] overflow-hidden select-none cursor-grab active:cursor-grabbing ${className}`}
+      className={`relative w-full h-[276px] sm:h-[296px] bg-transparent overflow-hidden select-none cursor-grab active:cursor-grabbing ${className}`}
     >
-      {/* Top Left: Holographic Sphere Header */}
-      <div className="absolute top-2 left-2 font-mono text-[9px] text-[#C2553A] tracking-wider select-none flex items-center gap-1.5 z-30 pointer-events-none">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#C2553A] animate-pulse" />
-        <span>SPHERE: CELESTIAL_3D_PERSPECTIVE</span>
-      </div>
-
-      {/* Top Right: Status Badge */}
-      <div className="absolute top-2 right-2 font-mono text-[9px] text-amber-500/80 tracking-wider select-none z-30 pointer-events-none">
-        FOV: 220 · 60FPS [HD]
-      </div>
-
-      {/* Bottom Left: Interactive Hint */}
-      <div className="absolute bottom-2 left-2 font-mono text-[9px] text-[#A89F91]/70 tracking-wider select-none z-30 pointer-events-none flex items-center gap-1">
-        <span>DRAG TO ROTATE · PARALLAX 3D</span>
-      </div>
-
-      {/* Bottom Right: Active Engine Lock Telemetry */}
-      <div className="absolute bottom-2 right-2 font-mono text-[9px] tracking-wider select-none z-30 pointer-events-none font-bold">
-        {hoveredNode ? (
-          <span className="text-amber-400">
-            LOCK: {hoveredNode.name.toUpperCase()} · {hoveredNode.version}
-          </span>
-        ) : (
-          <span className="text-emerald-500/80">12 ENGINES ONLINE</span>
-        )}
-      </div>
-
-      {/* 3D Canvas Layer with DPR HD Calibration */}
+      {/* 3D Animated Canvas Layer */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
       />
 
-      {/* 12 Interactive Language Node DOM Elements */}
+      {/* 12 Crisp Obsidian Keycap Nodes */}
       {POLYGLOT_LANGUAGES.map((node, index) => {
         const IconComponent = node.icon;
-        const isHovered = hoveredNode?.id === node.id;
+        const isActive = activeNode?.id === node.id;
 
         return (
-          <div
+          <button
+            type="button"
             key={node.id}
             ref={(el) => {
               nodeRefs.current[index] = el;
             }}
             onMouseEnter={() => handleNodeMouseEnter(node)}
             onMouseLeave={handleNodeMouseLeave}
-            className="absolute top-0 left-0 cursor-pointer will-change-transform group pointer-events-auto"
+            onFocus={() => handleNodeMouseEnter(node)}
+            onBlur={handleNodeMouseLeave}
+            onClick={() => handleNodeMouseEnter(node)}
+            className="absolute top-0 left-0 cursor-pointer will-change-transform group pointer-events-auto focus:outline-none"
             style={{
               transform: "translate3d(0px, 0px, 0px) translate(-50%, -50%)",
             }}
             aria-label={`${node.name} ${node.version} - ${node.role}`}
           >
-            {/* Hex / Square Icon Container */}
             <div
-              className={`relative flex items-center justify-center w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-xs transition-colors duration-150 backdrop-blur-xs ${
-                isHovered
-                  ? "bg-[#1F1916] border-2 border-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.8)]"
-                  : "bg-[#181412]/90 border border-[#3D332A] hover:border-amber-500/70 shadow-[0_0_8px_rgba(0,0,0,0.85)]"
+              className={`relative flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 ease-out ${
+                isActive
+                  ? "bg-[#28221D] border border-[#D4664A] shadow-[0_0_0_3px_rgba(212,102,74,0.22),0_12px_26px_rgba(0,0,0,0.62),inset_0_1px_0_rgba(255,248,240,0.12)]"
+                  : "bg-[#211C19]/95 border border-[#3B342E] hover:border-[#D4664A]/70 shadow-[0_6px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,248,240,0.08)]"
               }`}
             >
-              {/* Corner decorative notch */}
-              <div
-                className={`absolute -top-0.5 -right-0.5 w-1 h-1 ${
-                  isHovered ? "bg-amber-400" : "bg-[#C2553A]/50"
-                }`}
-              />
-
               <IconComponent
-                className="w-4 h-4 transition-transform duration-150"
-                style={{
-                  color: isHovered ? "#F59E0B" : node.color,
-                  filter: isHovered
-                    ? "drop-shadow(0 0 6px rgba(245, 158, 11, 0.95))"
-                    : `drop-shadow(0 0 3px ${node.accentGlow})`,
-                }}
+                className="w-[18px] h-[18px] transition-transform duration-200 ease-out group-hover:scale-105"
+                style={{ color: node.color }}
               />
             </div>
 
-            {/* Micro Monospace Label under Node */}
-            <div
-              className={`absolute top-full left-1/2 -translate-x-1/2 mt-0.5 whitespace-nowrap font-mono text-[7.5px] tracking-tight px-1 py-0.2 rounded-2xs border transition-all duration-150 pointer-events-none ${
-                isHovered
-                  ? "bg-[#1C1917] text-amber-300 border-amber-500/70 font-bold shadow-[0_0_8px_rgba(245,158,11,0.5)] opacity-100"
-                  : "bg-[#14110F]/85 text-[#A89F91] border-[#3D332A]/50 group-hover:text-white"
-              }`}
-            >
-              {node.name}
-            </div>
-          </div>
+            {/* Smooth Single Active Label Pill (Zero Collision) */}
+            <AnimatePresence>
+              {isActive && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5, scale: 0.92 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 3, scale: 0.94 }}
+                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 whitespace-nowrap font-sans text-[11px] font-medium leading-none px-2.5 py-1 rounded-md bg-[#1C1917]/95 text-[#F5F5F4] border border-[#D4664A]/55 shadow-lg pointer-events-none"
+                >
+                  {node.name}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
         );
       })}
     </div>

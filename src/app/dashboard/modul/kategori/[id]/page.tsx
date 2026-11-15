@@ -523,7 +523,7 @@ export default function DedicatedCategoryModulesPage({
       </nav>
 
       {/* ─── 2. Header Kategori Ringkas ─── */}
-      <header className="p-4 sm:p-5 vt-window bg-[#FFFFFF] dark:bg-[#18181B] border border-border space-y-3">
+      <header className="p-5 sm:p-6 vt-window rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div className="flex items-start gap-3.5 min-w-0">
             <div

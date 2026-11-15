@@ -18,7 +18,7 @@
   --color-brand-100: #fdddd7;
   --color-brand-200: #fbb9ad;
   --color-brand-300: #f48e7c;
-  --color-brand-400: #e0654f;
+  --color-brand-400: #d4664a;
   --color-brand-500: #c2553a;
   --color-brand-600: #a34530;
   --color-brand-700: #853827;
@@ -299,24 +299,24 @@ html.dark[data-surface="web"],
 .dark[data-surface="web"],
 html.dark:not([data-surface]),
 .dark:not([data-surface]) {
-  --color-background: #09090b;
-  --color-surface: #141416;
-  --color-surface-secondary: #1c1c20;
-  --color-surface-tertiary: #232328;
-  --color-surface-hover: #2b2b32;
+  --color-background: #0b0a09;
+  --color-surface: #141210;
+  --color-surface-secondary: #1c1917;
+  --color-surface-tertiary: #24201d;
+  --color-surface-hover: #2c2724;
 
-  --color-border: #27272a;
-  --color-border-hover: #3f3f46;
+  --color-border: #292524;
+  --color-border-hover: #3a3431;
 
-  --color-text-primary: #f4f4f5;
-  --color-text-secondary: #a1a1aa;
-  --color-text-tertiary: #71717a;
+  --color-text-primary: #f5f5f4;
+  --color-text-secondary: #a8a29e;
+  --color-text-tertiary: #8c857f;
 
-  --color-sidebar: #101012;
-  --color-sidebar-hover: #18181b;
+  --color-sidebar: #100e0d;
+  --color-sidebar-hover: #1c1917;
   --color-sidebar-active: #c2553a;
-  --color-sidebar-text: #a1a1aa;
-  --color-sidebar-text-active: #f4f4f5;
+  --color-sidebar-text: #a8a29e;
+  --color-sidebar-text-active: #f5f5f4;
 }
 
 .dark body,
@@ -369,7 +369,13 @@ html[data-radius="soft"] {
 }
 
 /* Motion Controls */
-html[data-motion="reduced"] *,
+html[data-motion="reduced"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -430,6 +436,14 @@ html[data-accent="violet"] {
   --color-brand-600: #7c3aed;
   --color-brand-700: #6d28d9;
   --color-sidebar-active: #5b21b6;
+}
+
+/* Indigo */
+html[data-accent="indigo"] {
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-sidebar-active: #3730a3;
 }
 
 /* Amber */
@@ -1038,13 +1052,13 @@ button, a, input, select, textarea {
 
 .dark .vt-desktop-bg,
 html.dark .vt-desktop-bg {
-  background-color: #0c0a09;
-  background-image: 
-    radial-gradient(ellipse at 50% 10%, rgba(194, 85, 58, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 85% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+  background-color: #0b0a09;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(212, 102, 74, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 85%, rgba(229, 193, 148, 0.035) 0%, transparent 50%),
+    linear-gradient(rgba(245, 245, 244, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 245, 244, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
 }
 
 .vt-scanlines {
@@ -1058,158 +1072,146 @@ html.dark .vt-desktop-bg {
 
 /* Retro Window Framing (Warm Classic Ivory & Bevel) */
 .vt-window {
-  background-color: #ECE9D8;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #7A756D;
-  border-bottom: 2px solid #7A756D;
-  box-shadow: 2px 6px 20px rgba(28, 25, 23, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  border: 1px solid #e4ddd4;
+  border-radius: 1rem;
+  box-shadow: 0 8px 28px -14px rgba(28, 25, 23, 0.1);
 }
 
 .dark .vt-window,
 html.dark .vt-window {
-  background-color: #18181B;
-  border-top: 2px solid #3F3F46;
-  border-left: 2px solid #3F3F46;
-  border-right: 2px solid #09090B;
-  border-bottom: 2px solid #09090B;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  background-color: #141210;
+  border: 1px solid #292524;
+  border-radius: 1rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 240, 0.04),
+    0 14px 36px -16px rgba(0, 0, 0, 0.7);
 }
 
 .vt-window-inset {
-  border-top: 2px solid #7A756D;
-  border-left: 2px solid #7A756D;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
+  border: 1px solid #e4ddd4;
+  border-radius: 0.75rem;
+  background-color: #f7f4ee;
 }
 
 .dark .vt-window-inset,
 html.dark .vt-window-inset {
-  border-top: 2px solid #09090B;
-  border-left: 2px solid #09090B;
-  border-right: 2px solid #3F3F46;
-  border-bottom: 2px solid #3F3F46;
-  background-color: #121214;
+  border: 1px solid #292524;
+  border-radius: 0.75rem;
+  background-color: #1c1917;
 }
 
-/* Window Titlebar (Signature Velqora Terracotta Gradient or Active Accent) */
+/* Header Strip (Refined Obsidian & Terracotta Accent — Legacy Titlebar Compatible) */
 .vt-titlebar {
-  background: linear-gradient(90deg, #C2553A 0%, #B84A2B 60%, #853827 100%);
-  color: #FFFFFF;
+  background: linear-gradient(90deg, #9f432c 0%, #853827 100%);
+  color: #fffbf8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .dark .vt-titlebar,
 html.dark .vt-titlebar {
-  background: linear-gradient(90deg, var(--color-brand-600, #a34530) 0%, var(--color-brand-700, #853827) 60%, var(--color-brand-800, #6b2d20) 100%);
-  color: #FFFFFF;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  background: #1c1917;
+  color: #f5f5f4;
+  border-bottom: 1px solid #292524;
 }
 
 .vt-titlebar-inactive {
-  background: linear-gradient(90deg, #9C968D 0%, #7A756D 100%);
-  color: #F4EFEB;
+  background: #eae4dc;
+  color: #57534e;
+  border-bottom: 1px solid #e4ddd4;
 }
 
 .dark .vt-titlebar-inactive,
 html.dark .vt-titlebar-inactive {
-  background: linear-gradient(90deg, #27272A 0%, #18181B 100%);
-  color: #71717A;
+  background: #141210;
+  color: #8c857f;
+  border-bottom: 1px solid #292524;
 }
 
-/* Control Buttons (Minimize, Maximize, Close) */
+/* Window Control Micro-Buttons */
 .vt-window-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  font-family: monospace;
+  width: 22px;
+  height: 22px;
+  border-radius: 0.375rem;
+  font-family: var(--font-sans, sans-serif);
   font-size: 11px;
-  font-weight: bold;
-  background-color: #ECE9D8;
-  color: #1C1917;
-  border-top: 1px solid #FFFFFF;
-  border-left: 1px solid #FFFFFF;
-  border-right: 1px solid #4A463F;
-  border-bottom: 1px solid #4A463F;
-  transition: all 0.1s ease;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.14);
+  color: #fffbf8;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.15s ease;
 }
 
 .dark .vt-window-btn,
 html.dark .vt-window-btn {
-  background-color: #27272A;
-  color: #F4F4F5;
-  border-top: 1px solid #52525B;
-  border-left: 1px solid #52525B;
-  border-right: 1px solid #09090B;
-  border-bottom: 1px solid #09090B;
+  background-color: #24201d;
+  color: #a8a29e;
+  border: 1px solid #3a3431;
 }
 
 .vt-window-btn:hover {
-  background-color: #F5EFEB;
-  color: #000000;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
 
 .dark .vt-window-btn:hover,
 html.dark .vt-window-btn:hover {
-  background-color: #3F3F46;
-  color: #FFFFFF;
+  background-color: #2c2724;
+  color: #f5f5f4;
 }
 
 .vt-window-btn:active {
-  border-top: 1px solid #4A463F;
-  border-left: 1px solid #4A463F;
-  border-right: 1px solid #FFFFFF;
-  border-bottom: 1px solid #FFFFFF;
+  transform: scale(0.95);
 }
 
 .dark .vt-window-btn:active,
 html.dark .vt-window-btn:active {
-  border-top: 1px solid #09090B;
-  border-left: 1px solid #09090B;
-  border-right: 1px solid #52525B;
-  border-bottom: 1px solid #52525B;
+  transform: scale(0.95);
 }
 
 .vt-window-btn-close:hover {
-  background-color: #EF4444 !important;
-  color: #FFFFFF !important;
-  border-color: #DC2626 !important;
+  background-color: rgba(248, 113, 113, 0.22) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(248, 113, 113, 0.45) !important;
 }
 
-/* Velqora Terracotta Primary Button */
+/* Velqora Muted Terracotta Primary Button */
 .vt-btn-terracotta,
 .vt-btn-pink {
-  background: #C2553A;
-  color: #FFFFFF;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-top: 2px solid #EE7257;
-  border-left: 2px solid #EE7257;
-  border-right: 2px solid #6B2D20;
-  border-bottom: 2px solid #6B2D20;
-  box-shadow: 0 2px 10px rgba(194, 85, 58, 0.35);
-  transition: all 0.12s ease;
+  background: #c2553a;
+  color: #fffbf8;
+  font-family: var(--font-sans, sans-serif);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(212, 102, 74, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 4px 12px -4px rgba(194, 85, 58, 0.35);
+  transition: all 0.15s ease;
 }
 
 .dark .vt-btn-terracotta,
 .dark .vt-btn-pink,
 html.dark .vt-btn-terracotta,
 html.dark .vt-btn-pink {
-  background: var(--color-brand-500, #C2553A);
-  border-top: 2px solid rgba(255, 255, 255, 0.3);
-  border-left: 2px solid rgba(255, 255, 255, 0.3);
-  border-right: 2px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  background: var(--color-brand-500, #c2553a);
+  color: #fffbf8;
+  border: 1px solid rgba(212, 102, 74, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 240, 0.14),
+    0 6px 16px -6px rgba(0, 0, 0, 0.55);
 }
 
 .vt-btn-terracotta:hover,
 .vt-btn-pink:hover {
-  background: #B84A2B;
-  box-shadow: 0 4px 16px rgba(194, 85, 58, 0.5);
+  background: #b34b32;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 6px 16px -4px rgba(179, 75, 50, 0.4);
   transform: translateY(-1px);
 }
 
@@ -1217,116 +1219,94 @@ html.dark .vt-btn-pink {
 .dark .vt-btn-pink:hover,
 html.dark .vt-btn-terracotta:hover,
 html.dark .vt-btn-pink:hover {
-  background: var(--color-brand-600, #B84A2B);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: #b34b32;
+  border-color: rgba(212, 102, 74, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 240, 0.16),
+    0 8px 20px -6px rgba(0, 0, 0, 0.65);
 }
 
 .vt-btn-terracotta:active,
 .vt-btn-pink:active {
-  border-top: 2px solid #6B2D20;
-  border-left: 2px solid #6B2D20;
-  border-right: 2px solid #EE7257;
-  border-bottom: 2px solid #EE7257;
-  transform: translateY(1px);
+  background: #9e3f29;
+  transform: translateY(0);
 }
 
 .dark .vt-btn-terracotta:active,
 .dark .vt-btn-pink:active,
 html.dark .vt-btn-terracotta:active,
 html.dark .vt-btn-pink:active {
-  border-top: 2px solid rgba(0, 0, 0, 0.5);
-  border-left: 2px solid rgba(0, 0, 0, 0.5);
-  border-right: 2px solid rgba(255, 255, 255, 0.3);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  background: #9e3f29;
+  transform: translateY(0);
 }
 
-/* Warm Paper / Chrome Bevel Button */
+/* Neutral Elevated Surface Button (Replaced Win98 Chrome Bevel) */
 .vt-btn-chrome {
-  background: #FFFFFF;
-  color: #1C1917;
-  font-family: var(--font-mono, monospace);
+  background: #ffffff;
+  color: #1c1917;
+  font-family: var(--font-sans, sans-serif);
   font-weight: 600;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #8A857D;
-  border-bottom: 2px solid #8A857D;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.12s ease;
+  border-radius: 0.5rem;
+  border: 1px solid #e4ddd4;
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04);
+  transition: all 0.15s ease;
 }
 
 .dark .vt-btn-chrome,
 html.dark .vt-btn-chrome {
-  background: #27272A;
-  color: #F4F4F5;
-  border-top: 2px solid #3F3F46;
-  border-left: 2px solid #3F3F46;
-  border-right: 2px solid #09090B;
-  border-bottom: 2px solid #09090B;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  background: #1c1917;
+  color: #f5f5f4;
+  border: 1px solid #292524;
+  box-shadow: inset 0 1px 0 rgba(255, 248, 240, 0.03);
 }
 
 .vt-btn-chrome:hover {
-  background: #F4EFEB;
-  color: #C2553A;
-  border-color: #B54F2F;
+  background: #f3efe9;
+  color: #1c1917;
+  border-color: #c8bfb4;
 }
 
 .dark .vt-btn-chrome:hover,
 html.dark .vt-btn-chrome:hover {
-  background: #3F3F46;
-  color: var(--color-brand-400, #EE7257);
-  border-top-color: #52525B;
-  border-left-color: #52525B;
+  background: #24201d;
+  color: #f5f5f4;
+  border-color: #3a3431;
 }
 
 .vt-btn-chrome:active {
-  border-top: 2px solid #8A857D;
-  border-left: 2px solid #8A857D;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
+  background: #eae4dc;
 }
 
 .dark .vt-btn-chrome:active,
 html.dark .vt-btn-chrome:active {
-  border-top: 2px solid #09090B;
-  border-left: 2px solid #09090B;
-  border-right: 2px solid #3F3F46;
-  border-bottom: 2px solid #3F3F46;
+  background: #2c2724;
 }
 
-/* Warm Amber Button */
+/* Subtle Champagne-Amber Highlight Button */
 .vt-btn-amber,
 .vt-btn-teal {
-  background: #F59E0B;
-  color: #1C1917;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-top: 2px solid #FDE68A;
-  border-left: 2px solid #FDE68A;
-  border-right: 2px solid #B45309;
-  border-bottom: 2px solid #B45309;
-  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.25);
-  transition: all 0.12s ease;
+  background: #d99b43;
+  color: #141210;
+  font-family: var(--font-sans, sans-serif);
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(229, 193, 148, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.15s ease;
 }
 
 .dark .vt-btn-amber,
 .dark .vt-btn-teal,
 html.dark .vt-btn-amber,
 html.dark .vt-btn-teal {
-  background: #D97706;
-  color: #FFFFFF;
-  border-top: 2px solid #F59E0B;
-  border-left: 2px solid #F59E0B;
-  border-right: 2px solid #78350F;
-  border-bottom: 2px solid #78350F;
+  background: #c98a35;
+  color: #141210;
+  border: 1px solid rgba(229, 193, 148, 0.35);
 }
 
 .vt-btn-amber:hover,
 .vt-btn-teal:hover {
-  background: #D97706;
-  color: #FFFFFF;
+  background: #e5b567;
   transform: translateY(-1px);
 }
 
@@ -1334,21 +1314,21 @@ html.dark .vt-btn-teal {
 .dark .vt-btn-teal:hover,
 html.dark .vt-btn-amber:hover,
 html.dark .vt-btn-teal:hover {
-  background: #B45309;
+  background: #e5b567;
 }
 
-/* Taskbar Styling (Retro Windows Cream) */
+/* Grounded Dock / Footer Bar */
 .vt-taskbar {
-  background: #ECE9D8;
-  border-top: 2px solid #FFFFFF;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  background: #faf8f5;
+  border-top: 1px solid #e4ddd4;
+  box-shadow: 0 -4px 16px rgba(28, 25, 23, 0.04);
 }
 
 .dark .vt-taskbar,
 html.dark .vt-taskbar {
-  background: #18181B;
-  border-top: 2px solid #3F3F46;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+  background: #100e0d;
+  border-top: 1px solid #292524;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.45);
 }
 
 /* Marquee / Ribbon Animation */

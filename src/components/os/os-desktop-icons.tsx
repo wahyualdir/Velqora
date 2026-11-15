@@ -1,116 +1,136 @@
 "use client";
 
-import React, { useState } from "react";
-import { Folder, Terminal, FileText, Cpu, LayoutDashboard, Calendar } from "lucide-react";
+import React from "react";
 import Link from "next/link";
+import {
+  ArrowUpRight,
+  BookOpen,
+  Compass,
+  LayoutDashboard,
+  ShieldCheck,
+  Terminal,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import type { LandingStats } from "@/actions/study/landing";
+import { EASE_SMOOTH, StaggerContainer, StaggerItem } from "./motion-primitives";
 
-interface DesktopShortcut {
+interface QuickShortcut {
   id: string;
-  name: string;
-  subtext: string;
+  title: string;
+  subtitle: string;
   icon: React.ReactNode;
-  iconBg: string;
   targetId?: string;
   href?: string;
 }
 
-export function OSDesktopIcons() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+interface OSDesktopIconsProps {
+  stats?: LandingStats;
+}
 
-  const shortcuts: DesktopShortcut[] = [
+export function OSDesktopIcons({ stats }: OSDesktopIconsProps) {
+  const totalDisciplines = stats?.totalDisciplines ?? 31;
+
+  const shortcuts: QuickShortcut[] = [
     {
       id: "curriculum",
-      name: "28_Disiplin.exe",
-      subtext: "Kurikulum Akademik",
-      icon: <Folder className="w-6 h-6 text-[#00F2FE]" />,
-      iconBg: "bg-cyan-950/60 border-cyan-500/40",
+      title: "Katalog Kurikulum",
+      subtitle: `${totalDisciplines} disiplin ilmu terstruktur`,
+      icon: <BookOpen className="w-[18px] h-[18px]" />,
       targetId: "curriculum-section",
     },
     {
-      id: "terminal",
-      name: "Notebook.ipynb",
-      subtext: "Python 3.12 Runtime",
-      icon: <Terminal className="w-6 h-6 text-emerald-400" />,
-      iconBg: "bg-emerald-950/60 border-emerald-500/40",
+      id: "notebook",
+      title: "Notebook Python 3.12",
+      subtitle: "Simulasi & formula KaTeX",
+      icon: <Terminal className="w-[18px] h-[18px]" />,
       targetId: "hero-window",
     },
     {
-      id: "readme",
-      name: "README.txt",
-      subtext: "Manifesto Akademik",
-      icon: <FileText className="w-6 h-6 text-amber-400" />,
-      iconBg: "bg-amber-950/60 border-amber-500/40",
+      id: "manifesto",
+      title: "Pendekatan Belajar",
+      subtitle: "Intuisi & diktat formal",
+      icon: <Compass className="w-[18px] h-[18px]" />,
       targetId: "notepad-section",
     },
     {
-      id: "companion",
-      name: "Telemetri.exe",
-      subtext: "System Monitor",
-      icon: <Cpu className="w-6 h-6 text-[#FF2E93]" />,
-      iconBg: "bg-pink-950/60 border-pink-500/40",
+      id: "audit",
+      title: "Transparansi Audit",
+      subtitle: "102+ rujukan primer ber-DOI",
+      icon: <ShieldCheck className="w-[18px] h-[18px]" />,
       targetId: "stats-section",
     },
     {
       id: "dashboard",
-      name: "Dashboard.url",
-      subtext: "Workspace Reader",
-      icon: <LayoutDashboard className="w-6 h-6 text-purple-400" />,
-      iconBg: "bg-purple-950/60 border-purple-500/40",
+      title: "Workspace Belajar",
+      subtitle: "Buka reader & modul lengkap",
+      icon: <LayoutDashboard className="w-[18px] h-[18px]" />,
       href: "/dashboard",
     },
   ];
 
-  const handleClick = (shortcut: DesktopShortcut) => {
-    setSelectedId(shortcut.id);
-    if (shortcut.targetId) {
-      const el = document.getElementById(shortcut.targetId);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
+  const handleScroll = (targetId?: string) => {
+    if (!targetId) return;
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-4xl mx-auto my-6 px-4 select-none">
-      {shortcuts.map((shortcut) => {
-        const isSelected = selectedId === shortcut.id;
-
-        const content = (
-          <div
-            onClick={() => handleClick(shortcut)}
-            className={`flex flex-col items-center justify-center p-3 rounded-xs text-center cursor-pointer transition-all duration-150 group border ${
-              isSelected
-                ? "bg-slate-800/80 border-[#00F2FE] shadow-[0_0_12px_rgba(0,242,254,0.3)]"
-                : "border-transparent hover:bg-slate-900/60 hover:border-slate-700/60"
-            }`}
-          >
-            {/* Retro Beveled Icon Box */}
-            <div
-              className={`w-12 h-12 rounded flex items-center justify-center border shadow-md group-hover:scale-105 transition-transform ${shortcut.iconBg}`}
+    <section
+      aria-label="Akses cepat fitur Velqora"
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+    >
+      <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-3.5">
+        {shortcuts.map((item) => {
+          const cardBody = (
+            <motion.div
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ duration: 0.2, ease: EASE_SMOOTH }}
+              className="h-full p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] shadow-2xs dark:shadow-[inset_0_1px_0_rgba(255,248,240,0.04)] hover:border-[#C2553A]/45 hover:dark:border-[#D4664A]/45 hover:bg-[#FAF8F5] dark:hover:bg-[#1C1917] hover:shadow-md transition-all flex items-center justify-between gap-3 text-left group cursor-pointer"
             >
-              {shortcut.icon}
-            </div>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] group-hover:border-[#C2553A]/35 group-hover:dark:border-[#D4664A]/45 group-hover:bg-[#FDF2EE] dark:group-hover:bg-[#D4664A]/12 text-[#57534E] dark:text-[#D6D3D1] group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] flex items-center justify-center shrink-0 transition-colors duration-200">
+                  {item.icon}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[13.5px] font-semibold text-[#1C1917] dark:text-[#F5F5F4] group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] transition-colors leading-snug">
+                    {item.title}
+                  </div>
+                  <div className="text-xs text-[#6B6560] dark:text-[#8C857F] leading-snug mt-0.5 line-clamp-1">
+                    {item.subtitle}
+                  </div>
+                </div>
+              </div>
 
-            {/* Icon Filename Label */}
-            <span className="mt-2 font-mono text-xs font-bold text-slate-200 tracking-tight group-hover:text-white truncate max-w-full">
-              {shortcut.name}
-            </span>
-            <span className="text-[10px] font-mono text-slate-400 truncate max-w-full">
-              {shortcut.subtext}
-            </span>
-          </div>
-        );
-
-        if (shortcut.href) {
-          return (
-            <Link key={shortcut.id} href={shortcut.href}>
-              {content}
-            </Link>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#8C857F] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] transition-all duration-200 shrink-0" />
+            </motion.div>
           );
-        }
 
-        return <div key={shortcut.id}>{content}</div>;
-      })}
-    </div>
+          if (item.href) {
+            return (
+              <StaggerItem key={item.id} className="sm:col-span-2 lg:col-span-1">
+                <Link href={item.href} className="block h-full">
+                  {cardBody}
+                </Link>
+              </StaggerItem>
+            );
+          }
+
+          return (
+            <StaggerItem key={item.id}>
+              <button
+                type="button"
+                onClick={() => handleScroll(item.targetId)}
+                className="w-full h-full text-left"
+              >
+                {cardBody}
+              </button>
+            </StaggerItem>
+          );
+        })}
+      </StaggerContainer>
+    </section>
   );
 }

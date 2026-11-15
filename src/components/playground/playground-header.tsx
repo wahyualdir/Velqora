@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 
 interface PlaygroundHeaderProps {
-  lang?: "javascript" | "python";
+  lang?: "javascript" | "python" | "sql";
   onRun: () => void;
   isRunning: boolean;
   onReset: () => void;

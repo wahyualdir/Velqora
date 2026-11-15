@@ -20,6 +20,7 @@ import {
   ScanLine,
   Scan,
   Code2,
+  FileCode2,
   FolderTree,
   FolderCode,
   Tags,
@@ -63,6 +64,7 @@ export const iconMap: Record<string, React.ElementType> = {
   ScanLine,
   Scan,
   Code2,
+  FileCode2,
   FolderTree,
   FolderOpen: FolderPixelIcon,
   FolderCode,
@@ -100,6 +102,7 @@ export const categoryTitleMap: Record<string, TranslationKey> = {
 export const linkLabelMap: Record<string, TranslationKey> = {
   Dashboard: "navDashboard",
   "Katalog Modul": "navKatalogModul",
+  "Katalog Kode": "navKatalogKode",
   "Materi Pembelajaran": "navMateri",
   "Semua Berkas": "navFile",
   "Materi Tersimpan": "navBookmark",

@@ -1,269 +1,229 @@
 "use client";
 
 import React, { useState } from "react";
-import { OSWindow } from "./os-window";
-import { CanvasLanguageOrbit, type LanguageNode } from "./canvas-language-orbit";
-import { 
-  Folder, 
-  FileText, 
-  Users, 
-  Edit3, 
-  Cpu, 
-  ArrowRight, 
-  RotateCw, 
-  Layers, 
-  ExternalLink 
-} from "lucide-react";
 import Link from "next/link";
-
-import { LandingStats } from "@/actions/study/landing";
+import { ArrowRight, BookOpen, Terminal } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  COMPUTE_ENGINES,
+  LiveComputeCanvas,
+  type ComputeEngineSpec,
+} from "./live-compute-canvas";
+import type { LandingStats } from "@/actions/study/landing";
+import { CountUpNumber, EASE_SMOOTH } from "./motion-primitives";
 
 interface OSHeroWindowProps {
   stats?: LandingStats;
 }
 
 export function OSHeroWindow({ stats }: OSHeroWindowProps) {
-  const [selectedIcon, setSelectedIcon] = useState<string>("koleksi");
-  const [activeLang, setActiveLang] = useState<LanguageNode | null>(null);
+  const [activeEngine, setActiveEngine] = useState<ComputeEngineSpec>(
+    COMPUTE_ENGINES[0]
+  );
+  const prefersReduced = useReducedMotion();
 
-  const totalDisciplines = stats?.totalDisciplines || 28;
-  const verifiedDisciplines = stats?.verifiedDisciplines ?? 5;
-  const inProgressDisciplines = stats?.inProgressDisciplines ?? 1;
-  const underReviewDisciplines = stats?.underReviewDisciplines ?? 22;
-  const totalChapters = stats?.totalChapters || 373;
-  const totalSubchapters = stats?.totalSubchapters || 3680;
-  const totalSources = stats?.totalSources || 102;
+  const totalDisciplines = stats?.totalDisciplines ?? 31;
+  const verifiedDisciplines = stats?.verifiedDisciplines ?? 7;
+  const inProgressDisciplines = stats?.inProgressDisciplines ?? 4;
+  const totalChapters = stats?.totalChapters ?? 443;
+  const totalSubchapters = stats?.totalSubchapters ?? 4105;
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
-  const desktopShortcuts = [
-    { id: "koleksi", label: "Kurikulum", icon: "▦", target: "curriculum-section" },
-    { id: "modul", label: "Modul.md", icon: "▤", target: "curriculum-section" },
-    { id: "komunitas", label: "Dashboard", icon: "◈", href: "/dashboard" },
-    { id: "catatan", label: "Manifesto", icon: "✎", target: "notepad-section" },
-    { id: "companion", label: "Telemetri", icon: "▣", target: "stats-section" },
-  ];
+  const reveal = (delay: number) => ({
+    initial: { opacity: 0, y: prefersReduced ? 0 : 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay, ease: EASE_SMOOTH },
+  });
 
   return (
-    <div id="hero-window" className="w-full max-w-7xl mx-auto px-2 sm:px-4 pt-4 pb-4">
-      {/* 3-Column Desktop Grid Layout (Exact Vintec Learn) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
-        {/* =========================================================================
-            COLUMN 1: Left Window (VELQORA — ACADEMIC LEARNING OS.EXE) - 6 cols
-            ========================================================================= */}
-        <div className="lg:col-span-6 flex flex-col">
-          <OSWindow
-            title="VELQORA — ACADEMIC LEARNING OS.EXE"
-            statusText={`AUDIT STATUS · ${verifiedDisciplines + inProgressDisciplines} DARI ${totalDisciplines} TOPIK TERVERIFIKASI / PROSES`}
-            className="flex-1 shadow-md"
-            bodyClassName="p-5 sm:p-7 flex flex-col justify-between"
+    <section
+      id="hero-window"
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-6"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        {/* Left Column: Choreographed Editorial Hero Copy, CTAs & Animated Stat Cards */}
+        <div className="lg:col-span-6 space-y-6">
+          {/* Status Pill */}
+          <motion.div
+            {...reveal(0.03)}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FDF2EE] dark:bg-[#1C1917] border border-[#F5D0C5] dark:border-[#D4664A]/30 text-xs font-medium text-[#9E3B1E] dark:text-[#E5C194]"
           >
-            <div className="space-y-4">
-              {/* Status Pill */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#FAF3EF] border border-[#C2553A]/30 rounded-full text-xs font-mono text-[#C2553A] font-bold">
-                <span className="w-2 h-2 rounded-full bg-[#C2553A] animate-pulse" />
-                <span>• SYSTEM ONLINE · 6 DARI 28 TOPIK TERVERIFIKASI PENUH (22 REVISI AKTIF)</span>
-              </div>
+            <span className="w-2 h-2 rounded-full bg-[#34D399] ring-2 ring-[#34D399]/20 shrink-0" />
+            <span>
+              {verifiedDisciplines} dari {totalDisciplines} topik terverifikasi penuh ·{" "}
+              {inProgressDisciplines} dalam pengembangan aktif
+            </span>
+          </motion.div>
 
-              {/* Big Vintec-Style Headline */}
-              <div className="space-y-1">
-                <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[#1C1917] uppercase font-sans">
-                  VELQORA
-                </h1>
-                <div className="text-base sm:text-lg font-mono font-bold text-[#C2553A] tracking-wider">
-                  learn. build. deploy.
-                </div>
-              </div>
-
-              {/* Description */}
-              <p className="text-xs sm:text-sm text-[#524B42] leading-relaxed font-sans max-w-lg">
-                Workspace perkuliahan &amp; computational notebook akademik: kurikulum berstandar industri 
-                (6 topik terverifikasi penuh bebas data sintetis, 22 topik lainnya sedang dalam tahap peninjauan &amp; perombakan materi).
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-2.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => scrollToSection("curriculum-section")}
-                  className="px-5 py-2.5 vt-btn-terracotta text-xs flex items-center gap-1.5 font-mono font-bold shadow-sm cursor-pointer"
-                >
-                  <span>Mulai Belajar</span>
-                  <span>▸</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => scrollToSection("curriculum-section")}
-                  className="px-4 py-2.5 vt-btn-chrome text-xs font-mono font-semibold cursor-pointer"
-                >
-                  Jelajahi Kurikulum (28 Topik)
-                </button>
-              </div>
-            </div>
-
-            {/* Stats Row (3 Columns Separated by Bevel Border) */}
-            <div className="grid grid-cols-3 gap-2 pt-6 mt-6 border-t-2 border-[#E5DDD5] font-mono text-center">
-              <div className="p-2 bg-[#F9F7F4] border border-[#E5DDD5] rounded-xs">
-                <div className="text-lg font-black text-[#C2553A]">{totalDisciplines}</div>
-                <div className="text-[11px] text-[#6B6560]">topik disiplin</div>
-              </div>
-              <div className="p-2 bg-[#F9F7F4] border border-[#E5DDD5] rounded-xs">
-                <div className="text-lg font-black text-[#1C1917]">{totalChapters}</div>
-                <div className="text-[11px] text-[#6B6560]">bab perkuliahan</div>
-              </div>
-              <div className="p-2 bg-[#F9F7F4] border border-[#E5DDD5] rounded-xs">
-                <div className="text-lg font-black text-[#10B981]">{totalSubchapters.toLocaleString()}</div>
-                <div className="text-[11px] text-[#6B6560]">subbab mendalam</div>
-              </div>
-            </div>
-          </OSWindow>
-        </div>
-
-        {/* =========================================================================
-            COLUMN 2: Center Vertical Desktop Icons - 1 col on lg
-            ========================================================================= */}
-        <div className="lg:col-span-1 hidden lg:flex flex-col items-center justify-center gap-3 py-2 select-none font-mono">
-          {desktopShortcuts.map((item) => {
-            const isSelected = selectedIcon === item.id;
-            const content = (
-              <div
-                onClick={() => {
-                  setSelectedIcon(item.id);
-                  if (item.target) scrollToSection(item.target);
-                }}
-                className={`flex flex-col items-center justify-center p-1.5 w-16 text-center cursor-pointer transition-all ${
-                  isSelected
-                    ? "bg-[#C2553A]/15 border border-dashed border-[#C2553A]"
-                    : "hover:bg-[#E8E0D7]/40 border border-transparent"
-                }`}
-              >
-                <div className="text-xl leading-none mb-1 text-[#1C1917]">{item.icon}</div>
-                <div className="text-[10px] text-[#1C1917] leading-tight font-bold">{item.label}</div>
-              </div>
-            );
-
-            if (item.href) {
-              return (
-                <Link key={item.id} href={item.href}>
-                  {content}
-                </Link>
-              );
-            }
-
-            return <div key={item.id}>{content}</div>;
-          })}
-        </div>
-
-        {/* =========================================================================
-            COLUMN 3: Right Window (MONITOR.EXE with 3D Canvas) - 5 cols
-            ========================================================================= */}
-        <div className="lg:col-span-5 flex flex-col">
-          <OSWindow
-            title="MONITOR.EXE"
-            statusText="POLYGLOT SPHERE · PERSPECTIVE 3D ACTIVE"
-            className="flex-1 shadow-md"
-            bodyClassName="p-3.5 bg-[#1C1917] text-[#FAF8F5] flex flex-col justify-between"
-          >
-            {/* Subheader: VELQORA AI // LEARNING OS */}
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#38312A] font-mono text-xs">
-              <span className="text-amber-400 font-bold tracking-wider">
-                VELQORA AI // LEARNING OS
+          {/* Headline & Subtitle */}
+          <div className="space-y-3">
+            <motion.h1
+              {...reveal(0.1)}
+              className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-[3.05rem] font-extrabold tracking-tight text-[#1C1917] dark:text-[#F5F5F4] leading-[1.12]"
+            >
+              Kuasai AI, Machine Learning &amp; Sains Data{" "}
+              <span className="text-[#C2553A] dark:text-[#D4664A]">
+                Secara Terstruktur.
               </span>
-              <div className="flex items-center gap-1.5 text-xs text-[#A89F91]">
-                <button type="button" title="Rotate" className="hover:text-white">
-                  <RotateCw className="w-3.5 h-3.5" />
-                </button>
-                <button type="button" title="Layers" className="hover:text-white">
-                  <Layers className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
+            </motion.h1>
 
-            {/* 3D Animated Polyglot Celestial Sphere Canvas */}
-            <CanvasLanguageOrbit onNodeHover={setActiveLang} />
+            <motion.p
+              {...reveal(0.18)}
+              className="text-base sm:text-lg text-[#44403C] dark:text-[#A8A29E] leading-relaxed max-w-2xl"
+            >
+              Workspace perkuliahan dan computational notebook akademik yang
+              memadukan formulasi matematis formal, eksekusi Python 3.12, serta
+              rujukan literatur primer ber-DOI.
+            </motion.p>
+          </div>
 
-            {/* Telemetry Progress Bars & Metrics */}
-            <div className="mt-3 space-y-2 font-mono text-[11px]">
-              {/* Metric 1: Topik Kurikulum */}
-              <div>
-                <div className="flex justify-between text-slate-300 pb-0.5">
-                  <span>kurikulum.topics</span>
-                  <span className="text-amber-400 font-bold">6/28 TERVERIFIKASI / PROSES</span>
-                </div>
-                <div className="w-full h-1.5 bg-[#2E2822] rounded-none overflow-hidden">
-                  <div className="h-full bg-[#C2553A]" style={{ width: "21.4%" }} />
-                </div>
-              </div>
-
-              {/* Metric 2: Literatur Sources */}
-              <div>
-                <div className="flex justify-between text-slate-300 pb-0.5">
-                  <span>literatur.sources</span>
-                  <span className="text-emerald-400 font-bold">RUJUKAN PRIMER BER-DOI</span>
-                </div>
-                <div className="w-full h-1.5 bg-[#2E2822] rounded-none overflow-hidden">
-                  <div className="h-full bg-[#10B981]" style={{ width: "100%" }} />
-                </div>
-              </div>
-
-              {/* Metric 3: System status flags */}
-              <div className="pt-2 border-t border-[#38312A] grid grid-cols-2 gap-2 text-[10px] text-slate-400">
-                <div className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>runtime.next15: OK</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>supabase.db: CONNECTED</span>
-                </div>
-              </div>
-
-              {/* Terminal log snippet connected to Polyglot Celestial Sphere */}
-              <div
-                className={`p-2 bg-[#120F0D] rounded-none border text-[10px] font-mono leading-tight transition-all duration-150 ${
-                  activeLang
-                    ? "border-amber-500/60 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
-                    : "border-[#38312A]"
-                }`}
+          {/* Action Buttons */}
+          <motion.div
+            {...reveal(0.25)}
+            className="flex flex-wrap items-center gap-3 pt-1"
+          >
+            <motion.div
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.18, ease: EASE_SMOOTH }}
+            >
+              <Link
+                href="/dashboard"
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#C2553A] hover:bg-[#B34B32] active:bg-[#9E3F29] text-[#FFFBF8] border border-[#D4664A]/45 text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_8px_20px_-8px_rgba(194,85,58,0.45)] transition-all"
               >
-                {activeLang ? (
-                  <>
-                    <div className="text-amber-400 font-bold flex items-center justify-between">
-                      <span className="truncate">
-                        [$ {activeLang.name} {activeLang.version}] {activeLang.role}
-                      </span>
-                      <span className="text-[9px] text-emerald-400 font-mono shrink-0 ml-1.5 animate-pulse">
-                        ● ENGAGED
-                      </span>
-                    </div>
-                    <div className="text-slate-300 truncate mt-0.5">
-                      &gt; {activeLang.telemetry}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-amber-400/90 font-bold flex items-center justify-between">
-                      <span>$ velqora status --sphere: 12 PERSPECTIVE COMPUTE ENGINES SYNCHRONIZED</span>
-                      <span className="text-[9px] text-emerald-400 font-mono shrink-0 ml-1.5">
-                        ● ACTIVE
-                      </span>
-                    </div>
-                    <div className="text-[#A89F91] truncate mt-0.5">
-                      &gt; Python 3.12 · Rust · TS · C++20 · PyTorch · Julia · Go · R · SQL · Bash · TF · Docker
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </OSWindow>
+                <span>Mulai Belajar</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+            </motion.div>
+
+            <motion.button
+              type="button"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.18, ease: EASE_SMOOTH }}
+              onClick={() => scrollToSection("curriculum-section")}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/50 hover:dark:border-[#D4664A]/45 hover:bg-[#F3EFE9] dark:hover:bg-[#1C1917] text-[#1C1917] dark:text-[#F5F5F4] text-sm font-semibold transition-all cursor-pointer"
+            >
+              <BookOpen className="w-4 h-4 text-[#C2553A] dark:text-[#D4664A]" />
+              <span>Jelajahi Kurikulum ({totalDisciplines} Topik)</span>
+            </motion.button>
+          </motion.div>
+
+          {/* 3 Balanced Stat Cards with Smooth Count-Up */}
+          <motion.div
+            {...reveal(0.32)}
+            className="grid grid-cols-3 gap-3 sm:gap-4 pt-3"
+          >
+            {[
+              {
+                value: totalDisciplines,
+                label: "Topik Disiplin",
+                meta: "4 klaster keilmuan",
+                accentBg: "bg-[#C2553A] dark:bg-[#D4664A]",
+                colorClass: "text-[#C2553A] dark:text-[#D4664A]",
+                formatLocale: false,
+              },
+              {
+                value: totalChapters,
+                label: "Bab Perkuliahan",
+                meta: "Diktat terstruktur",
+                accentBg: "bg-[#44403C] dark:bg-[#E5C194]",
+                colorClass: "text-[#1C1917] dark:text-[#F5F5F4]",
+                formatLocale: true,
+              },
+              {
+                value: totalSubchapters,
+                label: "Subbab Materi",
+                meta: "Python 3.12 & KaTeX",
+                accentBg: "bg-emerald-600 dark:bg-[#34D399]",
+                colorClass: "text-emerald-700 dark:text-[#34D399]",
+                formatLocale: true,
+              },
+            ].map((stat) => (
+              <motion.div
+                key={stat.label}
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2, ease: EASE_SMOOTH }}
+                className="group p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] shadow-2xs dark:shadow-[inset_0_1px_0_rgba(255,248,240,0.04)] hover:shadow-md hover:border-[#C2553A]/40 hover:dark:border-[#3A3431] transition-all flex flex-col justify-between gap-2"
+              >
+                <div className="space-y-2">
+                  <span
+                    className={`block w-6 h-0.5 rounded-full opacity-75 group-hover:w-10 transition-all duration-300 ${stat.accentBg}`}
+                  />
+                  <div
+                    className={`text-2xl sm:text-3xl font-bold font-display tabular-nums leading-none ${stat.colorClass}`}
+                  >
+                    <CountUpNumber
+                      value={stat.value}
+                      formatLocale={stat.formatLocale}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs sm:text-sm text-[#1C1917] dark:text-[#F5F5F4] font-semibold">
+                    {stat.label}
+                  </div>
+                  <div className="text-[11px] text-[#78716C] dark:text-[#8C857F] mt-0.5 hidden sm:block">
+                    {stat.meta}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
+
+        {/* Right Column: Live Interactive Curriculum Simulation Card */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: prefersReduced ? 0 : 18,
+            scale: prefersReduced ? 1 : 0.98,
+          }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.16, ease: EASE_SMOOTH }}
+          className="lg:col-span-6"
+        >
+          <div className="rounded-3xl bg-[#141210] border border-[#292524] shadow-[inset_0_1px_0_rgba(255,248,240,0.04),0_24px_56px_-16px_rgba(0,0,0,0.72)] overflow-hidden text-[#F5F5F4]">
+            {/* Minimal Architectural Header */}
+            <div className="px-5 py-3.5 border-b border-[#292524] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 text-xs font-semibold text-[#F5F5F4]">
+                <span className="w-6 h-6 rounded-lg bg-[#1C1917] border border-[#292524] flex items-center justify-center shrink-0">
+                  <Terminal className="w-3.5 h-3.5 text-[#D4664A]" />
+                </span>
+                <span>Simulasi Konsep Kurikulum</span>
+              </div>
+              <span
+                title={`${activeEngine.name} · ${activeEngine.statusLabel}`}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1C1917] border border-[#292524] text-[11px] font-medium text-[#E5C194] max-w-[210px] sm:max-w-none overflow-hidden"
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    activeEngine.isVerified ? "bg-[#34D399]" : "bg-[#E5B567]"
+                  }`}
+                />
+                <motion.span
+                  key={activeEngine.id}
+                  initial={{ opacity: 0, y: 2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.18, ease: EASE_SMOOTH }}
+                  className="truncate"
+                >
+                  {activeEngine.title}
+                </motion.span>
+              </span>
+            </div>
+
+            {/* Expansive Multi-Mode Compute Canvas + Interactive Dock */}
+            <LiveComputeCanvas onModeChange={setActiveEngine} />
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }

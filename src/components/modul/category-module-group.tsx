@@ -43,9 +43,9 @@ export function CategoryModuleGroup({
   const statusMeta = getTopicStatus(category.id || category.name);
 
   return (
-    <div className="vt-window rounded-none overflow-hidden shadow-xs bg-[#FAF8F5] dark:bg-[#121214] border border-border mb-6">
+    <div className="vt-window rounded-2xl overflow-hidden bg-[#FAF8F5] dark:bg-[#100E0D] border border-[#E4DDD4] dark:border-[#292524] mb-6">
       {/* Group Header Banner */}
-      <div className="p-3.5 sm:p-4 bg-[#FFFFFF] dark:bg-[#18181B] border-b border-border flex items-center justify-between gap-3">
+      <div className="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141210] border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"

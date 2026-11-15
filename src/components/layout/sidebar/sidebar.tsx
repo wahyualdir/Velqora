@@ -21,7 +21,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
 import { UserProfileMenu } from "@/components/layout/user-profile-menu";
 import { NotificationCenter } from "@/components/layout/notification-center";
-import { isAdminUser, isOwnerUser, OWNER_EMAIL } from "@/lib/utils";
+import { isAdminUser, isOwnerUser } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { useSurface } from "@/context/surface-context";
 import { iconMap, categoryTitleMap, linkLabelMap } from "./navigation-config";
@@ -149,17 +149,17 @@ export function Sidebar({
       <aside
         aria-label="Sidebar Mobile Drawer"
         className={cn(
-          "fixed top-0 left-0 bottom-0 z-50 w-[min(88vw,290px)] bg-[#FAF8F5] dark:bg-[#121214] border-r-2 border-r-[#7A756D] dark:border-r-[#27272A] border-l-2 border-l-[#FFFFFF] dark:border-l-[#1E1E22] shadow-2xl lg:hidden",
+          "fixed top-0 left-0 bottom-0 z-50 w-[min(88vw,290px)] bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] shadow-2xl lg:hidden",
           "flex flex-col transition-transform duration-200 ease-out select-none",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Mobile Header: Retro Window Titlebar */}
-        <div className="h-11 px-3 border-b-2 border-b-[#7A756D] dark:border-b-[#27272A] flex items-center justify-between shrink-0 bg-[#ECE9D8] dark:bg-[#18181B]">
+        {/* Mobile Header */}
+        <div className="h-12 px-3.5 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between shrink-0 bg-[#F3EFE9]/75 dark:bg-[#141210]">
           <Link
             href="/dashboard"
             onClick={onClose}
-            className="flex items-center gap-2 focus-visible:outline-none rounded-none p-0.5"
+            className="flex items-center gap-2 focus-visible:outline-none rounded-lg p-0.5"
           >
             <Logo variant="sidebar" />
           </Link>
@@ -169,14 +169,14 @@ export function Sidebar({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="p-1 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
+                className="vt-btn-chrome w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer"
                 title={resolvedTheme === "dark" ? "Mode Terang (Light)" : "Mode Gelap (Dark)"}
                 aria-label="Ganti Tema"
               >
                 {resolvedTheme === "dark" ? (
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <Sun className="w-3.5 h-3.5 text-[#E5C194]" />
                 ) : (
-                  <Moon className="w-3.5 h-3.5 text-[#853827]" />
+                  <Moon className="w-3.5 h-3.5 text-[#C2553A]" />
                 )}
               </button>
             )}
@@ -185,7 +185,7 @@ export function Sidebar({
               type="button"
               onClick={onClose}
               aria-label="Tutup menu navigasi"
-              className="px-2 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
+              className="vt-btn-chrome w-7 h-7 rounded-lg flex items-center justify-center font-mono text-sm cursor-pointer"
             >
               ×
             </button>
@@ -194,21 +194,21 @@ export function Sidebar({
 
         {/* Mobile Search Button */}
         {onOpenCommandPalette && (
-          <div className="px-2.5 pt-2 pb-1 shrink-0">
+          <div className="px-3 pt-2.5 pb-1 shrink-0">
             <button
               type="button"
               onClick={() => {
                 onClose();
                 onOpenCommandPalette();
               }}
-              className="w-full flex items-center justify-between gap-2 px-2.5 h-8 bg-[#FAF8F5] dark:bg-[#121214] border-t border-l border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-zinc-800 dark:border-r-zinc-800 text-[#7A756D] dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-zinc-200 transition-colors text-xs font-mono text-left cursor-pointer"
+              className="w-full flex items-center justify-between gap-2 px-3 h-8.5 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 transition-colors text-xs font-mono text-left cursor-pointer"
               title="Pencarian Cepat (Ctrl + K)"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <Search className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">Cari materi, modul...</span>
               </div>
-              <div className="flex items-center gap-0.5 px-1 py-0.2 border border-[#B8B1A5] dark:border-zinc-700 bg-[#ECE9D8] dark:bg-zinc-800 text-[9.5px] font-mono shrink-0">
+              <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9] dark:bg-[#1C1917] text-[9.5px] font-mono shrink-0 text-[#524B42] dark:text-[#A8A29E]">
                 <Command className="w-2.5 h-2.5" />
                 <span>K</span>
               </div>
@@ -219,7 +219,7 @@ export function Sidebar({
         {/* Mobile Navigation List (Scrollable Flat List) */}
         <nav
           aria-label="Navigasi Utama Mobile"
-          className="flex-1 px-2.5 py-2.5 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-4"
+          className="flex-1 px-2.5 py-3 space-y-4 overflow-y-auto sidebar-nav-scroll overscroll-contain pb-4"
         >
           {SIDEBAR_CATEGORIES.map((category) => {
             const catKey = categoryTitleMap[category.title];
@@ -228,7 +228,7 @@ export function Sidebar({
 
             return (
               <div key={category.title} className="space-y-1">
-                <div className="px-2 pt-1 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider">
+                <div className="px-2.5 pt-1 pb-0.5 font-mono text-[10px] font-semibold text-[#8A8378] dark:text-[#8C857F] uppercase tracking-wider">
                   {translatedCatTitle}
                 </div>
 
@@ -247,27 +247,27 @@ export function Sidebar({
                       <div key={link.href} className="space-y-0.5">
                         <div
                           className={cn(
-                            "group flex items-center rounded-xs transition-all duration-100",
+                            "group flex items-center rounded-lg transition-all duration-150",
                             isActive
-                              ? "bg-[#C2553A] dark:bg-brand-600 text-white shadow-xs border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900"
-                              : "text-[#2D2823] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent font-medium"
+                              ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
+                              : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent font-medium"
                           )}
                         >
                           <Link
                             href={link.href}
                             onClick={onClose}
                             aria-current={isActive ? "page" : undefined}
-                            className="flex items-center gap-2.5 px-2.5 h-8 flex-1 min-w-0 focus-visible:outline-none"
+                            className="flex items-center gap-2.5 px-2.5 h-8.5 flex-1 min-w-0 focus-visible:outline-none"
                           >
                             {Icon && (
                               <Icon
                                 className={cn(
                                   "w-4 h-4 shrink-0 transition-colors",
                                   isActive
-                                    ? "text-white"
+                                    ? "text-[#FFFBF8]"
                                     : isAiItem
-                                    ? "text-[#C2553A] dark:text-brand-400"
-                                    : "text-[#6E675F] dark:text-zinc-400 group-hover:text-[#1A1816] dark:group-hover:text-white"
+                                    ? "text-[#C2553A] dark:text-[#D4664A]"
+                                    : "text-[#8A8378] dark:text-[#8C857F] group-hover:text-[#1C1917] dark:group-hover:text-[#F5F5F4]"
                                 )}
                               />
                             )}
@@ -275,7 +275,7 @@ export function Sidebar({
                               {translatedLabel}
                             </span>
                             {isAiItem && !isActive && (
-                              <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-[#C2553A]/10 dark:bg-brand-400/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-400/30 rounded-2xs">
+                              <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-semibold bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#D4664A] border border-[#C2553A]/25 dark:border-[#D4664A]/30 rounded-md">
                                 AI
                               </span>
                             )}
@@ -291,10 +291,10 @@ export function Sidebar({
 
           {/* Mobile Admin Section */}
           {(isAdmin || isOwner) && (
-            <div className="pt-2.5 border-t border-[#7A756D]/40 dark:border-zinc-800 space-y-1">
-              <div className="px-2 pb-1 font-mono text-[9.5px] font-bold text-[#C2553A] dark:text-brand-400 flex items-center justify-between uppercase tracking-wider">
+            <div className="pt-3 border-t border-[#E4DDD4] dark:border-[#292524] space-y-1">
+              <div className="px-2.5 pb-1 font-mono text-[10px] font-semibold text-[#C2553A] dark:text-[#D4664A] flex items-center justify-between uppercase tracking-wider">
                 <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
-                <Crown className="w-3 h-3 text-[#C2553A] dark:text-brand-400" />
+                <Crown className="w-3 h-3 text-[#C2553A] dark:text-[#D4664A]" />
               </div>
 
               <div className="space-y-0.5">
@@ -304,11 +304,11 @@ export function Sidebar({
                     onClick={onClose}
                     aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-2.5 px-2.5 h-8 font-sans text-[13px] font-medium transition-colors rounded-xs",
+                      "flex items-center gap-2.5 px-2.5 h-8.5 font-sans text-[13px] font-medium transition-colors rounded-lg",
                       "focus-visible:outline-none",
                       pathname.startsWith("/dashboard/kelola-role")
-                        ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
-                        : "text-[#2D2823] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
+                        ? "bg-[#C2553A] text-[#FFFBF8] font-semibold border border-[#D4664A]/40 shadow-xs"
+                        : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent"
                     )}
                   >
                     <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
@@ -321,11 +321,11 @@ export function Sidebar({
                   onClick={onClose}
                   aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 h-8 font-sans text-[13px] font-medium transition-colors rounded-xs",
+                    "flex items-center gap-2.5 px-2.5 h-8.5 font-sans text-[13px] font-medium transition-colors rounded-lg",
                     "focus-visible:outline-none",
                     pathname.startsWith("/dashboard/peta-pengguna")
-                      ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
-                      : "text-[#2D2823] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
+                      ? "bg-[#C2553A] text-[#FFFBF8] font-semibold border border-[#D4664A]/40 shadow-xs"
+                      : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent"
                   )}
                 >
                   <MapPin className="w-3.5 h-3.5 shrink-0" />
@@ -337,20 +337,20 @@ export function Sidebar({
         </nav>
 
         {/* Mobile Footer: Notification + User Profile */}
-        <div className="p-2.5 border-t-2 border-t-[#7A756D] dark:border-t-[#27272A] bg-[#ECE9D8] dark:bg-[#18181B] shrink-0 space-y-2">
+        <div className="p-3 border-t border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9]/75 dark:bg-[#141210] shrink-0 space-y-2.5">
           <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <NotificationCenter
                 dropdownPosition="top"
                 align="left"
-                buttonClassName="p-1 rounded-none bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B]"
+                buttonClassName="vt-btn-chrome p-1.5 rounded-lg"
               />
-              <span className="font-mono text-[10px] text-[#7A756D] dark:text-zinc-400">
+              <span className="font-mono text-[10px] text-[#8A8378] dark:text-[#8C857F]">
                 Notifikasi
               </span>
             </div>
-            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-[#FAF8F5] dark:bg-[#121214] border border-[#B8B1A5] dark:border-zinc-700 text-[9px] font-mono text-emerald-700 dark:text-emerald-400 uppercase font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FFFFFF] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] text-[9.5px] font-mono text-emerald-700 dark:text-[#34D399] uppercase font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] dark:bg-[#34D399]" />
               Online
             </div>
           </div>
@@ -363,22 +363,22 @@ export function Sidebar({
         <aside
           aria-label="Sidebar Desktop"
           className={cn(
-            "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-[#FAF8F5] dark:bg-[#121214] border-r-2 border-r-[#7A756D] dark:border-r-[#27272A] border-l-2 border-l-[#FFFFFF] dark:border-l-[#1E1E22] select-none",
-            "flex-col transition-all duration-200 ease-out shadow-xs",
+            "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] select-none",
+            "flex-col transition-all duration-200 ease-out",
             isCollapsed ? "w-[68px]" : "w-[245px]"
           )}
         >
           {/* Desktop Header: Brand + Quick Actions */}
           <div
             className={cn(
-              "h-11 px-3 border-b-2 border-b-[#7A756D] dark:border-b-[#27272A] flex items-center shrink-0 bg-[#ECE9D8] dark:bg-[#18181B] transition-all duration-200",
+              "h-12 px-3.5 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center shrink-0 bg-[#F3EFE9]/75 dark:bg-[#141210] transition-all duration-200",
               isCollapsed ? "justify-center" : "justify-between"
             )}
           >
             <Link
               href="/dashboard"
               className={cn(
-                "flex items-center gap-2 focus-visible:outline-none rounded-none p-0.5 min-w-0 overflow-hidden",
+                "flex items-center gap-2 focus-visible:outline-none rounded-lg p-0.5 min-w-0 overflow-hidden",
                 isCollapsed && "justify-center"
               )}
               title="Velqora Dashboard"
@@ -388,19 +388,19 @@ export function Sidebar({
 
             {/* Actions when Expanded: Theme Toggle + Collapse Button */}
             {!isCollapsed && (
-              <div className="flex items-center gap-1 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {mounted && (
                   <button
                     type="button"
                     onClick={toggleTheme}
-                    className="p-1 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer"
+                    className="vt-btn-chrome w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
                     title={resolvedTheme === "dark" ? "Mode Terang (Light)" : "Mode Gelap (Dark)"}
                     aria-label="Ganti Tema"
                   >
                     {resolvedTheme === "dark" ? (
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
+                      <Sun className="w-3.5 h-3.5 text-[#E5C194]" />
                     ) : (
-                      <Moon className="w-3.5 h-3.5 text-[#853827]" />
+                      <Moon className="w-3.5 h-3.5 text-[#C2553A]" />
                     )}
                   </button>
                 )}
@@ -411,7 +411,7 @@ export function Sidebar({
                     onClick={onToggleCollapse}
                     aria-label="Toggle sidebar"
                     aria-expanded={!isCollapsed}
-                    className="px-1.5 py-0.5 font-mono text-xs font-bold bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] transition-colors cursor-pointer"
+                    className="vt-btn-chrome w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
                     title="Kecilkan Sidebar (Collapse)"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
@@ -423,35 +423,35 @@ export function Sidebar({
 
           {/* Toggle Expand Bar when Collapsed */}
           {isCollapsed && onToggleCollapse && (
-            <div className="px-2 pt-2 shrink-0">
+            <div className="px-2 pt-2.5 shrink-0">
               <button
                 type="button"
                 onClick={onToggleCollapse}
                 aria-label="Toggle sidebar"
                 aria-expanded={!isCollapsed}
-                className="w-full flex items-center justify-center h-6 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] active:border-t-[#7A756D] active:border-l-[#7A756D] active:border-b-[#FFFFFF] active:border-r-[#FFFFFF] cursor-pointer"
+                className="vt-btn-chrome w-full flex items-center justify-center h-7 rounded-lg cursor-pointer"
                 title="Buka Penuh Sidebar (Expand)"
               >
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           )}
 
           {/* Desktop Search Trigger */}
           {onOpenCommandPalette && (
-            <div className={cn("shrink-0", isCollapsed ? "px-2 pt-2" : "px-2.5 pt-2 pb-1")}>
+            <div className={cn("shrink-0", isCollapsed ? "px-2 pt-2" : "px-3 pt-2.5 pb-1")}>
               {!isCollapsed ? (
                 <button
                   type="button"
                   onClick={onOpenCommandPalette}
-                  className="w-full flex items-center justify-between gap-2 px-2.5 h-8 bg-[#FAF8F5] dark:bg-[#121214] border-t border-l border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-zinc-800 dark:border-r-zinc-800 text-[#7A756D] dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-zinc-200 transition-colors text-xs font-mono text-left cursor-pointer group"
+                  className="w-full flex items-center justify-between gap-2 px-3 h-8.5 rounded-xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 transition-colors text-xs font-mono text-left cursor-pointer group"
                   title="Pencarian Cepat (Ctrl + K)"
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <Search className="w-3.5 h-3.5 shrink-0 text-[#7A756D] dark:text-zinc-400 group-hover:text-[#C2553A] dark:group-hover:text-brand-400 transition-colors" />
+                    <Search className="w-3.5 h-3.5 shrink-0 text-[#8A8378] dark:text-[#8C857F] group-hover:text-[#C2553A] dark:group-hover:text-[#D4664A] transition-colors" />
                     <span className="truncate">Cari...</span>
                   </div>
-                  <div className="flex items-center gap-0.5 px-1 py-0.2 border border-[#B8B1A5] dark:border-zinc-700 bg-[#ECE9D8] dark:bg-zinc-800 text-[9.5px] font-mono text-[#524B42] dark:text-zinc-300 shrink-0">
+                  <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9] dark:bg-[#1C1917] text-[9.5px] font-mono text-[#524B42] dark:text-[#A8A29E] shrink-0">
                     <Command className="w-2.5 h-2.5" />
                     <span>K</span>
                   </div>
@@ -460,7 +460,7 @@ export function Sidebar({
                 <button
                   type="button"
                   onClick={onOpenCommandPalette}
-                  className="w-8 h-8 mx-auto flex items-center justify-center bg-[#FAF8F5] dark:bg-[#121214] border-t border-l border-[#7A756D] dark:border-t-[#09090B] dark:border-l-[#09090B] border-b border-r border-[#FFFFFF] dark:border-b-zinc-800 dark:border-r-zinc-800 text-[#7A756D] dark:text-zinc-400 hover:text-[#C2553A] dark:hover:text-brand-400 transition-colors cursor-pointer"
+                  className="w-8.5 h-8.5 mx-auto rounded-xl flex items-center justify-center bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#8A8378] dark:text-[#8C857F] hover:text-[#C2553A] dark:hover:text-[#D4664A] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 transition-colors cursor-pointer"
                   title="Pencarian Cepat (Ctrl + K)"
                 >
                   <Search className="w-3.5 h-3.5" />
@@ -472,7 +472,7 @@ export function Sidebar({
           {/* Desktop Navigation List (Flat structured per Category) */}
           <nav
             aria-label="Navigasi Utama Desktop"
-            className="flex-1 px-2 py-3 space-y-3 overflow-y-auto sidebar-nav-scroll overscroll-contain"
+            className="flex-1 px-2.5 py-3 space-y-3.5 overflow-y-auto sidebar-nav-scroll overscroll-contain"
           >
             {SIDEBAR_CATEGORIES.map((category) => {
               const catKey = categoryTitleMap[category.title];
@@ -480,10 +480,10 @@ export function Sidebar({
                 catKey && t(catKey) && t(catKey) !== catKey ? t(catKey) : category.title;
 
               return (
-                <div key={category.title} className="space-y-0.5">
+                <div key={category.title} className="space-y-1">
                   {/* Category Header */}
                   {!isCollapsed && (
-                    <div className="px-2 pt-1 pb-0.5 font-mono text-[9.5px] font-bold text-[#853827] dark:text-brand-400 uppercase tracking-wider">
+                    <div className="px-2.5 pt-1 pb-0.5 font-mono text-[10px] font-semibold text-[#8A8378] dark:text-[#8C857F] uppercase tracking-wider">
                       {translatedCatTitle}
                     </div>
                   )}
@@ -504,20 +504,20 @@ export function Sidebar({
                         <div key={link.href} className="relative group space-y-0.5">
                           <div
                             className={cn(
-                              "flex items-center rounded-xs transition-all duration-100",
+                              "flex items-center rounded-lg transition-all duration-150",
                               isActive
-                                ? "bg-[#C2553A] dark:bg-brand-600 text-white shadow-xs border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900"
-                                : "text-[#2D2823] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent font-medium"
+                                ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
+                                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent font-medium"
                             )}
                           >
                             <Link
                               href={link.href}
                               aria-current={isActive ? "page" : undefined}
                               className={cn(
-                                "relative flex items-center transition-all duration-100 flex-1 min-w-0 focus-visible:outline-none",
+                                "relative flex items-center transition-all duration-150 flex-1 min-w-0 focus-visible:outline-none",
                                 isCollapsed
-                                  ? "justify-center w-8 h-8 mx-auto"
-                                  : "gap-2 px-2.5 h-7.5"
+                                  ? "justify-center w-8.5 h-8.5 mx-auto"
+                                  : "gap-2.5 px-2.5 h-8.5"
                               )}
                             >
                               {Icon && (
@@ -525,10 +525,10 @@ export function Sidebar({
                                   className={cn(
                                     "w-3.5 h-3.5 shrink-0 transition-colors",
                                     isActive
-                                      ? "text-white"
+                                      ? "text-[#FFFBF8]"
                                       : isAiItem
-                                      ? "text-[#C2553A] dark:text-brand-400"
-                                      : "text-[#7A756D] dark:text-zinc-400 group-hover:text-[#1A1816] dark:group-hover:text-white"
+                                      ? "text-[#C2553A] dark:text-[#D4664A]"
+                                      : "text-[#8A8378] dark:text-[#8C857F] group-hover:text-[#1C1917] dark:group-hover:text-[#F5F5F4]"
                                   )}
                                 />
                               )}
@@ -540,19 +540,19 @@ export function Sidebar({
                               )}
 
                               {isAiItem && !isActive && !isCollapsed && (
-                                <span className="px-1 py-0.2 text-[8.5px] font-mono font-bold bg-[#C2553A]/10 dark:bg-brand-400/15 text-[#C2553A] dark:text-brand-400 border border-[#C2553A]/30 dark:border-brand-400/30 rounded-2xs">
+                                <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-semibold bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#D4664A] border border-[#C2553A]/25 dark:border-[#D4664A]/30 rounded-md">
                                   AI
                                 </span>
                               )}
                             </Link>
                           </div>
 
-                          {/* Collapsed Tooltip on Hover (Desktop Collapsed 64px) */}
+                          {/* Collapsed Tooltip on Hover */}
                           {isCollapsed && (
-                            <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 rounded-none bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] text-xs font-sans font-bold shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap flex items-center gap-2">
+                            <div className="pointer-events-none group-hover:pointer-events-auto absolute left-full top-1/2 -translate-y-1/2 ml-2.5 px-3 py-1.5 rounded-lg bg-[#FFFFFF] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] text-[#1C1917] dark:text-[#F5F5F4] text-xs font-sans font-semibold shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap flex items-center gap-2">
                               <span>{translatedLabel}</span>
                               {isAiItem && (
-                                <span className="px-1 py-0.2 text-[8px] font-mono bg-[#C2553A]/10 dark:bg-brand-400/15 text-[#C2553A] dark:text-brand-400">
+                                <span className="px-1.5 py-0.5 text-[8.5px] font-mono bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#D4664A] rounded-md">
                                   AI
                                 </span>
                               )}
@@ -568,11 +568,11 @@ export function Sidebar({
 
             {/* Desktop Admin Section */}
             {(isAdmin || isOwner) && (
-              <div className="pt-2 border-t border-[#7A756D]/40 dark:border-zinc-800 space-y-1">
+              <div className="pt-2.5 border-t border-[#E4DDD4] dark:border-[#292524] space-y-1">
                 {!isCollapsed && (
-                  <div className="px-2 pb-0.5 font-mono text-[9.5px] font-bold text-[#C2553A] dark:text-brand-400 uppercase tracking-wider flex items-center justify-between">
+                  <div className="px-2.5 pb-0.5 font-mono text-[10px] font-semibold text-[#C2553A] dark:text-[#D4664A] uppercase tracking-wider flex items-center justify-between">
                     <span>{isOwner ? "Administrasi (Pemilik)" : "Administrasi"}</span>
-                    <Crown className="w-3 h-3 text-[#C2553A] dark:text-brand-400" />
+                    <Crown className="w-3 h-3 text-[#C2553A] dark:text-[#D4664A]" />
                   </div>
                 )}
 
@@ -583,14 +583,14 @@ export function Sidebar({
                         href="/dashboard/kelola-role"
                         aria-current={pathname.startsWith("/dashboard/kelola-role") ? "page" : undefined}
                         className={cn(
-                          "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
+                          "relative flex items-center transition-all duration-150 flex-1 min-w-0 rounded-lg font-sans text-[13px] font-medium",
                           "focus-visible:outline-none",
                           isCollapsed
-                            ? "justify-center w-8 h-8 mx-auto"
-                            : "gap-2 px-2.5 h-7.5",
+                            ? "justify-center w-8.5 h-8.5 mx-auto"
+                            : "gap-2.5 px-2.5 h-8.5",
                           pathname.startsWith("/dashboard/kelola-role")
-                            ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
-                            : "text-[#3D352E] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
+                            ? "bg-[#C2553A] text-[#FFFBF8] font-semibold border border-[#D4664A]/40 shadow-xs"
+                            : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent"
                         )}
                       >
                         <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
@@ -600,7 +600,7 @@ export function Sidebar({
                       </Link>
 
                       {isCollapsed && (
-                        <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                        <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 px-2.5 py-1 rounded-lg font-sans text-xs font-semibold bg-[#FFFFFF] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] text-[#1C1917] dark:text-[#F5F5F4] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                           Kelola Hak Akses
                         </div>
                       )}
@@ -612,14 +612,14 @@ export function Sidebar({
                       href="/dashboard/peta-pengguna"
                       aria-current={pathname.startsWith("/dashboard/peta-pengguna") ? "page" : undefined}
                       className={cn(
-                        "relative flex items-center transition-all duration-100 flex-1 min-w-0 rounded-xs font-sans text-[13px] font-medium",
+                        "relative flex items-center transition-all duration-150 flex-1 min-w-0 rounded-lg font-sans text-[13px] font-medium",
                         "focus-visible:outline-none",
                         isCollapsed
-                          ? "justify-center w-8 h-8 mx-auto"
-                          : "gap-2 px-2.5 h-7.5",
+                          ? "justify-center w-8.5 h-8.5 mx-auto"
+                          : "gap-2.5 px-2.5 h-8.5",
                         pathname.startsWith("/dashboard/peta-pengguna")
-                          ? "bg-[#C2553A] dark:bg-brand-600 text-white font-bold border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900 dark:border-r-brand-900 shadow-xs"
-                          : "text-[#3D352E] dark:text-zinc-300 hover:text-[#1A1816] dark:hover:text-white hover:bg-[#ECE7DF] dark:hover:bg-zinc-800/70 border border-transparent"
+                          ? "bg-[#C2553A] text-[#FFFBF8] font-semibold border border-[#D4664A]/40 shadow-xs"
+                          : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917] border border-transparent"
                       )}
                     >
                       <MapPin className="w-3.5 h-3.5 shrink-0" />
@@ -629,7 +629,7 @@ export function Sidebar({
                     </Link>
 
                     {isCollapsed && (
-                      <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-0.5 font-sans text-[11px] font-bold bg-[#FAF8F5] dark:bg-[#18181B] border-2 border-t-[#FFFFFF] dark:border-t-[#3F3F46] border-l-[#FFFFFF] dark:border-l-[#3F3F46] border-b-[#7A756D] dark:border-b-[#09090B] border-r-[#7A756D] dark:border-r-[#09090B] text-[#1C1917] dark:text-[#F4F4F5] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 px-2.5 py-1 rounded-lg font-sans text-xs font-semibold bg-[#FFFFFF] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] text-[#1C1917] dark:text-[#F5F5F4] whitespace-nowrap shadow-xl z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                         Peta Pengguna
                       </div>
                     )}
@@ -642,28 +642,28 @@ export function Sidebar({
           {/* Desktop Footer: Notifications + Theme (when collapsed) + UserProfileMenu */}
           <div
             className={cn(
-              "border-t-2 border-t-[#7A756D] dark:border-t-[#27272A] bg-[#ECE9D8] dark:bg-[#18181B] shrink-0 transition-all duration-200",
-              isCollapsed ? "p-2 space-y-2 flex flex-col items-center" : "p-2.5 space-y-2"
+              "border-t border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9]/75 dark:bg-[#141210] shrink-0 transition-all duration-200",
+              isCollapsed ? "p-2 space-y-2 flex flex-col items-center" : "p-3 space-y-2.5"
             )}
           >
             {!isCollapsed ? (
               <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   <NotificationCenter
                     dropdownPosition="top"
                     align="left"
-                    buttonClassName="p-1 rounded-none bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46]"
+                    buttonClassName="vt-btn-chrome p-1.5 rounded-lg"
                   />
-                  <span className="font-mono text-[10px] text-[#7A756D] dark:text-zinc-400">
+                  <span className="font-mono text-[10px] text-[#8A8378] dark:text-[#8C857F]">
                     Notifikasi
                   </span>
                 </div>
 
                 <div
-                  className="flex items-center gap-1 px-1.5 py-0.5 bg-[#FAF8F5] dark:bg-[#121214] border border-[#B8B1A5] dark:border-zinc-700 text-[9px] font-mono text-emerald-700 dark:text-emerald-400 uppercase font-bold"
+                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FFFFFF] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] text-[9.5px] font-mono text-emerald-700 dark:text-[#34D399] uppercase font-semibold"
                   title="Sistem Terhubung"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#059669] dark:bg-[#34D399]" />
                   Online
                 </div>
               </div>
@@ -672,20 +672,20 @@ export function Sidebar({
                 <NotificationCenter
                   dropdownPosition="top"
                   align="left"
-                  buttonClassName="p-1.5 rounded-none bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46]"
+                  buttonClassName="vt-btn-chrome p-1.5 rounded-lg"
                 />
                 {mounted && (
                   <button
                     type="button"
                     onClick={toggleTheme}
-                    className="p-1.5 font-mono text-xs bg-[#ECE9D8] dark:bg-[#27272A] text-[#1C1917] dark:text-[#F4F4F5] border-t border-l border-[#FFFFFF] dark:border-t-[#3F3F46] dark:border-l-[#3F3F46] border-b border-r border-[#7A756D] dark:border-b-[#09090B] dark:border-r-[#09090B] hover:bg-[#F2EFE8] dark:hover:bg-[#3F3F46] cursor-pointer"
+                    className="vt-btn-chrome p-1.5 rounded-lg cursor-pointer"
                     title={resolvedTheme === "dark" ? "Mode Terang" : "Mode Gelap"}
                     aria-label="Ganti Tema"
                   >
                     {resolvedTheme === "dark" ? (
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
+                      <Sun className="w-3.5 h-3.5 text-[#E5C194]" />
                     ) : (
-                      <Moon className="w-3.5 h-3.5 text-[#853827]" />
+                      <Moon className="w-3.5 h-3.5 text-[#C2553A]" />
                     )}
                   </button>
                 )}

@@ -76,6 +76,7 @@ export const SIDEBAR_CATEGORIES: readonly NavCategory[] = [
     title: "Modul",
     links: [
       { label: "Katalog Modul", href: "/dashboard/modul", icon: "Layers" },
+      { label: "Katalog Kode", href: "/dashboard/kode", icon: "FileCode2" },
       { label: "Materi Pembelajaran", href: "/dashboard/materi", icon: "BookOpen" },
       { label: "Semua Berkas", href: "/dashboard/file", icon: "Files" },
       { label: "Materi Tersimpan", href: "/dashboard/bookmark", icon: "Bookmark" },

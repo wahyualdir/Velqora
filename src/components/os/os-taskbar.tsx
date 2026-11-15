@@ -1,157 +1,76 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import Link from "next/link";
-import { Folder, Terminal, FileText, Cpu, Layers, LogOut, User, RefreshCw, Activity } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
+import { RevealSection } from "./motion-primitives";
 
 export function OSTaskbar() {
-  const [startOpen, setStartOpen] = useState(false);
-  const [timeString, setTimeString] = useState("");
-  const startMenuRef = useRef<HTMLDivElement>(null);
-
-  // Live Clock (HH:MM:SS)
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeString(
-        now.toLocaleTimeString("id-ID", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-      );
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Close Start Menu on outside click
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (startMenuRef.current && !startMenuRef.current.contains(e.target as Node)) {
-        setStartOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const scrollTo = (id: string) => {
-    setStartOpen(false);
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
   return (
-    <div ref={startMenuRef} className="fixed bottom-0 left-0 right-0 z-50 select-none font-mono">
-      {/* Start Menu Pop-up (Exact Vintec Learn 98 Style) */}
-      {startOpen && (
-        <div className="absolute bottom-10 left-2 w-64 bg-[#ECE9D8] border-2 border-[#FFFFFF] border-r-[#7A756D] border-b-[#7A756D] shadow-2xl overflow-hidden flex z-50 animate-in slide-in-from-bottom-2 duration-75 text-xs">
-          {/* Left Vertical Brand Stripe (VELQORA 98) */}
-          <div className="w-8 bg-gradient-to-t from-[#853827] via-[#C2553A] to-[#EE7257] flex items-end justify-center pb-3 text-white font-bold select-none">
-            <span className="-rotate-90 tracking-widest text-sm whitespace-nowrap drop-shadow-xs">
-              VELQORA 98
-            </span>
+    <footer className="border-t border-[#E4DDD4] dark:border-[#292524] bg-[#F3EFE9]/70 dark:bg-[#100E0D] text-[#44403C] dark:text-[#A8A29E]">
+      <RevealSection yOffset={10} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#E4DDD4] dark:border-[#292524]">
+          <div className="space-y-2 max-w-md">
+            <Logo variant="navbar" size="md" />
+            <p className="text-sm text-[#57534E] dark:text-[#A8A29E] leading-relaxed">
+              Workspace pembelajaran akademik dan computational notebook untuk
+              menguasai AI, Machine Learning, dan Sains Data berbasis rujukan
+              primer.
+            </p>
           </div>
 
-          {/* Menu Items (Vintec Exact Menu Options) */}
-          <div className="flex-1 p-1 space-y-0.5 text-[#1C1917]">
-            <Link
-              href="/login"
-              onClick={() => setStartOpen(false)}
-              className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#C2553A] hover:text-white transition-colors text-left"
+          <nav
+            aria-label="Navigasi footer"
+            className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium"
+          >
+            <button
+              type="button"
+              onClick={() => scrollTo("curriculum-section")}
+              className="hover:text-[#C2553A] dark:hover:text-[#D4664A] transition-colors cursor-pointer"
             >
-              <span className="text-sm">▤</span>
-              <span className="font-semibold">Masuk</span>
-            </Link>
-
-            <Link
-              href="/register"
-              onClick={() => setStartOpen(false)}
-              className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#C2553A] hover:text-white transition-colors text-left"
+              Kurikulum
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollTo("notepad-section")}
+              className="hover:text-[#C2553A] dark:hover:text-[#D4664A] transition-colors cursor-pointer"
             >
-              <span className="text-sm font-bold text-[#C2553A] group-hover:text-white">✚</span>
-              <span className="font-semibold">Daftar akun baru</span>
-            </Link>
-
-            <div className="h-px bg-[#B8B1A5] my-1" />
-
+              Pendekatan
+            </button>
             <button
               type="button"
               onClick={() => scrollTo("stats-section")}
-              className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#C2553A] hover:text-white transition-colors text-left"
+              className="hover:text-[#C2553A] dark:hover:text-[#D4664A] transition-colors cursor-pointer"
             >
-              <span className="text-sm text-emerald-600">◉</span>
-              <span>Status sistem</span>
+              Transparansi
             </button>
+            <Link href="/dashboard" className="hover:text-[#C2553A] dark:hover:text-[#D4664A] transition-colors">
+              Dashboard
+            </Link>
+            <Link href="/login" className="hover:text-[#C2553A] dark:hover:text-[#D4664A] transition-colors">
+              Masuk
+            </Link>
+            <Link href="/register" className="hover:text-[#C2553A] dark:hover:text-[#D4664A] transition-colors">
+              Daftar
+            </Link>
+          </nav>
+        </div>
 
-            <button
-              type="button"
-              onClick={() => scrollTo("stats-section")}
-              className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#C2553A] hover:text-white transition-colors text-left"
-            >
-              <span className="text-sm">▣</span>
-              <span>Velqora Companion</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setStartOpen(false);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#C2553A] hover:text-white transition-colors text-left"
-            >
-              <span className="text-sm">↻</span>
-              <span>Reboot…</span>
-            </button>
+        <div className="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#6B6560] dark:text-[#8C857F]">
+          <span>© 2026 Velqora Academic Platform. Dirancang untuk pembelajaran terstruktur.</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#1C1917] dark:text-[#F5F5F4] font-medium">
+            <span className="w-2 h-2 rounded-full bg-[#34D399] ring-2 ring-[#34D399]/20" />
+            <span>Sistem Aktif</span>
           </div>
         </div>
-      )}
-
-      {/* Main Taskbar (Vintec Exact Layout: Start, Center Copyright, Right Status & Clock) */}
-      <footer className="h-9 vt-taskbar flex items-center justify-between px-2 text-xs select-none">
-        {/* Left: Start Button */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setStartOpen(!startOpen)}
-            className={`px-3 py-1 text-xs font-bold tracking-wider flex items-center gap-1.5 transition-all ${
-              startOpen
-                ? "bg-[#C2553A] text-white border-t-2 border-l-2 border-[#6B2D20] border-b-2 border-r-2 border-[#EE7257]"
-                : "vt-btn-terracotta"
-            }`}
-          >
-            <span className="font-black text-sm">⊞</span>
-            <span>Start</span>
-          </button>
-        </div>
-
-        {/* Center: Copyright Notice (Exact Vintec Learn) */}
-        <div className="text-[11px] text-[#6B6560] font-sans font-medium hidden sm:block">
-          © Velqora — 2026
-        </div>
-
-        {/* Right: Status Pill & Real-time Clock */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => scrollTo("stats-section")}
-            className="px-2 py-0.5 bg-[#FAF8F5] border border-[#C5BCB0] text-[#1C1917] text-[11px] flex items-center gap-1.5 hover:bg-[#F0EAE1]"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-            <span>Status</span>
-          </button>
-
-          {/* Clock Inset Box */}
-          <div className="px-2.5 py-0.5 bg-[#FAF8F5] border-t border-l border-[#8A857D] border-b border-r border-[#FFFFFF] text-[11px] text-[#1C1917] font-bold">
-            {timeString || "12:00:00"}
-          </div>
-        </div>
-      </footer>
-    </div>
+      </RevealSection>
+    </footer>
   );
 }

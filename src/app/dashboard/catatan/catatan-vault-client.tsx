@@ -241,7 +241,7 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
               </Link>
             </div>
 
-            <NoteGraph data={graphData} height={280} className="rounded-none shadow-xs" />
+            <NoteGraph data={graphData} height={280} className="rounded-xl shadow-xs" />
           </div>
 
           {/* Featured & Connected Notes Grid */}

@@ -99,7 +99,7 @@ export default function DashboardPage() {
         <div
           role="tablist"
           aria-label="Mode Tampilan Dashboard"
-          className="inline-flex items-center gap-1 bg-[#ECE9D8] dark:bg-zinc-800/80 p-1 rounded-sm border border-[#7A756D]/40 dark:border-zinc-700 text-xs font-mono select-none"
+          className="inline-flex items-center gap-1.5 bg-[#F3EFE9] dark:bg-[#141210] p-1 rounded-xl border border-[#E4DDD4] dark:border-[#292524] text-xs font-mono select-none"
         >
           <button
             type="button"
@@ -112,10 +112,10 @@ export default function DashboardPage() {
               }
             }}
             className={cn(
-              "px-3 py-1 font-semibold transition-all cursor-pointer rounded-xs flex items-center gap-1.5",
+              "px-3.5 py-1.5 font-semibold transition-all cursor-pointer rounded-lg flex items-center gap-1.5",
               activeTab === "overview"
-                ? "bg-[#C2553A] dark:bg-brand-600 text-white shadow-xs border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900"
-                : "text-[#524B42] dark:text-zinc-300 hover:text-[#1C1917] dark:hover:text-white"
+                ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
+                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#FFFFFF]/60 dark:hover:bg-[#1C1917]"
             )}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
@@ -133,10 +133,10 @@ export default function DashboardPage() {
               }
             }}
             className={cn(
-              "px-3 py-1 font-semibold transition-all cursor-pointer rounded-xs flex items-center gap-1.5",
+              "px-3.5 py-1.5 font-semibold transition-all cursor-pointer rounded-lg flex items-center gap-1.5",
               activeTab === "statistik"
-                ? "bg-[#C2553A] dark:bg-brand-600 text-white shadow-xs border-t border-l border-[#EE7257] dark:border-t-brand-400 dark:border-l-brand-400 border-b border-r border-[#6B2D20] dark:border-b-brand-900"
-                : "text-[#524B42] dark:text-zinc-300 hover:text-[#1C1917] dark:hover:text-white"
+                ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
+                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#FFFFFF]/60 dark:hover:bg-[#1C1917]"
             )}
           >
             <BarChart3 className="w-3.5 h-3.5" />

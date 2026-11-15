@@ -53,7 +53,7 @@ export const TechBackground = React.memo(function TechBackground({
       <div
         className={cn(
           "absolute inset-0 transition-colors duration-200",
-          isLight ? "bg-[#fafaf8]" : "bg-[#09090b]"
+          isLight ? "bg-[#FAF8F5]" : "bg-[#0B0A09]"
         )}
       />
 
@@ -64,18 +64,18 @@ export const TechBackground = React.memo(function TechBackground({
             "absolute inset-0 transition-opacity duration-300",
             isLight
               ? "bg-tech-grid-light opacity-25 radial-mask-vignette"
-              : "bg-tech-grid opacity-20 radial-mask-vignette"
+              : "bg-tech-grid opacity-[0.14] radial-mask-vignette"
           )}
         />
       )}
 
-      {/* Subtle Edge Vignette & Ambient Glow */}
+      {/* Subtle Edge Vignette & Warm Terracotta Ambient Glow (<= 5% opacity) */}
       <div
         className={cn(
           "absolute inset-0 pointer-events-none transition-opacity duration-300",
           isLight
             ? "bg-gradient-to-b from-white/20 via-transparent to-stone-200/20 opacity-15"
-            : "bg-gradient-to-b from-brand-500/[0.04] via-transparent to-black/40 opacity-40"
+            : "bg-[radial-gradient(ellipse_75%_55%_at_50%_-10%,rgba(212,102,74,0.055),transparent_70%)] opacity-100"
         )}
       />
     </div>

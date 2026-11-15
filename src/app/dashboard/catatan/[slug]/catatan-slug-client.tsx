@@ -140,7 +140,7 @@ export function CatatanSlugClient({
                 ? `?fromCategory=${encodeURIComponent(targetCategoryParam)}`
                 : ""
             }`}
-            className="p-3.5 vt-window bg-surface hover:bg-surface-secondary border border-border hover:border-brand-500/60 transition-all flex flex-col gap-1 text-left group cursor-pointer shadow-2xs"
+            className="p-3.5 vt-window rounded-xl bg-surface hover:bg-surface-secondary border border-border hover:border-brand-500/60 transition-all flex flex-col gap-1 text-left group cursor-pointer shadow-2xs"
           >
             <span className="text-[11px] text-text-tertiary flex items-center gap-1 group-hover:text-brand-600 dark:group-hover:text-brand-400">
               <ArrowLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" />
@@ -161,7 +161,7 @@ export function CatatanSlugClient({
                 ? `?fromCategory=${encodeURIComponent(targetCategoryParam)}`
                 : ""
             }`}
-            className="p-3.5 vt-window bg-surface hover:bg-surface-secondary border border-border hover:border-brand-500/60 transition-all flex flex-col gap-1 text-right group cursor-pointer sm:col-start-2 shadow-2xs"
+            className="p-3.5 vt-window rounded-xl bg-surface hover:bg-surface-secondary border border-border hover:border-brand-500/60 transition-all flex flex-col gap-1 text-right group cursor-pointer sm:col-start-2 shadow-2xs"
           >
             <span className="text-[11px] text-text-tertiary flex items-center justify-end gap-1 group-hover:text-brand-600 dark:group-hover:text-brand-400">
               <span>Topik Berikutnya</span>
@@ -357,7 +357,7 @@ export function CatatanSlugClient({
               height={200}
               isLocal
               activeSlug={note.slug}
-              className="rounded-none shadow-2xs"
+              className="rounded-xl shadow-2xs"
             />
           </div>
 

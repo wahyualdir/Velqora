@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 export type AccentColor =
+  | "terracotta"
   | "platinum"
   | "titanium"
   | "indigo"
@@ -193,9 +194,9 @@ export const THEME_PRESETS: ThemePreset[] = [
 
 export const DEFAULT_THEME_SETTINGS: ThemeSettings = {
   mode: "dark",
-  accent: "indigo",
+  accent: "terracotta",
   bgStyle: "tech-canvas",
-  bgIntensity: "bold",
+  bgIntensity: "subtle",
   contrast: "balanced",
   density: "comfortable",
   radius: "balanced",
@@ -233,11 +234,11 @@ interface ThemeAccentContextType {
 
 const ThemeAccentContext = createContext<ThemeAccentContextType>({
   settings: DEFAULT_THEME_SETTINGS,
-  accent: "indigo",
+  accent: "terracotta",
   setAccent: () => {},
   bgStyle: "tech-canvas",
   setBgStyle: () => {},
-  bgIntensity: "bold",
+  bgIntensity: "subtle",
   setBgIntensity: () => {},
   contrast: "balanced",
   setContrast: () => {},
@@ -257,6 +258,7 @@ const ThemeAccentContext = createContext<ThemeAccentContextType>({
 });
 
 const VALID_ACCENTS: AccentColor[] = [
+  "terracotta",
   "platinum",
   "titanium",
   "indigo",
@@ -345,8 +347,8 @@ export function ThemeAccentProvider({ children }: { children: React.ReactNode })
         if (parsed && typeof parsed === "object") {
           loadedSettings = {
             mode: parsed.mode || "dark",
-            accent: VALID_ACCENTS.includes(parsed.accent) ? parsed.accent : "platinum",
-            bgStyle: VALID_BG_STYLES.includes(parsed.bgStyle) ? parsed.bgStyle : "super-dark",
+            accent: VALID_ACCENTS.includes(parsed.accent) ? parsed.accent : "terracotta",
+            bgStyle: VALID_BG_STYLES.includes(parsed.bgStyle) ? parsed.bgStyle : "tech-canvas",
             bgIntensity: VALID_INTENSITIES.includes(parsed.bgIntensity) ? parsed.bgIntensity : "subtle",
             contrast: VALID_CONTRASTS.includes(parsed.contrast) ? parsed.contrast : "balanced",
             density: VALID_DENSITIES.includes(parsed.density) ? parsed.density : "comfortable",
