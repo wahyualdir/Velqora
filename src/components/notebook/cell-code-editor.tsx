@@ -20,6 +20,7 @@ interface CellCodeEditorProps {
   kernel: NotebookKernel;
   variables?: VariableSummary[];
   editorMode?: "codemirror" | "lite";
+  wordWrap?: boolean;
   placeholderText?: string;
   onRunCell?: () => void;
   onRunAndAdvance?: () => void;
@@ -78,7 +79,7 @@ function buildVelqoraTheme(isDark: boolean) {
       },
       ".cm-scroller": {
         overflowX: "auto",
-        minHeight: "88px",
+        minHeight: "56px",
       },
     },
     { dark: isDark }
@@ -122,6 +123,7 @@ export function CellCodeEditor({
   kernel,
   variables = [],
   editorMode = "codemirror",
+  wordWrap = true,
   placeholderText = "# Tulis kode Anda di sini...",
   onRunCell,
   onRunAndAdvance,
@@ -137,6 +139,7 @@ export function CellCodeEditor({
   const langCompRef = useRef(new Compartment());
   const themeCompRef = useRef(new Compartment());
   const completionCompRef = useRef(new Compartment());
+  const wrapCompRef = useRef(new Compartment());
 
   const onChangeRef = useRef(onChange);
   const onRunCellRef = useRef(onRunCell);
@@ -222,6 +225,7 @@ export function CellCodeEditor({
         langCompRef.current.of(getLanguageExtension(kernel)),
         themeCompRef.current.of(buildVelqoraTheme(isDark)),
         completionCompRef.current.of(buildCompletionSource()),
+        wrapCompRef.current.of(wordWrap ? EditorView.lineWrapping : []),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             onChangeRef.current(update.state.doc.toString());
@@ -295,6 +299,17 @@ export function CellCodeEditor({
     });
   }, [isDark, editorMode]);
 
+  // Update line wrapping live
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view || editorMode === "lite") return;
+    view.dispatch({
+      effects: wrapCompRef.current.reconfigure(
+        wordWrap ? EditorView.lineWrapping : []
+      ),
+    });
+  }, [wordWrap, editorMode]);
+
   if (editorMode === "lite") {
     return (
       <textarea
@@ -338,7 +353,9 @@ export function CellCodeEditor({
             });
           }
         }}
-        className="w-full min-h-[110px] p-3 font-mono text-[13px] leading-relaxed bg-[#FAF8F5] dark:bg-[#0F0E0D] text-[#1C1917] dark:text-[#F5F5F4] focus:outline-hidden resize-y"
+        className={`w-full min-h-[72px] p-3 font-mono text-[13px] leading-relaxed bg-[#FAF8F5] dark:bg-[#0F0E0D] text-[#1C1917] dark:text-[#F5F5F4] focus:outline-hidden resize-y ${
+          wordWrap ? "whitespace-pre-wrap" : "whitespace-pre overflow-x-auto"
+        }`}
       />
     );
   }

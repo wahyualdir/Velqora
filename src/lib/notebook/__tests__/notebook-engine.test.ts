@@ -21,6 +21,13 @@ import {
   convertSectionToNotebook,
   createStarterNotebook,
 } from "../curriculum-converter";
+import {
+  buildDatasetSnippets,
+  getSafeSqlTableName,
+  normalizeDatasetUrl,
+  NOTEBOOK_SNIPPETS,
+  SAMPLE_DATASETS,
+} from "../sample-datasets";
 import type { NotebookCell } from "../types";
 
 function makeCodeCell(
@@ -195,4 +202,61 @@ test("Tablet compact rail, responsive DocReader outline drawer, and mobile short
   assert.ok(docReaderSrc.includes("xl:hidden flex justify-end"));
   assert.ok(mobileDashSrc.includes("/dashboard/playground"));
   assert.ok(mobileDashSrc.includes("auto-rows-fr"));
+});
+
+test("Sample datasets, snippets, URL normalizer, and safe SQL table helpers work cleanly", () => {
+  assert.equal(SAMPLE_DATASETS.length >= 4, true);
+  for (const ds of SAMPLE_DATASETS) {
+    const lines = ds.csvContent.trim().split(/\r?\n/);
+    assert.equal(lines.length, ds.rows + 1, `${ds.filename} row count mismatch`);
+    assert.equal(
+      lines[0].split(",").length,
+      ds.columns,
+      `${ds.filename} column count mismatch`
+    );
+  }
+  assert.equal(NOTEBOOK_SNIPPETS.length >= 5, true);
+
+  assert.equal(getSafeSqlTableName("2026-penjualan data.csv"), "t_2026_penjualan_data");
+  assert.equal(getSafeSqlTableName("iris_dataset.csv"), "iris_dataset");
+
+  const gh = normalizeDatasetUrl(
+    "https://github.com/mwaskom/seaborn-data/blob/master/iris.csv"
+  );
+  assert.equal(
+    gh.fetchUrl,
+    "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+  );
+  assert.equal(gh.suggestedFileName, "iris.csv");
+
+  const gsheet = normalizeDatasetUrl(
+    "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs/edit#gid=12345"
+  );
+  assert.equal(
+    gsheet.fetchUrl,
+    "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs/export?format=csv&gid=12345"
+  );
+  assert.equal(gsheet.suggestedFileName, "gsheet_1BxiMVs0.csv");
+
+  const snippets = buildDatasetSnippets({
+    path: "/workspace/sample_data/nilai_akademik_mahasiswa.csv",
+    name: "nilai_akademik_mahasiswa.csv",
+    size: 1024,
+    mimeType: "text/csv",
+    updatedAt: new Date().toISOString(),
+    origin: "dataset",
+  });
+  assert.ok(snippets.pandasRead.includes("pd.read_csv"));
+  assert.ok(snippets.pandasPlot.includes("plt.show()"));
+  assert.ok(snippets.pandasStats.includes("df.isna().sum()"));
+  assert.ok(snippets.sqlQuery.includes("SELECT * FROM nilai_akademik_mahasiswa"));
+});
+
+test("Dashboard layout uses overflow-x-clip and full-height playground shell", () => {
+  const layoutSrc = fs.readFileSync(
+    path.join(process.cwd(), "src/app/dashboard/layout.tsx"),
+    "utf8"
+  );
+  assert.ok(layoutSrc.includes("overflow-x-clip"));
+  assert.ok(layoutSrc.includes('pathname.startsWith("/dashboard/playground")'));
 });

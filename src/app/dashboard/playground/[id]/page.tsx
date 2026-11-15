@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { getNotebookByIdAction } from "@/actions/notebook/notebooks";
 import { NotebookWorkbench } from "@/components/notebook/notebook-workbench";
-import { PageContainer } from "@/components/ui/section";
 
 export default async function PlaygroundNotebookDetailPage({
   params,
@@ -12,7 +11,7 @@ export default async function PlaygroundNotebookDetailPage({
   const { notebook } = await getNotebookByIdAction(id);
 
   return (
-    <PageContainer className="space-y-4">
+    <div className="flex-1 min-h-0 flex flex-col gap-2.5">
       <Suspense
         fallback={
           <div className="p-8 rounded-2xl border border-border bg-surface text-xs font-mono text-text-secondary">
@@ -25,6 +24,6 @@ export default async function PlaygroundNotebookDetailPage({
           lookupId={id}
         />
       </Suspense>
-    </PageContainer>
+    </div>
   );
 }

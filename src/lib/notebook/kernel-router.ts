@@ -317,14 +317,15 @@ export class NotebookKernelRouter {
   async ingestWorkspaceFile(
     fileName: string,
     bytes: Uint8Array,
-    mimeType: string
+    mimeType: string,
+    origin: "upload" | "dataset" = "upload"
   ): Promise<void> {
     const entry = await writeVfsFile(
       this.notebookId,
       `/workspace/${fileName}`,
       bytes,
       mimeType,
-      "upload"
+      origin
     );
 
     const filePayload = [{ name: entry.name, path: entry.path, bytes }];

@@ -36,8 +36,8 @@ export default async function SharedPlaygroundNotebookPage({
   }
 
   return (
-    <PageContainer className="space-y-4">
-      <div className="px-3.5 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/8 text-xs font-mono text-emerald-800 dark:text-emerald-200 flex flex-wrap items-center justify-between gap-2">
+    <div className="flex-1 min-h-0 flex flex-col gap-2.5">
+      <div className="px-3.5 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/8 text-xs font-mono text-emerald-800 dark:text-emerald-200 flex flex-wrap items-center justify-between gap-2 shrink-0">
         <span className="flex items-center gap-2">
           <Globe className="w-4 h-4 shrink-0" />
           <span>
@@ -60,6 +60,6 @@ export default async function SharedPlaygroundNotebookPage({
           shareSlug={slug}
         />
       </Suspense>
-    </PageContainer>
+    </div>
   );
 }

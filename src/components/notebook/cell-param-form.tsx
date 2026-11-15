@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import {
   extractCellFormMeta,
@@ -12,14 +12,30 @@ interface CellParamFormProps {
   source: string;
   kernel: NotebookKernel;
   onChangeSource: (nextSource: string, autoRun?: boolean) => void;
+  layout?: "stacked" | "split";
 }
 
 export function CellParamForm({
   source,
   kernel,
   onChangeSource,
+  layout = "stacked",
 }: CellParamFormProps) {
   const formMeta = useMemo(() => extractCellFormMeta(source), [source]);
+  const sliderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const onChangeSourceRef = useRef(onChangeSource);
+
+  useEffect(() => {
+    onChangeSourceRef.current = onChangeSource;
+  }, [onChangeSource]);
+
+  useEffect(() => {
+    return () => {
+      if (sliderTimerRef.current) {
+        clearTimeout(sliderTimerRef.current);
+      }
+    };
+  }, []);
 
   if (
     !formMeta.title &&
@@ -32,14 +48,35 @@ export function CellParamForm({
   const handleParamChange = (
     param: CellParamDef,
     nextValue: string | number | boolean,
-    autoRun = true
+    autoRun = true,
+    debounceRun = false
   ) => {
     const nextCode = updateCellParamValue(source, param, nextValue, kernel);
+    if (debounceRun && autoRun) {
+      if (sliderTimerRef.current) {
+        clearTimeout(sliderTimerRef.current);
+      }
+      onChangeSource(nextCode, false);
+      sliderTimerRef.current = setTimeout(() => {
+        onChangeSourceRef.current(nextCode, true);
+        sliderTimerRef.current = null;
+      }, 180);
+      return;
+    }
+
     onChangeSource(nextCode, autoRun);
   };
 
+  const isSplit = layout === "split";
+
   return (
-    <div className="p-3.5 border-t border-border/80 bg-[#F3EFE9]/60 dark:bg-[#181512] space-y-3">
+    <div
+      className={
+        isSplit
+          ? "h-full p-3 bg-surface-secondary/30 border-t xl:border-t-0 xl:border-l border-border/80 space-y-2.5"
+          : "p-3.5 border-t border-border/80 bg-[#F3EFE9]/55 dark:bg-[#161412] space-y-3"
+      }
+    >
       {(formMeta.title || formMeta.description) && (
         <div className="space-y-0.5">
           {formMeta.title && (
@@ -57,11 +94,19 @@ export function CellParamForm({
       )}
 
       {formMeta.params.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div
+          className={
+            isSplit
+              ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2"
+              : "grid grid-cols-1 sm:grid-cols-2 gap-3"
+          }
+        >
           {formMeta.params.map((param) => (
             <div
               key={`${param.name}_${param.lineIndex}`}
-              className="flex flex-col gap-1 p-2.5 rounded-xl border border-border bg-surface"
+              className={`flex flex-col gap-1 rounded-xl border border-border/80 bg-surface ${
+                isSplit ? "p-2" : "p-2.5"
+              }`}
             >
               <div className="flex items-center justify-between gap-2 text-[11px] font-mono">
                 <label className="font-semibold text-text-primary truncate">
@@ -82,9 +127,9 @@ export function CellParamForm({
                   step={param.step ?? 1}
                   value={Number(param.value)}
                   onChange={(e) =>
-                    handleParamChange(param, Number(e.target.value), true)
+                    handleParamChange(param, Number(e.target.value), true, true)
                   }
-                  className="w-full accent-[#C2553A] cursor-pointer min-h-[28px]"
+                  className="w-full accent-[#C2553A] cursor-pointer min-h-[26px]"
                 />
               )}
 

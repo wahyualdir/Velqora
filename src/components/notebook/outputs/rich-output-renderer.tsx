@@ -12,6 +12,7 @@ import { TracebackOutput } from "./traceback-output";
 interface RichOutputRendererProps {
   outputs: RichCellOutput[];
   onAskAiFix?: (errorSummary: string) => void;
+  onInsertCode?: (code: string, kernel?: "python" | "sql") => void;
 }
 
 function buildSandboxedHtmlSrcDoc(rawHtml: string): string {
@@ -61,6 +62,7 @@ function buildPlotlySrcDoc(spec: Record<string, unknown>): string {
 export function RichOutputRenderer({
   outputs,
   onAskAiFix,
+  onInsertCode,
 }: RichOutputRendererProps) {
   if (!outputs || outputs.length === 0) return null;
 
@@ -123,7 +125,15 @@ export function RichOutputRenderer({
         }
 
         if (out.kind === "dataframe") {
-          return <DataFrameExplorer key={idx} payload={out.data} />;
+          return (
+            <DataFrameExplorer
+              key={idx}
+              payload={out.data}
+              onInsertCode={
+                onInsertCode ? (code) => onInsertCode(code, "python") : undefined
+              }
+            />
+          );
         }
 
         if (out.kind === "sql_result") {

@@ -8,16 +8,17 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Code2,
   Copy,
   Eye,
   FileText,
   FlaskConical,
   Loader2,
+  Maximize2,
+  Minimize2,
   Play,
-  Plus,
   Sparkles,
   Trash2,
+  X,
 } from "lucide-react";
 import { NoteRenderer } from "@/components/notes/note-renderer";
 import type {
@@ -43,6 +44,7 @@ interface CellItemProps {
   sqlTables: SqlTableMeta[];
   surroundingCode?: string;
   editorMode: "codemirror" | "lite";
+  wordWrap?: boolean;
   readOnly?: boolean;
   onActivate: () => void;
   onUpdateCell: (patch: Partial<NotebookCell>) => void;
@@ -56,6 +58,7 @@ interface CellItemProps {
     prefillCode?: string,
     kernelOverride?: NotebookKernel
   ) => void;
+  onInsertCode?: (code: string, kernel?: NotebookKernel) => void;
   onFocusInsertHandler?: (
     insertFn: ((snippet: string, cursorBackOffset?: number) => void) | null
   ) => void;
@@ -91,6 +94,7 @@ export function CellItem({
   sqlTables,
   surroundingCode,
   editorMode,
+  wordWrap = true,
   readOnly = false,
   onActivate,
   onUpdateCell,
@@ -100,6 +104,7 @@ export function CellItem({
   onDeleteCell,
   onDuplicateCell,
   onAddBelow,
+  onInsertCode,
   onFocusInsertHandler,
 }: CellItemProps) {
   const [editingMarkdown, setEditingMarkdown] = useState(
@@ -109,6 +114,7 @@ export function CellItem({
     Boolean(cell.testAssertions)
   );
   const [showInlineAi, setShowInlineAi] = useState(false);
+  const [fullscreenOutput, setFullscreenOutput] = useState(false);
 
   const hasFormParams = cell.source.includes("#@param") || cell.source.includes("#@title");
   const isFormOnly = cell.formMode === "form";
@@ -119,18 +125,28 @@ export function CellItem({
       ? `${errorOutput.ename}: ${errorOutput.evalue}\n${errorOutput.traceback.join("\n")}`
       : undefined;
 
+  const statusAccentClass = isRunning
+    ? "border-l-amber-500"
+    : errorOutput
+      ? "border-l-rose-500"
+      : isActive
+        ? "border-l-[#C2553A]"
+        : dagInfo?.status === "fresh"
+          ? "border-l-emerald-500/70"
+          : "border-l-transparent";
+
   return (
     <div
       id={`nb-cell-${cell.id}`}
       onClick={onActivate}
-      className={`rounded-2xl border transition-all bg-surface shadow-2xs overflow-hidden ${
+      className={`group rounded-xl border border-l-[3px] ${statusAccentClass} transition-colors bg-surface shadow-2xs overflow-hidden ${
         isActive
-          ? "border-[#C2553A]/70 ring-1 ring-[#C2553A]/20"
-          : "border-border hover:border-border-strong"
+          ? "border-border-strong ring-1 ring-[#C2553A]/15"
+          : "border-border/80 hover:border-border-strong"
       }`}
     >
       {/* Cell Header Chrome */}
-      <div className="px-3 py-2 border-b border-border/80 bg-[#F3EFE9]/70 dark:bg-[#141210] flex flex-wrap items-center justify-between gap-2">
+      <div className="px-2.5 py-1.5 min-h-[38px] border-b border-border/60 bg-surface-secondary/35 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           {cell.type === "code" ? (
             <>
@@ -141,21 +157,21 @@ export function CellItem({
                   onRunCell();
                 }}
                 disabled={isRunning}
-                className="min-h-[36px] min-w-[36px] px-2.5 rounded-xl bg-[#C2553A] hover:bg-[#D4664A] text-white text-xs font-mono font-bold inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60 transition-colors shrink-0"
+                className="h-7 px-2.5 rounded-lg bg-[#C2553A] hover:bg-[#AD472E] text-white text-[11px] font-mono font-bold inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60 transition-colors shrink-0"
                 title="Jalankan Sel (Ctrl/Cmd + Enter, atau Shift + Enter untuk sel berikutnya)"
                 aria-label={`Jalankan Sel ${index + 1}`}
               >
                 {isRunning ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <Loader2 className="w-3 h-3 animate-spin" />
                 ) : (
-                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <Play className="w-3 h-3 fill-current" />
                 )}
                 <span className="hidden sm:inline">
-                  {isRunning ? "Menjalankan" : "Run"}
+                  {isRunning ? "Run..." : "Run"}
                 </span>
               </button>
 
-              <span className="text-[11px] font-mono text-text-tertiary tabular-nums shrink-0">
+              <span className="text-[11px] font-mono text-text-muted tabular-nums shrink-0">
                 [{isRunning ? "*" : cell.executionCount ?? " "}]
               </span>
 
@@ -247,7 +263,13 @@ export function CellItem({
         </div>
 
         {/* Cell Action Buttons */}
-        <div className="flex items-center gap-1 shrink-0">
+        <div
+          className={`flex items-center gap-1 shrink-0 transition-opacity ${
+            isActive
+              ? "opacity-100"
+              : "opacity-100 md:opacity-45 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+          }`}
+        >
           {cell.type === "code" && hasFormParams && (
             <button
               type="button"
@@ -257,7 +279,7 @@ export function CellItem({
                   formMode: isFormOnly ? "both" : "form",
                 });
               }}
-              className="px-2 py-1 min-h-[32px] rounded-lg border border-border bg-surface hover:bg-surface-secondary text-[10.5px] font-mono text-text-secondary cursor-pointer"
+              className="px-2 py-1 h-7 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-[10.5px] font-mono text-text-secondary cursor-pointer"
               title="Beralih antara Form + Kode atau Form saja"
             >
               {isFormOnly ? "Lihat Kode" : "Sembunyikan Kode"}
@@ -272,7 +294,7 @@ export function CellItem({
                   e.stopPropagation();
                   setShowTestEditor((p) => !p);
                 }}
-                className={`p-1.5 min-h-[32px] min-w-[32px] rounded-lg border text-xs flex items-center justify-center cursor-pointer transition-colors ${
+                className={`h-7 w-7 rounded-lg border text-xs flex items-center justify-center cursor-pointer transition-colors ${
                   showTestEditor
                     ? "bg-emerald-500/15 border-emerald-500/35 text-emerald-700 dark:text-emerald-300"
                     : "border-border bg-surface text-text-secondary hover:bg-surface-secondary"
@@ -289,7 +311,7 @@ export function CellItem({
                   e.stopPropagation();
                   setShowInlineAi((p) => !p);
                 }}
-                className={`p-1.5 min-h-[32px] min-w-[32px] rounded-lg border text-xs flex items-center justify-center cursor-pointer transition-colors ${
+                className={`h-7 w-7 rounded-lg border text-xs flex items-center justify-center cursor-pointer transition-colors ${
                   showInlineAi
                     ? "bg-[#C2553A]/15 border-[#C2553A]/40 text-[#C2553A] dark:text-[#D4664A]"
                     : "border-border bg-surface text-text-secondary hover:bg-surface-secondary"
@@ -311,7 +333,7 @@ export function CellItem({
                   e.stopPropagation();
                   onMoveCell(-1);
                 }}
-                className="p-1.5 min-h-[32px] min-w-[32px] rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary disabled:opacity-35 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+                className="h-7 w-7 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary disabled:opacity-35 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
                 title="Naikkan sel"
                 aria-label="Naikkan sel"
               >
@@ -324,7 +346,7 @@ export function CellItem({
                   e.stopPropagation();
                   onMoveCell(1);
                 }}
-                className="p-1.5 min-h-[32px] min-w-[32px] rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary disabled:opacity-35 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+                className="h-7 w-7 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary disabled:opacity-35 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
                 title="Turunkan sel"
                 aria-label="Turunkan sel"
               >
@@ -336,7 +358,7 @@ export function CellItem({
                   e.stopPropagation();
                   onDuplicateCell();
                 }}
-                className="hidden sm:flex p-1.5 min-h-[32px] min-w-[32px] rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary items-center justify-center cursor-pointer"
+                className="hidden sm:flex h-7 w-7 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary items-center justify-center cursor-pointer"
                 title="Duplikasi sel"
                 aria-label="Duplikasi sel"
               >
@@ -349,7 +371,7 @@ export function CellItem({
                     e.stopPropagation();
                     onDeleteCell();
                   }}
-                  className="p-1.5 min-h-[32px] min-w-[32px] rounded-lg border border-border bg-surface hover:bg-rose-500/10 text-text-secondary hover:text-rose-600 flex items-center justify-center cursor-pointer"
+                  className="h-7 w-7 rounded-lg border border-border bg-surface hover:bg-rose-500/10 text-text-secondary hover:text-rose-600 flex items-center justify-center cursor-pointer"
                   title="Hapus sel"
                   aria-label="Hapus sel"
                 >
@@ -358,11 +380,41 @@ export function CellItem({
               )}
             </>
           )}
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdateCell({ collapsed: !cell.collapsed });
+            }}
+            className="h-7 w-7 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary flex items-center justify-center cursor-pointer"
+            title={cell.collapsed ? "Buka isi sel" : "Lipat isi sel"}
+            aria-label={cell.collapsed ? "Buka isi sel" : "Lipat isi sel"}
+          >
+            {cell.collapsed ? (
+              <ChevronDown className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronUp className="w-3.5 h-3.5" />
+            )}
+          </button>
         </div>
       </div>
 
       {/* Cell Body */}
-      {cell.type === "markdown" ? (
+      {cell.collapsed ? (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onUpdateCell({ collapsed: false });
+          }}
+          className="px-3 py-2 text-[11px] font-mono text-text-muted bg-surface-secondary/20 hover:bg-surface-secondary/40 cursor-pointer flex items-center justify-between"
+        >
+          <span className="truncate">
+            {cell.source.split(/\r?\n/).find((l) => l.trim()) || "Sel dilipat"}
+          </span>
+          <span className="text-[#C2553A] shrink-0 ml-2">Buka Sel</span>
+        </div>
+      ) : cell.type === "markdown" ? (
         editingMarkdown && !readOnly ? (
           <div className="p-3 bg-[#FAF8F5] dark:bg-[#0F0E0D] space-y-2">
             <textarea
@@ -396,38 +448,81 @@ export function CellItem({
         )
       ) : (
         <div>
-          {/* Interactive Colab @param Form Controls */}
-          <CellParamForm
-            source={cell.source}
-            kernel={cell.kernel}
-            onChangeSource={(nextSource, autoRun) => {
-              onUpdateCell({
-                source: nextSource,
-                lastModifiedAt: Date.now(),
-              });
-              if (autoRun) {
-                onRunCell();
-              }
-            }}
-          />
+          {hasFormParams && !isFormOnly ? (
+            <div className="grid grid-cols-1 xl:grid-cols-12 items-stretch">
+              <div className="xl:col-span-7 min-w-0">
+                <CellCodeEditor
+                  value={cell.source}
+                  onChange={(nextVal) =>
+                    onUpdateCell({
+                      source: nextVal,
+                      lastModifiedAt: Date.now(),
+                    })
+                  }
+                  kernel={cell.kernel}
+                  variables={variables}
+                  editorMode={readOnly ? "lite" : editorMode}
+                  wordWrap={wordWrap}
+                  onRunCell={onRunCell}
+                  onRunAndAdvance={onRunAndAdvance}
+                  onFocusInsertHandler={onFocusInsertHandler}
+                />
+              </div>
+              <div className="xl:col-span-5 min-w-0">
+                <CellParamForm
+                  source={cell.source}
+                  kernel={cell.kernel}
+                  layout="split"
+                  onChangeSource={(nextSource, autoRun) => {
+                    onUpdateCell({
+                      source: nextSource,
+                      lastModifiedAt: Date.now(),
+                    });
+                    if (autoRun) {
+                      onRunCell();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Interactive Colab @param Form Controls */}
+              <CellParamForm
+                source={cell.source}
+                kernel={cell.kernel}
+                layout="stacked"
+                onChangeSource={(nextSource, autoRun) => {
+                  onUpdateCell({
+                    source: nextSource,
+                    lastModifiedAt: Date.now(),
+                  });
+                  if (autoRun) {
+                    onRunCell();
+                  }
+                }}
+              />
 
-          {/* Code Editor */}
-          {!isFormOnly && (
-            <CellCodeEditor
-              value={cell.source}
-              onChange={(nextVal) =>
-                onUpdateCell({
-                  source: nextVal,
-                  lastModifiedAt: Date.now(),
-                })
-              }
-              kernel={cell.kernel}
-              variables={variables}
-              editorMode={readOnly ? "lite" : editorMode}
-              onRunCell={onRunCell}
-              onRunAndAdvance={onRunAndAdvance}
-              onFocusInsertHandler={onFocusInsertHandler}
-            />
+              {/* Code Editor */}
+              {!isFormOnly && (
+                <CellCodeEditor
+                  value={cell.source}
+                  onChange={(nextVal) =>
+                    onUpdateCell({
+                      source: nextVal,
+                      lastModifiedAt: Date.now(),
+                    })
+                  }
+                  kernel={cell.kernel}
+                  variables={variables}
+                  editorMode={readOnly ? "lite" : editorMode}
+                  wordWrap={wordWrap}
+                  onRunCell={onRunCell}
+                  onRunAndAdvance={onRunAndAdvance}
+                  onFocusInsertHandler={onFocusInsertHandler}
+                />
+              )}
+            </>
           )}
 
           {/* Autograder / Unit Test Editor */}
@@ -487,25 +582,36 @@ export function CellItem({
                 <span className="text-[10.5px] font-mono uppercase tracking-wider text-text-tertiary">
                   Output ({cell.outputs.length})
                 </span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    onUpdateCell({ outputCollapsed: !cell.outputCollapsed })
-                  }
-                  className="text-[10.5px] font-mono text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
-                >
-                  {cell.outputCollapsed ? (
-                    <>
-                      <ChevronDown className="w-3 h-3" />
-                      <span>Tampilkan</span>
-                    </>
-                  ) : (
-                    <>
-                      <ChevronUp className="w-3 h-3" />
-                      <span>Lipat</span>
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setFullscreenOutput(true)}
+                    className="text-[10.5px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer"
+                    title="Tampilkan output dalam layar penuh"
+                  >
+                    <Maximize2 className="w-3 h-3" />
+                    <span className="hidden sm:inline">Layar Penuh</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onUpdateCell({ outputCollapsed: !cell.outputCollapsed })
+                    }
+                    className="text-[10.5px] font-mono text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    {cell.outputCollapsed ? (
+                      <>
+                        <ChevronDown className="w-3 h-3" />
+                        <span>Tampilkan</span>
+                      </>
+                    ) : (
+                      <>
+                        <ChevronUp className="w-3 h-3" />
+                        <span>Lipat</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {!cell.outputCollapsed && (
@@ -513,6 +619,13 @@ export function CellItem({
                   <RichOutputRenderer
                     outputs={cell.outputs}
                     onAskAiFix={() => setShowInlineAi(true)}
+                    onInsertCode={(code, k) => {
+                      if (onInsertCode) {
+                        onInsertCode(code, k);
+                      } else {
+                        onAddBelow("code", code, k);
+                      }
+                    }}
                   />
                 </div>
               )}
@@ -521,33 +634,59 @@ export function CellItem({
         </div>
       )}
 
-      {/* Quick Insert Bar Between Cells */}
-      {!readOnly && (
-        <div className="px-3 py-1.5 border-t border-border/50 bg-surface-secondary/25 flex items-center justify-center gap-2 opacity-90 hover:opacity-100">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddBelow("code");
-            }}
-            className="min-h-[30px] px-2.5 py-0.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-[11px] font-mono text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
+      {fullscreenOutput && cell.outputs && cell.outputs.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs p-3 sm:p-6 flex flex-col"
+          onClick={() => setFullscreenOutput(false)}
+        >
+          <div
+            className="flex-1 min-h-0 max-w-6xl w-full mx-auto rounded-2xl border border-border bg-surface shadow-2xl flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <Plus className="w-3 h-3 text-[#C2553A]" />
-            <Code2 className="w-3 h-3" />
-            <span>Kode</span>
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddBelow("markdown");
-            }}
-            className="min-h-[30px] px-2.5 py-0.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-[11px] font-mono text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
-          >
-            <Plus className="w-3 h-3 text-[#C2553A]" />
-            <FileText className="w-3 h-3" />
-            <span>Teks / LaTeX</span>
-          </button>
+            <div className="px-4 py-3 border-b border-border bg-surface-secondary/40 flex items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <Maximize2 className="w-4 h-4 text-[#C2553A] shrink-0" />
+                <span className="text-xs font-mono font-bold text-text-primary truncate">
+                  Output Layar Penuh — Sel [{cell.executionCount ?? index + 1}] ({cell.kernel})
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setFullscreenOutput(false)}
+                  className="px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <Minimize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Kecilkan</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFullscreenOutput(false)}
+                  className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary cursor-pointer"
+                  aria-label="Tutup output layar penuh"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <div className="p-4 sm:p-5 overflow-y-auto flex-1 min-h-0">
+              <RichOutputRenderer
+                outputs={cell.outputs}
+                onAskAiFix={() => {
+                  setFullscreenOutput(false);
+                  setShowInlineAi(true);
+                }}
+                onInsertCode={(code, k) => {
+                  setFullscreenOutput(false);
+                  if (onInsertCode) {
+                    onInsertCode(code, k);
+                  } else {
+                    onAddBelow("code", code, k);
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

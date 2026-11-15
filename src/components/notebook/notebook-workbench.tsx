@@ -5,10 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Boxes,
   Check,
+  ChevronDown,
   Cloud,
   Copy,
   Cpu,
+  Database,
   Download,
+  Eraser,
   FileCode2,
   FileText,
   FolderOpen,
@@ -16,6 +19,11 @@ import {
   History,
   Laptop,
   Layers,
+  Maximize2,
+  Minimize2,
+  MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
   Play,
@@ -26,6 +34,7 @@ import {
   Sparkles,
   Square,
   Upload,
+  WrapText,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -72,10 +81,13 @@ import {
   listVfsFiles,
   readVfsFileBytes,
 } from "@/lib/notebook/vfs-manager";
+import type { SampleDatasetSpec } from "@/lib/notebook/sample-datasets";
 import { AICellCopilot } from "./ai-cell-copilot";
 import { CellItem } from "./cell-item";
 import { DagPanel } from "./dag-panel";
+import { DatasetPreviewModal } from "./dataset-preview-modal";
 import { FileExplorerPanel } from "./file-explorer-panel";
+import { NotebookOutlinePanel } from "./notebook-outline-panel";
 import { RuntimeConnectionModal } from "./runtime-connection-modal";
 import { TouchSymbolBar } from "./touch-symbol-bar";
 import { VariableInspectorPanel } from "./variable-inspector-panel";
@@ -135,11 +147,17 @@ export function NotebookWorkbench({
   const [vfsFiles, setVfsFiles] = useState<VfsFileEntry[]>([]);
 
   const [inspectorOpen, setInspectorOpen] = useState(true);
-  const [inspectorTab, setInspectorTab] = useState<InspectorTab>("variables");
+  const [outlineOpen, setOutlineOpen] = useState(true);
+  const [inspectorTab, setInspectorTab] = useState<InspectorTab>("files");
   const [mobileTab, setMobileTab] = useState<MobileViewTab>("cells");
   const [tabletDrawerOpen, setTabletDrawerOpen] = useState(false);
 
   const [singleCellFocus, setSingleCellFocus] = useState(false);
+  const [wordWrap, setWordWrap] = useState(true);
+  const [canvasWide, setCanvasWide] = useState(false);
+  const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<VfsFileEntry | null>(null);
+  const [isDraggingOverWorkspace, setIsDraggingOverWorkspace] = useState(false);
   const [libraryDrawerOpen, setLibraryDrawerOpen] = useState(false);
   const [savedLibrary, setSavedLibrary] = useState<NotebookDocument[]>([]);
   const [versionsDrawerOpen, setVersionsDrawerOpen] = useState(false);
@@ -154,10 +172,25 @@ export function NotebookWorkbench({
   >(null);
   const [touchBarVisible, setTouchBarVisible] = useState(false);
   const ipynbInputRef = useRef<HTMLInputElement>(null);
+  const optionsMenuRef = useRef<HTMLDivElement>(null);
 
   const routerRef = useRef<NotebookKernelRouter | null>(null);
   const docRef = useRef(doc);
   docRef.current = doc;
+
+  useEffect(() => {
+    if (!optionsMenuOpen) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (
+        optionsMenuRef.current &&
+        !optionsMenuRef.current.contains(e.target as Node)
+      ) {
+        setOptionsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [optionsMenuOpen]);
 
   // Initialize kernel router and subscribe to telemetry
   useEffect(() => {
@@ -334,11 +367,17 @@ export function NotebookWorkbench({
 
   const updateCell = useCallback(
     (cellId: string, patch: Partial<NotebookCell>) => {
-      setDoc((prev) => ({
-        ...prev,
-        updatedAt: new Date().toISOString(),
-        cells: prev.cells.map((c) => (c.id === cellId ? { ...c, ...patch } : c)),
-      }));
+      setDoc((prev) => {
+        const next: NotebookDocument = {
+          ...prev,
+          updatedAt: new Date().toISOString(),
+          cells: prev.cells.map((c) =>
+            c.id === cellId ? { ...c, ...patch } : c
+          ),
+        };
+        docRef.current = next;
+        return next;
+      });
     },
     []
   );
@@ -527,12 +566,48 @@ export function NotebookWorkbench({
     }
   };
 
-  const handleUploadFiles = async (files: FileList) => {
+  const handleIngestDatasetBuffer = useCallback(
+    async (
+      fileName: string,
+      bytes: Uint8Array,
+      mimeType: string,
+      origin: "upload" | "dataset" = "dataset"
+    ) => {
+      const kr = routerRef.current;
+      if (!kr) return;
+      await kr.ingestWorkspaceFile(fileName, bytes, mimeType, origin);
+      const list = await listVfsFiles(docRef.current.id);
+      setVfsFiles(list);
+      toast.success(`Dataset "${fileName}" siap di /workspace.`);
+    },
+    []
+  );
+
+  const handleLoadSampleDataset = useCallback(
+    async (sample: SampleDatasetSpec) => {
+      const bytes = new TextEncoder().encode(sample.csvContent);
+      await handleIngestDatasetBuffer(
+        `sample_data/${sample.filename}`,
+        bytes,
+        "text/csv",
+        "dataset"
+      );
+    },
+    [handleIngestDatasetBuffer]
+  );
+
+  const handleUploadFiles = async (files: FileList | File[]) => {
     const kr = routerRef.current;
-    if (!kr) return;
-    for (const f of Array.from(files)) {
+    const listArr = Array.from(files);
+    if (!kr || listArr.length === 0) return;
+    for (const f of listArr) {
       const buf = new Uint8Array(await f.arrayBuffer());
-      await kr.ingestWorkspaceFile(f.name, buf, f.type || "application/octet-stream");
+      await kr.ingestWorkspaceFile(
+        f.name,
+        buf,
+        f.type || "application/octet-stream",
+        "upload"
+      );
       const fd = new FormData();
       fd.set("file", f);
       fd.set("notebookId", doc.id);
@@ -540,7 +615,37 @@ export function NotebookWorkbench({
     }
     const list = await listVfsFiles(doc.id);
     setVfsFiles(list);
-    toast.success(`${files.length} file diunggah ke /workspace.`);
+    toast.success(`${listArr.length} file diunggah ke /workspace.`);
+  };
+
+  const handleClearAllOutputs = () => {
+    setDoc((prev) => ({
+      ...prev,
+      updatedAt: new Date().toISOString(),
+      cells: prev.cells.map((c) => ({
+        ...c,
+        outputs: [],
+        executionCount: null,
+        executionOrder: null,
+        timingMs: null,
+      })),
+    }));
+    toast.info("Semua output sel dibersihkan.");
+  };
+
+  const allCellsCollapsed = useMemo(
+    () => doc.cells.length > 0 && doc.cells.every((c) => Boolean(c.collapsed)),
+    [doc.cells]
+  );
+
+  const handleToggleCollapseAllCells = () => {
+    const nextCollapsed = !allCellsCollapsed;
+    setDoc((prev) => ({
+      ...prev,
+      updatedAt: new Date().toISOString(),
+      cells: prev.cells.map((c) => ({ ...c, collapsed: nextCollapsed })),
+    }));
+    toast.info(nextCollapsed ? "Semua sel dilipat." : "Semua sel dibuka.");
   };
 
   const addCell = (
@@ -612,6 +717,7 @@ export function NotebookWorkbench({
         <FileExplorerPanel
           files={vfsFiles}
           onUploadFiles={handleUploadFiles}
+          onIngestDatasetBuffer={handleIngestDatasetBuffer}
           onDeleteFile={async (path) => {
             await deleteVfsFile(doc.id, path);
             setVfsFiles(await listVfsFiles(doc.id));
@@ -630,6 +736,7 @@ export function NotebookWorkbench({
             a.click();
             URL.revokeObjectURL(url);
           }}
+          onPreviewFile={(file) => setPreviewFile(file)}
           onInsertSnippet={(snippet, kernelHint) => {
             addCell("code", activeCell?.id, snippet, kernelHint);
             setMobileTab("cells");
@@ -690,7 +797,47 @@ export function NotebookWorkbench({
   };
 
   return (
-    <div className="w-full space-y-3.5 pb-14 lg:pb-6">
+    <div
+      className="relative w-full lg:flex-1 lg:min-h-0 flex flex-col gap-2.5 pb-12 lg:pb-0"
+      onDragOver={(e) => {
+        if (readOnly) return;
+        if (e.dataTransfer?.types?.includes("Files")) {
+          e.preventDefault();
+          setIsDraggingOverWorkspace(true);
+        }
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setIsDraggingOverWorkspace(false);
+        }
+      }}
+      onDrop={(e) => {
+        setIsDraggingOverWorkspace(false);
+        if (readOnly) return;
+        if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+          e.preventDefault();
+          void handleUploadFiles(e.dataTransfer.files);
+          setInspectorOpen(true);
+          setInspectorTab("files");
+          setMobileTab("files");
+        }
+      }}
+    >
+      {/* Global Drag & Drop Overlay */}
+      {isDraggingOverWorkspace && !readOnly && (
+        <div className="absolute inset-0 z-40 rounded-2xl border-2 border-dashed border-[#C2553A] bg-[#C2553A]/10 backdrop-blur-[2px] flex items-center justify-center pointer-events-none">
+          <div className="px-5 py-4 rounded-2xl bg-surface border border-[#C2553A]/40 shadow-xl text-center space-y-1">
+            <Database className="w-7 h-7 text-[#C2553A] mx-auto" />
+            <p className="text-sm font-bold text-text-primary">
+              Lepaskan Dataset atau File ke /workspace
+            </p>
+            <p className="text-xs font-mono text-text-secondary">
+              CSV, TSV, Excel (.xlsx/.xls), JSON, SQLite, atau script
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Hidden .ipynb upload input */}
       <input
         ref={ipynbInputRef}
@@ -704,290 +851,486 @@ export function NotebookWorkbench({
         }}
       />
 
-      {/* ─── TOP NOTEBOOK WORKSPACE HEADER ─── */}
-      <div className="rounded-2xl border border-border bg-surface p-3.5 sm:p-4 shadow-2xs space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2.5">
-          {/* Notebook Identity & Title */}
-          <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            {!readOnly && (
-              <button
-                type="button"
-                onClick={() => {
-                  void refreshLibrary();
-                  setLibraryDrawerOpen(true);
-                }}
-                className="min-h-[40px] min-w-[40px] px-2.5 rounded-xl border border-border bg-surface-secondary/60 hover:bg-surface-secondary text-text-primary inline-flex items-center gap-1.5 text-xs font-mono font-semibold cursor-pointer shrink-0"
-                title="Buka Daftar Notebook Saya"
-              >
-                <Layers className="w-4 h-4 text-[#C2553A]" />
-                <span className="hidden sm:inline">Notebook</span>
-              </button>
+      {/* ─── TOP SINGLE-ROW STUDIO RIBBON ─── */}
+      <div className="rounded-2xl border border-border bg-surface px-3 py-2 shadow-2xs flex flex-wrap items-center justify-between gap-2 shrink-0">
+        {/* Left: Notebook Identity & Outline Toggle */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={() => {
+                void refreshLibrary();
+                setLibraryDrawerOpen(true);
+              }}
+              className="h-9 px-2.5 rounded-xl border border-border bg-surface-secondary/50 hover:bg-surface-secondary text-text-primary inline-flex items-center gap-1.5 text-xs font-mono font-semibold cursor-pointer shrink-0"
+              title="Buka Koleksi Notebook Saya"
+            >
+              <Layers className="w-3.5 h-3.5 text-[#C2553A]" />
+              <span className="hidden sm:inline">Notebook</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setOutlineOpen((p) => !p)}
+            className={`hidden lg:inline-flex h-9 w-9 rounded-xl border items-center justify-center cursor-pointer transition-colors shrink-0 ${
+              outlineOpen
+                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
+                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
+            }`}
+            title={outlineOpen ? "Sembunyikan Outline & Snippet" : "Tampilkan Outline & Snippet"}
+            aria-label="Toggle Outline Panel"
+          >
+            {outlineOpen ? (
+              <PanelLeftClose className="w-4 h-4" />
+            ) : (
+              <PanelLeftOpen className="w-4 h-4" />
+            )}
+          </button>
+
+          <div className="min-w-0 flex-1 flex items-center gap-2">
+            {readOnly ? (
+              <h1 className="text-sm sm:text-base font-bold text-text-primary truncate">
+                {doc.title}
+              </h1>
+            ) : (
+              <input
+                type="text"
+                value={doc.title}
+                onChange={(e) =>
+                  setDoc((prev) => ({
+                    ...prev,
+                    title: e.target.value,
+                    updatedAt: new Date().toISOString(),
+                  }))
+                }
+                aria-label="Judul Notebook"
+                className="w-full max-w-[320px] bg-transparent text-sm sm:text-base font-bold text-text-primary border-b border-transparent focus:border-[#C2553A] focus:outline-hidden truncate py-0.5"
+              />
             )}
 
-            <div className="min-w-0 flex-1">
-              {readOnly ? (
-                <h1 className="text-base sm:text-lg font-bold text-text-primary truncate">
-                  {doc.title}
-                </h1>
-              ) : (
-                <input
-                  type="text"
-                  value={doc.title}
-                  onChange={(e) =>
-                    setDoc((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                      updatedAt: new Date().toISOString(),
-                    }))
-                  }
-                  aria-label="Judul Notebook"
-                  className="w-full bg-transparent text-base sm:text-lg font-bold text-text-primary border-b border-transparent focus:border-[#C2553A] focus:outline-hidden truncate py-0.5"
-                />
+            <div
+              className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-border/80 bg-surface-secondary/50 text-[10.5px] font-mono text-text-secondary shrink-0"
+              title={kernelDetail || KERNEL_STATUS_LABELS[activeKernelState]}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  activeKernelState === "executing" ||
+                  activeKernelState === "loading"
+                    ? "bg-amber-500 animate-pulse"
+                    : activeKernelState === "error"
+                      ? "bg-rose-500"
+                      : "bg-emerald-500"
+                }`}
+              />
+              <span className="max-w-[140px] truncate">
+                {activeKernelState === "ready"
+                  ? "Siap"
+                  : KERNEL_STATUS_LABELS[activeKernelState]}
+              </span>
+              {isCloudAuthenticated && !readOnly && (
+                <span className="text-emerald-600 dark:text-emerald-400">· Cloud</span>
               )}
-              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-text-secondary">
-                <span className="inline-flex items-center gap-1.5">
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      activeKernelState === "executing" ||
-                      activeKernelState === "loading"
-                        ? "bg-amber-500"
-                        : activeKernelState === "error"
-                        ? "bg-rose-500"
-                        : "bg-emerald-500"
-                    }`}
-                  />
-                  <span>
-                    {KERNEL_STATUS_LABELS[activeKernelState]}
-                    {kernelDetail ? ` • ${kernelDetail}` : ""}
-                  </span>
-                </span>
-                {isCloudAuthenticated && !readOnly && (
-                  <span className="text-[10px] text-emerald-700 dark:text-emerald-300">
-                    • Cloud Sync Siap
-                  </span>
-                )}
-              </div>
             </div>
-          </div>
-
-          {/* Primary Actions */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {readOnly && (
-              <button
-                type="button"
-                disabled={cloningShare}
-                onClick={handleCloneShare}
-                className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-[#C2553A] hover:bg-[#D4664A] text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                <Copy className="w-3.5 h-3.5" />
-                <span>{cloningShare ? "Menyalin..." : "Salin & Edit"}</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => void runAllCells()}
-              className="min-h-[40px] px-3 py-1.5 rounded-xl bg-[#C2553A] hover:bg-[#D4664A] text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
-              title="Jalankan seluruh sel dari atas ke bawah"
-            >
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Run All</span>
-            </button>
-
-            {runningCellIds.size > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  routerRef.current?.terminateKernel();
-                  setRunningCellIds(new Set());
-                  toast.warning("Eksekusi kernel dihentikan (Interrupt).");
-                }}
-                className="min-h-[40px] px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                <Square className="w-3.5 h-3.5 fill-current" />
-                <span>Hentikan</span>
-              </button>
-            )}
-
-            {!readOnly && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleRestartAndRunAll}
-                  className="min-h-[40px] px-2.5 py-1.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-                  title="Reset kernel & jalankan seluruh sel"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span className="hidden md:inline">Restart</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setRuntimeModalOpen(true)}
-                  className="min-h-[40px] px-2.5 py-1.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-                  title="Pilih Browser WASM vs Local/GPU Runtime"
-                >
-                  {doc.runtimeMode === "remote_ws" ? (
-                    <Laptop className="w-3.5 h-3.5 text-emerald-600" />
-                  ) : (
-                    <Cpu className="w-3.5 h-3.5 text-[#C2553A]" />
-                  )}
-                  <span className="hidden sm:inline">
-                    {doc.runtimeMode === "remote_ws" ? "GPU Bridge" : "WASM"}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  disabled={syncingCloud}
-                  onClick={handleSaveCloud}
-                  className="min-h-[40px] px-2.5 py-1.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-                  title="Simpan ke Cloud & Lokal"
-                >
-                  {isCloudAuthenticated ? (
-                    <Cloud className="w-3.5 h-3.5 text-emerald-600" />
-                  ) : (
-                    <Save className="w-3.5 h-3.5 text-[#C2553A]" />
-                  )}
-                  <span className="hidden sm:inline">
-                    {syncingCloud ? "Menyimpan..." : "Simpan"}
-                  </span>
-                </button>
-              </>
-            )}
-
-            {/* Tablet Slide-Over Inspector Toggle (768px-1023px) */}
-            <button
-              type="button"
-              onClick={() => setTabletDrawerOpen(true)}
-              className="hidden md:inline-flex lg:hidden min-h-[40px] px-3 py-1.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1.5 cursor-pointer"
-            >
-              <PanelRightOpen className="w-4 h-4 text-[#C2553A]" />
-              <span>Inspektor</span>
-            </button>
-
-            {/* Desktop Inspector Collapse Toggle (>=1024px) */}
-            <button
-              type="button"
-              onClick={() => setInspectorOpen((p) => !p)}
-              className="hidden lg:inline-flex min-h-[40px] px-2.5 py-1.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary cursor-pointer items-center gap-1.5"
-              title="Tutup / buka panel kanan"
-            >
-              {inspectorOpen ? (
-                <PanelRightClose className="w-4 h-4" />
-              ) : (
-                <PanelRightOpen className="w-4 h-4 text-[#C2553A]" />
-              )}
-            </button>
           </div>
         </div>
 
-        {/* Secondary Studio Controls Strip */}
-        {!readOnly && (
-          <div className="pt-2 border-t border-border/70 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
-            <div className="flex flex-wrap items-center gap-1.5">
+        {/* Right: Execution, Dataset Shortcut, Save & Options Menu */}
+        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+          {readOnly && (
+            <button
+              type="button"
+              disabled={cloningShare}
+              onClick={handleCloneShare}
+              className="h-9 px-3 rounded-xl bg-[#C2553A] hover:bg-[#D4664A] text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>{cloningShare ? "Menyalin..." : "Salin & Edit"}</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => void runAllCells()}
+            className="h-9 px-3 rounded-xl bg-[#C2553A] hover:bg-[#AD472E] text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+            title="Jalankan seluruh sel dari atas ke bawah"
+          >
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>Run All</span>
+          </button>
+
+          {runningCellIds.size > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                routerRef.current?.terminateKernel();
+                setRunningCellIds(new Set());
+                toast.warning("Eksekusi kernel dihentikan (Interrupt).");
+              }}
+              className="h-9 px-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <Square className="w-3.5 h-3.5 fill-current" />
+              <span className="hidden sm:inline">Stop</span>
+            </button>
+          )}
+
+          {!readOnly && (
+            <>
               <button
                 type="button"
-                onClick={() =>
-                  setDoc((prev) => ({ ...prev, reactiveMode: !prev.reactiveMode }))
-                }
-                className={`min-h-[34px] px-2.5 py-1 rounded-lg border inline-flex items-center gap-1.5 cursor-pointer transition-colors ${
-                  doc.reactiveMode
-                    ? "bg-[#C2553A]/15 border-[#C2553A]/40 text-[#C2553A] dark:text-[#D4664A] font-bold"
-                    : "bg-surface-secondary/50 border-border text-text-secondary"
-                }`}
+                onClick={() => addCell("code", activeCell?.id)}
+                className="hidden sm:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1 cursor-pointer"
+                title="Tambah sel kode di bawah sel aktif"
               >
-                <GitBranch className="w-3.5 h-3.5" />
-                <span>Reaktif: {doc.reactiveMode ? "ON" : "OFF"}</span>
+                <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
+                <span>Kode</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => addCell("markdown", activeCell?.id)}
+                className="hidden md:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1 cursor-pointer"
+                title="Tambah sel teks / Markdown di bawah sel aktif"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
+                <span>Teks</span>
+              </button>
+            </>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setInspectorTab("files");
+              setMobileTab("files");
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+                setInspectorOpen((open) =>
+                  open && inspectorTab === "files" ? false : true
+                );
+              } else {
+                setInspectorOpen(true);
+                if (typeof window !== "undefined" && window.innerWidth >= 768) {
+                  setTabletDrawerOpen(true);
+                }
+              }
+            }}
+            className={`h-9 px-2.5 rounded-xl border text-xs font-mono font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors ${
+              inspectorOpen && inspectorTab === "files"
+                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
+                : "border-border bg-surface hover:bg-surface-secondary text-text-primary"
+            }`}
+            title="Kelola Dataset, Sample Data, & File Workspace"
+          >
+            <Database className="w-3.5 h-3.5 text-[#C2553A]" />
+            <span className="hidden sm:inline">Dataset</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-surface-secondary text-[10px] tabular-nums">
+              {vfsFiles.length}
+            </span>
+          </button>
+
+          {!readOnly && (
+            <>
+              <button
+                type="button"
+                onClick={handleRestartAndRunAll}
+                className="hidden sm:inline-flex h-9 w-9 lg:w-auto lg:px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary items-center justify-center gap-1.5 cursor-pointer"
+                title="Reset kernel & jalankan seluruh sel"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden xl:inline">Restart</span>
               </button>
 
               <button
                 type="button"
-                onClick={() =>
-                  setDoc((prev) => ({
-                    ...prev,
-                    editorMode:
-                      prev.editorMode === "codemirror" ? "lite" : "codemirror",
-                  }))
-                }
-                className="min-h-[34px] px-2.5 py-1 rounded-lg border border-border bg-surface-secondary/50 hover:bg-surface-secondary text-text-secondary inline-flex items-center gap-1 cursor-pointer"
-                title="Beralih antara CodeMirror 6 IDE atau Editor Teks Ringan"
+                onClick={() => setRuntimeModalOpen(true)}
+                className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
+                title="Pilih Browser WASM vs Local/GPU Runtime"
               >
-                <FileCode2 className="w-3.5 h-3.5" />
-                <span>
-                  Editor: {doc.editorMode === "codemirror" ? "IDE (CM6)" : "Lite"}
+                {doc.runtimeMode === "remote_ws" ? (
+                  <Laptop className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Cpu className="w-3.5 h-3.5 text-[#C2553A]" />
+                )}
+                <span className="hidden xl:inline">
+                  {doc.runtimeMode === "remote_ws" ? "GPU Bridge" : "WASM"}
                 </span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setSingleCellFocus((p) => !p)}
-                className={`min-h-[34px] px-2.5 py-1 rounded-lg border inline-flex items-center gap-1 cursor-pointer ${
-                  singleCellFocus
-                    ? "bg-brand-500/15 border-brand-500/35 text-brand-700 dark:text-brand-300 font-bold"
-                    : "bg-surface-secondary/50 border-border text-text-secondary"
-                }`}
+                disabled={syncingCloud}
+                onClick={handleSaveCloud}
+                className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
+                title="Simpan ke Cloud & Lokal"
               >
-                <span>{singleCellFocus ? "Mode: Sel Tunggal" : "Mode: Multi-Sel"}</span>
+                {isCloudAuthenticated ? (
+                  <Cloud className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Save className="w-3.5 h-3.5 text-[#C2553A]" />
+                )}
+                <span className="hidden md:inline">
+                  {syncingCloud ? "..." : "Simpan"}
+                </span>
               </button>
-            </div>
 
-            <div className="flex flex-wrap items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => ipynbInputRef.current?.click()}
-                className="min-h-[34px] px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
-              >
-                <Upload className="w-3 h-3" />
-                <span>Impor .ipynb</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleExportIpynb}
-                className="min-h-[34px] px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
-              >
-                <Download className="w-3 h-3" />
-                <span>.ipynb</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleExportMarkdown}
-                className="hidden sm:inline-flex min-h-[34px] px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary items-center gap-1 cursor-pointer"
-              >
-                <FileText className="w-3 h-3" />
-                <span>Ekspor .md</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  void refreshVersions();
-                  setVersionsDrawerOpen(true);
-                }}
-                className="min-h-[34px] px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
-              >
-                <History className="w-3 h-3" />
-                <span>Riwayat ({versions.length})</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleShareToggle}
-                className="min-h-[34px] px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary inline-flex items-center gap-1 cursor-pointer"
-              >
-                <Share2 className="w-3 h-3" />
-                <span>Bagikan</span>
-              </button>
-            </div>
-          </div>
-        )}
+              {/* Consolidated Opsi Dropdown */}
+              <div className="relative" ref={optionsMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setOptionsMenuOpen((p) => !p)}
+                  className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1 cursor-pointer"
+                  aria-expanded={optionsMenuOpen}
+                  title="Pengaturan Editor, Kanvas, Impor & Ekspor"
+                >
+                  <MoreHorizontal className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Opsi</span>
+                  <ChevronDown className="w-3 h-3 opacity-60" />
+                </button>
+
+                {optionsMenuOpen && (
+                  <div className="absolute right-0 mt-1.5 w-64 rounded-2xl border border-border bg-surface shadow-xl z-50 py-1.5 text-xs font-mono overflow-hidden">
+                    <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-text-muted">
+                      Tampilan & Eksekusi
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDoc((prev) => ({
+                          ...prev,
+                          reactiveMode: !prev.reactiveMode,
+                        }))
+                      }
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2 text-text-primary">
+                        <GitBranch className="w-3.5 h-3.5 text-[#C2553A]" />
+                        <span>Mode Reaktif DAG</span>
+                      </span>
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          doc.reactiveMode
+                            ? "bg-[#C2553A]/15 text-[#C2553A]"
+                            : "bg-surface-secondary text-text-muted"
+                        }`}
+                      >
+                        {doc.reactiveMode ? "ON" : "OFF"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDoc((prev) => ({
+                          ...prev,
+                          editorMode:
+                            prev.editorMode === "codemirror"
+                              ? "lite"
+                              : "codemirror",
+                        }))
+                      }
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2 text-text-primary">
+                        <FileCode2 className="w-3.5 h-3.5 text-[#C2553A]" />
+                        <span>Editor Kode</span>
+                      </span>
+                      <span className="text-[10px] text-text-secondary">
+                        {doc.editorMode === "codemirror" ? "CM6 IDE" : "Lite"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setWordWrap((p) => !p)}
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2 text-text-primary">
+                        <WrapText className="w-3.5 h-3.5 text-[#C2553A]" />
+                        <span>Bungkus Baris (Wrap)</span>
+                      </span>
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          wordWrap
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                            : "bg-surface-secondary text-text-muted"
+                        }`}
+                      >
+                        {wordWrap ? "ON" : "OFF"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setCanvasWide((p) => !p)}
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2 text-text-primary">
+                        {canvasWide ? (
+                          <Minimize2 className="w-3.5 h-3.5 text-[#C2553A]" />
+                        ) : (
+                          <Maximize2 className="w-3.5 h-3.5 text-[#C2553A]" />
+                        )}
+                        <span>Lebar Kanvas Penuh</span>
+                      </span>
+                      <span className="text-[10px] text-text-secondary">
+                        {canvasWide ? "Penuh" : "Nyaman"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSingleCellFocus((p) => !p)}
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-left cursor-pointer"
+                    >
+                      <span className="text-text-primary pl-5">
+                        Fokus Sel Tunggal
+                      </span>
+                      <span className="text-[10px] text-text-secondary">
+                        {singleCellFocus ? "Aktif" : "Multi-Sel"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleClearAllOutputs();
+                        setOptionsMenuOpen(false);
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <Eraser className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Bersihkan Semua Output</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleToggleCollapseAllCells();
+                        setOptionsMenuOpen(false);
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>
+                        {allCellsCollapsed
+                          ? "Buka Semua Sel"
+                          : "Lipat Semua Sel"}
+                      </span>
+                    </button>
+
+                    <div className="my-1 border-t border-border/70" />
+                    <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-text-muted">
+                      Berkas & Kolaborasi
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        ipynbInputRef.current?.click();
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>Impor .ipynb</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        handleExportIpynb();
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>Ekspor .ipynb</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        handleExportMarkdown();
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>Ekspor Markdown (.md)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        void refreshVersions();
+                        setVersionsDrawerOpen(true);
+                      }}
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <History className="w-3.5 h-3.5 text-[#C2553A]" />
+                        <span>Riwayat Checkpoint</span>
+                      </span>
+                      <span className="text-[10px] text-text-muted">
+                        {versions.length}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        void handleShareToggle();
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>Bagikan Link Publik</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Tablet Slide-Over Inspector Toggle (768px-1023px) */}
+          <button
+            type="button"
+            onClick={() => setTabletDrawerOpen(true)}
+            className="hidden md:inline-flex lg:hidden h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1.5 cursor-pointer"
+          >
+            <PanelRightOpen className="w-4 h-4 text-[#C2553A]" />
+            <span>Panel</span>
+          </button>
+
+          {/* Desktop Inspector Collapse Toggle (>=1024px) */}
+          <button
+            type="button"
+            onClick={() => setInspectorOpen((p) => !p)}
+            className={`hidden lg:inline-flex h-9 w-9 rounded-xl border items-center justify-center cursor-pointer transition-colors ${
+              inspectorOpen
+                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
+                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
+            }`}
+            title={inspectorOpen ? "Tutup panel kanan" : "Buka panel kanan"}
+            aria-label="Toggle Panel Kanan"
+          >
+            {inspectorOpen ? (
+              <PanelRightClose className="w-4 h-4" />
+            ) : (
+              <PanelRightOpen className="w-4 h-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ─── MOBILE TAB SWITCHER (< 768px) ─── */}
-      <div className="grid grid-cols-5 gap-1 p-1 rounded-2xl border border-border bg-surface md:hidden">
+      <div className="grid grid-cols-5 gap-1 p-1 rounded-2xl border border-border bg-surface md:hidden shrink-0">
         {(
           [
             { id: "cells", label: "Sel", icon: FileCode2 },
+            { id: "files", label: "Dataset", icon: FolderOpen },
             { id: "variables", label: "Variabel", icon: Boxes },
-            { id: "files", label: "File", icon: FolderOpen },
             { id: "dag", label: "DAG", icon: GitBranch },
             { id: "ai", label: "AI", icon: Sparkles },
           ] as const
@@ -1012,97 +1355,157 @@ export function NotebookWorkbench({
         })}
       </div>
 
-      {/* ─── MAIN STUDIO SPLIT WORKSPACE ─── */}
-      <div className="flex flex-col lg:flex-row gap-4 items-start">
-        {/* Cells Canvas */}
+      {/* ─── MAIN 3-PANE STUDIO WORKSPACE (Independent Scroll on Desktop) ─── */}
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 items-stretch">
+        {/* Left Collapsible Outline & Snippets Pane (>= 1024px) */}
+        {outlineOpen && (
+          <aside className="hidden lg:flex flex-col w-[228px] xl:w-[252px] shrink-0 min-h-0">
+            <NotebookOutlinePanel
+              cells={doc.cells}
+              activeCellId={activeCell?.id || ""}
+              loadedFileNames={vfsFiles.map((f) => f.path)}
+              onSelectCell={(cid) => {
+                setActiveCellId(cid);
+                document
+                  .getElementById(`nb-cell-${cid}`)
+                  ?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              onInsertSnippet={(code, kernel) =>
+                addCell("code", activeCell?.id, code, kernel)
+              }
+              onLoadSampleDataset={handleLoadSampleDataset}
+            />
+          </aside>
+        )}
+
+        {/* Center Cells Canvas (Independently Scrollable on Desktop) */}
         <div
-          className={`flex-1 w-full min-w-0 space-y-3 ${
+          className={`flex-1 min-w-0 lg:overflow-y-auto lg:pr-1 ${
             mobileTab !== "cells" ? "hidden md:block" : "block"
           }`}
         >
-          {displayedCells.map((cell) => {
-            const realIndex = doc.cells.findIndex((c) => c.id === cell.id);
-            return (
-              <CellItem
-                key={cell.id}
-                cell={cell}
-                index={realIndex}
-                totalCells={doc.cells.length}
-                isActive={activeCell?.id === cell.id}
-                isRunning={runningCellIds.has(cell.id)}
-                dagInfo={dagMap.get(cell.id)}
-                variables={variables}
-                sqlTables={sqlTables}
-                editorMode={doc.editorMode}
-                readOnly={readOnly}
-                surroundingCode={doc.cells
-                  .filter((c) => c.type === "code" && c.id !== cell.id)
-                  .slice(0, 3)
-                  .map((c) => c.source)
-                  .join("\n\n")}
-                onActivate={() => setActiveCellId(cell.id)}
-                onUpdateCell={(patch) => updateCell(cell.id, patch)}
-                onRunCell={() => void runSingleCell(cell.id)}
-                onRunAndAdvance={() => {
-                  void runSingleCell(cell.id);
-                  const next = doc.cells[realIndex + 1];
-                  if (next) setActiveCellId(next.id);
-                  else addCell("code", cell.id);
-                }}
-                onMoveCell={(dir) => {
-                  const targetIdx = realIndex + dir;
-                  if (targetIdx < 0 || targetIdx >= doc.cells.length) return;
-                  setDoc((prev) => {
-                    const nextCells = [...prev.cells];
-                    const [moved] = nextCells.splice(realIndex, 1);
-                    nextCells.splice(targetIdx, 0, moved);
-                    return { ...prev, cells: nextCells };
-                  });
-                }}
-                onDeleteCell={() => {
-                  setDoc((prev) => {
-                    if (prev.cells.length <= 1) return prev;
-                    const nextCells = prev.cells.filter((c) => c.id !== cell.id);
-                    if (activeCellId === cell.id) {
-                      setActiveCellId(nextCells[Math.max(0, realIndex - 1)]?.id || "");
+          <div
+            className={`mx-auto w-full space-y-2 pb-8 ${
+              canvasWide ? "max-w-none" : "max-w-[980px]"
+            }`}
+          >
+            {displayedCells.map((cell, visibleIdx) => {
+              const realIndex = doc.cells.findIndex((c) => c.id === cell.id);
+              return (
+                <React.Fragment key={cell.id}>
+                  <CellItem
+                    cell={cell}
+                    index={realIndex}
+                    totalCells={doc.cells.length}
+                    isActive={activeCell?.id === cell.id}
+                    isRunning={runningCellIds.has(cell.id)}
+                    dagInfo={dagMap.get(cell.id)}
+                    variables={variables}
+                    sqlTables={sqlTables}
+                    editorMode={doc.editorMode}
+                    wordWrap={wordWrap}
+                    readOnly={readOnly}
+                    surroundingCode={doc.cells
+                      .filter((c) => c.type === "code" && c.id !== cell.id)
+                      .slice(0, 3)
+                      .map((c) => c.source)
+                      .join("\n\n")}
+                    onActivate={() => setActiveCellId(cell.id)}
+                    onUpdateCell={(patch) => updateCell(cell.id, patch)}
+                    onRunCell={() => void runSingleCell(cell.id)}
+                    onRunAndAdvance={() => {
+                      void runSingleCell(cell.id);
+                      const next = doc.cells[realIndex + 1];
+                      if (next) setActiveCellId(next.id);
+                      else addCell("code", cell.id);
+                    }}
+                    onMoveCell={(dir) => {
+                      const targetIdx = realIndex + dir;
+                      if (targetIdx < 0 || targetIdx >= doc.cells.length) return;
+                      setDoc((prev) => {
+                        const nextCells = [...prev.cells];
+                        const [moved] = nextCells.splice(realIndex, 1);
+                        nextCells.splice(targetIdx, 0, moved);
+                        return { ...prev, cells: nextCells };
+                      });
+                    }}
+                    onDeleteCell={() => {
+                      setDoc((prev) => {
+                        if (prev.cells.length <= 1) return prev;
+                        const nextCells = prev.cells.filter((c) => c.id !== cell.id);
+                        if (activeCellId === cell.id) {
+                          setActiveCellId(
+                            nextCells[Math.max(0, realIndex - 1)]?.id || ""
+                          );
+                        }
+                        return { ...prev, cells: nextCells };
+                      });
+                    }}
+                    onDuplicateCell={() =>
+                      addCell(cell.type, cell.id, cell.source, cell.kernel)
                     }
-                    return { ...prev, cells: nextCells };
-                  });
-                }}
-                onDuplicateCell={() =>
-                  addCell(cell.type, cell.id, cell.source, cell.kernel)
-                }
-                onAddBelow={(t, prefill, kernelOvr) =>
-                  addCell(t, cell.id, prefill, kernelOvr)
-                }
-                onFocusInsertHandler={(fn) => {
-                  insertHandlerRef.current = fn;
-                  setTouchBarVisible(Boolean(fn));
-                }}
-              />
-            );
-          })}
+                    onAddBelow={(t, prefill, kernelOvr) =>
+                      addCell(t, cell.id, prefill, kernelOvr)
+                    }
+                    onInsertCode={(code, kernelOvr) =>
+                      addCell("code", cell.id, code, kernelOvr)
+                    }
+                    onFocusInsertHandler={(fn) => {
+                      insertHandlerRef.current = fn;
+                      setTouchBarVisible(Boolean(fn));
+                    }}
+                  />
 
-          {!readOnly && (
-            <div className="pt-1 flex flex-wrap items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => addCell("code")}
-                className="min-h-[42px] px-4 py-2 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                <Plus className="w-4 h-4 text-[#C2553A]" />
-                <span>Tambah Sel Kode ({doc.defaultKernel})</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => addCell("markdown")}
-                className="min-h-[42px] px-4 py-2 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                <Plus className="w-4 h-4 text-[#C2553A]" />
-                <span>Tambah Sel Markdown</span>
-              </button>
-            </div>
-          )}
+                  {/* Clean Hover-Reveal Inter-Cell Insertion Divider */}
+                  {!readOnly && visibleIdx < displayedCells.length - 1 && (
+                    <div className="group/div relative h-5 flex items-center justify-center">
+                      <div className="w-full h-px bg-transparent group-hover/div:bg-[#C2553A]/35 transition-colors" />
+                      <div className="absolute flex items-center gap-1.5 opacity-0 group-hover/div:opacity-100 focus-within:opacity-100 transition-opacity bg-surface px-2 py-0.5 rounded-full border border-border shadow-xs">
+                        <button
+                          type="button"
+                          onClick={() => addCell("code", cell.id)}
+                          className="text-[10.5px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer px-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Kode</span>
+                        </button>
+                        <span className="text-border">|</span>
+                        <button
+                          type="button"
+                          onClick={() => addCell("markdown", cell.id)}
+                          className="text-[10.5px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer px-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Teks</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+
+            {!readOnly && (
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => addCell("code")}
+                  className="h-9 px-3.5 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
+                  <span>Sel Kode ({doc.defaultKernel})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addCell("markdown")}
+                  className="h-9 px-3.5 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
+                  <span>Sel Markdown / LaTeX</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile Non-Cell Tab Content (< 768px) */}
@@ -1114,14 +1517,14 @@ export function NotebookWorkbench({
 
         {/* Desktop Persistent Right Inspector Panel (>= 1024px) */}
         {inspectorOpen && (
-          <aside className="hidden lg:flex flex-col w-[360px] xl:w-[400px] shrink-0 rounded-2xl border border-border bg-surface shadow-2xs overflow-hidden sticky top-5 max-h-[calc(100dvh-2.5rem)]">
-            <div className="grid grid-cols-4 border-b border-border bg-[#F3EFE9]/60 dark:bg-[#141210] p-1 gap-1 shrink-0">
+          <aside className="hidden lg:flex flex-col w-[336px] xl:w-[384px] shrink-0 rounded-2xl border border-border bg-surface shadow-2xs overflow-hidden min-h-0">
+            <div className="grid grid-cols-4 border-b border-border bg-surface-secondary/40 p-1 gap-1 shrink-0">
               {(
                 [
-                  { id: "variables", label: "Variabel", icon: Boxes },
-                  { id: "files", label: "File", icon: FolderOpen },
-                  { id: "dag", label: "DAG", icon: GitBranch },
-                  { id: "ai", label: "AI", icon: Sparkles },
+                  { id: "files", label: "Dataset", icon: FolderOpen, count: vfsFiles.length },
+                  { id: "variables", label: "Variabel", icon: Boxes, count: variables.length },
+                  { id: "dag", label: "DAG", icon: GitBranch, count: 0 },
+                  { id: "ai", label: "AI", icon: Sparkles, count: 0 },
                 ] as const
               ).map((tab) => {
                 const Icon = tab.icon;
@@ -1131,20 +1534,31 @@ export function NotebookWorkbench({
                     key={tab.id}
                     type="button"
                     onClick={() => setInspectorTab(tab.id)}
-                    className={`min-h-[36px] px-2 py-1 rounded-xl text-[11px] font-mono font-semibold inline-flex items-center justify-center gap-1 cursor-pointer transition-colors ${
+                    className={`min-h-[34px] px-1.5 py-1 rounded-xl text-[11px] font-mono font-semibold inline-flex items-center justify-center gap-1 cursor-pointer transition-colors ${
                       active
                         ? "bg-[#C2553A] text-white"
                         : "text-text-secondary hover:text-text-primary hover:bg-surface"
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{tab.label}</span>
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{tab.label}</span>
+                    {tab.count > 0 && (
+                      <span
+                        className={`text-[9.5px] px-1 rounded-full tabular-nums ${
+                          active
+                            ? "bg-white/20 text-white"
+                            : "bg-surface-secondary text-text-muted"
+                        }`}
+                      >
+                        {tab.count}
+                      </span>
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            <div className="p-3.5 overflow-y-auto flex-1 scrollbar-thin">
+            <div className="p-3.5 overflow-y-auto flex-1 min-h-0">
               {inspectorContent(inspectorTab)}
             </div>
           </aside>
@@ -1165,8 +1579,8 @@ export function NotebookWorkbench({
               <div className="grid grid-cols-4 gap-1 flex-1">
                 {(
                   [
+                    { id: "files", label: "Dataset" },
                     { id: "variables", label: "Variabel" },
-                    { id: "files", label: "File" },
                     { id: "dag", label: "DAG" },
                     { id: "ai", label: "AI" },
                   ] as const
@@ -1337,6 +1751,17 @@ export function NotebookWorkbench({
           routerRef.current?.setRuntimeMode("wasm");
           setDoc((prev) => ({ ...prev, runtimeMode: "wasm" }));
           toast.info("Koneksi Remote Kernel diputus.");
+        }}
+      />
+
+      <DatasetPreviewModal
+        notebookId={doc.id}
+        file={previewFile}
+        onClose={() => setPreviewFile(null)}
+        onInsertSnippet={(snippet, kernelHint) => {
+          addCell("code", activeCell?.id, snippet, kernelHint);
+          setPreviewFile(null);
+          setMobileTab("cells");
         }}
       />
 

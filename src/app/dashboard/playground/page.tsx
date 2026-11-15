@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { NotebookWorkbench } from "@/components/notebook/notebook-workbench";
-import { PageContainer } from "@/components/ui/section";
 import { getAcademicCurriculum } from "@/lib/curriculum/registry";
 import type { ExerciseItem } from "@/lib/curriculum/types";
 import {
@@ -69,8 +68,8 @@ export default async function PlaygroundPage({
   const initialDocument = resolveInitialNotebookFromCurriculum(resolvedParams);
 
   return (
-    <PageContainer className="space-y-4">
-      <SubNavTabs category="tools" />
+    <div className="flex-1 min-h-0 flex flex-col gap-2.5">
+      <SubNavTabs category="tools" className="mb-0 shrink-0" />
 
       <Suspense
         fallback={
@@ -81,6 +80,6 @@ export default async function PlaygroundPage({
       >
         <NotebookWorkbench initialDocument={initialDocument} />
       </Suspense>
-    </PageContainer>
+    </div>
   );
 }
