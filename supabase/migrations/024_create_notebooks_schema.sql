@@ -51,6 +51,9 @@ CREATE TABLE IF NOT EXISTS notebook_versions (
 CREATE INDEX IF NOT EXISTS idx_notebook_versions_nb_created
   ON notebook_versions(notebook_id, created_at DESC);
 
+CREATE INDEX IF NOT EXISTS idx_notebook_versions_user_id
+  ON notebook_versions(user_id);
+
 CREATE TABLE IF NOT EXISTS notebook_datasets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   notebook_id UUID NOT NULL REFERENCES notebooks(id) ON DELETE CASCADE,
@@ -67,7 +70,16 @@ CREATE TABLE IF NOT EXISTS notebook_datasets (
 CREATE INDEX IF NOT EXISTS idx_notebook_datasets_nb
   ON notebook_datasets(notebook_id);
 
--- RLS Policies
+CREATE INDEX IF NOT EXISTS idx_notebook_datasets_user_id
+  ON notebook_datasets(user_id);
+
+-- Explicit Data API privileges (alongside strict RLS below)
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE notebooks TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE notebook_versions TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE notebook_datasets TO authenticated;
+GRANT SELECT ON TABLE notebooks TO anon;
+
+-- RLS Policies (scoped TO role with cached (SELECT auth.uid()) initplan)
 ALTER TABLE notebooks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notebook_versions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notebook_datasets ENABLE ROW LEVEL SECURITY;
@@ -75,22 +87,26 @@ ALTER TABLE notebook_datasets ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users manage own notebooks" ON notebooks;
 CREATE POLICY "Users manage own notebooks"
   ON notebooks FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Public notebooks readable by authenticated or anon" ON notebooks;
 CREATE POLICY "Public notebooks readable by authenticated or anon"
   ON notebooks FOR SELECT
-  USING (is_public = TRUE);
+  TO anon, authenticated
+  USING (is_public = TRUE AND is_archived = FALSE);
 
 DROP POLICY IF EXISTS "Users manage own notebook versions" ON notebook_versions;
 CREATE POLICY "Users manage own notebook versions"
   ON notebook_versions FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users manage own notebook datasets" ON notebook_datasets;
 CREATE POLICY "Users manage own notebook datasets"
   ON notebook_datasets FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);

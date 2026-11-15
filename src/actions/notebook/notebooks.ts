@@ -449,7 +449,8 @@ export async function uploadNotebookDatasetAction(formData: FormData): Promise<{
     }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const storagePath = `notebooks/${user.id}/${notebookId}/${Date.now()}_${safeName}`;
+    // Prefix with user.id so Storage RLS policy (foldername[1] = auth.uid()::text) allows upload
+    const storagePath = `${user.id}/notebooks/${notebookId}/${Date.now()}_${safeName}`;
 
     const { error: uploadErr } = await supabase.storage
       .from(STORAGE_BUCKET)
