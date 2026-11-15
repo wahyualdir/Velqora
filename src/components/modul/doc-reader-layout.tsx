@@ -150,6 +150,12 @@ export function DocReaderLayout({
   viewMode: _viewMode = "doc",
 }: DocReaderLayoutProps) {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const statusMeta = useMemo(() => getTopicStatus(categoryName || categoryId), [categoryName, categoryId]);
   const kodeTopicId = categoryId || categoryName;
 
@@ -171,13 +177,8 @@ export function DocReaderLayout({
 
   const flatSections = useMemo(() => flattenDocSections(sections), [sections]);
 
-  // Selected section ID (URL query sync priority)
+  // Selected section ID (hydrated safely from activeSectionId; URL ?section= synced in useEffect)
   const [selectedId, setSelectedId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const fromUrl = urlParams.get("section");
-      if (fromUrl) return fromUrl;
-    }
     if (activeSectionId) return activeSectionId;
     return flatSections[0]?.id || sections[0]?.id || "";
   });
@@ -762,7 +763,7 @@ export function DocReaderLayout({
             className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer flex items-center justify-center"
             aria-label="Ubah tema warna"
           >
-            {resolvedTheme === "dark" ? (
+            {mounted && resolvedTheme === "dark" ? (
               <Sun className="w-4 h-4 text-amber-400" />
             ) : (
               <Moon className="w-4 h-4 text-slate-700" />
