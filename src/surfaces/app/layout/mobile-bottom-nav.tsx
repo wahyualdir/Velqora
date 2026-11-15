@@ -64,7 +64,7 @@ export function MobileBottomNav({ onToggleSidebar }: MobileBottomNavProps) {
     <>
       <nav
         aria-label="Navigasi Mobile Utama"
-        className="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-border lg:hidden px-2 pt-1 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-xl select-none"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-border md:hidden px-2 pt-1 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-xl select-none"
       >
         <div className="flex items-center justify-around max-w-md mx-auto">
           {primaryNavItems.map((item) => {

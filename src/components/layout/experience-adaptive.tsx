@@ -33,14 +33,18 @@ export function ExperienceAdaptive({
     return <>{desktop}</>;
   }
 
-  // App surface (PWA standalone) always renders mobile app presentation
-  if (surface === "app") {
+  // Adaptive viewport rendering across both Web and Standalone App (PWA) surfaces:
+  // Tablets/Foldables/Desktops installed as PWA now retain full tablet/desktop space.
+  if (experience === "mobile") {
     return <>{mobile}</>;
   }
 
-  // Web surface (browser) renders desktop workspace (with tablet variant if available)
-  if (experience === "tablet" && tablet) {
-    return <>{tablet}</>;
+  if (experience === "tablet") {
+    return <>{tablet ?? desktop}</>;
+  }
+
+  if (surface === "app" && experience !== "desktop") {
+    return <>{tablet ?? desktop}</>;
   }
 
   return <>{desktop}</>;

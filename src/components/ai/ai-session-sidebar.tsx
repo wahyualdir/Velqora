@@ -33,7 +33,7 @@ export function AISessionSidebar({
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 
   return (
-    <aside className="w-full md:w-64 lg:w-72 rounded-xl border border-border bg-surface flex flex-col shrink-0 h-full max-h-[600px] overflow-hidden shadow-2xs">
+    <aside className="w-full lg:w-72 rounded-xl border border-border bg-surface flex flex-col shrink-0 h-full lg:max-h-[640px] overflow-hidden shadow-2xs">
       {/* Sidebar Header */}
       <div className="p-3.5 border-b border-border flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ export function AISessionSidebar({
             size="sm"
             variant="ghost"
             onClick={onNewSession}
-            className="p-1.5 h-auto text-text-secondary hover:text-brand-500"
+            className="min-h-[36px] min-w-[36px] p-1.5 h-auto text-text-secondary hover:text-brand-500"
             title="Buat Sesi Baru"
             aria-label="Sesi baru"
           >
@@ -59,7 +59,7 @@ export function AISessionSidebar({
             <button
               type="button"
               onClick={onCloseMobile}
-              className="p-1 rounded text-text-tertiary hover:text-text-primary md:hidden cursor-pointer"
+              className="min-h-[36px] min-w-[36px] flex items-center justify-center p-1 rounded-lg text-text-tertiary hover:text-text-primary lg:hidden cursor-pointer"
               aria-label="Tutup riwayat"
             >
               <X className="w-4 h-4" />

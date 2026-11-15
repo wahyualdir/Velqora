@@ -131,18 +131,18 @@ export default function PengaturanPage() {
         {/* Workspace Header */}
         <SettingsHeader />
 
-        {/* Desktop 2-Column Grid Layout / Mobile Stack */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Settings Left Navigation (col-span-3) */}
-          <div className="lg:col-span-3 lg:sticky lg:top-20">
+        {/* Tablet & Desktop 2-Column Grid Layout / Mobile Stack */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6 items-start">
+          {/* Settings Left Navigation */}
+          <div className="md:col-span-4 lg:col-span-3 md:sticky md:top-20">
             <SettingsNav
               activeSection={activeSection}
               onSelectSection={setActiveSection}
             />
           </div>
 
-          {/* Settings Right Content Panel (col-span-9) */}
-          <div className="lg:col-span-9 rounded-2xl border border-border bg-surface p-5 sm:p-7 shadow-2xs">
+          {/* Settings Right Content Panel */}
+          <div className="md:col-span-8 lg:col-span-9 rounded-2xl border border-border bg-surface p-5 sm:p-7 shadow-2xs">
             {activeSection === "profile" && (
               <ProfileSettings
                 fullName={fullName}

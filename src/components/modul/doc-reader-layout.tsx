@@ -568,19 +568,19 @@ export function DocReaderLayout({
 
   return (
     <div
-      className={`flex flex-col bg-white dark:bg-[#111113] overflow-hidden transition-all duration-300 font-sans w-full h-screen ${
+      className={`flex flex-col bg-white dark:bg-[#111113] overflow-hidden transition-all duration-300 font-sans w-full h-dvh ${
         isFullscreen ? "fixed inset-0 z-50 shadow-2xl" : "flex-1"
       }`}
     >
       {/* ─── 1. MINIMAL ACADEMIC TOOLBAR ─── */}
-      <header className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-border/80 bg-white/90 dark:bg-[#161619]/90 backdrop-blur-md select-none shrink-0 gap-3 z-30">
+      <header className="flex items-center justify-between px-2.5 sm:px-6 py-2 border-b border-border/80 bg-white/90 dark:bg-[#161619]/90 backdrop-blur-md select-none shrink-0 gap-2 sm:gap-3 z-30">
         {/* Left: Mobile Drawer Trigger + Brand + Navigation Toggle */}
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
           {/* Mobile Navigation Drawer Button */}
           <button
             type="button"
             onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            className="md:hidden p-2 rounded-lg border border-border bg-surface text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="md:hidden min-h-[40px] min-w-[40px] p-2 rounded-lg border border-border bg-surface text-text-secondary hover:text-text-primary transition-colors cursor-pointer flex items-center justify-center shrink-0"
             aria-label="Buka navigasi materi"
           >
             <Menu className="w-4 h-4" />
@@ -590,7 +590,7 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="hidden md:flex items-center gap-1.5 p-1.5 px-2 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="hidden md:flex items-center gap-1.5 min-h-[36px] px-2.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer shrink-0"
             title={sidebarOpen ? "Sembunyikan panel bab" : "Buka panel bab"}
           >
             {sidebarOpen ? (
@@ -604,8 +604,9 @@ export function DocReaderLayout({
           {/* Back to Catalog */}
           <Link
             href="/dashboard/modul"
-            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors shrink-0"
+            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors shrink-0 flex items-center justify-center"
             title="Kembali ke Katalog Modul"
+            aria-label="Kembali ke Katalog Modul"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -630,7 +631,7 @@ export function DocReaderLayout({
         </div>
 
         {/* Right: Quick Actions, TOC Toggle, Theme, Fullscreen */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
           {/* Quick Contextual Actions */}
           {currentSection && (
             <>
@@ -638,16 +639,18 @@ export function DocReaderLayout({
                 href={`/dashboard/ai-tutor?prompt=${encodeURIComponent(
                   `Halo AI Tutor, saya sedang mempelajari "${currentSection.title}" pada kurikulum ${categoryName}. Bisakah Anda menjelaskan konsep intinya, membimbing penurunan matematisnya, dan memberikan contoh kode interaktif?`
                 )}`}
-                className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 transition-colors cursor-pointer"
+                className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 transition-colors cursor-pointer flex items-center justify-center"
                 title="Tanya AI Tutor"
+                aria-label="Tanya AI Tutor"
               >
                 <Bot className="w-4 h-4" />
               </Link>
 
               <Link
                 href={`/dashboard/kuis-ai?topic=${encodeURIComponent(`${categoryName} - ${currentSection.title}`)}`}
-                className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-amber-500 transition-colors cursor-pointer"
+                className="hidden sm:flex min-h-[36px] min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-amber-500 transition-colors cursor-pointer items-center justify-center"
                 title="Kuis Pemahaman AI"
+                aria-label="Kuis Pemahaman AI"
               >
                 <BrainCircuit className="w-4 h-4" />
               </Link>
@@ -657,7 +660,7 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setTheoryFocusMode((prev) => !prev)}
-            className={`hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono font-medium transition-colors cursor-pointer ${
+            className={`hidden md:inline-flex items-center gap-1.5 min-h-[36px] px-2.5 py-1 rounded-lg border text-[11px] font-mono font-medium transition-colors cursor-pointer ${
               theoryFocusMode
                 ? "border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-300"
                 : "border-border bg-surface text-text-secondary hover:bg-surface-secondary"
@@ -674,8 +677,9 @@ export function DocReaderLayout({
 
           <Link
             href={kodeCatalogHref}
-            className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer inline-flex items-center gap-1.5 text-[11px] font-mono font-medium"
+            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-0 p-1.5 sm:px-2.5 sm:py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5 text-[11px] font-mono font-medium"
             title="Buka Katalog Kode untuk subbab ini"
+            aria-label="Buka Katalog Kode"
           >
             <FileCode2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
             <span className="hidden lg:inline">Katalog Kode</span>
@@ -687,9 +691,16 @@ export function DocReaderLayout({
           </Link>
 
           <Link
-            href={relatedCodeEntries[0]?.playgroundHref || "/dashboard/playground"}
-            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-emerald-500 transition-colors cursor-pointer"
-            title="Jalankan di Ruang Praktik Kode"
+            href={
+              currentSection
+                ? `/dashboard/playground?topic=${encodeURIComponent(
+                    categoryId
+                  )}&sub=${encodeURIComponent(currentSection.id)}`
+                : relatedCodeEntries[0]?.playgroundHref || "/dashboard/playground"
+            }
+            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-emerald-500 transition-colors cursor-pointer flex items-center justify-center"
+            title="Buka Subbab di Lab Notebook (Colab++)"
+            aria-label="Buka Subbab di Lab Notebook"
           >
             <Code2 className="w-4 h-4" />
           </Link>
@@ -702,19 +713,20 @@ export function DocReaderLayout({
                 toast.success("Tautan materi berhasil disalin.");
               }
             }}
-            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="hidden sm:flex min-h-[36px] min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer items-center justify-center"
             title="Salin Tautan"
+            aria-label="Salin Tautan"
           >
             <Share2 className="w-4 h-4" />
           </button>
 
           <div className="h-4 w-px bg-border/60 mx-0.5 hidden sm:block" />
 
-          {/* In-Page Outline Toggle (Collapsible Right Panel) */}
+          {/* In-Page Outline Toggle (Right Panel >=1280px & Slide-Over Drawer <1280px) */}
           <button
             type="button"
             onClick={() => setOutlineOpen(!outlineOpen)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors cursor-pointer ${
+            className={`hidden sm:flex items-center gap-1.5 min-h-[36px] px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors cursor-pointer ${
               outlineOpen
                 ? "bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700"
                 : "border-border bg-surface text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
@@ -722,7 +734,7 @@ export function DocReaderLayout({
             title="Buka / tutup panel daftar isi halaman"
           >
             <ListFilter className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Outline</span>
+            <span className="hidden md:inline">Outline</span>
             {tocItems.length > 0 && (
               <span className="text-[10px] px-1 py-0.2 rounded-full bg-surface-secondary text-text-tertiary">
                 {tocItems.length}
@@ -747,7 +759,7 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer flex items-center justify-center"
             aria-label="Ubah tema warna"
           >
             {resolvedTheme === "dark" ? (
@@ -761,8 +773,9 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+            className="hidden sm:flex min-h-[36px] min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer items-center justify-center"
             title={isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
+            aria-label={isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
           >
             {isFullscreen ? (
               <Minimize2 className="w-4 h-4 text-brand-600" />
@@ -1350,64 +1363,127 @@ export function DocReaderLayout({
             RIGHT OUTLINE SIDEBAR (Collapsible / Optional "On this page")
            ───────────────────────────────────────────────────────────── */}
         {outlineOpen && (
-          <aside className="hidden xl:flex flex-col border-l border-border bg-white dark:bg-[#141417] transition-all duration-200 shrink-0 w-64 z-20">
-            <div className="p-3.5 border-b border-border/80 flex items-center justify-between">
-              <h4 className="text-xs font-bold font-sans text-text-primary flex items-center gap-1.5">
-                <ListFilter className="w-3.5 h-3.5" style={{ color: themeColor }} />
-                <span>Daftar Isi Halaman</span>
-              </h4>
-              <button
-                type="button"
-                onClick={() => setOutlineOpen(false)}
-                className="p-1 rounded text-text-tertiary hover:text-text-primary text-xs"
-                title="Tutup outline"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
+          <>
+            <aside className="hidden xl:flex flex-col border-l border-border bg-white dark:bg-[#141417] transition-all duration-200 shrink-0 w-64 z-20">
+              <div className="p-3.5 border-b border-border/80 flex items-center justify-between">
+                <h4 className="text-xs font-bold font-sans text-text-primary flex items-center gap-1.5">
+                  <ListFilter className="w-3.5 h-3.5" style={{ color: themeColor }} />
+                  <span>Daftar Isi Halaman</span>
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => setOutlineOpen(false)}
+                  className="p-1 rounded text-text-tertiary hover:text-text-primary text-xs"
+                  title="Tutup outline"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
-            <nav className="flex-1 overflow-y-auto p-3 space-y-1 text-xs scrollbar-thin">
-              {tocItems.map((item) => {
-                const isActive = activeHeadingId === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => scrollToHeading(item.id)}
-                    className={`w-full text-left transition-colors flex items-start gap-1.5 cursor-pointer ${
-                      item.level === 3 ? "pl-3 text-[11px]" : "font-medium"
-                    } ${
-                      isActive
-                        ? "text-brand-600 dark:text-brand-400 font-bold"
-                        : "text-text-secondary hover:text-text-primary"
-                    }`}
-                  >
-                    <span
-                      className={`w-1 h-1 rounded-full mt-1.5 shrink-0 transition-colors ${
-                        isActive ? "bg-brand-600 dark:bg-brand-400" : "bg-transparent hover:bg-text-tertiary"
+              <nav className="flex-1 overflow-y-auto p-3 space-y-1 text-xs scrollbar-thin">
+                {tocItems.map((item) => {
+                  const isActive = activeHeadingId === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => scrollToHeading(item.id)}
+                      className={`w-full text-left transition-colors flex items-start gap-1.5 cursor-pointer ${
+                        item.level === 3 ? "pl-3 text-[11px]" : "font-medium"
+                      } ${
+                        isActive
+                          ? "text-brand-600 dark:text-brand-400 font-bold"
+                          : "text-text-secondary hover:text-text-primary"
                       }`}
-                    />
-                    <span className="line-clamp-2 leading-snug">{item.text}</span>
-                  </button>
-                );
-              })}
+                    >
+                      <span
+                        className={`w-1 h-1 rounded-full mt-1.5 shrink-0 transition-colors ${
+                          isActive ? "bg-brand-600 dark:bg-brand-400" : "bg-transparent hover:bg-text-tertiary"
+                        }`}
+                      />
+                      <span className="line-clamp-2 leading-snug">{item.text}</span>
+                    </button>
+                  );
+                })}
 
-              {tocItems.length === 0 && (
-                <div className="p-4 text-center text-xs text-text-tertiary">
-                  Tidak ada sub-heading pada halaman ini.
+                {tocItems.length === 0 && (
+                  <div className="p-4 text-center text-xs text-text-tertiary">
+                    Tidak ada sub-heading pada halaman ini.
+                  </div>
+                )}
+              </nav>
+            </aside>
+
+            {/* Tablet & Small-Screen Slide-Over Outline Drawer (<1280px) */}
+            <div className="fixed inset-0 z-50 xl:hidden flex justify-end">
+              <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+                onClick={() => setOutlineOpen(false)}
+                aria-hidden="true"
+              />
+              <aside className="relative z-10 w-72 max-w-[85vw] h-full bg-white dark:bg-[#141417] border-l border-border shadow-2xl flex flex-col">
+                <div className="p-3.5 border-b border-border/80 flex items-center justify-between">
+                  <h4 className="text-xs font-bold font-sans text-text-primary flex items-center gap-1.5">
+                    <ListFilter className="w-3.5 h-3.5" style={{ color: themeColor }} />
+                    <span>Daftar Isi Halaman</span>
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setOutlineOpen(false)}
+                    className="min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-text-tertiary hover:text-text-primary cursor-pointer"
+                    aria-label="Tutup outline"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-              )}
-            </nav>
-          </aside>
+
+                <nav className="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs scrollbar-thin">
+                  {tocItems.map((item) => {
+                    const isActive = activeHeadingId === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          scrollToHeading(item.id);
+                          setOutlineOpen(false);
+                        }}
+                        className={`w-full text-left py-1.5 px-2 rounded-lg transition-colors flex items-start gap-1.5 cursor-pointer ${
+                          item.level === 3 ? "pl-5 text-[11px]" : "font-medium"
+                        } ${
+                          isActive
+                            ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold"
+                            : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 transition-colors ${
+                            isActive ? "bg-brand-600 dark:bg-brand-400" : "bg-transparent"
+                          }`}
+                        />
+                        <span className="line-clamp-2 leading-snug">{item.text}</span>
+                      </button>
+                    );
+                  })}
+
+                  {tocItems.length === 0 && (
+                    <div className="p-4 text-center text-xs text-text-tertiary">
+                      Tidak ada sub-heading pada halaman ini.
+                    </div>
+                  )}
+                </nav>
+              </aside>
+            </div>
+          </>
         )}
       </div>
 
-      {/* ─── 3. FLOATING OUTLINE / TOC BUTTON ON MOBILE (< md) ─── */}
-      <div className="fixed bottom-6 right-5 z-30 md:hidden flex items-center gap-2">
+      {/* ─── 3. FLOATING OUTLINE / TOC BUTTON ON MOBILE (< sm) ─── */}
+      <div className="fixed bottom-5 right-4 z-30 sm:hidden flex items-center gap-2">
         <button
           type="button"
           onClick={() => setMobileTocOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-2.5 rounded-full shadow-lg border border-border/80 bg-white/95 dark:bg-[#1C1C20]/95 backdrop-blur-md text-text-primary hover:border-brand-500 font-sans text-xs font-bold transition-all active:scale-95 cursor-pointer"
+          className="flex items-center gap-2 min-h-[44px] px-3.5 py-2 rounded-full shadow-lg border border-border/80 bg-white/95 dark:bg-[#1C1C20]/95 backdrop-blur-md text-text-primary hover:border-brand-500 font-sans text-xs font-bold transition-all active:scale-95 cursor-pointer"
           style={{ borderColor: mobileTocOpen ? themeColor : undefined }}
           aria-label="Buka Daftar Isi Halaman"
         >
@@ -1426,7 +1502,7 @@ export function DocReaderLayout({
 
       {/* ─── 4. MOBILE BOTTOM-SHEET TOC DRAWER ─── */}
       {mobileTocOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex flex-col justify-end">
+        <div className="fixed inset-0 z-50 sm:hidden flex flex-col justify-end">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
@@ -1434,7 +1510,7 @@ export function DocReaderLayout({
           />
 
           {/* Sheet Canvas */}
-          <div className="relative z-10 w-full max-h-[82vh] bg-white dark:bg-[#161619] rounded-t-2xl border-t border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-200">
+          <div className="relative z-10 w-full max-h-[82dvh] bg-white dark:bg-[#161619] rounded-t-2xl border-t border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-200 pb-[env(safe-area-inset-bottom,0px)]">
             {/* Sheet Handle */}
             <div className="pt-2.5 pb-1 flex justify-center">
               <div className="w-10 h-1.5 rounded-full bg-border-strong/60" />

@@ -4,9 +4,16 @@ declare module "sql.js" {
     values: Array<Array<number | string | Uint8Array | null>>;
   }
 
+  export interface SqlJsStatement {
+    run(params?: unknown): boolean;
+    free(): boolean;
+  }
+
   export interface SqlJsDatabase {
     run(sql: string, params?: unknown): SqlJsDatabase;
     exec(sql: string, params?: unknown): SqlJsQueryExecResult[];
+    prepare(sql: string, params?: unknown): SqlJsStatement;
+    export(): Uint8Array;
     getRowsModified(): number;
     close(): void;
   }

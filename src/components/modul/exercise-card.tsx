@@ -120,12 +120,22 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
                   <span>{copiedCode ? "Disalin" : "Salin"}</span>
                 </button>
                 <Link
-                  href={`/dashboard/playground?code=${encodeURIComponent(exercise.starterCode)}`}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-brand-600 hover:bg-brand-700 text-white transition-colors"
-                  title="Jalankan langsung di Python Playground"
+                  href={`/dashboard/playground?code=${encodeURIComponent(
+                    exercise.starterCode
+                  )}&lang=python&task=${encodeURIComponent(exercise.task)}${
+                    exercise.testCase?.expectedOutput !== undefined
+                      ? `&test=${encodeURIComponent(
+                          `# ${exercise.testCase.description || "Verifikasi Hasil"}\nassert any(v == ${JSON.stringify(
+                            exercise.testCase.expectedOutput
+                          )} for k, v in locals().items() if not k.startswith('_'))`
+                        )}`
+                      : ""
+                  }`}
+                  className="flex items-center gap-1 min-h-[32px] px-2.5 py-0.5 rounded text-[10px] font-semibold bg-brand-600 hover:bg-brand-700 text-white transition-colors"
+                  title="Jalankan & Uji langsung di Lab Notebook"
                 >
                   <Play className="w-2.5 h-2.5 fill-current" />
-                  <span>Playground</span>
+                  <span>Lab Notebook</span>
                 </Link>
               </div>
             </div>

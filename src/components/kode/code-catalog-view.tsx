@@ -421,12 +421,12 @@ export function CodeCatalogView() {
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-nowrap overflow-x-auto scrollbar-none pb-1.5 sm:flex-wrap sm:overflow-visible sm:pb-0 gap-2 snap-x snap-mandatory touch-pan-x">
           <button
             type="button"
             onClick={() => handleSelectTopic("all")}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-colors cursor-pointer",
+              "shrink-0 snap-start min-h-[40px] px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-colors cursor-pointer",
               selectedTopic === "all"
                 ? "bg-brand-600 text-white border-brand-600"
                 : "bg-surface-secondary/50 text-text-secondary border-border hover:text-text-primary"
@@ -445,7 +445,7 @@ export function CodeCatalogView() {
                 type="button"
                 onClick={() => handleSelectTopic(summary.topic.id)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors cursor-pointer",
+                  "shrink-0 snap-start min-h-[40px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors cursor-pointer",
                   isActive
                     ? "bg-brand-600 text-white border-brand-600 font-semibold"
                     : "bg-surface text-text-secondary border-border hover:bg-surface-secondary hover:text-text-primary"

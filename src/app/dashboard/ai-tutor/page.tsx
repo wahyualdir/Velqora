@@ -78,7 +78,7 @@ function AITutorContent() {
 
   // Fetch Ingested User Modules for AI Knowledge Base
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
       setShowSidebar(false);
     }
     getUserKnowledgeModulesAction().then((mods) => {
@@ -405,21 +405,50 @@ function AITutorContent() {
         />
 
         {/* Main Conversation Workspace Layout */}
-        <div className="flex flex-col md:flex-row gap-4 items-start">
-          {/* Collapsible Session Sidebar */}
+        <div className="flex flex-col lg:flex-row gap-4 items-start relative">
+          {/* Desktop Inline Session Sidebar (>= 1024px) */}
           {showSidebar && (
-            <AISessionSidebar
-              sessions={sessions}
-              activeSessionId={activeSessionId}
-              onSelectSession={handleSelectSession}
-              onNewSession={handleNewSession}
-              onDeleteSession={handleDeleteSession}
-              onCloseMobile={() => setShowSidebar(false)}
-            />
+            <div className="hidden lg:block shrink-0">
+              <AISessionSidebar
+                sessions={sessions}
+                activeSessionId={activeSessionId}
+                onSelectSession={handleSelectSession}
+                onNewSession={handleNewSession}
+                onDeleteSession={handleDeleteSession}
+                onCloseMobile={() => setShowSidebar(false)}
+              />
+            </div>
+          )}
+
+          {/* Mobile & Tablet Slide-Over Session Drawer (< 1024px) */}
+          {showSidebar && (
+            <div className="fixed inset-0 z-50 lg:hidden flex justify-start">
+              <div
+                className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+                onClick={() => setShowSidebar(false)}
+                aria-hidden="true"
+              />
+              <div className="relative z-10 w-[min(88vw,340px)] h-full p-3 bg-background shadow-2xl">
+                <AISessionSidebar
+                  sessions={sessions}
+                  activeSessionId={activeSessionId}
+                  onSelectSession={(id) => {
+                    handleSelectSession(id);
+                    setShowSidebar(false);
+                  }}
+                  onNewSession={() => {
+                    handleNewSession();
+                    setShowSidebar(false);
+                  }}
+                  onDeleteSession={handleDeleteSession}
+                  onCloseMobile={() => setShowSidebar(false)}
+                />
+              </div>
+            </div>
           )}
 
           {/* Conversation Main Window */}
-          <div className="flex-1 w-full rounded-xl border border-border bg-surface flex flex-col h-[calc(100vh-17rem)] md:h-[620px] overflow-hidden shadow-2xs">
+          <div className="flex-1 w-full rounded-xl border border-border bg-surface flex flex-col h-[calc(100dvh-13.5rem)] md:h-[calc(100dvh-11.5rem)] min-h-[400px] overflow-hidden shadow-2xs">
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 scrollbar-thin">
               {messages.length === 0 ? (

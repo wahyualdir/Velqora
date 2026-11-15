@@ -260,7 +260,7 @@ export function ConverterWorkbench({
             <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary">
               Warna Latar Belakang
             </label>
-            <div className="grid grid-cols-4 gap-1 p-1 rounded-lg border border-border bg-surface">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-lg border border-border bg-surface">
               {[
                 { id: "none", label: "Asli" },
                 { id: "red", label: "Merah" },
@@ -271,7 +271,7 @@ export function ConverterWorkbench({
                   key={c.id}
                   type="button"
                   onClick={() => onChangePhotoBgColor(c.id)}
-                  className={`py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
+                  className={`min-h-[40px] py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                     photoBgColor === c.id
                       ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold"
                       : "text-text-tertiary hover:text-text-primary"

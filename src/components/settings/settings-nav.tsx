@@ -37,8 +37,8 @@ const SECTIONS = [
 export function SettingsNav({ activeSection, onSelectSection }: SettingsNavProps) {
   return (
     <nav aria-label="Navigasi Pengaturan" className="w-full">
-      {/* Mobile Horizontal Pill Tabs */}
-      <div className="flex lg:hidden items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto scrollbar-none touch-pan-x">
+      {/* Mobile Horizontal Pill Tabs (< 768px) */}
+      <div className="flex md:hidden items-center gap-1.5 p-1 rounded-xl bg-surface border border-border overflow-x-auto scrollbar-none touch-pan-x">
         {SECTIONS.map((sec) => {
           const Icon = sec.icon;
           const isActive = activeSection === sec.id;
@@ -48,7 +48,7 @@ export function SettingsNav({ activeSection, onSelectSection }: SettingsNavProps
               key={sec.id}
               type="button"
               onClick={() => onSelectSection(sec.id)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center gap-2 min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
                   ? "bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 shadow-2xs"
                   : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
@@ -61,8 +61,8 @@ export function SettingsNav({ activeSection, onSelectSection }: SettingsNavProps
         })}
       </div>
 
-      {/* Desktop Vertical Menu */}
-      <div className="hidden lg:flex flex-col gap-1 p-2 rounded-xl border border-border bg-surface shadow-2xs">
+      {/* Tablet & Desktop Vertical Menu (>= 768px) */}
+      <div className="hidden md:flex flex-col gap-1 p-2 rounded-xl border border-border bg-surface shadow-2xs">
         {SECTIONS.map((sec) => {
           const Icon = sec.icon;
           const isActive = activeSection === sec.id;

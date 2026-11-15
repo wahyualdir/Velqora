@@ -65,7 +65,7 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="relative min-h-screen flex bg-transparent overflow-x-hidden">
+    <div className="relative min-h-dvh flex bg-transparent overflow-x-hidden">
       {/* Precision technical canvas background */}
       <TechBackground />
 
@@ -75,34 +75,38 @@ export default function DashboardLayout({
         onClose={() => setCommandPaletteOpen(false)}
       />
 
-      {/* Fixed Desktop Sidebar (>= 1024px) & Tablet Drawer (Hidden in immersive Doc Reader mode) */}
+      {/* Fixed Desktop Sidebar (>= 1024px) & Tablet Compact Rail / Drawer (Hidden in immersive Doc Reader mode) */}
       {!isDocReader && (
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          onOpenDrawer={() => setSidebarOpen(true)}
           isCollapsed={sidebarCollapsed}
           onToggleCollapse={handleToggleCollapse}
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         />
       )}
 
-      {/* Main Content Area: Desktop Workspace on >=1024px, Mobile App Shell on <1024px */}
+      {/* Main Content Area: Desktop Workspace (>=1024px), Tablet Compact Rail (>=768px), Mobile App Shell (<768px) */}
       <div
         className={cn(
           "flex-1 flex flex-col min-w-0 z-10 transition-all duration-200 ease-out",
-          !isApp && !isDocReader && (sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-[245px]"),
-          isDocReader && "lg:pl-0"
+          !isApp && !isDocReader && (sidebarCollapsed ? "md:pl-[68px] lg:pl-[68px]" : "md:pl-[68px] lg:pl-[245px]"),
+          isApp && !isDocReader && "md:pl-[68px]",
+          isDocReader && "md:pl-0 lg:pl-0"
         )}
       >
-        {/* Responsive Header: Mobile Top Bar ONLY on Mobile & App (<1024px or isApp). Hidden in Doc Reader! */}
+        {/* Responsive Header: Mobile Top Bar ONLY on Mobile (<768px). Hidden on Tablet+ & Doc Reader! */}
         {!isDocReader && (
           isApp ? (
-            <MobileTopBar
-              onOpenSearch={() => setCommandPaletteOpen(true)}
-              onOpenMenu={() => setSidebarOpen(true)}
-            />
+            <div className="block md:hidden">
+              <MobileTopBar
+                onOpenSearch={() => setCommandPaletteOpen(true)}
+                onOpenMenu={() => setSidebarOpen(true)}
+              />
+            </div>
           ) : (
-            <div className="block lg:hidden">
+            <div className="block md:hidden">
               <MobileTopBar
                 onOpenSearch={() => setCommandPaletteOpen(true)}
                 onOpenMenu={() => setSidebarOpen(true)}
@@ -113,12 +117,12 @@ export default function DashboardLayout({
 
         <main
           className={cn(
-            "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-screen",
+            "flex-1 w-full mx-auto animate-fade-in flex flex-col justify-between min-h-dvh",
             isDocReader
-              ? "max-w-none p-0 m-0 w-full min-h-screen"
+              ? "max-w-none p-0 m-0 w-full min-h-dvh"
               : isApp
-              ? "max-w-2xl px-3 sm:px-5 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]"
-              : "max-w-[1560px] px-3 sm:px-5 lg:px-8 xl:px-10 py-3.5 sm:py-5 lg:py-7 pb-8"
+              ? "max-w-2xl md:max-w-[1560px] px-3 sm:px-5 md:px-6 lg:px-8 py-3.5 sm:py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8"
+              : "max-w-[1560px] px-3 sm:px-5 md:px-6 lg:px-8 xl:px-10 py-3.5 sm:py-5 lg:py-7 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8"
           )}
         >
           <div className="flex-1 min-w-0">{children}</div>

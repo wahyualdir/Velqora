@@ -78,13 +78,13 @@ export function ModuleFilters({
         </div>
 
         {/* Filter Row */}
-        <div className="flex flex-wrap items-center gap-2.5 justify-between pt-0.5">
-          <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2.5 justify-between pt-0.5">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 flex-1 min-w-0">
             {/* Category Dropdown */}
             <select
               value={selectedCategory}
               onChange={(e) => onCategoryChange(e.target.value)}
-              className="px-3 py-1.5 min-h-[36px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Filter kategori"
             >
               <option value="">Semua Topik AI</option>
@@ -99,7 +99,7 @@ export function ModuleFilters({
             <select
               value={levelFilter}
               onChange={(e) => onLevelChange(e.target.value)}
-              className="px-3 py-1.5 min-h-[36px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Filter tingkat kesulitan"
             >
               <option value="">Semua Tingkat</option>
@@ -112,7 +112,7 @@ export function ModuleFilters({
             <select
               value={scope}
               onChange={(e) => onScopeChange(e.target.value as "all" | "mine")}
-              className="px-3 py-1.5 min-h-[36px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Filter kepemilikan"
             >
               <option value="all" className="dark:bg-[#141210] dark:text-[#F5F5F4]">Semua Konten</option>
@@ -121,11 +121,11 @@ export function ModuleFilters({
           </div>
 
           {/* Sort Controls & Reset */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="px-3 py-1.5 min-h-[36px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#524B42] dark:text-[#A8A29E] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="flex-1 sm:flex-initial min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#524B42] dark:text-[#A8A29E] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Urutkan modul"
             >
               <option value="latest" className="dark:bg-[#141210] dark:text-[#F5F5F4]">Terbaru</option>
@@ -138,7 +138,7 @@ export function ModuleFilters({
               <button
                 type="button"
                 onClick={onResetFilters}
-                className="vt-btn-chrome rounded-xl text-xs font-mono font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5 py-1.5 px-3 min-h-[36px] cursor-pointer"
+                className="vt-btn-chrome rounded-xl text-xs font-mono font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5 py-1.5 px-3 min-h-[40px] cursor-pointer shrink-0"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset</span>

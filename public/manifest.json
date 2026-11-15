@@ -5,9 +5,9 @@
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
-  "orientation": "portrait-primary",
+  "background_color": "#FAF8F5",
+  "theme_color": "#0B0A09",
+  "orientation": "any",
   "categories": ["education", "productivity", "utilities"],
   "icons": [
     {
@@ -58,10 +58,10 @@
       "icons": [{ "src": "/logo.svg", "sizes": "any" }]
     },
     {
-      "name": "Tugas & Jadwal",
-      "short_name": "Tugas",
-      "description": "Kelola tenggat tugas dan jadwal harian",
-      "url": "/dashboard/tugas",
+      "name": "Velqora Lab Notebook",
+      "short_name": "Notebook",
+      "description": "Buka notebook komputasi Python, SQL, dan AI interaktif",
+      "url": "/dashboard/playground",
       "icons": [{ "src": "/logo.svg", "sizes": "any" }]
     }
   ]

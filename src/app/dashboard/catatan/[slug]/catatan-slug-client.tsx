@@ -178,7 +178,7 @@ export function CatatanSlugClient({
     ) : null;
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-[#FAF8F5] dark:bg-[#141416] overflow-hidden">
+    <div className="flex h-[calc(100dvh-4rem)] pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:pb-0 bg-[#FAF8F5] dark:bg-[#141416] overflow-hidden">
       {/* ─── 1. Left Panel: Vault Sidebar Tree ─── */}
       {/* Desktop Sidebar */}
       <div className="hidden lg:block w-72 h-full shrink-0">

@@ -5,11 +5,11 @@ import Link from "next/link";
 import {
   Play,
   BookOpen,
-  CheckSquare,
+  Code2,
   Bot,
-  ScanLine,
+  FileCode2,
   ChevronRight,
-  Calendar,
+  Layers,
   Sparkles,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -138,52 +138,52 @@ export function MobileDashboardView({
       )}
 
       {/* ─── 3. Quick Academic Shortcuts (4 Icons) ─── */}
-      <div className="grid grid-cols-4 gap-2.5 auto-rows-fr">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 auto-rows-fr">
+        <Link
+          href="/dashboard/playground"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+        >
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
+            <Code2 className="w-5 h-5" />
+          </div>
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+            Lab Notebook
+          </span>
+        </Link>
+
+        <Link
+          href="/dashboard/kode"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+        >
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
+            <FileCode2 className="w-5 h-5" />
+          </div>
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+            Katalog Kode
+          </span>
+        </Link>
+
+        <Link
+          href="/dashboard/modul"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+        >
+          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
+            <Layers className="w-5 h-5" />
+          </div>
+          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+            Modul
+          </span>
+        </Link>
+
         <Link
           href="/dashboard/ai-tutor"
-          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
         >
           <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
             <Bot className="w-5 h-5" />
           </div>
           <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             AI Tutor
-          </span>
-        </Link>
-
-        <Link
-          href="/dashboard/tugas"
-          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
-        >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
-            <CheckSquare className="w-5 h-5" />
-          </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
-            Tugas
-          </span>
-        </Link>
-
-        <Link
-          href="/dashboard/jadwal"
-          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
-        >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
-            <Calendar className="w-5 h-5" />
-          </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
-            Jadwal
-          </span>
-        </Link>
-
-        <Link
-          href="/dashboard/konversi"
-          className="p-3 rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-brand-500/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
-        >
-          <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center shrink-0">
-            <ScanLine className="w-5 h-5" />
-          </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
-            Scanner
           </span>
         </Link>
       </div>

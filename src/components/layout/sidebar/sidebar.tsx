@@ -15,6 +15,7 @@ import {
   Command,
   Sun,
   Moon,
+  Menu,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
@@ -29,6 +30,7 @@ import { iconMap, categoryTitleMap, linkLabelMap } from "./navigation-config";
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenDrawer?: () => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
   onOpenCommandPalette?: () => void;
@@ -37,6 +39,7 @@ interface SidebarProps {
 export function Sidebar({
   isOpen,
   onClose,
+  onOpenDrawer,
   isCollapsed = false,
   onToggleCollapse,
   onOpenCommandPalette,
@@ -136,21 +139,25 @@ export function Sidebar({
 
   return (
     <>
-      {/* ─── 1. MOBILE DRAWER BACKDROP OVERLAY ─── */}
+      {/* ─── 1. MOBILE & TABLET DRAWER BACKDROP OVERLAY ─── */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden animate-fade-in"
+          className={cn(
+            "fixed inset-0 z-40 bg-black/60 backdrop-blur-xs animate-fade-in",
+            !isApp && "lg:hidden"
+          )}
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
-      {/* ─── 2. MOBILE DRAWER SIDEBAR ─── */}
+      {/* ─── 2. MOBILE & TABLET DRAWER SIDEBAR ─── */}
       <aside
         aria-label="Sidebar Mobile Drawer"
         className={cn(
-          "fixed top-0 left-0 bottom-0 z-50 w-[min(88vw,290px)] bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] shadow-2xl lg:hidden",
-          "flex flex-col transition-transform duration-200 ease-out select-none",
+          "fixed top-0 left-0 bottom-0 z-50 w-[min(88vw,300px)] bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] shadow-2xl",
+          "flex flex-col transition-transform duration-200 ease-out select-none pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]",
+          !isApp && "lg:hidden",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -363,7 +370,7 @@ export function Sidebar({
         <aside
           aria-label="Sidebar Desktop"
           className={cn(
-            "hidden lg:flex fixed top-0 left-0 z-30 h-screen bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] select-none",
+            "hidden lg:flex fixed top-0 left-0 z-30 h-dvh bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] select-none",
             "flex-col transition-all duration-200 ease-out",
             isCollapsed ? "w-[68px]" : "w-[245px]"
           )}
@@ -696,6 +703,105 @@ export function Sidebar({
           </div>
         </aside>
       )}
+
+      {/* ─── 4. COMPACT TABLET & PWA NAVIGATION RAIL (768px–1023px & Standalone PWA >=768px) ─── */}
+      <aside
+        aria-label="Sidebar Tablet Rail"
+        className={cn(
+          "hidden md:flex fixed top-0 left-0 z-30 h-dvh w-[68px] bg-[#FAF8F5] dark:bg-[#100E0D] border-r border-[#E4DDD4] dark:border-[#292524] select-none",
+          "flex-col items-center justify-between pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]",
+          !isApp && "lg:hidden"
+        )}
+      >
+        <div className="w-full px-2 py-2.5 border-b border-[#E4DDD4] dark:border-[#292524] flex flex-col items-center gap-2 shrink-0 bg-[#F3EFE9]/75 dark:bg-[#141210]">
+          <Link
+            href="/dashboard"
+            className="flex items-center justify-center rounded-lg p-1 focus-visible:outline-none"
+            title="Velqora Dashboard"
+          >
+            <Logo variant="sidebar" hideText />
+          </Link>
+
+          {onOpenDrawer && (
+            <button
+              type="button"
+              onClick={onOpenDrawer}
+              aria-label="Buka menu navigasi lengkap"
+              title="Buka Menu Lengkap"
+              className="vt-btn-chrome w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          )}
+
+          {onOpenCommandPalette && (
+            <button
+              type="button"
+              onClick={onOpenCommandPalette}
+              aria-label="Pencarian cepat"
+              title="Pencarian Cepat (Ctrl + K)"
+              className="vt-btn-chrome w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        <nav
+          aria-label="Navigasi Tablet Compact"
+          className="flex-1 w-full px-2 py-2.5 space-y-1.5 overflow-y-auto sidebar-nav-scroll flex flex-col items-center"
+        >
+          {SIDEBAR_CATEGORIES.flatMap((category) => category.links).map((link) => {
+            const Icon = iconMap[link.icon];
+            const isActive = isLinkActive(link);
+            const linkKey = linkLabelMap[link.label];
+            const translatedLabel =
+              linkKey && t(linkKey) && t(linkKey) !== linkKey ? t(linkKey) : link.label;
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                title={translatedLabel}
+                aria-label={translatedLabel}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0",
+                  isActive
+                    ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
+                    : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#EFECE6] dark:hover:bg-[#1C1917]"
+                )}
+              >
+                {Icon && <Icon className="w-[18px] h-[18px]" />}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="w-full px-2 py-2.5 border-t border-[#E4DDD4] dark:border-[#292524] flex flex-col items-center gap-2 shrink-0 bg-[#F3EFE9]/60 dark:bg-[#141210]">
+          <NotificationCenter
+            dropdownPosition="top"
+            align="left"
+            buttonClassName="vt-btn-chrome w-10 h-10 rounded-xl flex items-center justify-center"
+          />
+          {mounted && (
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="vt-btn-chrome w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer"
+              title={resolvedTheme === "dark" ? "Mode Terang (Light)" : "Mode Gelap (Dark)"}
+              aria-label="Ganti Tema"
+            >
+              {resolvedTheme === "dark" ? (
+                <Sun className="w-4 h-4 text-[#E5C194]" />
+              ) : (
+                <Moon className="w-4 h-4 text-[#C2553A]" />
+              )}
+            </button>
+          )}
+          <UserProfileMenu variant="sidebar" isCollapsed />
+        </div>
+      </aside>
     </>
   );
 }

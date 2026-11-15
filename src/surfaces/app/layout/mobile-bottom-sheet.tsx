@@ -45,7 +45,7 @@ export function MobileBottomSheet({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center md:hidden animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center lg:hidden animate-fade-in">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
@@ -58,7 +58,7 @@ export function MobileBottomSheet({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 w-full max-h-[85vh] overflow-y-auto bg-surface border-t border-border rounded-t-2xl shadow-2xl p-4 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] flex flex-col space-y-3 animate-slide-up overscroll-contain",
+          "relative z-10 w-full md:max-w-lg max-h-[85dvh] overflow-y-auto bg-surface border-t md:border border-border rounded-t-2xl md:rounded-2xl shadow-2xl p-4 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] md:pb-5 flex flex-col space-y-3 animate-slide-up overscroll-contain",
           className
         )}
       >

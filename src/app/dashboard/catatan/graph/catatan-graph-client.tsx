@@ -60,7 +60,7 @@ export function CatatanGraphClient({ initialData }: CatatanGraphClientProps) {
   }, [initialData, search, selectedCategory]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-[#FAF8F5] dark:bg-[#141416] overflow-hidden select-none">
+    <div className="flex flex-col h-[calc(100dvh-4rem)] pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:pb-0 bg-[#FAF8F5] dark:bg-[#141416] overflow-hidden select-none">
       {/* ─── 1. Top Control Bar ─── */}
       <header className="px-4 py-3 bg-surface dark:bg-[#18181B] border-b border-border flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">

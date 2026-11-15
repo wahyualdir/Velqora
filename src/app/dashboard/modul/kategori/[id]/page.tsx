@@ -473,7 +473,7 @@ export default function DedicatedCategoryModulesPage({
   // ─── Tampilan 1: Mode Dokumentasi Resmi ala Scikit-Learn (Full-Height Immersive) ───
   if (viewLayout === "doc") {
     return (
-      <div className="w-full h-screen overflow-hidden flex flex-col">
+      <div className="w-full h-dvh overflow-hidden flex flex-col">
         <DocReaderLayout
           categoryName={category?.name || decodeURIComponent(categoryId)}
           categoryId={categoryId}
