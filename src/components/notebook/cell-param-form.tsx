@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import {
   extractCellFormMeta,
   updateCellParamValue,
@@ -22,6 +22,7 @@ export function CellParamForm({
   layout = "stacked",
 }: CellParamFormProps) {
   const formMeta = useMemo(() => extractCellFormMeta(source), [source]);
+  const [collapsed, setCollapsed] = useState(false);
   const sliderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onChangeSourceRef = useRef(onChangeSource);
 
@@ -74,31 +75,51 @@ export function CellParamForm({
       className={
         isSplit
           ? "h-full p-3 bg-surface-secondary/30 border-t xl:border-t-0 xl:border-l border-border/80 space-y-2.5"
-          : "p-3.5 border-t border-border/80 bg-[#F3EFE9]/55 dark:bg-[#161412] space-y-3"
+          : "px-3.5 py-2.5 border-b border-border/80 bg-[#F3EFE9]/55 dark:bg-[#161412] space-y-2.5"
       }
     >
-      {(formMeta.title || formMeta.description) && (
-        <div className="space-y-0.5">
-          {formMeta.title && (
-            <div className="flex items-center gap-1.5 text-xs font-bold text-text-primary">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
-              <span>{formMeta.title}</span>
-            </div>
-          )}
-          {formMeta.description && (
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 space-y-0.5">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-text-primary">
+            <SlidersHorizontal className="w-3.5 h-3.5 shrink-0 text-[#C2553A] dark:text-[#D4664A]" />
+            <span className="truncate">
+              {formMeta.title || "Parameter Interaktif"}
+            </span>
+            {formMeta.params.length > 0 && (
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-surface-secondary text-text-secondary">
+                {formMeta.params.length}
+              </span>
+            )}
+          </div>
+          {!collapsed && formMeta.description && (
             <p className="text-[11.5px] text-text-secondary">
               {formMeta.description}
             </p>
           )}
         </div>
-      )}
+        {formMeta.params.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setCollapsed((p) => !p)}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-border/80 bg-surface hover:bg-surface-secondary text-[11px] font-medium text-text-secondary cursor-pointer shrink-0 transition-colors"
+            title={collapsed ? "Tampilkan parameter" : "Ciutkan parameter"}
+          >
+            <span>{collapsed ? "Buka" : "Ciutkan"}</span>
+            {collapsed ? (
+              <ChevronDown className="w-3 h-3" />
+            ) : (
+              <ChevronUp className="w-3 h-3" />
+            )}
+          </button>
+        )}
+      </div>
 
-      {formMeta.params.length > 0 && (
+      {!collapsed && formMeta.params.length > 0 && (
         <div
           className={
             isSplit
               ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2"
-              : "grid grid-cols-1 sm:grid-cols-2 gap-3"
+              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"
           }
         >
           {formMeta.params.map((param) => (

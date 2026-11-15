@@ -146,15 +146,39 @@ export function NotebookWorkbench({
   const [installedPackages, setInstalledPackages] = useState<string[]>([]);
   const [vfsFiles, setVfsFiles] = useState<VfsFileEntry[]>([]);
 
-  const [inspectorOpen, setInspectorOpen] = useState(true);
-  const [outlineOpen, setOutlineOpen] = useState(true);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [outlineOpen, setOutlineOpen] = useState(false);
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>("files");
   const [mobileTab, setMobileTab] = useState<MobileViewTab>("cells");
   const [tabletDrawerOpen, setTabletDrawerOpen] = useState(false);
 
   const [singleCellFocus, setSingleCellFocus] = useState(false);
   const [wordWrap, setWordWrap] = useState(true);
-  const [canvasWide, setCanvasWide] = useState(false);
+  const [canvasWide, setCanvasWide] = useState(true);
+  const [editorFontSize, setEditorFontSize] = useState<number>(14);
+
+  const isCompactDesktop = () =>
+    typeof window !== "undefined" && window.innerWidth < 1536;
+
+  const toggleOutline = () => {
+    setOutlineOpen((prev) => {
+      const next = !prev;
+      if (next && isCompactDesktop()) {
+        setInspectorOpen(false);
+      }
+      return next;
+    });
+  };
+
+  const toggleInspector = () => {
+    setInspectorOpen((prev) => {
+      const next = !prev;
+      if (next && isCompactDesktop()) {
+        setOutlineOpen(false);
+      }
+      return next;
+    });
+  };
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const [previewFile, setPreviewFile] = useState<VfsFileEntry | null>(null);
   const [isDraggingOverWorkspace, setIsDraggingOverWorkspace] = useState(false);
@@ -872,7 +896,7 @@ export function NotebookWorkbench({
 
           <button
             type="button"
-            onClick={() => setOutlineOpen((p) => !p)}
+            onClick={toggleOutline}
             className={`hidden lg:inline-flex h-9 w-9 rounded-xl border items-center justify-center cursor-pointer transition-colors shrink-0 ${
               outlineOpen
                 ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
@@ -1003,9 +1027,11 @@ export function NotebookWorkbench({
               setInspectorTab("files");
               setMobileTab("files");
               if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-                setInspectorOpen((open) =>
-                  open && inspectorTab === "files" ? false : true
-                );
+                const willOpen = !(inspectorOpen && inspectorTab === "files");
+                setInspectorOpen(willOpen);
+                if (willOpen && isCompactDesktop()) {
+                  setOutlineOpen(false);
+                }
               } else {
                 setInspectorOpen(true);
                 if (typeof window !== "undefined" && window.innerWidth >= 768) {
@@ -1176,6 +1202,26 @@ export function NotebookWorkbench({
                       </span>
                     </button>
 
+                    <div className="px-3 py-2 flex items-center justify-between gap-2">
+                      <span className="text-text-primary">Ukuran Kode</span>
+                      <div className="inline-flex items-center gap-1">
+                        {[12.5, 14, 15.5].map((sz) => (
+                          <button
+                            key={sz}
+                            type="button"
+                            onClick={() => setEditorFontSize(sz)}
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border cursor-pointer transition-colors ${
+                              editorFontSize === sz
+                                ? "border-[#C2553A]/40 bg-[#C2553A]/15 text-[#C2553A] dark:text-[#F09A82]"
+                                : "border-border bg-surface-secondary/50 text-text-secondary hover:text-text-primary"
+                            }`}
+                          >
+                            {sz}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => setSingleCellFocus((p) => !p)}
@@ -1293,6 +1339,29 @@ export function NotebookWorkbench({
             </>
           )}
 
+          {/* Wide / Focus Canvas 1-Click Toggle */}
+          <button
+            type="button"
+            onClick={() => setCanvasWide((p) => !p)}
+            className={`hidden xl:inline-flex h-9 px-2.5 rounded-xl border text-xs font-mono font-semibold items-center gap-1.5 cursor-pointer transition-colors ${
+              canvasWide
+                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
+                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
+            }`}
+            title={
+              canvasWide
+                ? "Lebar Kanvas Penuh aktif — klik untuk mode Terpusat"
+                : "Kanvas Terpusat — klik untuk Lebar Penuh"
+            }
+          >
+            {canvasWide ? (
+              <Maximize2 className="w-3.5 h-3.5" />
+            ) : (
+              <Minimize2 className="w-3.5 h-3.5" />
+            )}
+            <span>{canvasWide ? "Lebar" : "Fokus"}</span>
+          </button>
+
           {/* Tablet Slide-Over Inspector Toggle (768px-1023px) */}
           <button
             type="button"
@@ -1306,7 +1375,7 @@ export function NotebookWorkbench({
           {/* Desktop Inspector Collapse Toggle (>=1024px) */}
           <button
             type="button"
-            onClick={() => setInspectorOpen((p) => !p)}
+            onClick={toggleInspector}
             className={`hidden lg:inline-flex h-9 w-9 rounded-xl border items-center justify-center cursor-pointer transition-colors ${
               inspectorOpen
                 ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
@@ -1404,6 +1473,7 @@ export function NotebookWorkbench({
                     sqlTables={sqlTables}
                     editorMode={doc.editorMode}
                     wordWrap={wordWrap}
+                    fontSize={editorFontSize}
                     readOnly={readOnly}
                     surroundingCode={doc.cells
                       .filter((c) => c.type === "code" && c.id !== cell.id)
@@ -1517,7 +1587,7 @@ export function NotebookWorkbench({
 
         {/* Desktop Persistent Right Inspector Panel (>= 1024px) */}
         {inspectorOpen && (
-          <aside className="hidden lg:flex flex-col w-[336px] xl:w-[384px] shrink-0 rounded-2xl border border-border bg-surface shadow-2xs overflow-hidden min-h-0">
+          <aside className="hidden lg:flex flex-col w-[320px] xl:w-[340px] shrink-0 rounded-2xl border border-border bg-surface shadow-2xs overflow-hidden min-h-0">
             <div className="grid grid-cols-4 border-b border-border bg-surface-secondary/40 p-1 gap-1 shrink-0">
               {(
                 [

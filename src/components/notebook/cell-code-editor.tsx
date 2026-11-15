@@ -21,6 +21,7 @@ interface CellCodeEditorProps {
   variables?: VariableSummary[];
   editorMode?: "codemirror" | "lite";
   wordWrap?: boolean;
+  fontSize?: number;
   placeholderText?: string;
   onRunCell?: () => void;
   onRunAndAdvance?: () => void;
@@ -43,24 +44,29 @@ function getLanguageExtension(kernel: NotebookKernel) {
   }
 }
 
-function buildVelqoraTheme(isDark: boolean) {
+function buildVelqoraTheme(isDark: boolean, fontSize = 14) {
   const editorTheme = EditorView.theme(
     {
       "&": {
         backgroundColor: isDark ? "#0F0E0D" : "#FAF8F5",
         color: isDark ? "#F5F5F4" : "#1C1917",
-        fontSize: "13px",
+        fontSize: `${fontSize}px`,
         fontFamily:
           'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       },
       ".cm-content": {
-        padding: "10px 0",
+        padding: "12px 0",
+        lineHeight: "1.65",
         caretColor: "#D4664A",
       },
+      ".cm-line": {
+        padding: "0 14px",
+      },
       ".cm-gutters": {
-        backgroundColor: isDark ? "#141210" : "#F3EFE9",
-        color: isDark ? "#78716C" : "#8A8378",
-        borderRight: isDark ? "1px solid #292524" : "1px solid #E4DDD4",
+        backgroundColor: isDark ? "#0F0E0D" : "#FAF8F5",
+        color: isDark ? "#6B645E" : "#8A8378",
+        borderRight: isDark ? "1px solid #24201E" : "1px solid #EBE5DC",
+        minWidth: "40px",
         userSelect: "none",
       },
       ".cm-activeLine": {
@@ -124,6 +130,7 @@ export function CellCodeEditor({
   variables = [],
   editorMode = "codemirror",
   wordWrap = true,
+  fontSize = 14,
   placeholderText = "# Tulis kode Anda di sini...",
   onRunCell,
   onRunAndAdvance,
@@ -223,7 +230,7 @@ export function CellCodeEditor({
         customKeymap,
         cmPlaceholder(placeholderText),
         langCompRef.current.of(getLanguageExtension(kernel)),
-        themeCompRef.current.of(buildVelqoraTheme(isDark)),
+        themeCompRef.current.of(buildVelqoraTheme(isDark, fontSize)),
         completionCompRef.current.of(buildCompletionSource()),
         wrapCompRef.current.of(wordWrap ? EditorView.lineWrapping : []),
         EditorView.updateListener.of((update) => {
@@ -290,14 +297,16 @@ export function CellCodeEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kernel, editorMode]);
 
-  // Update light/dark theme live
+  // Update light/dark theme & font size live
   useEffect(() => {
     const view = viewRef.current;
     if (!view || editorMode === "lite") return;
     view.dispatch({
-      effects: themeCompRef.current.reconfigure(buildVelqoraTheme(isDark)),
+      effects: themeCompRef.current.reconfigure(
+        buildVelqoraTheme(isDark, fontSize)
+      ),
     });
-  }, [isDark, editorMode]);
+  }, [isDark, fontSize, editorMode]);
 
   // Update line wrapping live
   useEffect(() => {
@@ -353,7 +362,8 @@ export function CellCodeEditor({
             });
           }
         }}
-        className={`w-full min-h-[72px] p-3 font-mono text-[13px] leading-relaxed bg-[#FAF8F5] dark:bg-[#0F0E0D] text-[#1C1917] dark:text-[#F5F5F4] focus:outline-hidden resize-y ${
+        style={{ fontSize: `${fontSize}px` }}
+        className={`w-full min-h-[72px] px-3.5 py-3 font-mono leading-[1.65] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-[#1C1917] dark:text-[#F5F5F4] focus:outline-hidden resize-y ${
           wordWrap ? "whitespace-pre-wrap" : "whitespace-pre overflow-x-auto"
         }`}
       />

@@ -5,6 +5,7 @@ import {
   AlertCircle,
   ArrowDown,
   ArrowUp,
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -45,6 +46,7 @@ interface CellItemProps {
   surroundingCode?: string;
   editorMode: "codemirror" | "lite";
   wordWrap?: boolean;
+  fontSize?: number;
   readOnly?: boolean;
   onActivate: () => void;
   onUpdateCell: (patch: Partial<NotebookCell>) => void;
@@ -95,6 +97,7 @@ export function CellItem({
   surroundingCode,
   editorMode,
   wordWrap = true,
+  fontSize = 14,
   readOnly = false,
   onActivate,
   onUpdateCell,
@@ -115,6 +118,19 @@ export function CellItem({
   );
   const [showInlineAi, setShowInlineAi] = useState(false);
   const [fullscreenOutput, setFullscreenOutput] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [zenEditorOpen, setZenEditorOpen] = useState(false);
+
+  const handleCopyCode = async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(cell.source);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 1500);
+    } catch {
+      // Clipboard API unavailable
+    }
+  };
 
   const hasFormParams = cell.source.includes("#@param") || cell.source.includes("#@title");
   const isFormOnly = cell.formMode === "form";
@@ -270,6 +286,44 @@ export function CellItem({
               : "opacity-100 md:opacity-45 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
           }`}
         >
+          {cell.type === "code" && (
+            <>
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                className={`h-7 px-2 rounded-lg border text-[11px] font-medium inline-flex items-center gap-1 cursor-pointer transition-colors ${
+                  copiedCode
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                    : "border-border bg-surface text-text-secondary hover:bg-surface-secondary"
+                }`}
+                title="Salin kode sel ke clipboard"
+                aria-label="Salin kode sel"
+              >
+                {copiedCode ? (
+                  <Check className="w-3.5 h-3.5" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5" />
+                )}
+                <span className="hidden sm:inline">
+                  {copiedCode ? "Tersalin" : "Salin"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZenEditorOpen(true);
+                }}
+                className="h-7 w-7 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary flex items-center justify-center cursor-pointer transition-colors"
+                title="Perbesar Editor (Zen Mode)"
+                aria-label="Perbesar Editor"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
+
           {cell.type === "code" && hasFormParams && (
             <button
               type="button"
@@ -448,79 +502,63 @@ export function CellItem({
         )
       ) : (
         <div>
-          {hasFormParams && !isFormOnly ? (
-            <div className="grid grid-cols-1 xl:grid-cols-12 items-stretch">
-              <div className="xl:col-span-7 min-w-0">
-                <CellCodeEditor
-                  value={cell.source}
-                  onChange={(nextVal) =>
-                    onUpdateCell({
-                      source: nextVal,
-                      lastModifiedAt: Date.now(),
-                    })
-                  }
-                  kernel={cell.kernel}
-                  variables={variables}
-                  editorMode={readOnly ? "lite" : editorMode}
-                  wordWrap={wordWrap}
-                  onRunCell={onRunCell}
-                  onRunAndAdvance={onRunAndAdvance}
-                  onFocusInsertHandler={onFocusInsertHandler}
-                />
-              </div>
-              <div className="xl:col-span-5 min-w-0">
-                <CellParamForm
-                  source={cell.source}
-                  kernel={cell.kernel}
-                  layout="split"
-                  onChangeSource={(nextSource, autoRun) => {
-                    onUpdateCell({
-                      source: nextSource,
-                      lastModifiedAt: Date.now(),
-                    });
-                    if (autoRun) {
-                      onRunCell();
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
+          {/* Interactive Colab @param Strip (Full Width Above Editor) */}
+          <CellParamForm
+            source={cell.source}
+            kernel={cell.kernel}
+            layout="stacked"
+            onChangeSource={(nextSource, autoRun) => {
+              onUpdateCell({
+                source: nextSource,
+                lastModifiedAt: Date.now(),
+              });
+              if (autoRun) {
+                onRunCell();
+              }
+            }}
+          />
+
+          {/* Full-Width Code Editor */}
+          {!isFormOnly && (
             <>
-              {/* Interactive Colab @param Form Controls */}
-              <CellParamForm
-                source={cell.source}
-                kernel={cell.kernel}
-                layout="stacked"
-                onChangeSource={(nextSource, autoRun) => {
+              <CellCodeEditor
+                value={cell.source}
+                onChange={(nextVal) =>
                   onUpdateCell({
-                    source: nextSource,
+                    source: nextVal,
                     lastModifiedAt: Date.now(),
-                  });
-                  if (autoRun) {
-                    onRunCell();
-                  }
-                }}
+                  })
+                }
+                kernel={cell.kernel}
+                variables={variables}
+                editorMode={readOnly ? "lite" : editorMode}
+                wordWrap={wordWrap}
+                fontSize={fontSize}
+                onRunCell={onRunCell}
+                onRunAndAdvance={onRunAndAdvance}
+                onFocusInsertHandler={onFocusInsertHandler}
               />
 
-              {/* Code Editor */}
-              {!isFormOnly && (
-                <CellCodeEditor
-                  value={cell.source}
-                  onChange={(nextVal) =>
-                    onUpdateCell({
-                      source: nextVal,
-                      lastModifiedAt: Date.now(),
-                    })
-                  }
-                  kernel={cell.kernel}
-                  variables={variables}
-                  editorMode={readOnly ? "lite" : editorMode}
-                  wordWrap={wordWrap}
-                  onRunCell={onRunCell}
-                  onRunAndAdvance={onRunAndAdvance}
-                  onFocusInsertHandler={onFocusInsertHandler}
-                />
+              {isActive && !readOnly && (
+                <div className="px-3.5 py-1 border-t border-border/50 bg-[#F3EFE9]/35 dark:bg-[#141210]/70 flex items-center justify-between gap-2 text-[10.5px] font-mono text-text-tertiary">
+                  <span>
+                    <kbd className="px-1 py-0.5 rounded bg-surface border border-border/80 text-[10px]">
+                      Shift+Enter
+                    </kbd>{" "}
+                    jalankan &amp; lanjut ·{" "}
+                    <kbd className="px-1 py-0.5 rounded bg-surface border border-border/80 text-[10px]">
+                      Ctrl/Cmd+Enter
+                    </kbd>{" "}
+                    jalankan ·{" "}
+                    <kbd className="px-1 py-0.5 rounded bg-surface border border-border/80 text-[10px]">
+                      Tab
+                    </kbd>{" "}
+                    indentasi
+                  </span>
+                  <span className="hidden sm:inline shrink-0">
+                    {cell.source.split(/\r?\n/).length} baris
+                  </span>
+                </div>
               )}
             </>
           )}
@@ -686,6 +724,132 @@ export function CellItem({
                 }}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Zen Code Editor Modal */}
+      {zenEditorOpen && cell.type === "code" && (
+        <div
+          className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs p-3 sm:p-6 flex items-center justify-center"
+          onClick={() => setZenEditorOpen(false)}
+        >
+          <div
+            className="w-full max-w-6xl max-h-[92vh] rounded-2xl border border-border bg-surface shadow-2xl flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-4 py-2.5 border-b border-border bg-surface-secondary/40 flex items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span
+                  className={`px-2 py-0.5 rounded-md border text-[11px] font-semibold shrink-0 ${KERNEL_BADGE[cell.kernel].cls}`}
+                >
+                  {KERNEL_BADGE[cell.kernel].label}
+                </span>
+                <span className="text-xs font-mono font-bold text-text-primary truncate">
+                  Zen Editor — Sel [{cell.executionCount ?? index + 1}]
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCopyCode}
+                  className={`h-8 px-2.5 rounded-lg border text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors ${
+                    copiedCode
+                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                      : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
+                  }`}
+                >
+                  {copiedCode ? (
+                    <Check className="w-3.5 h-3.5" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                  <span className="hidden sm:inline">
+                    {copiedCode ? "Tersalin" : "Salin Kode"}
+                  </span>
+                </button>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    onClick={() => onRunCell()}
+                    disabled={isRunning}
+                    className="h-8 px-3 rounded-lg bg-[#C2553A] hover:bg-[#AA452C] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+                  >
+                    {isRunning ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                    )}
+                    <span>Jalankan</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setZenEditorOpen(false)}
+                  className="h-8 px-2.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <Minimize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Kecilkan</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <CellParamForm
+                source={cell.source}
+                kernel={cell.kernel}
+                layout="stacked"
+                onChangeSource={(nextSource, autoRun) => {
+                  onUpdateCell({
+                    source: nextSource,
+                    lastModifiedAt: Date.now(),
+                  });
+                  if (autoRun) {
+                    onRunCell();
+                  }
+                }}
+              />
+              <CellCodeEditor
+                value={cell.source}
+                onChange={(nextVal) =>
+                  onUpdateCell({
+                    source: nextVal,
+                    lastModifiedAt: Date.now(),
+                  })
+                }
+                kernel={cell.kernel}
+                variables={variables}
+                editorMode={readOnly ? "lite" : editorMode}
+                wordWrap={wordWrap}
+                fontSize={Math.max(fontSize, 15)}
+                onRunCell={onRunCell}
+                onRunAndAdvance={onRunAndAdvance}
+                onFocusInsertHandler={onFocusInsertHandler}
+              />
+            </div>
+
+            {cell.outputs && cell.outputs.length > 0 && (
+              <div className="border-t border-border bg-surface-secondary/20 max-h-[38vh] overflow-y-auto p-3.5">
+                <div className="text-[10.5px] font-mono uppercase tracking-wider text-text-tertiary mb-1.5">
+                  Output ({cell.outputs.length})
+                </div>
+                <RichOutputRenderer
+                  outputs={cell.outputs}
+                  onAskAiFix={() => {
+                    setZenEditorOpen(false);
+                    setShowInlineAi(true);
+                  }}
+                  onInsertCode={(code, k) => {
+                    setZenEditorOpen(false);
+                    if (onInsertCode) {
+                      onInsertCode(code, k);
+                    } else {
+                      onAddBelow("code", code, k);
+                    }
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
