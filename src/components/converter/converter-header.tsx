@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/layout/page-header";
 export function ConverterHeader() {
   return (
     <PageHeader
-      eyebrow="Utilitas Akademik"
+      eyebrow="Alat Dokumen"
       title="Konversi & OCR Berkas"
-      description="Alat pengolahan dokumen, scanner catatan, penjernih foto tugas HD, konversi format berkas, dan utilitas data perkuliahan."
+      description="Alat pengolahan dokumen, scanner catatan, penjernih foto, konversi format berkas, dan utilitas dokumen belajar."
     />
   );
 }

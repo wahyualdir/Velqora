@@ -211,7 +211,7 @@ export default function DetailMateriPage({ params }: { params: Promise<{ id: str
 
         {material.subject && (
           <p className="text-xs sm:text-sm font-semibold text-brand-600 dark:text-brand-400">
-            Mata Kuliah / Topik: {material.subject}
+            Topik: {material.subject}
           </p>
         )}
 

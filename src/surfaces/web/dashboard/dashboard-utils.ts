@@ -36,22 +36,50 @@ const INDONESIAN_DAYS = [
   "Sabtu",
 ] as const;
 
+const INDONESIAN_MONTHS = [
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
+] as const;
+
+const INDONESIAN_MONTHS_SHORT = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mei",
+  "Jun",
+  "Jul",
+  "Agu",
+  "Sep",
+  "Okt",
+  "Nov",
+  "Des",
+] as const;
+
 export function getIndonesianDayName(date: Date = new Date()): string {
   return INDONESIAN_DAYS[date.getDay()] || "Senin";
 }
 
 export function getCurrentAcademicPeriod(date: Date = new Date()): AcademicPeriodInfo {
+  const dayName = getIndonesianDayName(date);
+  const dayNum = date.getDate();
+  const monthIdx = date.getMonth();
   const year = date.getFullYear();
-  const month = date.getMonth(); // 0-indexed: 0 = Jan, 6 = Jul
-  const isGanjil = month >= 6;
-  const startYear = isGanjil ? year : year - 1;
-  const endYear = startYear + 1;
-  const termName = isGanjil ? "Ganjil" : "Genap";
 
   return {
-    badgeText: `TA ${startYear}/${endYear} ${termName.toUpperCase()}`,
-    semesterLabel: `Semester ${termName} ${startYear}/${endYear}`,
-    shortPeriod: `${termName} ${startYear}/${endYear}`,
+    badgeText: "Kurikulum AI & Data",
+    semesterLabel: `${dayName}, ${dayNum} ${INDONESIAN_MONTHS[monthIdx]} ${year}`,
+    shortPeriod: `${dayName}, ${dayNum} ${INDONESIAN_MONTHS_SHORT[monthIdx]}`,
   };
 }
 
@@ -227,7 +255,7 @@ export function resolveActiveTopicEmblem(
   return {
     code: monogram,
     label: (categoryCandidate || "FOKUS BELAJAR").toUpperCase().slice(0, 22),
-    sublabel: titleCandidate || "Portal Akademik Velqora",
+    sublabel: titleCandidate || "Workspace Belajar Velqora",
     bgClass: "bg-[#C2553A] dark:bg-[#A34530]",
     textClass: "text-[#FFFBF8]",
     borderClass: "border-[#C2553A]/35",

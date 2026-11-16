@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://velqora.app"),
   title: "Velqora — Modern Platform for Progressive Learning",
   description:
-    "Platform digital modern untuk penyimpanan dan pengelolaan modul pembelajaran, tugas, ruang kelas, dan dokumen perkuliahan berbasis AI.",
+    "Platform pembelajaran digital modern untuk mengelola modul AI, materi belajar, catatan interaktif, latihan terstruktur, dan proyek coding.",
   applicationName: "Velqora",
   authors: [{ name: "JOBLIB505 FORUM GROUP" }],
   generator: "Next.js",
@@ -58,8 +58,8 @@ export const metadata: Metadata = {
     "Velqora",
     "Learning Platform",
     "Modul Belajar",
-    "Manajemen Kuliah",
-    "Tugas Kuliah",
+    "Kurikulum AI",
+    "Praktik Coding",
     "AI Tutor",
     "Education Platform",
   ],
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Velqora — Modern Platform for Progressive Learning",
     description:
-      "Platform digital modern untuk penyimpanan dan pengelolaan modul pembelajaran, tugas, ruang kelas, dan dokumen perkuliahan berbasis AI.",
+      "Platform pembelajaran digital modern untuk mengelola modul AI, materi belajar, catatan interaktif, latihan terstruktur, dan proyek coding.",
     siteName: "Velqora",
     images: [
       {
@@ -94,7 +94,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Velqora — Modern Platform for Progressive Learning",
     description:
-      "Platform digital modern untuk penyimpanan dan pengelolaan modul pembelajaran, tugas, dan perkuliahan berbasis AI.",
+      "Platform pembelajaran digital modern untuk mengelola modul AI, materi belajar, catatan interaktif, latihan terstruktur, dan proyek coding.",
     images: ["/logo-banner.png"],
   },
   robots: {

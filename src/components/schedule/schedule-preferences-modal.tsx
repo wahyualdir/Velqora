@@ -222,7 +222,7 @@ export function SchedulePreferencesModal({
         {/* Safety Note */}
         <div className="flex items-center gap-2 p-2.5 rounded-lg bg-surface-secondary/40 border border-border/50 text-[11px] text-text-tertiary">
           <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-          <span>Batas belajar maksimal 4 jam/hari dan proteksi anti-bentrok kuliah tetap diprioritaskan.</span>
+          <span>Batas belajar maksimal 4 jam/hari dan proteksi anti-bentrok jadwal tetap diprioritaskan.</span>
         </div>
 
         {/* Footer */}

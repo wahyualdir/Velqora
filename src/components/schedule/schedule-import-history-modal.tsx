@@ -24,12 +24,12 @@ export function ScheduleImportHistoryModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Riwayat Import Jadwal Akademik"
+      title="Riwayat Impor Jadwal"
       className="max-w-2xl"
     >
       <div className="space-y-4">
         <p className="text-xs text-text-secondary">
-          Daftar dokumen akademik yang telah diproses dan disimpan ke jadwal Anda. Isi dokumen asli tidak disimpan untuk menjaga privasi akademik Anda.
+          Daftar dokumen jadwal yang telah diproses dan disimpan ke workspace Anda. Isi dokumen asli tidak disimpan untuk menjaga privasi Anda.
         </p>
 
         {historyItems.length === 0 ? (

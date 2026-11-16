@@ -73,9 +73,9 @@ export function QuizSetupForm({
     <div className="space-y-6 max-w-4xl">
       {/* 1. Preset Topics */}
       <div className="space-y-2.5">
-        <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary flex items-center gap-1.5">
+        <label className="text-xs font-semibold font-sans text-text-secondary flex items-center gap-1.5">
           <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-          <span>Pilih Topik Akademik Populer</span>
+          <span>Pilih Topik Populer</span>
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">

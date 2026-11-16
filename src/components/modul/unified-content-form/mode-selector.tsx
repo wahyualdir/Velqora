@@ -43,9 +43,9 @@ export function ModeSelector({ kind, onChangeKind, disabled = false }: ModeSelec
             <BookOpen className="w-4 h-4" />
           </div>
           <div className="space-y-0.5 min-w-0">
-            <div className="text-xs sm:text-sm font-bold text-text-primary">Modul Perkuliahan</div>
+            <div className="text-xs sm:text-sm font-bold text-text-primary">Modul Pembelajaran</div>
             <div className="text-[11px] text-text-secondary leading-snug">
-              Bahan ajar akademik, silabus bab, teori, catatan, dan referensi perkuliahan.
+              Materi terstruktur, silabus bab, teori, catatan, dan contoh terapan.
             </div>
           </div>
         </button>

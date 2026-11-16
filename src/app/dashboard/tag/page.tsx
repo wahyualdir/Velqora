@@ -12,17 +12,17 @@ import { SubNavTabs } from "@/components/layout/sub-nav-tabs";
 import { getTags, createTag, deleteTag } from "@/actions/study-actions";
 import { toast } from "sonner";
 
-const POPULAR_ACADEMIC_TAGS = [
+const POPULAR_TOPIC_TAGS = [
   "python",
   "machine-learning",
+  "deep-learning",
   "web-dev",
   "react",
   "database-sql",
   "algoritma",
-  "tugas-akhir",
-  "uas-semester",
-  "uts",
-  "skripsi",
+  "proyek-ai",
+  "latihan-mandiri",
+  "catatan-penting",
   "data-science",
   "cyber-security",
 ];
@@ -120,7 +120,7 @@ export default function TagPage() {
             <div className="flex-1 w-full">
               <Input
                 label="Nama Label / Tag Baru"
-                placeholder="Contoh: machine-learning, uas-2026, deep-learning"
+                placeholder="Contoh: machine-learning, proyek-ai, deep-learning"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -138,10 +138,10 @@ export default function TagPage() {
           {/* Quick Presets */}
           <div className="space-y-2 pt-3 border-t border-border">
             <span className="text-xs font-medium text-text-secondary flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-brand-400" /> Rekomendasi Tag Akademik Cepat:
+              <Sparkles className="w-3.5 h-3.5 text-brand-400" /> Rekomendasi Tag Topik Populer:
             </span>
             <div className="flex flex-wrap gap-1.5">
-              {POPULAR_ACADEMIC_TAGS.map((pt) => {
+              {POPULAR_TOPIC_TAGS.map((pt) => {
                 const alreadyExists = tags.some((t) => t.name.toLowerCase() === pt.toLowerCase());
                 return (
                   <button

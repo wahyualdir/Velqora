@@ -49,7 +49,7 @@ export function NotepadManifesto() {
           {/* Left Column: Manifesto Prose Balanced with Grounded Specs */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             <div className="space-y-4">
-              <EditorialEyebrow index="01" label="Pendekatan Akademik" />
+              <EditorialEyebrow index="01" label="Pendekatan Pembelajaran" />
 
               <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#1C1917] dark:text-[#F5F5F4] tracking-tight leading-snug">
                 Menguasai AI &amp; Sains Data bukan sekadar memanggil API hitam.

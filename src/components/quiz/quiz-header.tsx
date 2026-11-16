@@ -15,7 +15,7 @@ export function QuizHeader({ quizState, onReset }: QuizHeaderProps) {
     <PageHeader
       eyebrow="Evaluasi Pemahaman"
       title="Kuis AI"
-      description="Uji pemahaman akademik dan retensi materi melalui kuis interaktif yang dihasilkan secara terstruktur oleh AI."
+      description="Uji pemahaman materi dan latihan konsep melalui kuis interaktif yang disusun secara terstruktur oleh AI."
       actions={
         quizState !== "setup" ? (
           <Button

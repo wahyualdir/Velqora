@@ -157,13 +157,13 @@ export function MobileTaskList({
             {/* Task Info Summary */}
             <div className="p-3 rounded-xl bg-surface-secondary/50 border border-border/80 space-y-2 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-text-tertiary">Mata Kuliah</span>
+                <span className="text-text-tertiary">Topik / Modul</span>
                 <span className="font-semibold text-text-primary">
                   {selectedTask.subject || "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-text-tertiary">Dosen Pengampu</span>
+                <span className="text-text-tertiary">Mentor / Sumber</span>
                 <span className="text-text-secondary">
                   {selectedTask.lecturer || "—"}
                 </span>

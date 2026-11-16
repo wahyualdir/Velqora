@@ -22,9 +22,9 @@ export function AITutorHeader({
 }: AITutorHeaderProps) {
   return (
     <PageHeader
-      eyebrow="Asisten Akademik"
+      eyebrow="Asisten Belajar AI"
       title="AI Tutor"
-      description="Konsultasi materi, analisis kode, dan pemahaman konsep akademik berbantuan kecerdasan buatan."
+      description="Konsultasi materi, analisis kode, dan pemahaman konsep AI & pemrograman berbantuan kecerdasan buatan."
       actions={
         <>
           <Button

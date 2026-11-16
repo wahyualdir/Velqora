@@ -43,14 +43,14 @@ export function LearningPreferences() {
           Preferensi Belajar
         </h2>
         <p className="text-xs text-text-secondary leading-relaxed">
-          Atur bahasa workspace, format tampilan konten modul, dan efek interaksi perkuliahan.
+          Atur bahasa workspace, format tampilan konten modul, dan kenyamanan antarmuka belajar.
         </p>
       </div>
 
       {/* Setting Row 1: Workspace Language */}
       <div className="space-y-2">
         <div className="space-y-0.5">
-          <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-primary flex items-center gap-1.5">
+          <label className="text-xs font-semibold font-sans text-text-primary flex items-center gap-1.5">
             <Globe className="w-3.5 h-3.5" />
             Bahasa Antarmuka
           </label>

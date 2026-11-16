@@ -22,9 +22,9 @@ export function AcademicHealthCard({ health, healthTrend }: AcademicHealthCardPr
     return (
       <div className="p-6 rounded-2xl border border-border bg-surface text-center space-y-2">
         <Activity className="w-8 h-8 mx-auto text-text-muted" />
-        <h3 className="text-sm font-semibold text-text-primary">Belum Ada Data Kesehatan Akademik</h3>
+        <h3 className="text-sm font-semibold text-text-primary">Belum Ada Data Keseimbangan Belajar</h3>
         <p className="text-xs text-text-tertiary max-w-sm mx-auto">
-          Tambahkan jadwal kuliah dan tugas untuk mengaktifkan perhitungan kesehatan akademik otomatis.
+          Tambahkan jadwal sesi dan tugas belajar untuk mengaktifkan analisis keseimbangan otomatis.
         </p>
       </div>
     );
@@ -44,7 +44,7 @@ export function AcademicHealthCard({ health, healthTrend }: AcademicHealthCardPr
         <div>
           <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
             <Activity className="w-4 h-4 text-brand-500" />
-            <span>Kesehatan Akademik & Tren Keseimbangan</span>
+            <span>Skor Keseimbangan &amp; Ritme Belajar</span>
           </h3>
           <p className="text-xs text-text-tertiary">
             Evaluasi kuantitatif terhadap ritme belajar, alokasi istirahat, dan pencegahan kejenuhan.

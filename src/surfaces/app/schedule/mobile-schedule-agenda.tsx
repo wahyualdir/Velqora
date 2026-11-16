@@ -73,10 +73,10 @@ export function MobileScheduleAgenda({
             <Calendar className="w-5 h-5" />
           </div>
           <h3 className="text-sm font-bold text-text-primary">
-            Belum ada jadwal perkuliahan
+            Belum ada jadwal belajar
           </h3>
           <p className="text-xs text-text-secondary max-w-xs mx-auto">
-            Tambahkan jadwal mata kuliah atau sesi belajar mandiri Anda.
+            Tambahkan jadwal topik fokus atau sesi belajar mandiri Anda.
           </p>
           <Button size="sm" onClick={onAdd} className="text-xs gap-1.5 rounded-lg">
             <Plus className="w-3.5 h-3.5" />
@@ -189,7 +189,7 @@ export function MobileScheduleAgenda({
 
               {selectedItem.lecturer && (
                 <div className="flex items-center justify-between">
-                  <span className="text-text-tertiary">Dosen Pengampu</span>
+                  <span className="text-text-tertiary">Mentor / Instruktur</span>
                   <span className="text-text-secondary">
                     {selectedItem.lecturer}
                   </span>
@@ -199,7 +199,7 @@ export function MobileScheduleAgenda({
               {selectedItem.subject && (
                 <div className="pt-2 border-t border-border/60">
                   <p className="text-[11px] text-text-secondary leading-relaxed">
-                    Mata Kuliah: {selectedItem.subject}
+                    Topik / Modul: {selectedItem.subject}
                   </p>
                 </div>
               )}

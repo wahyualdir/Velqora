@@ -156,7 +156,7 @@ export function SessionOutcomeForm({
               >
                 <option value="">Pilih Alasan</option>
                 <option value="Kelelahan / Perlu Istirahat">Kelelahan / Perlu Istirahat</option>
-                <option value="Ada Agenda Kuliah Pengganti">Ada Agenda Kuliah Pengganti</option>
+                <option value="Ada Agenda Pengganti">Ada Agenda Pengganti</option>
                 <option value="Tugas Sudah Selesai Lebih Awal">Tugas Sudah Selesai Lebih Awal</option>
                 <option value="Lainnya">Lainnya</option>
               </select>

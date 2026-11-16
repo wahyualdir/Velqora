@@ -15,9 +15,9 @@ import {
 import { getLandingCurriculumData } from "@/actions/study/landing";
 
 export const metadata: Metadata = {
-  title: "Velqora — Platform Pembelajaran & Computational Notebook Akademik",
+  title: "Velqora — Platform Pembelajaran & Computational Notebook Interaktif",
   description:
-    "Workspace perkuliahan modern dan computational notebook akademik untuk Kecerdasan Buatan, Machine Learning, Sains Data, dan Rekayasa Sistem berbasis rujukan primer ber-DOI.",
+    "Workspace pembelajaran modern dan computational notebook interaktif untuk Kecerdasan Buatan, Machine Learning, Sains Data, dan Rekayasa Sistem.",
   keywords: [
     "Velqora",
     "Learning Platform",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "Deep Learning",
     "Python 3.12",
     "LaTeX KaTeX",
-    "Kurikulum Akademik",
+    "Kurikulum AI & Data",
   ],
 };
 

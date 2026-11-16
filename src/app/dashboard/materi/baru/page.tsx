@@ -150,7 +150,7 @@ export default function TambahMateriPage() {
               Tambah Materi Baru
             </h1>
             <p className="text-xs sm:text-sm text-text-secondary">
-              Simpan slide materi, dokumen PDF, berkas kode, atau catatan perkuliahan ke workspace Anda.
+              Simpan slide materi, dokumen PDF, berkas kode, atau catatan belajar ke workspace Anda.
             </p>
           </div>
         </div>
@@ -161,18 +161,18 @@ export default function TambahMateriPage() {
         {/* SECTION 1: INFORMASI MATERI */}
         <section className="p-4 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-4">
           <div className="border-b border-border/70 pb-3">
-            <h2 className="text-sm font-bold text-text-primary tracking-tight uppercase font-mono">
+            <h2 className="text-sm font-semibold text-text-primary tracking-tight font-sans">
               1. Informasi Materi
             </h2>
             <p className="text-xs text-text-secondary">
-              Tentukan judul, mata kuliah, dan klasifikasi dokumen.
+              Tentukan judul, topik terkait, dan klasifikasi dokumen.
             </p>
           </div>
 
           <div className="space-y-4">
             <Input
               label="Judul Materi *"
-              placeholder="Contoh: Pertemuan 1 - Pengenalan Algoritma & Struktur Data"
+              placeholder="Contoh: Bagian 1 - Pengenalan Algoritma & Struktur Data"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -180,7 +180,7 @@ export default function TambahMateriPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Mata Kuliah / Topik"
+                label="Topik / Subjek"
                 placeholder="Contoh: Algoritma & Pemrograman"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
@@ -242,7 +242,7 @@ export default function TambahMateriPage() {
 
             <Textarea
               label="Catatan Lengkap / Teks Materi"
-              placeholder="Tuliskan rumus, kode referensi, poin penting, atau rangkuman materi kuliah..."
+              placeholder="Tuliskan rumus, kode referensi, poin penting, atau rangkuman materi belajar..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={6}

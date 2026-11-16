@@ -185,7 +185,7 @@ export function SessionFeedbackModal({
               className="w-full text-xs px-3 py-2 rounded-xl border border-border bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="">-- Pilih Alasan (Opsional) --</option>
-              <option value="KULIAH_BERUBAH">Jadwal Kuliah Berubah</option>
+              <option value="KULIAH_BERUBAH">Jadwal Agenda Berubah</option>
               <option value="TERLALU_PADAT">Hari Terlalu Padat</option>
               <option value="TIDAK_SEMPAT">Tidak Sempat</option>
               <option value="KELELAHAN">Kelelahan / Perlu Istirahat</option>

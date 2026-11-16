@@ -36,7 +36,7 @@ export function CurriculumSectionManager({
           </div>
           <div>
             <h3 className="text-xs sm:text-sm font-bold text-text-primary">
-              {isProject ? "Struktur & Milestone Proyek" : "Silabus Bab Perkuliahan"}
+              {isProject ? "Struktur & Milestone Proyek" : "Silabus & Daftar Bab Modul"}
             </h3>
             <p className="text-[11px] text-text-secondary">
               {isProject

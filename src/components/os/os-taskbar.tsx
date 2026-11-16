@@ -20,7 +20,7 @@ export function OSTaskbar() {
           <div className="space-y-2 max-w-md">
             <Logo variant="navbar" size="md" />
             <p className="text-sm text-[#57534E] dark:text-[#A8A29E] leading-relaxed">
-              Workspace pembelajaran akademik dan computational notebook untuk
+              Platform pembelajaran dan computational notebook interaktif untuk
               menguasai AI, Machine Learning, dan Sains Data berbasis rujukan
               primer.
             </p>

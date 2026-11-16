@@ -45,7 +45,7 @@ const TOOL_TABS: SubNavTabItem[] = [
 
 const TASK_TABS: SubNavTabItem[] = [
   { label: "Daftar Tugas", href: "/dashboard/tugas", icon: CheckSquare },
-  { label: "Jadwal Perkuliahan", href: "/dashboard/jadwal", icon: Calendar },
+  { label: "Jadwal Belajar", href: "/dashboard/jadwal", icon: Calendar },
 ];
 
 const SETTINGS_TABS: SubNavTabItem[] = [

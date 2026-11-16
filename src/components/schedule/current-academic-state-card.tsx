@@ -59,11 +59,11 @@ export function CurrentAcademicStateCard({
     <Card padding="md" className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
         <div>
-          <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
-            Kondisi Akademik Saat Ini
+          <h2 className="text-sm font-semibold text-text-primary font-sans">
+            Status Belajar Saat Ini
           </h2>
           <p className="text-xs text-text-tertiary">
-            Ringkasan kesehatan jadwal, beban harian, risiko batas waktu, dan integritas kalender.
+            Ringkasan keteraturan jadwal, beban harian, risiko batas waktu, dan integritas kalender.
           </p>
         </div>
 

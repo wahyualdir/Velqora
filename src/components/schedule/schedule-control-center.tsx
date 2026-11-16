@@ -107,7 +107,7 @@ export function ScheduleControlCenter({
             )}
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {health?.summary || "Memantau distribusi beban dan keselamatan akademik secara deterministik."}
+            {health?.summary || "Memantau distribusi beban dan keseimbangan jadwal belajar secara deterministik."}
           </p>
         </div>
 
@@ -182,7 +182,7 @@ export function ScheduleControlCenter({
         <div className="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800 space-y-2">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
             <AlertTriangle className="w-3.5 h-3.5" />
-            Perlu Perhatian Akademik ({warnings.length})
+            Perlu Perhatian ({warnings.length})
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {warnings.map((w, idx) => (

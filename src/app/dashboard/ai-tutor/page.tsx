@@ -461,7 +461,7 @@ function AITutorContent() {
                       Mulai Sesi Belajar
                     </h3>
                     <p className="text-xs text-text-secondary leading-relaxed">
-                      Tanyakan konsep teori, minta tinjauan kode, atau gunakan modul pembelajaran Anda sebagai konteks konsultasi akademik.
+                      Tanyakan konsep teori, minta tinjauan kode, atau gunakan modul pembelajaran Anda sebagai konteks diskusi.
                     </p>
                   </div>
                 </div>
@@ -480,7 +480,7 @@ function AITutorContent() {
               {isTyping && (
                 <div className="flex items-center gap-2 p-3 rounded-xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface-secondary text-xs text-text-secondary w-fit font-sans animate-pulse">
                   <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                  <span>AI Tutor sedang menyusun jawaban akademik...</span>
+                  <span>AI Tutor sedang menyusun penjelasan...</span>
                 </div>
               )}
 

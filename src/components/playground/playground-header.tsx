@@ -26,7 +26,7 @@ export function PlaygroundHeader({
     <PageHeader
       eyebrow="Ruang Praktik"
       title="Ruang Praktik Kode"
-      description="Lingkungan eksekusi kode interaktif di browser untuk menguji algoritma, fungsi, dan latihan praktikum akademik."
+      description="Lingkungan eksekusi kode interaktif di browser untuk menguji algoritma, fungsi, dan latihan pemrograman."
       actions={
         <>
           <Button

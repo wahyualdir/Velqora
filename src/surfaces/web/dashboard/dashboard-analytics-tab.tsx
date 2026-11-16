@@ -141,7 +141,7 @@ export function DashboardAnalyticsTab() {
       return "Konsistensi belajar harian 30–45 menit lebih efektif untuk retensi materi dibanding sesi maraton panjang.";
     }
     if (taskCompletionRate === 100 && totalTugas > 0) {
-      return "Seluruh tugas akademik telah terselesaikan. Anda dapat fokus mendalami materi dan modul berikutnya.";
+      return "Seluruh tugas belajar telah terselesaikan. Anda dapat fokus mendalami materi dan modul berikutnya.";
     }
     return "Pertahankan ritme belajar harian untuk menjaga pemahaman konsep dan kontinuitas materi.";
   };

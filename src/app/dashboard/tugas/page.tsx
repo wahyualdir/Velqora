@@ -290,7 +290,7 @@ function TugasContent() {
           <EmptyState
             icon={<ClipboardList className="w-8 h-8" />}
             title="Belum ada tugas"
-            description="Tambahkan tugas perkuliahan atau proyek pertama Anda untuk mulai memantau batas waktu pengerjaan."
+            description="Tambahkan tugas belajar atau latihan proyek pertama Anda untuk memantau tenggat pengerjaan."
             action={
               <Link href="/dashboard/tugas/baru">
                 <Button size="sm" className="gap-1.5 text-xs font-semibold">

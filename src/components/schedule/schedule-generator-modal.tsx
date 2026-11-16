@@ -96,7 +96,7 @@ export function ScheduleGeneratorModal({
     try {
       const payload: AutoScheduleGoalRequest = {
         goalTitle: goalTitle.trim(),
-        subject: subject.trim() || "Fokus Akademik",
+        subject: subject.trim() || "Fokus Belajar",
         durationMinutes,
         targetSessionsPerWeek: targetSessions,
         targetTotalHours: targetTotalHours ? Number(targetTotalHours) : undefined,
@@ -201,7 +201,7 @@ export function ScheduleGeneratorModal({
         <form onSubmit={handleGenerate} className="space-y-4">
           <div className="space-y-1">
             <p className="text-xs text-text-secondary leading-relaxed">
-              Mesin penjadwalan Velqora menganalisis ketersediaan waktu luang Anda, menghindari bentrok perkuliahan & tenggat tugas, membatasi beban harian secara proporsional, dan menyusun slot belajar optimal.
+              Mesin penjadwalan Velqora menganalisis ketersediaan waktu luang Anda, menghindari bentrok agenda &amp; tenggat latihan, membatasi beban harian secara proporsional, dan menyusun slot belajar optimal.
             </p>
           </div>
 
@@ -215,7 +215,7 @@ export function ScheduleGeneratorModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              label="Mata Kuliah / Topik Terkait"
+              label="Topik / Modul Terkait"
               placeholder="Contoh: Kecerdasan Buatan"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
@@ -228,7 +228,7 @@ export function ScheduleGeneratorModal({
               options={[
                 { value: "45", label: "45 Menit (Fokus Ringkas)" },
                 { value: "60", label: "60 Menit (1 Jam)" },
-                { value: "90", label: "90 Menit (Standar Akademik)" },
+                { value: "90", label: "90 Menit (Deep Focus)" },
                 { value: "120", label: "120 Menit (2 Jam Intensif)" },
                 { value: "180", label: "180 Menit (3 Jam)" },
               ]}

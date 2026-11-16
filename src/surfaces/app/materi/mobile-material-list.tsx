@@ -187,7 +187,7 @@ export function MobileMaterialList({
               </div>
               {selectedMaterial.subject && (
                 <div className="flex items-center justify-between">
-                  <span className="text-text-tertiary">Mata Kuliah</span>
+                  <span className="text-text-tertiary">Topik / Modul</span>
                   <span className="text-text-secondary">
                     {selectedMaterial.subject}
                   </span>

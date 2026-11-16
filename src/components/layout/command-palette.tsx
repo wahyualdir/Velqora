@@ -131,7 +131,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       {
         id: "nav-materi",
         title: "Materi Pembelajaran",
-        subtitle: "Daftar materi kuliah, modul, dan dokumen pembelajaran",
+        subtitle: "Daftar materi belajar, modul, dan referensi",
         category: "Navigasi",
         icon: BookOpen,
         action: () => navigateTo("/dashboard/materi"),
@@ -288,7 +288,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       {
         id: "act-new-task",
         title: "Tambah Tugas Baru",
-        subtitle: "Catat deadline dan prioritas tugas akademik baru",
+        subtitle: "Catat target, prioritas, dan tenggat latihan baru",
         category: "Aksi Cepat",
         icon: Plus,
         action: () => navigateTo("/dashboard/tugas/baru"),

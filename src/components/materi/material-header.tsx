@@ -13,9 +13,9 @@ interface MaterialHeaderProps {
 export function MaterialHeader({ totalCount: _totalCount }: MaterialHeaderProps) {
   return (
     <PageHeader
-      eyebrow="Bahan Ajar & Dokumen"
+      eyebrow="Bahan Belajar & Referensi"
       title="Materi Pembelajaran"
-      description="Temukan, unggah, dan kelola seluruh bahan materi perkuliahan dan dokumen studi dalam satu ruang kerja terstruktur."
+      description="Temukan, unggah, dan kelola seluruh materi belajar dan dokumentasi studi Anda dalam satu workspace."
       actions={
         <Link href="/dashboard/materi/baru">
           <Button size="sm" className="gap-1.5 text-xs font-semibold cursor-pointer">

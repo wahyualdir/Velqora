@@ -16,9 +16,9 @@ export interface RetroLoadingDialogProps {
 
 const DEFAULT_STAGES = [
   { at: 0, text: "Memverifikasi kredensial akun..." },
-  { at: 25, text: "Menginisialisasi sesi akademik 256-bit..." },
-  { at: 55, text: "Sinkronisasi repositori modul & kuis..." },
-  { at: 80, text: "Menyiapkan workspace Velqora..." },
+  { at: 25, text: "Menyiapkan sesi workspace..." },
+  { at: 55, text: "Sinkronisasi modul belajar & catatan..." },
+  { at: 80, text: "Menyiapkan ruang kerja Velqora..." },
   { at: 96, text: "Sesi siap. Mengalihkan ke dashboard..." },
 ];
 

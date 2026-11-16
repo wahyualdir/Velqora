@@ -69,16 +69,16 @@ export function ClassroomSyncModal({
               Sinkronkan Tugas & Deadline
             </h4>
             <p className="text-xs text-text-secondary">
-              Impor tugas perkuliahan langsung dari Google Classroom ke Velqora.
+              Impor daftar latihan dan tenggat dari Google Classroom ke Velqora.
             </p>
           </div>
         </div>
 
         <form onSubmit={handleConnect} className="space-y-3.5">
           <Input
-            label="Email Google Suite / Kampus *"
+            label="Email Google Workspace *"
             type="email"
-            placeholder="mahasiswa@student.ac.id"
+            placeholder="nama@email.com"
             value={connectEmail}
             onChange={(e) => setConnectEmail(e.target.value)}
             required

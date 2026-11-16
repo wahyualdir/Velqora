@@ -11,21 +11,21 @@ import {
   resolveActiveTopicEmblem,
 } from "@/surfaces/web/dashboard/dashboard-utils";
 
-describe("FASE 44: Academic Portal Dashboard Redesign & Integration Suite", () => {
-  describe("Group A: Academic Period & Schedule Time Helpers", () => {
-    it("Resolves Ganjil semester for July-December dates", () => {
+describe("FASE 44: Learning Workspace Dashboard Redesign & Integration Suite", () => {
+  describe("Group A: Workspace Date & Schedule Time Helpers", () => {
+    it("Formats November date cleanly without college semester labels", () => {
       const novDate = new Date(2026, 10, 15, 10, 0, 0);
       const info = getCurrentAcademicPeriod(novDate);
-      assert.equal(info.badgeText, "TA 2026/2027 GANJIL");
-      assert.equal(info.semesterLabel, "Semester Ganjil 2026/2027");
-      assert.equal(info.shortPeriod, "Ganjil 2026/2027");
+      assert.equal(info.badgeText, "Kurikulum AI & Data");
+      assert.equal(info.semesterLabel, "Minggu, 15 November 2026");
+      assert.equal(info.shortPeriod, "Minggu, 15 Nov");
     });
 
-    it("Resolves Genap semester for January-June dates", () => {
+    it("Formats February date cleanly without college semester labels", () => {
       const febDate = new Date(2027, 1, 10, 10, 0, 0);
       const info = getCurrentAcademicPeriod(febDate);
-      assert.equal(info.badgeText, "TA 2026/2027 GENAP");
-      assert.equal(info.semesterLabel, "Semester Genap 2026/2027");
+      assert.equal(info.badgeText, "Kurikulum AI & Data");
+      assert.equal(info.semesterLabel, "Rabu, 10 Februari 2027");
     });
 
     it("Maps weekdays cleanly to Indonesian day names", () => {

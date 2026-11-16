@@ -18,9 +18,9 @@ export function TaskHeader({
 }: TaskHeaderProps) {
   return (
     <PageHeader
-      eyebrow="Tugas & Pekerjaan"
+      eyebrow="Tugas & Latihan"
       title="Tugas"
-      description="Kelola tugas akademik, batas waktu pengumpulan, dan status penyelesaian tugas Anda secara terorganisir."
+      description="Kelola target latihan, tenggat waktu, dan progres penyelesaian belajar Anda secara terstruktur."
       actions={
         <>
           {onOpenClassroom && (

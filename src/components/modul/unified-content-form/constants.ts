@@ -42,7 +42,7 @@ export const PROJECT_TYPES = [
   { value: "Mobile App", label: "Aplikasi Mobile" },
   { value: "Desktop App", label: "Aplikasi Desktop" },
   { value: "Automation / Script", label: "Automasi & Scripting" },
-  { value: "Academic Research", label: "Riset & Eksperimen Akademik" },
+  { value: "Academic Research", label: "Riset & Eksperimen" },
   { value: "Other", label: "Lainnya" },
 ];
 

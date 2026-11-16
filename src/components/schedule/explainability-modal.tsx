@@ -19,7 +19,7 @@ const QUESTION_TITLES: Record<string, string> = {
   q1_whyThisTime: "1. Mengapa waktu dan hari ini yang dipilih?",
   q2_whatPrioritized: "2. Apa prioritas utama dalam keputusan ini?",
   q3_dataConsidered: "3. Data apa saja yang dipertimbangkan sistem?",
-  q4_conflictStatus: "4. Apakah ada bentrok dengan agenda kuliah lain?",
+  q4_conflictStatus: "4. Apakah ada bentrok dengan agenda lain?",
   q5_workloadAfter: "5. Bagaimana dampak terhadap beban harian?",
   q6_sessionDuration: "6. Mengapa durasi sesi ini yang dipilih?",
   q7_userPreferenceUsed: "7. Bagaimana preferensi belajar Anda digunakan?",

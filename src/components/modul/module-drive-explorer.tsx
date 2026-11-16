@@ -192,7 +192,7 @@ export function ModuleDriveExplorer({
     // Academic safety check for folder name
     const nameCheck = validateAcademicText(newFolderName);
     if (!nameCheck.isValid) {
-      toast.error(nameCheck.reason || "Nama folder tidak sesuai dengan standar bahan ajar akademik");
+      toast.error(nameCheck.reason || "Nama folder tidak sesuai dengan standar materi belajar");
       return;
     }
 
@@ -306,7 +306,7 @@ export function ModuleDriveExplorer({
         if (!check.isValid) {
           toast.error(
             check.reason ||
-              `Berkas "${currentUploadFile.name}" terdeteksi tidak sesuai dengan bahan ajar akademik.`
+              `Berkas "${currentUploadFile.name}" terdeteksi tidak sesuai dengan standar materi belajar.`
           );
           continue;
         }

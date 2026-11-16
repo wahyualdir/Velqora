@@ -80,7 +80,7 @@ export function RunDialogCTA({ stats }: RunDialogCTAProps) {
               </h2>
 
               <p className="text-sm sm:text-base text-[#A8A29E] leading-relaxed">
-                Akses kurikulum akademik {totalDisciplines} disiplin keilmuan, uji
+                Akses kurikulum {totalDisciplines} topik pembelajaran, uji
                 pemahaman lewat computational notebook Python 3.12 terverifikasi,
                 dan kuasai AI, Machine Learning, hingga Sains Data bersama Velqora.
               </p>

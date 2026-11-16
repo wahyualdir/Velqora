@@ -38,7 +38,7 @@ export function TaskToolbar({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Cari tugas, mata kuliah, atau dosen..."
+          placeholder="Cari tugas, topik, atau instruktur..."
           className="w-full pl-10 pr-9 py-2 min-h-[40px] rounded-xl border border-border bg-surface-secondary/70 text-xs sm:text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-brand-500 transition-colors font-medium"
         />
         {search && (

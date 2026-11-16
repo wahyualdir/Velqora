@@ -90,12 +90,12 @@ export function EditTaskModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
-            label="Mata Kuliah"
+            label="Topik / Modul"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
           <Input
-            label="Dosen Pengampu"
+            label="Mentor / Sumber"
             value={lecturer}
             onChange={(e) => setLecturer(e.target.value)}
           />

@@ -408,7 +408,7 @@ export function UnifiedContentForm({
     if (!contentValidation.isValid) {
       toast.error(
         contentValidation.reason ||
-          "Konten atau judul terdeteksi tidak sesuai dengan bahan ajar akademik."
+          "Konten atau judul terdeteksi tidak sesuai dengan standar materi belajar."
       );
       return;
     }

@@ -196,7 +196,7 @@ export function ModuleInteractionBar({
     // Academic safety check
     const check = validateAcademicText(trimmed);
     if (!check.isValid) {
-      toast.error(check.reason || "Komentar terdeteksi tidak sesuai dengan etika akademik.");
+      toast.error(check.reason || "Komentar terdeteksi tidak sesuai dengan pedoman komunitas belajar.");
       return;
     }
 

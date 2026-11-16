@@ -127,7 +127,7 @@ export function ScheduleImportModal({
       }
 
       if (result.classification && !result.classification.isSchedule) {
-        setErrorMessage(`Dokumen ini belum dapat dikenali sebagai jadwal akademik: ${result.classification.reason}`);
+        setErrorMessage(`Dokumen ini belum dapat dikenali sebagai jadwal belajar: ${result.classification.reason}`);
         setStep("upload");
         return;
       }
@@ -223,7 +223,7 @@ export function ScheduleImportModal({
   // Save inline edit with immediate full revalidation
   const handleSaveEdit = (id: string) => {
     if (!editForm.title || !editForm.title.trim()) {
-      toast.error("Nama agenda / mata kuliah tidak boleh kosong.");
+      toast.error("Nama agenda / topik tidak boleh kosong.");
       return;
     }
 
@@ -527,11 +527,11 @@ export function ScheduleImportModal({
                   <RefreshCw className="w-4 h-4 animate-spin" />
                   <span>
                     {step === "uploading" && "Membaca berkas dokumen..."}
-                    {step === "extracting" && "Mengekstrak dan menstrukturkan jadwal akademik..."}
+                    {step === "extracting" && "Mengekstrak dan menyusun jadwal..."}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground pl-7">
-                  Mesin menganalisis tabel, mendeteksi jam, ruang, dosen, dan memeriksa potensi bentrok waktu.
+                  Mesin menganalisis tabel, mendeteksi jam, tempat, instruktur, dan memeriksa potensi bentrok waktu.
                 </p>
               </div>
             )}
@@ -688,24 +688,24 @@ export function ScheduleImportModal({
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="sm:col-span-2">
                             <label className="text-xs font-medium text-foreground block mb-1">
-                              Nama Mata Kuliah / Agenda *
+                              Nama Agenda / Sesi *
                             </label>
                             <Input
                               value={editForm.title || ""}
                               onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                              placeholder="contoh: Pemrograman Web"
+                              placeholder="contoh: Praktik Machine Learning"
                               className="text-sm"
                             />
                           </div>
 
                           <div>
                             <label className="text-xs font-medium text-foreground block mb-1">
-                              Kode MK (Opsional)
+                              Kode / Topik (Opsional)
                             </label>
                             <Input
                               value={editForm.subject || ""}
                               onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })}
-                              placeholder="contoh: IF3101"
+                              placeholder="contoh: ML-101"
                               className="text-sm"
                             />
                           </div>
@@ -765,12 +765,12 @@ export function ScheduleImportModal({
 
                           <div>
                             <label className="text-xs font-medium text-foreground block mb-1">
-                              Dosen Pengampu
+                              Mentor / Instruktur
                             </label>
                             <Input
                               value={editForm.instructor || ""}
                               onChange={(e) => setEditForm({ ...editForm, instructor: e.target.value })}
-                              placeholder="contoh: Dr. Budi Santoso, M.T."
+                              placeholder="contoh: Pembimbing / Mandiri"
                               className="text-sm"
                             />
                           </div>
@@ -1099,7 +1099,7 @@ export function ScheduleImportModal({
           <div className="space-y-4 p-4">
             <div className="p-3 rounded-xl bg-muted/40 border border-border/50 space-y-1.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Mata Kuliah:</span>
+                <span className="text-muted-foreground">Topik / Agenda:</span>
                 <span className="font-semibold text-foreground">{evidenceModalItem.title}</span>
               </div>
               <div className="flex justify-between">

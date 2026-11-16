@@ -142,7 +142,7 @@ export function DailyPlanModal({
           onClose();
         }
       }}
-      title="Susun Hari Saya (Daily Academic Plan)"
+      title="Susun Hari Saya (Rencana Belajar Harian)"
       className="max-w-2xl"
     >
       {/* ─── STEP 1: FORM WIZARD ─── */}
@@ -150,7 +150,7 @@ export function DailyPlanModal({
         <form onSubmit={handleGenerate} className="space-y-4">
           <div className="space-y-1">
             <p className="text-xs text-text-secondary leading-relaxed">
-              Pilih tanggal, target durasi, dan tugas prioritas. Mesin cerdas Velqora akan mencari slot waktu luang optimal, menghindari bentrok jadwal kuliah, dan membatasi beban harian Anda secara proporsional.
+              Pilih tanggal, target durasi, dan tugas prioritas. Mesin cerdas Velqora akan mencari slot waktu luang optimal, menghindari bentrok jadwal aktif, dan membatasi beban harian Anda secara proporsional.
             </p>
           </div>
 
@@ -275,7 +275,7 @@ export function DailyPlanModal({
                 : "Menyimpan sesi belajar ke database..."}
             </h3>
             <p className="text-xs text-text-secondary">
-              Memeriksa bentrok jadwal perkuliahan, jeda istirahat 30 menit, dan tenggat tugas.
+              Memeriksa bentrok jadwal aktif, jeda istirahat 30 menit, dan tenggat latihan.
             </p>
           </div>
         </div>

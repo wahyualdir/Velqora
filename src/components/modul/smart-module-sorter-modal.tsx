@@ -68,7 +68,7 @@ export function SmartModuleSorterModal({
     if (!check.isValid) {
       toast.error(
         check.reason ||
-          `Berkas "${file.name}" terdeteksi tidak sesuai dengan bahan ajar akademik.`
+          `Berkas "${file.name}" terdeteksi tidak sesuai dengan standar materi belajar.`
       );
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
@@ -114,7 +114,7 @@ export function SmartModuleSorterModal({
     if (!textCheck.isValid) {
       toast.error(
         textCheck.reason ||
-          "Konten terdeteksi tidak sesuai dengan standar bahan ajar akademik."
+          "Konten terdeteksi tidak sesuai dengan standar materi belajar."
       );
       return;
     }
@@ -143,7 +143,7 @@ export function SmartModuleSorterModal({
     if (!newChapterInput.trim()) return;
     const chCheck = validateAcademicText(newChapterInput.trim());
     if (!chCheck.isValid) {
-      toast.error(chCheck.reason || "Nama bab tidak sesuai dengan materi akademik.");
+      toast.error(chCheck.reason || "Nama bab tidak sesuai dengan standar materi belajar.");
       return;
     }
     setFinalChapters([...finalChapters, newChapterInput.trim()]);
@@ -164,7 +164,7 @@ export function SmartModuleSorterModal({
     if (!titleCheck.isValid) {
       toast.error(
         titleCheck.reason ||
-          "Judul atau deskripsi modul tidak sesuai dengan bahan ajar akademik."
+          "Judul atau deskripsi modul tidak sesuai dengan standar materi belajar."
       );
       return;
     }
@@ -332,7 +332,7 @@ export function SmartModuleSorterModal({
             </label>
             <Textarea
               rows={5}
-              placeholder="Tempelkan silabus, materi pertemuan, catatan kuliah, atau kode sumber modul di sini..."
+              placeholder="Tempelkan silabus, materi belajar, catatan, atau kode sumber modul di sini..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
               disabled={analyzing || saving}

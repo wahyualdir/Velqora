@@ -221,7 +221,7 @@ export async function getUserStudyStats() {
       {
         id: "first-tasks",
         title: "Penyelesai Tugas",
-        desc: "Selesaikan 5 tugas akademik tepat waktu",
+        desc: "Selesaikan 5 target belajar tepat waktu",
         unlocked: completedTugas >= 5,
         progress: Math.min(completedTugas, 5),
         max: 5,

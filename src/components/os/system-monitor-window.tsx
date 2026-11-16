@@ -163,7 +163,7 @@ export function SystemMonitorWindow({ stats }: SystemMonitorWindowProps) {
               <div className="flex flex-wrap items-center gap-2">
                 {[
                   "Jalur Belajar Terkurasi",
-                  "Diktat Akademik Formal",
+                  "Modul Pembelajaran Terstruktur",
                   "Bebas Data Sintetis",
                 ].map((tag) => (
                   <span

@@ -87,7 +87,7 @@ export function DeadlineIntelligenceCard({
                   </div>
                   {task.subject && (
                     <div className="text-xs text-text-tertiary">
-                      Mata Kuliah: <span className="font-medium text-text-secondary">{task.subject}</span>
+                      Topik: <span className="font-medium text-text-secondary">{task.subject}</span>
                     </div>
                   )}
                 </div>

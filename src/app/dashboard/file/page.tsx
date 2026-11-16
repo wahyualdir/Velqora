@@ -257,7 +257,7 @@ export default function FilePage() {
                 <p className="text-xs text-text-secondary leading-relaxed">
                   {hasActiveFilter
                     ? "Tidak ada berkas yang sesuai dengan kata kunci pencarian atau filter yang dipilih."
-                    : "Unggah berkas dokumen, kode program, atau gambar perkuliahan Anda untuk mulai mengelola berkas studi."}
+                    : "Unggah berkas dokumen, kode program, atau gambar referensi Anda untuk mulai mengelola berkas belajar."}
                 </p>
               </div>
               {hasActiveFilter && (

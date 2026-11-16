@@ -80,12 +80,12 @@ export function ScheduleFormModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={initialItem ? "Edit Agenda Akademik" : "Tambah Jadwal & Agenda"}
+      title={initialItem ? "Edit Agenda Belajar" : "Tambah Jadwal & Agenda"}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Nama Kegiatan / Sesi *"
-          placeholder="Contoh: Kuliah Teori & Praktikum"
+          placeholder="Contoh: Praktik Python & Machine Learning"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -93,8 +93,8 @@ export function ScheduleFormModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
-            label="Mata Kuliah / Topik"
-            placeholder="Contoh: Pemrograman Web Lanjut"
+            label="Topik / Modul"
+            placeholder="Contoh: Python Data Analytics"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
@@ -123,7 +123,7 @@ export function ScheduleFormModal({
             value={type}
             onChange={(e) => setType(e.target.value as any)}
             options={[
-              { value: "jadwal", label: "Jadwal Kuliah" },
+              { value: "jadwal", label: "Sesi Belajar" },
               { value: "reminder", label: "Pengingat" },
             ]}
           />

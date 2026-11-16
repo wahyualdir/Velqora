@@ -77,7 +77,7 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               {...reveal(0.18)}
               className="text-base sm:text-lg text-[#44403C] dark:text-[#A8A29E] leading-relaxed max-w-2xl"
             >
-              Workspace perkuliahan dan computational notebook akademik yang
+              Workspace pembelajaran interaktif dan computational notebook yang
               memadukan formulasi matematis formal, eksekusi Python 3.12, serta
               rujukan literatur primer ber-DOI.
             </motion.p>
@@ -131,8 +131,8 @@ export function OSHeroWindow({ stats }: OSHeroWindowProps) {
               },
               {
                 value: totalChapters,
-                label: "Bab Perkuliahan",
-                meta: "Diktat terstruktur",
+                label: "Bab Pembelajaran",
+                meta: "Modul terstruktur",
                 accentBg: "bg-[#44403C] dark:bg-[#E5C194]",
                 colorClass: "text-[#1C1917] dark:text-[#F5F5F4]",
                 formatLocale: true,

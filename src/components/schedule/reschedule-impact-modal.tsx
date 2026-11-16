@@ -107,7 +107,7 @@ export function RescheduleImpactModal({
 
         {/* Before vs After Card */}
         <div className="p-3.5 rounded-xl border border-border/80 bg-surface space-y-2">
-          <span className="text-xs font-bold text-text-primary">Perubahan Jam Kuliah:</span>
+          <span className="text-xs font-bold text-text-primary">Perubahan Jam Sesi:</span>
           <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-secondary/40 border border-border/50 text-xs">
             <div className="space-y-0.5">
               <span className="text-[10px] text-text-tertiary uppercase font-mono">Sebelumnya</span>

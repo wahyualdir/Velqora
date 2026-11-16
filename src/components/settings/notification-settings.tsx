@@ -57,7 +57,7 @@ export function NotificationSettings() {
                 Tugas & Tenggat Waktu
               </h3>
               <p className="text-xs text-text-secondary">
-                Pemberitahuan otomatis ketika tugas akademik mendekati batas waktu pengumpulan.
+                Pemberitahuan otomatis ketika target belajar atau latihan mendekati batas waktu.
               </p>
             </div>
           </div>

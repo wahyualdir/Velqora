@@ -114,13 +114,13 @@ const GUIDE_ITEMS: GuideItem[] = [
       },
     ],
     tips: "Sampaikan pertanyaan secara spesifik dengan menyertakan nomor bab modul untuk mempermudah diskusi.",
-    importantNote: "Seluruh kiriman dipindai oleh sistem penyaring etika akademik untuk menjaga ketertiban ruang belajar.",
+    importantNote: "Seluruh kiriman dipindai oleh sistem penyaring konten untuk menjaga kenyamanan ruang belajar.",
   },
   {
     id: "ai-auto-sort",
     category: "ai-tools",
     title: "3. Asisten AI & Pengorganisir Silabus",
-    subtitle: "Kecerdasan buatan untuk analisis bahan ajar, pembuatan ringkasan, dan penyusunan struktur bab perkuliahan.",
+    subtitle: "Kecerdasan buatan untuk analisis bahan belajar, pembuatan ringkasan, dan penyusunan struktur bab.",
     badge: "Kecerdasan Buatan",
     badgeColor: "bg-brand-500/10 text-brand-400 border-brand-500/25",
     icon: Cpu,
@@ -129,44 +129,44 @@ const GUIDE_ITEMS: GuideItem[] = [
     steps: [
       {
         title: "Penyortiran Otomatis Silabus",
-        desc: "Gunakan fitur Smart Auto-Sorter untuk membaca teks Rencana Pembelajaran Semester (RPS) dan menyusun struktur modul secara otomatis.",
+        desc: "Gunakan fitur Smart Auto-Sorter untuk membaca daftar topik atau silabus belajar dan menyusun struktur modul secara otomatis.",
       },
       {
         title: "AI Tutor Berbasis Pengetahuan Modul (RAG)",
-        desc: "Ajukan pertanyaan seputar materi perkuliahan pada menu AI Tutor. Asisten AI akan merujuk langsung ke catatan dan modul yang Anda miliki.",
+        desc: "Ajukan pertanyaan seputar materi pada menu AI Tutor. Asisten AI akan merujuk langsung ke catatan dan modul yang Anda miliki.",
       },
       {
-        title: "Pembuatan Kuis Akademik Mandiri",
+        title: "Pembuatan Kuis Mandiri AI",
         desc: "Akses menu Kuis AI untuk menghasilkan latihan soal pilihan ganda interaktif lengkap dengan pembahasan jawaban.",
       },
     ],
-    tips: "Unggah berkas tugas atau catatan kode Anda ke AI Tutor untuk mendapatkan analisis dan penjelasan baris per baris.",
+    tips: "Unggah berkas latihan atau potongan kode Anda ke AI Tutor untuk mendapatkan analisis dan penjelasan baris per baris.",
   },
   {
     id: "tugas-dan-kelas",
     category: "tugas-kelas",
-    title: "4. Manajemen Tugas, Ruang Kelas & Jadwal",
-    subtitle: "Pusat pelacakan tenggat waktu akademik, ruang kelas kuliah, dan integrasi tatap muka daring.",
+    title: "4. Manajemen Tugas & Jadwal Belajar",
+    subtitle: "Pusat pelacakan target belajar, tenggat latihan, dan agenda harian terstruktur.",
     badge: "Manajemen Waktu",
     badgeColor: "bg-brand-500/10 text-brand-400 border-brand-500/25",
     icon: ClipboardList,
-    actionUrl: "/dashboard/kelas",
-    actionLabel: "Kelola Kelas",
+    actionUrl: "/dashboard/jadwal",
+    actionLabel: "Kelola Jadwal",
     steps: [
       {
-        title: "Ruang Kelas Terintegrasi",
-        desc: "Tambahkan data mata kuliah, ruang perkuliahan, nama dosen pengampu, serta tautan konferensi Zoom atau Google Meet.",
+        title: "Penyusun Jadwal Cerdas",
+        desc: "Tambahkan sesi belajar, topik fokus, lokasi atau tautan pertemuan, serta estimasi durasi belajar Anda.",
       },
       {
         title: "Pelacakan Batas Waktu Tugas",
-        desc: "Catat penugasan akademik lengkap dengan tingkat prioritas, lampiran referensi, dan hitung mundur tanggal tenggat waktu.",
+        desc: "Catat target tugas dan latihan lengkap dengan tingkat prioritas, lampiran referensi, dan hitung mundur tanggal tenggat waktu.",
       },
       {
         title: "Kalender dan Pengingat",
-        desc: "Pantau agenda perkuliahan harian dan mingguan melalui tampilan kalender untuk menghindari keterlambatan penugasan.",
+        desc: "Pantau agenda belajar harian dan mingguan melalui tampilan kalender untuk menjaga ritme konsistensi Anda.",
       },
     ],
-    tips: "Hubungkan materi atau modul langsung ke ruang kelas agar anggota kelas dapat mengunduh materi kuliah dengan satu klik.",
+    tips: "Gunakan fitur Susun Hari Saya agar jadwal belajar disesuaikan otomatis dengan beban harian Anda.",
   },
   {
     id: "keamanan-filter",
@@ -182,12 +182,12 @@ const GUIDE_ITEMS: GuideItem[] = [
         desc: "Sistem membaca header berkas biner untuk mencegah file berbahaya (.exe, .bat, .dll, shell script) yang disamarkan dengan ekstensi dokumen palsu.",
       },
       {
-        title: "Daftar Putih Format Akademik",
-        desc: "Hanya dokumen bahan ajar yang diizinkan: Dokumen PDF/Office, Kode Sumber Pemrograman, Berkas Notebook Jupyter, Data Tabel, dan Gambar.",
+        title: "Daftar Putih Format Pembelajaran",
+        desc: "Hanya dokumen belajar yang diizinkan: Dokumen PDF/Office, Kode Sumber Pemrograman, Berkas Notebook Jupyter, Data Tabel, dan Gambar.",
       },
       {
-        title: "Filter Konten Akademik",
-        desc: "Pencegahan otomatis terhadap teks spam, promosi tidak sah, serta konten yang melanggar etika perkuliahan.",
+        title: "Filter Konten Aman",
+        desc: "Pencegahan otomatis terhadap teks spam, promosi tidak sah, serta konten yang melanggar kenyamanan ruang belajar.",
       },
       {
         title: "Matriks Hak Akses Berjenjang",
@@ -220,7 +220,7 @@ const GUIDE_ITEMS: GuideItem[] = [
         desc: "Catat streak belajar harian seiring bertambahnya aktivitas belajar dan penyelesaian tugas.",
       },
     ],
-    tips: "Pertahankan konsistensi belajar harian dengan menyelesaikan minimal satu bab modul atau tugas perkuliahan setiap hari.",
+    tips: "Pertahankan konsistensi belajar harian dengan menyelesaikan minimal satu bab modul atau target latihan setiap hari.",
   },
 ];
 
@@ -231,7 +231,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Mengapa sistem menolak pengunggahan berkas tertentu?",
-    a: "Sistem dilengkapi dengan Academic Content Filter dan Binary Magic Byte Scanner. Berkas akan ditolak apabila terdeteksi sebagai file eksekusi biner berbahaya (.exe, .bat, .dll), menggunakan manipulasi ekstensi ganda, atau mengandung konten yang tidak sesuai dengan peruntukan akademik.",
+    a: "Sistem dilengkapi dengan Content Filter dan Binary Magic Byte Scanner. Berkas akan ditolak apabila terdeteksi sebagai file eksekusi biner berbahaya (.exe, .bat, .dll), menggunakan manipulasi ekstensi ganda, atau mengandung konten yang tidak sesuai dengan standar pembelajaran.",
   },
   {
     q: "Bagaimana cara membaca pratinjau dokumen tanpa harus mengunduh?",
@@ -500,10 +500,10 @@ export default function PanduanAplikasiPage() {
                   <TableCell><Badge variant="success" size="sm">Diizinkan</Badge></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Menulis Komentar Diskusi Akademik</TableCell>
+                  <TableCell className="font-medium">Menulis Komentar Diskusi Materi</TableCell>
                   <TableCell><Badge variant="warning" isMono size="sm">Lencana Owner</Badge></TableCell>
                   <TableCell><Badge variant="brand" isMono size="sm">Lencana Pembuat</Badge></TableCell>
-                  <TableCell><Badge variant="neutral" isMono size="sm">Lencana Mahasiswa</Badge></TableCell>
+                  <TableCell><Badge variant="neutral" isMono size="sm">Lencana Pembelajar</Badge></TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-medium">Unggah, Ubah Nama, & Hapus Berkas</TableCell>

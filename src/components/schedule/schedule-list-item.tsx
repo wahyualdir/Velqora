@@ -74,7 +74,7 @@ export function ScheduleListItem({
                   ? "Pengingat"
                   : isClassroom
                   ? "Classroom"
-                  : "Jadwal Kuliah"}
+                  : "Sesi Belajar"}
               </Badge>
 
               {item.subject && (

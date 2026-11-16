@@ -117,7 +117,7 @@ export function AttachedFilesManager({
               Klik untuk memilih berkas atau folder
             </p>
             <p className="text-[11px] text-text-tertiary">
-              Maksimum 50MB per berkas. Mendukung semua format akademik dan coding standar.
+              Maksimum 50MB per berkas. Mendukung semua format dokumen, dataset, dan coding standar.
             </p>
           </div>
         </div>

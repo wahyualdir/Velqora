@@ -185,7 +185,7 @@ export function WhatIfModal({ isOpen, onClose, schedules }: WhatIfModalProps) {
                   <h4 className="font-semibold text-sm">
                     {simulationResult.isSafe
                       ? "Perubahan Aman Diterapkan"
-                      : "Peringatan Risiko Akademik"}
+                      : "Peringatan Risiko Beban Jadwal"}
                   </h4>
                   <p className="text-xs mt-0.5 opacity-90">
                     {simulationResult.summary}

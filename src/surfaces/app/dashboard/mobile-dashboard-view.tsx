@@ -39,7 +39,7 @@ export function MobileDashboardView({
   stats,
   loading,
 }: MobileDashboardViewProps) {
-  const [shortPeriod, setShortPeriod] = useState("Ganjil 2026/2027");
+  const [shortPeriod, setShortPeriod] = useState("Hari Ini");
 
   useEffect(() => {
     setShortPeriod(getCurrentAcademicPeriod(new Date()).shortPeriod);

@@ -178,7 +178,7 @@ export function FileListItem({
           onDelete(file.id, file.file_path || file.path);
           setDeleteDialogOpen(false);
         }}
-        title="Hapus Berkas Akademik?"
+        title="Hapus Berkas?"
         message={`Apakah Anda yakin ingin menghapus berkas "${file.name}" dari cloud storage? Tindakan ini tidak dapat dibatalkan.`}
         confirmText="Hapus Berkas"
       />

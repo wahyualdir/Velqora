@@ -47,7 +47,7 @@ export function WorkloadIntelligenceTable({
         <Calendar className="w-8 h-8 mx-auto text-text-muted" />
         <h3 className="text-sm font-semibold text-text-primary">Belum Ada Analisis Beban Belajar</h3>
         <p className="text-xs text-text-tertiary">
-          Tambahkan jadwal perkuliahan untuk menghitung distribusi beban per hari.
+          Tambahkan jadwal belajar untuk menghitung distribusi beban per hari.
         </p>
       </div>
     );
@@ -78,9 +78,9 @@ export function WorkloadIntelligenceTable({
       <div className="overflow-x-auto scrollbar-thin">
         <table className="w-full text-left text-xs border-collapse min-w-[540px]">
           <thead>
-            <tr className="border-b border-border/60 text-text-tertiary font-mono text-[11px]">
+            <tr className="border-b border-border/60 text-text-tertiary font-sans text-xs">
               <th className="py-2.5 px-3 font-semibold">Hari</th>
-              <th className="py-2.5 px-3 font-semibold">Kuliah</th>
+              <th className="py-2.5 px-3 font-semibold">Sesi Terjadwal</th>
               <th className="py-2.5 px-3 font-semibold">Belajar Mandiri</th>
               <th className="py-2.5 px-3 font-semibold">Beban Harian / Batas 6 Jam</th>
               <th className="py-2.5 px-3 font-semibold text-right">Status Beban</th>

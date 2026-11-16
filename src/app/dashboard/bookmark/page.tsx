@@ -130,7 +130,7 @@ export default function BookmarkPage() {
       <PageHeader
         eyebrow="Tersimpan"
         title="Materi Tersimpan"
-        description="Akses cepat ke materi, modul, dan referensi akademik yang Anda simpan untuk dipelajari kembali."
+        description="Akses cepat ke materi, modul, dan referensi belajar yang Anda simpan untuk dipelajari kembali."
         actions={
           <div className="flex items-center gap-2">
             {bookmarks.length > 0 && (

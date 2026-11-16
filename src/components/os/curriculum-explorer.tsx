@@ -207,10 +207,10 @@ export function CurriculumExplorer({
             title: m.title,
             slug: m.id.replace("mod-", ""),
             code: "AC-401",
-            degreeLevel: m.level || "Sarjana (S1)",
+            degreeLevel: m.level || "Menengah",
             totalCredits: 4,
             targetRole: "Specialist",
-            description: m.category || "Modul Kurikulum Akademik",
+            description: m.category || "Modul Kurikulum AI",
             chaptersCount: m.chaptersCount || 12,
             subchaptersCount: (m.chaptersCount || 12) * 10,
             cluster: "ai" as const,
@@ -388,7 +388,7 @@ export function CurriculumExplorer({
                   </div>
 
                   <div className="pt-3 border-t border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between text-xs font-semibold text-[#C2553A] dark:text-[#D4664A]">
-                    <span>{cluster.count} Disiplin Akademik</span>
+                    <span>{cluster.count} Topik Pembelajaran</span>
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </div>
                 </motion.button>
@@ -417,7 +417,7 @@ export function CurriculumExplorer({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari topik atau kode mata kuliah..."
+                placeholder="Cari topik atau kode modul..."
                 aria-label="Cari topik kurikulum"
                 className="w-full pl-9 pr-9 py-2 rounded-xl bg-[#FAF8F5] dark:bg-[#0F0E0D] border border-[#E4DDD4] dark:border-[#292524] text-sm text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#78716C] dark:placeholder:text-[#6E6863] focus:outline-none focus:ring-2 focus:ring-[#D4664A]/25 focus:border-[#D4664A] transition-shadow"
               />
@@ -542,7 +542,7 @@ export function CurriculumExplorer({
               <div className="px-6 py-4 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between gap-4 bg-[#FAF8F5] dark:bg-[#1C1917]">
                 <div>
                   <h3 className="font-display text-lg font-bold text-[#1C1917] dark:text-[#F5F5F4]">
-                    Katalog Kurikulum Akademik Velqora
+                    Katalog Kurikulum Velqora
                   </h3>
                   <p className="text-xs text-[#6B6560] dark:text-[#A8A29E] mt-0.5">
                     {totalDisciplines} disiplin · {verifiedDisciplines} terverifikasi penuh ·{" "}
@@ -573,7 +573,7 @@ export function CurriculumExplorer({
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] dark:text-[#8C857F]" />
                   <input
                     type="text"
-                    placeholder="Ketik nama topik, kode mata kuliah, atau peran karir..."
+                    placeholder="Ketik nama topik, kode modul, atau peran karir..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#0F0E0D] border border-[#E4DDD4] dark:border-[#292524] text-sm text-[#1C1917] dark:text-[#F5F5F4] placeholder:text-[#78716C] dark:placeholder:text-[#6E6863] focus:outline-none focus:ring-2 focus:ring-[#D4664A]/25 focus:border-[#D4664A]"

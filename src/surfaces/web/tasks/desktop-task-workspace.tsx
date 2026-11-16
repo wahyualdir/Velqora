@@ -104,7 +104,7 @@ export function DesktopTaskWorkspace({
         <DesktopTableHeader>
           <tr>
             <DesktopTableHead className="w-[36%]">Nama Tugas & Deskripsi</DesktopTableHead>
-            <DesktopTableHead className="w-[20%]">Mata Kuliah / Dosen</DesktopTableHead>
+            <DesktopTableHead className="w-[20%]">Topik / Mentor</DesktopTableHead>
             <DesktopTableHead className="w-[15%]">Tenggat Waktu</DesktopTableHead>
             <DesktopTableHead className="w-[12%]">Status</DesktopTableHead>
             <DesktopTableHead className="w-[10%]">Prioritas</DesktopTableHead>

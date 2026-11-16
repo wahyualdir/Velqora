@@ -40,7 +40,7 @@ export function ProfileSettings({
           Profil Pengguna
         </h2>
         <p className="text-xs text-text-secondary leading-relaxed">
-          Informasi identitas akademik yang ditampilkan pada modul, catatan studi, dan ruang kelas Anda.
+          Informasi profil yang ditampilkan pada modul, catatan belajar, dan workspace Anda.
         </p>
       </div>
 
@@ -48,7 +48,7 @@ export function ProfileSettings({
       <div className="space-y-4">
         {/* Email Address (Read-only identity) */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary flex items-center gap-1.5">
+          <label className="text-xs font-semibold font-sans text-text-secondary flex items-center gap-1.5">
             <Mail className="w-3.5 h-3.5" />
             Alamat Email
           </label>
@@ -56,7 +56,7 @@ export function ProfileSettings({
             type="email"
             value={email || "Tidak ada email"}
             disabled
-            className="bg-surface-secondary/70 text-text-tertiary font-mono text-xs cursor-not-allowed border-border"
+            className="bg-surface-secondary/70 text-text-tertiary font-sans text-xs cursor-not-allowed border-border"
           />
           <p className="text-[11px] text-text-tertiary">
             Alamat email terdaftar digunakan untuk autentikasi dan tidak dapat diubah langsung di sini.
@@ -65,7 +65,7 @@ export function ProfileSettings({
 
         {/* Full Name */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary flex items-center gap-1.5">
+          <label className="text-xs font-semibold font-sans text-text-secondary flex items-center gap-1.5">
             <User className="w-3.5 h-3.5" />
             Nama Lengkap
           </label>
@@ -79,30 +79,30 @@ export function ProfileSettings({
           />
         </div>
 
-        {/* Institution / Campus */}
+        {/* Organization / Background */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary flex items-center gap-1.5">
+          <label className="text-xs font-semibold font-sans text-text-secondary flex items-center gap-1.5">
             <GraduationCap className="w-3.5 h-3.5" />
-            Institusi / Universitas
+            Organisasi / Komunitas (Opsional)
           </label>
           <Input
             type="text"
             value={institution}
             onChange={(e) => onChangeInstitution(e.target.value)}
-            placeholder="Contoh: Universitas Gadjah Mada / Institut Teknologi Bandung"
+            placeholder="Contoh: Pembelajar Mandiri, Komunitas AI, atau Perusahaan"
             className="text-xs sm:text-sm"
           />
         </div>
 
         {/* Bio */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary">
-            Bio Akademik
+          <label className="text-xs font-semibold font-sans text-text-secondary">
+            Bio &amp; Minat Belajar
           </label>
           <Textarea
             value={bio}
             onChange={(e) => onChangeBio(e.target.value)}
-            placeholder="Tulis ringkasan bidang studi, minat riset, atau fokus akademik Anda..."
+            placeholder="Tulis ringkasan minat teknologi, bidang yang sedang dipelajari, atau target Anda..."
             rows={3}
             className="text-xs sm:text-sm leading-relaxed"
           />
@@ -110,7 +110,7 @@ export function ProfileSettings({
 
         {/* Avatar URL */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold font-mono uppercase tracking-wider text-text-secondary">
+          <label className="text-xs font-semibold font-sans text-text-secondary">
             Tautan Foto Profil (URL)
           </label>
           <Input

@@ -77,7 +77,7 @@ export default function TambahTugasPage() {
               Tambah Tugas Baru
             </h1>
             <p className="text-xs sm:text-sm text-text-secondary">
-              Dokumentasikan instruksi tugas perkuliahan, prioritas, dan tenggat waktu pengumpulan.
+              Catat target latihan, prioritas pengerjaan, dan tenggat waktunya.
             </p>
           </div>
         </div>
@@ -88,18 +88,18 @@ export default function TambahTugasPage() {
         {/* SECTION 1: INFORMASI TUGAS */}
         <section className="p-4 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-4">
           <div className="border-b border-border/70 pb-3">
-            <h2 className="text-sm font-bold text-text-primary tracking-tight uppercase font-mono">
+            <h2 className="text-sm font-semibold text-text-primary tracking-tight font-sans">
               1. Informasi Tugas
             </h2>
             <p className="text-xs text-text-secondary">
-              Tentukan judul, mata kuliah, dan dosen pengampu tugas.
+              Tentukan judul, topik modul, dan referensi atau mentor terkait.
             </p>
           </div>
 
           <div className="space-y-4">
             <Input
               label="Judul Tugas *"
-              placeholder="Contoh: Tugas 2 - Analisis Algoritma Sorting"
+              placeholder="Contoh: Latihan 2 - Analisis Algoritma Sorting"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -107,15 +107,15 @@ export default function TambahTugasPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Mata Kuliah / Modul"
+                label="Topik / Modul"
                 placeholder="Contoh: Struktur Data & Algoritma"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
               />
 
               <Input
-                label="Dosen Pengampu / Instruktur"
-                placeholder="Contoh: Dr. Budi Santoso"
+                label="Mentor / Sumber Belajar"
+                placeholder="Contoh: Dokumentasi / Pembimbing"
                 value={lecturer}
                 onChange={(e) => setLecturer(e.target.value)}
               />
@@ -123,7 +123,7 @@ export default function TambahTugasPage() {
 
             <Textarea
               label="Deskripsi Tugas / Soal / Instruksi"
-              placeholder="Tuliskan petunjuk pengerjaan, batasan, atau instruksi dari dosen..."
+              placeholder="Tuliskan petunjuk pengerjaan, batasan, atau target hasil belajar..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}

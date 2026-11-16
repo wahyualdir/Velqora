@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
     const aiRes = await executeAIEngine({
       prompt: fullPrompt,
       userId: user?.id,
-      displayName: user?.email?.split("@")[0] || "Mahasiswa",
+      displayName: user?.email?.split("@")[0] || "Pembelajar",
       provider: "gemini",
     });
 

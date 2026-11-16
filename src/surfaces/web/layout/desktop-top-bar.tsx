@@ -37,7 +37,7 @@ export function DesktopTopBar({
   const { isPwaStandalone, canInstallPwa, promptInstallPwa } = useExperience();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [shortPeriod, setShortPeriod] = useState("Ganjil 2026/2027");
+  const [shortPeriod, setShortPeriod] = useState("Hari Ini");
 
   useEffect(() => {
     setMounted(true);

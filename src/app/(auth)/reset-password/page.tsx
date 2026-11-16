@@ -69,17 +69,17 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-[440px] mx-auto text-left space-y-3.5">
           {/* Primary Auth Surface */}
           <div className="vt-window rounded-2xl overflow-hidden text-left">
-            {/* Editorial Card Header */}
-            <div className="px-5 py-3.5 bg-[#F3EFE9]/75 dark:bg-[#1C1917]/85 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between select-none">
-              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+            {/* Clean Card Header */}
+            <div className="px-5 py-3 bg-[#F3EFE9]/60 dark:bg-[#1C1917]/60 border-b border-[#E6E0D6] dark:border-[#24201E] flex items-center justify-between select-none">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
                 <VelqoraMark size={18} />
-                <span className="font-mono text-[11px] font-semibold tracking-[0.08em] text-[#524B42] dark:text-[#A8A29E] truncate uppercase">
-                  VELQORA // PASSWORD RECOVERY
+                <span className="font-sans text-xs font-semibold text-[#1C1917] dark:text-[#F5F5F4] truncate">
+                  Velqora
                 </span>
               </div>
               <Link
                 href="/login"
-                className="text-[11px] font-mono font-medium text-[#8A8378] dark:text-[#8C857F] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] transition-colors shrink-0"
+                className="text-xs font-sans font-medium text-[#6B6560] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] transition-colors shrink-0"
               >
                 ← Masuk
               </Link>
@@ -89,13 +89,10 @@ export default function ResetPasswordPage() {
             <div className="p-3.5 sm:p-6 bg-[#FFFFFF] dark:bg-[#141210] space-y-5">
               {/* Header Title & Subtitle */}
               <div className="space-y-1.5 text-center">
-                <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#D4664A] border border-[#C2553A]/20 dark:border-[#D4664A]/30">
-                  SECURITY // PASSWORD RECOVERY
-                </div>
                 <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-[#F5F5F4] tracking-tight font-sans">
                   {isSuccess ? "Password Diperbarui!" : "Buat Password Baru"}
                 </h1>
-                <p className="text-xs text-[#524B42] dark:text-[#A8A29E] leading-relaxed max-w-xs mx-auto font-sans">
+                <p className="text-xs sm:text-sm text-[#6B6560] dark:text-[#A8A29E] leading-relaxed max-w-xs mx-auto font-sans">
                   {isSuccess
                     ? "Password Anda berhasil diubah. Mengalihkan ke halaman login..."
                     : "Masukkan password baru akun Anda di bawah ini"}
@@ -191,23 +188,14 @@ export default function ResetPasswordPage() {
                 </form>
               )}
             </div>
-
-            {/* Hairline Telemetry Bar */}
-            <div className="px-5 py-2.5 bg-[#FAF8F5] dark:bg-[#100E0D] border-t border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-[#A8A29E] select-none">
-              <span className="flex items-center gap-2 truncate">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#059669] dark:bg-[#34D399]" />
-                {loading ? "UPDATING CREDENTIALS..." : "SYSTEM READY · RECOVERY SECURE"}
-              </span>
-              <span className="text-[#8A8378] dark:text-[#8C857F] hidden sm:inline">VELQORA // TLS 1.3</span>
-            </div>
           </div>
 
           {/* Secondary Switcher Box */}
-          <div className="vt-window rounded-xl p-3.5 text-center text-xs font-mono text-[#524B42] dark:text-[#A8A29E]">
+          <div className="rounded-2xl border border-[#E6E0D6] dark:border-[#24201E] bg-[#FFFFFF] dark:bg-[#141210] p-3.5 text-center text-xs font-sans text-[#6B6560] dark:text-[#A8A29E]">
             Batal pemulihan?{" "}
             <Link
               href="/login"
-              className="font-semibold text-[#C2553A] dark:text-[#D4664A] hover:underline inline-flex items-center gap-1"
+              className="font-semibold text-[#C2553A] dark:text-[#F09A82] hover:underline inline-flex items-center gap-1"
             >
               <span>Kembali ke Halaman Masuk →</span>
             </Link>
@@ -216,9 +204,9 @@ export default function ResetPasswordPage() {
       </main>
 
       {/* Clean Footer */}
-      <footer className="w-full py-4 px-4 border-t border-[#E4DDD4] dark:border-[#292524] z-10 flex items-center justify-center max-w-4xl mx-auto text-center font-mono text-xs text-[#8A8378] dark:text-[#8C857F]">
+      <footer className="w-full py-4 px-4 border-t border-[#E6E0D6] dark:border-[#24201E] z-10 flex items-center justify-center max-w-4xl mx-auto text-center font-sans text-xs text-[#8A8378] dark:text-[#8C857F]">
         <p>
-          &copy; 2026 VELQORA ACADEMIC PLATFORM. ALL RIGHTS RESERVED.
+          &copy; 2026 Velqora Learning Platform. All rights reserved.
         </p>
       </footer>
     </div>

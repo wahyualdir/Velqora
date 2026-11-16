@@ -43,9 +43,9 @@ export function ScheduleHeader({
 
   return (
     <PageHeader
-      eyebrow="Jadwal Akademik"
-      title="Jadwal"
-      description="Kelola agenda perkuliahan, import berkas jadwal otomatis, dan susun waktu belajar bebas bentrok."
+      eyebrow="Jadwal & Target Belajar"
+      title="Jadwal Belajar"
+      description="Kelola agenda sesi belajar, impor jadwal otomatis, dan susun rutinitas harian bebas bentrok."
       actions={
         <>
           <Link href="/dashboard/jadwal/intelligence">

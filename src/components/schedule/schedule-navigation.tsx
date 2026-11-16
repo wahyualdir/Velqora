@@ -76,7 +76,7 @@ export function ScheduleNavigation({
                 : "text-text-tertiary hover:text-text-secondary"
             }`}
           >
-            Jadwal Kuliah
+            Sesi Belajar
           </button>
           <button
             type="button"

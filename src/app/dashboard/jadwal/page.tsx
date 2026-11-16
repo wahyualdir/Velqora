@@ -338,7 +338,7 @@ function JadwalContent() {
       <section className="space-y-3">
         <div className="flex items-center justify-between px-1 text-xs text-text-tertiary">
           <span>
-            Menampilkan {filteredItems.length} dari {scheduleItems.length} agenda perkuliahan
+            Menampilkan {filteredItems.length} dari {scheduleItems.length} agenda belajar
           </span>
         </div>
 
@@ -364,7 +364,7 @@ function JadwalContent() {
             title="Belum ada agenda"
             description={
               selectedDay === "Semua"
-                ? "Belum ada kegiatan yang dijadwalkan. Import berkas jadwal perkuliahan atau susun rencana belajar harian."
+                ? "Belum ada kegiatan yang dijadwalkan. Impor jadwal atau susun rencana belajar harian."
                 : `Tidak ada jadwal kegiatan untuk hari ${selectedDay}.`
             }
             action={

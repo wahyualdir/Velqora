@@ -26,9 +26,10 @@ export function NotebookDefinitionCard({ unit }: NotebookDefinitionCardProps) {
 
       <div className="p-5 space-y-4 text-xs sm:text-sm leading-relaxed">
         {/* 2. Formal Academic Definition */}
-        <div className="p-3.5 rounded-lg border border-border bg-surface dark:bg-[#121316] relative pl-4 border-l-4 border-l-brand-500">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-text-tertiary block mb-1">
-            Definisi Akademik:
+        <div className="p-3.5 rounded-xl border border-border bg-surface dark:bg-[#121316] relative pl-4">
+          <div className="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-full bg-[#C2553A]" />
+          <span className="text-xs font-sans font-medium text-text-tertiary block mb-1">
+            Definisi Konsep:
           </span>
           <p className="text-text-primary font-serif italic text-sm sm:text-[14.5px] leading-relaxed">
             &ldquo;{unit.formalDefinition}&rdquo;

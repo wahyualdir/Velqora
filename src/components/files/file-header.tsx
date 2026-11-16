@@ -14,9 +14,9 @@ interface FileHeaderProps {
 export function FileHeader({ onUploadClick, uploading, fileCount: _fileCount }: FileHeaderProps) {
   return (
     <PageHeader
-      eyebrow="Berkas Akademik"
+      eyebrow="Berkas & Lampiran"
       title="Semua Berkas"
-      description="Kelola, pratinjau, dan simpan seluruh berkas perkuliahan, kode program, diagram, dan dokumen studi Anda di cloud storage."
+      description="Kelola, pratinjau, dan simpan seluruh berkas materi, kode program, diagram, dan dokumen belajar Anda di cloud storage."
       actions={
         <Button
           size="sm"

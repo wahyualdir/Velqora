@@ -44,7 +44,7 @@ export function RecommendationsCenter({
         <ShieldCheck className="w-8 h-8 mx-auto text-emerald-500" />
         <div className="space-y-1">
           <h3 className="text-sm font-semibold text-text-primary">
-            Jadwal Akademik Anda Telah Optimal
+            Jadwal Belajar Anda Telah Optimal
           </h3>
           <p className="text-xs text-text-tertiary max-w-md mx-auto">
             Tidak ditemukan titik bentrok jadwal atau kelebihan beban harian yang memerlukan pemindahan sesi saat ini.

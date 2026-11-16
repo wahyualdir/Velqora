@@ -14,17 +14,17 @@ export function NotebookSourceList({ sources, className = "" }: NotebookSourceLi
 
   return (
     <footer
-      aria-label="Referensi Akademik"
+      aria-label="Referensi & Sumber"
       className={`my-8 pt-6 border-t border-border/80 space-y-3 ${className}`}
     >
-      <div className="flex items-center gap-2 text-xs font-semibold text-text-tertiary font-mono uppercase tracking-wider">
+      <div className="flex items-center gap-2 text-xs font-semibold text-text-tertiary font-sans">
         <BookMarked className="w-3.5 h-3.5" />
-        <span>Rujukan Akademik & Sumber Terverifikasi</span>
+        <span>Referensi &amp; Sumber Terverifikasi</span>
       </div>
 
       <div className="divide-y divide-border/60 text-xs">
         {sources.map((src, idx) => {
-          const authors = Array.isArray(src.authors) ? src.authors.join(", ") : "Penulis Akademik";
+          const authors = Array.isArray(src.authors) ? src.authors.join(", ") : "Tim Penulis";
           const title = src.title;
           const url = (src as any).url;
           const doi = (src as any).doi;

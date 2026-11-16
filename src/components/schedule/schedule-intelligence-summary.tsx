@@ -140,12 +140,12 @@ export function ScheduleIntelligenceSummary({
 
       {/* Grid: 4 Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 auto-rows-fr">
-        {/* Metric 1: Kuliah */}
+        {/* Metric 1: Sesi Terjadwal */}
         <CardStat
           icon={BookOpen}
-          label="Kuliah"
+          label="Sesi Terjadwal"
           value={`${parseFloat((dayBreakdown.lecturesMinutes / 60).toFixed(1))} Jam`}
-          hint={`${dayBreakdown.activities.filter((a) => a.category === "kuliah").length} mata kuliah`}
+          hint={`${dayBreakdown.activities.filter((a) => a.category === "kuliah").length} sesi terstruktur`}
           isMono
         />
 

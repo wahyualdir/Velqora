@@ -31,7 +31,7 @@ export function DashboardHeader({
   activeFilter,
   onFilterChange,
 }: DashboardHeaderProps) {
-  const [semesterLabel, setSemesterLabel] = useState("Semester Ganjil 2026/2027");
+  const [semesterLabel, setSemesterLabel] = useState("Workspace Belajar");
   const displayName = userName?.trim() ? userName.trim() : null;
 
   useEffect(() => {

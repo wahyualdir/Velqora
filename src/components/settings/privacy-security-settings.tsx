@@ -57,7 +57,7 @@ export function PrivacySecuritySettings() {
           Privasi & Keamanan
         </h2>
         <p className="text-xs text-text-secondary leading-relaxed">
-          Kelola memori kecerdasan buatan, pembaruan kata sandi autentikasi, dan perlindungan privasi data akademik Anda.
+          Kelola memori kecerdasan buatan, pembaruan kata sandi autentikasi, dan perlindungan privasi data belajar Anda.
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export function PrivacySecuritySettings() {
                 Memori Belajar AI Tutor
               </h3>
               <p className="text-xs text-text-secondary">
-                Kelola fakta preferensi akademik, gaya belajar, dan topik fokus yang diingat oleh AI Tutor.
+                Kelola preferensi topik, gaya belajar, dan fokus materi yang diingat oleh AI Tutor.
               </p>
             </div>
           </div>

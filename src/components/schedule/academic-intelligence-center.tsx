@@ -156,7 +156,7 @@ export function AcademicIntelligenceCenter() {
     return (
       <div className="p-8 max-w-xl mx-auto text-center space-y-4">
         <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
-        <h2 className="text-lg font-bold text-text-primary">Gagal Memuat Intelijen Akademik</h2>
+        <h2 className="text-lg font-bold text-text-primary">Gagal Memuat Analisis Jadwal</h2>
         <p className="text-xs text-text-tertiary">{error}</p>
         <Button onClick={loadIntelligenceData} size="sm" className="gap-2">
           <RefreshCw className="w-3.5 h-3.5" />
@@ -183,16 +183,16 @@ export function AcademicIntelligenceCenter() {
               <span>Kembali ke Jadwal</span>
             </Link>
             <span className="text-text-muted">•</span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase font-mono bg-brand-500/10 text-brand-600 dark:text-brand-400 px-2 py-0.5 rounded border border-brand-500/20">
+            <span className="inline-flex items-center gap-1 text-xs font-medium bg-brand-500/10 text-brand-600 dark:text-brand-400 px-2.5 py-0.5 rounded-full">
               <Activity className="w-3 h-3" />
-              <span>Intelligence Center</span>
+              <span>Analisis Jadwal</span>
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight font-display">
-            Pusat Intelijen & Observabilitas Akademik
+            Pusat Analisis &amp; Keseimbangan Belajar
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary max-w-3xl">
-            Pusat observasi real-time untuk memantau kesehatan jadwal, mendeteksi penumpukan beban, dan melihat transparansi rekomendasi otomatis.
+            Pusat observasi real-time untuk memantau ritme jadwal, mendeteksi penumpukan beban, dan melihat transparansi rekomendasi otomatis.
           </p>
         </div>
 
