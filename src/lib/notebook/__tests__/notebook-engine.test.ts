@@ -19,8 +19,11 @@ import {
 import {
   convertCodeEntryToNotebook,
   convertSectionToNotebook,
+  createBlankNotebook,
   createStarterNotebook,
 } from "../curriculum-converter";
+import { transformJsTsCellCode } from "../jsts-preprocessor";
+import { preprocessPythonCellSource } from "../python-preprocessor";
 import {
   buildDatasetSnippets,
   getSafeSqlTableName,
@@ -259,4 +262,88 @@ test("Dashboard layout uses overflow-x-clip and full-height playground shell", (
   );
   assert.ok(layoutSrc.includes("overflow-x-clip"));
   assert.ok(layoutSrc.includes('pathname.startsWith("/dashboard/playground")'));
+});
+
+test("createBlankNotebook produces clean coding-first cell without stacked banners or sliders", () => {
+  const blank = createBlankNotebook("python");
+  assert.equal(blank.cells.length, 1);
+  assert.equal(blank.cells[0].type, "code");
+  assert.equal(blank.cells[0].kernel, "python");
+  assert.equal(blank.cells[0].source, "");
+  assert.equal(blank.cells[0].source.includes("#@param"), false);
+});
+
+test("Colab Python preprocessor handles !pip, %matplotlib inline, %%time, %%writefile, and 1:1 line preservation", () => {
+  const src = [
+    "%matplotlib inline",
+    "!pip install -q seaborn plotly>=5.0",
+    "import numpy as np, pandas as pd",
+    "from sklearn.metrics import accuracy_score",
+    'doc = """',
+    "import fake_not_installed",
+    '!pip install should_be_ignored',
+    '"""',
+    "# import commented_pkg",
+    "print(123)",
+    "np.mean?",
+  ].join("\n");
+
+  const res = preprocessPythonCellSource(src);
+  assert.deepEqual(res.pipInstalls, ["seaborn", "plotly>=5.0"]);
+  assert.ok(res.imports.includes("numpy"));
+  assert.ok(res.imports.includes("pandas"));
+  assert.ok(res.imports.includes("sklearn"));
+  assert.equal(res.imports.includes("fake_not_installed"), false);
+  assert.equal(res.imports.includes("commented_pkg"), false);
+
+  const outLines = res.pythonCode.split("\n");
+  assert.equal(outLines.length, src.split("\n").length);
+  assert.equal(outLines[outLines.length - 2], "print(123)");
+  assert.equal(outLines[outLines.length - 1], "help(np.mean)");
+
+  const timed = preprocessPythonCellSource("%%time\nx = sum(range(100))\nx");
+  assert.equal(timed.timingMode, "cell");
+  assert.equal(timed.pythonCode.split("\n").length, 3);
+
+  const wf = preprocessPythonCellSource("%%writefile helper.py\ndef hi():\n    return 'ok'\n");
+  assert.equal(wf.writeFile?.path, "/workspace/helper.py");
+  assert.ok(wf.writeFile?.content.includes("def hi():"));
+});
+
+test("JS/TS notebook preprocessor runs const/let/functions/redeclarations across cells without ReferenceError", async () => {
+  const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+    ...args: string[]
+  ) => (...vals: unknown[]) => Promise<unknown>;
+  const scope: Record<string, unknown> = Object.create(null);
+
+  // Cell 1: const inside same cell + implicit return expression
+  const c1 = transformJsTsCellCode(
+    "const x = 10;\nconst y = x + 5;\ny;",
+    false,
+    Object.keys(scope)
+  );
+  const r1 = await new AsyncFunction("__scope", c1.body)(scope);
+  assert.equal(r1, 15);
+  assert.equal(scope.x, 10);
+  assert.equal(scope.y, 15);
+
+  // Cell 2: function with inner const + access prior cell x
+  const c2 = transformJsTsCellCode(
+    "function kali(a, b) {\n  const res = a * b;\n  return res;\n}\nkali(x, 2);",
+    false,
+    Object.keys(scope)
+  );
+  const r2 = await new AsyncFunction("__scope", c2.body)(scope);
+  assert.equal(r2, 20);
+  assert.equal(typeof scope.kali, "function");
+
+  // Cell 3: redeclare const x in new cell + TypeScript annotations
+  const c3 = transformJsTsCellCode(
+    "interface Item { id: number; }\nconst x: number = 99;\nconst item: Item = { id: x };\nitem.id;",
+    true,
+    Object.keys(scope)
+  );
+  const r3 = await new AsyncFunction("__scope", c3.body)(scope);
+  assert.equal(r3, 99);
+  assert.equal(scope.x, 99);
 });

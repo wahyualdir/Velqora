@@ -1,5 +1,8 @@
 /// <reference lib="webworker" />
 
+(self as unknown as Record<string, unknown>)._N_E =
+  (self as unknown as Record<string, unknown>)._N_E || {};
+
 import type {
   DataFramePayload,
   RichCellOutput,
@@ -20,7 +23,9 @@ async function ensureSqlStatic(): Promise<SqlStatic> {
   if (!sqlStaticPromise) {
     sqlStaticPromise = (async () => {
       const mod = await import("sql.js");
-      const initSqlJs = mod.default;
+      const initSqlJs =
+        (mod as unknown as { default?: SqlJsModule["default"] }).default ||
+        (mod as unknown as SqlJsModule["default"]);
       const base =
         originBase ||
         (typeof self !== "undefined" && self.location?.origin

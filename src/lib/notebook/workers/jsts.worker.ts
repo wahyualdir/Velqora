@@ -1,27 +1,18 @@
 /// <reference lib="webworker" />
 
+import { transformJsTsCellCode } from "../jsts-preprocessor";
 import type {
   DataFramePayload,
   RichCellOutput,
   VariableSummary,
 } from "../types";
 
+(self as unknown as Record<string, unknown>)._N_E =
+  (self as unknown as Record<string, unknown>)._N_E || {};
+
 // Persistent per-worker cell scope (isolated from DOM & main thread)
 const cellScope: Record<string, unknown> = Object.create(null);
 const vfsCache: Map<string, Uint8Array> = new Map();
-
-function stripTypeScriptSyntax(code: string): string {
-  return code
-    .replace(/^\s*import\s+type\s+[\s\S]*?;?\s*$/gm, "")
-    .replace(/\bexport\s+(?=const|let|var|function|class|async)/g, "")
-    .replace(/\binterface\s+[A-Za-z0-9_]+(?:\s+extends\s+[^{]+)?\s*\{[\s\S]*?\}/g, "")
-    .replace(/\btype\s+[A-Za-z0-9_]+\s*=[\s\S]*?;/g, "")
-    .replace(
-      /:\s*(string|number|boolean|any|void|unknown|never|object|Record<[^>\n]+>|Array<[^>\n]+>|Promise<[^>\n]+>|string\[\]|number\[\]|boolean\[\])(?=\s*[=),;\n])/g,
-      ""
-    )
-    .replace(/\s+as\s+(?:const|[A-Za-z0-9_<>\[\]| ]+)/g, "");
-}
 
 function normalizeToDataFrame(
   data: unknown,
@@ -85,23 +76,6 @@ function collectVariables(): VariableSummary[] {
         isArr && val.length > 0 && typeof val[0] === "object" && val[0] !== null,
     };
   });
-}
-
-function rewriteTopLevelDecls(code: string): string {
-  // Hoist top-level `const`/`let`/`var`/`function`/`class` bindings onto `globalScope`
-  return code
-    .replace(
-      /^([ \t]*)(?:const|let|var)\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*=/gm,
-      "$1__scope.$2 ="
-    )
-    .replace(
-      /^([ \t]*)(async\s+)?function\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/gm,
-      "$1__scope.$3 = $2function $3("
-    )
-    .replace(
-      /^([ \t]*)class\s+([A-Za-z_$][A-Za-z0-9_$]*)/gm,
-      "$1__scope.$2 = class $2"
-    );
 }
 
 self.onmessage = async (event: MessageEvent) => {
@@ -209,22 +183,20 @@ self.onmessage = async (event: MessageEvent) => {
 
     try {
       const isTs = msg.kernel === "typescript";
-      const rawCode = isTs ? stripTypeScriptSyntax(String(msg.code || "")) : String(msg.code || "");
-      const rewritten = rewriteTopLevelDecls(rawCode);
-
-      // Expose persistent scope vars via `with (__scope)` wrapper safely
       const scopeKeys = Object.keys(cellScope);
+      const { body } = transformJsTsCellCode(
+        String(msg.code || ""),
+        isTs,
+        scopeKeys
+      );
+
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const fnBody = `
-        const { ${scopeKeys.join(", ")} } = __scope;
-        ${rewritten}
-      `;
       const runner = new AsyncFunction(
         "console",
         "display",
         "workspace",
         "__scope",
-        fnBody
+        body
       );
 
       const ret = await runner(customConsole, display, workspace, cellScope);
@@ -250,14 +222,6 @@ self.onmessage = async (event: MessageEvent) => {
                 : String(ret),
           });
         }
-      }
-
-      if (outputs.length === 0) {
-        outputs.push({
-          kind: "stream",
-          name: "stdout",
-          text: "(Kode berhasil dieksekusi tanpa output)",
-        });
       }
 
       const end = performance.now();

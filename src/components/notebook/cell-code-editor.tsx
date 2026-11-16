@@ -44,6 +44,21 @@ function getLanguageExtension(kernel: NotebookKernel) {
   }
 }
 
+function getKernelPlaceholder(kernel: NotebookKernel, fallback?: string): string {
+  if (fallback) return fallback;
+  switch (kernel) {
+    case "sql":
+      return "-- Tulis kueri SQLite di sini, lalu klik ▶ Run atau Ctrl+Enter...";
+    case "javascript":
+      return "// Tulis kode JavaScript di sini, lalu klik ▶ Run atau Ctrl+Enter...";
+    case "typescript":
+      return "// Tulis kode TypeScript di sini, lalu klik ▶ Run atau Ctrl+Enter...";
+    case "python":
+    default:
+      return "# Tulis kode Python (atau !pip install nama_paket), lalu klik ▶ Run atau Shift+Enter...";
+  }
+}
+
 function buildVelqoraTheme(isDark: boolean, fontSize = 14) {
   const editorTheme = EditorView.theme(
     {
@@ -55,24 +70,24 @@ function buildVelqoraTheme(isDark: boolean, fontSize = 14) {
           'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       },
       ".cm-content": {
-        padding: "12px 0",
+        padding: "14px 0",
         lineHeight: "1.65",
         caretColor: "#D4664A",
       },
       ".cm-line": {
-        padding: "0 14px",
+        padding: "0 16px",
       },
       ".cm-gutters": {
         backgroundColor: isDark ? "#0F0E0D" : "#FAF8F5",
         color: isDark ? "#6B645E" : "#8A8378",
         borderRight: isDark ? "1px solid #24201E" : "1px solid #EBE5DC",
-        minWidth: "40px",
+        minWidth: "42px",
         userSelect: "none",
       },
       ".cm-activeLine": {
         backgroundColor: isDark
           ? "rgba(212, 102, 74, 0.08)"
-          : "rgba(194, 85, 58, 0.06)",
+          : "rgba(194, 85, 58, 0.05)",
       },
       ".cm-activeLineGutter": {
         backgroundColor: isDark ? "#1C1917" : "#EBE5DC",
@@ -85,7 +100,7 @@ function buildVelqoraTheme(isDark: boolean, fontSize = 14) {
       },
       ".cm-scroller": {
         overflowX: "auto",
-        minHeight: "56px",
+        minHeight: "82px",
       },
     },
     { dark: isDark }
@@ -131,13 +146,14 @@ export function CellCodeEditor({
   editorMode = "codemirror",
   wordWrap = true,
   fontSize = 14,
-  placeholderText = "# Tulis kode Anda di sini...",
+  placeholderText,
   onRunCell,
   onRunAndAdvance,
   onFocusInsertHandler,
 }: CellCodeEditorProps) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
+  const resolvedPlaceholder = getKernelPlaceholder(kernel, placeholderText);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -147,6 +163,7 @@ export function CellCodeEditor({
   const themeCompRef = useRef(new Compartment());
   const completionCompRef = useRef(new Compartment());
   const wrapCompRef = useRef(new Compartment());
+  const placeholderCompRef = useRef(new Compartment());
 
   const onChangeRef = useRef(onChange);
   const onRunCellRef = useRef(onRunCell);
@@ -228,7 +245,7 @@ export function CellCodeEditor({
       extensions: [
         basicSetup,
         customKeymap,
-        cmPlaceholder(placeholderText),
+        placeholderCompRef.current.of(cmPlaceholder(resolvedPlaceholder)),
         langCompRef.current.of(getLanguageExtension(kernel)),
         themeCompRef.current.of(buildVelqoraTheme(isDark, fontSize)),
         completionCompRef.current.of(buildCompletionSource()),
@@ -292,10 +309,11 @@ export function CellCodeEditor({
       effects: [
         langCompRef.current.reconfigure(getLanguageExtension(kernel)),
         completionCompRef.current.reconfigure(buildCompletionSource()),
+        placeholderCompRef.current.reconfigure(cmPlaceholder(resolvedPlaceholder)),
       ],
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kernel, editorMode]);
+  }, [kernel, editorMode, resolvedPlaceholder]);
 
   // Update light/dark theme & font size live
   useEffect(() => {
@@ -325,7 +343,7 @@ export function CellCodeEditor({
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholderText}
+        placeholder={resolvedPlaceholder}
         spellCheck={false}
         onFocus={() => {
           onFocusInsertRef.current?.((snippet: string, cursorBackOffset = 0) => {
@@ -363,7 +381,7 @@ export function CellCodeEditor({
           }
         }}
         style={{ fontSize: `${fontSize}px` }}
-        className={`w-full min-h-[72px] px-3.5 py-3 font-mono leading-[1.65] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-[#1C1917] dark:text-[#F5F5F4] focus:outline-hidden resize-y ${
+        className={`w-full min-h-[88px] px-4 py-3.5 font-mono leading-[1.65] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-[#1C1917] dark:text-[#F5F5F4] focus:outline-hidden resize-y ${
           wordWrap ? "whitespace-pre-wrap" : "whitespace-pre overflow-x-auto"
         }`}
       />

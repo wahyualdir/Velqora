@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
+  BookOpen,
   Boxes,
   Check,
   ChevronDown,
@@ -13,6 +14,7 @@ import {
   Download,
   Eraser,
   FileCode2,
+  FilePlus2,
   FileText,
   FolderOpen,
   GitBranch,
@@ -47,7 +49,14 @@ import {
   toggleShareNotebookAction,
   uploadNotebookDatasetAction,
 } from "@/actions/notebook/notebooks";
-import { convertCodeEntryToNotebook, createStarterNotebook, mapLanguageToKernel } from "@/lib/notebook/curriculum-converter";
+import {
+  convertCodeEntryToNotebook,
+  createBlankNotebook,
+  createStarterNotebook,
+  createTemplateNotebook,
+  mapLanguageToKernel,
+  NOTEBOOK_TEMPLATES,
+} from "@/lib/notebook/curriculum-converter";
 import {
   analyzeNotebookDag,
   getTopologicalDownstreamCellIds,
@@ -72,6 +81,7 @@ import type {
   NotebookDocument,
   NotebookKernel,
   NotebookVersion,
+  PendingInputPrompt,
   SqlTableMeta,
   VariableSummary,
   VfsFileEntry,
@@ -123,13 +133,15 @@ export function NotebookWorkbench({
   const searchParams = useSearchParams();
 
   const [doc, setDoc] = useState<NotebookDocument>(
-    () => initialDocument || createStarterNotebook("python")
+    () => initialDocument || createBlankNotebook("python")
   );
   const [activeCellId, setActiveCellId] = useState<string>(
-    () => (initialDocument || createStarterNotebook("python")).cells[0]?.id || ""
+    () => doc.cells[0]?.id || ""
   );
   const [runningCellIds, setRunningCellIds] = useState<Set<string>>(new Set());
-  const [execCounter, setExecCounter] = useState(1);
+  const [pendingInputPrompt, setPendingInputPrompt] =
+    useState<PendingInputPrompt | null>(null);
+  const execCounterRef = useRef(1);
 
   const [kernelStates, setKernelStates] = useState<
     Record<NotebookKernel, KernelBootState>
@@ -154,8 +166,11 @@ export function NotebookWorkbench({
 
   const [singleCellFocus, setSingleCellFocus] = useState(false);
   const [wordWrap, setWordWrap] = useState(true);
-  const [canvasWide, setCanvasWide] = useState(true);
+  const [canvasWide, setCanvasWide] = useState(false);
   const [editorFontSize, setEditorFontSize] = useState<number>(14);
+  const [libraryTab, setLibraryTab] = useState<"notebooks" | "templates">(
+    "notebooks"
+  );
 
   const isCompactDesktop = () =>
     typeof window !== "undefined" && window.innerWidth < 1536;
@@ -332,9 +347,12 @@ export function NotebookWorkbench({
     }
   }, [initialDocument, readOnly, searchParams]);
 
-  // Debounced autosave to local IndexedDB
+  // Debounced autosave to local IndexedDB (skip completely empty untouched drafts)
   useEffect(() => {
     if (readOnly) return;
+    const hasContent =
+      doc.cells.length > 1 || doc.cells.some((c) => c.source.trim().length > 0);
+    if (!hasContent) return;
     const timer = setTimeout(() => {
       void saveLocalNotebook(doc);
     }, 800);
@@ -413,15 +431,32 @@ export function NotebookWorkbench({
       if (!kr || !targetCell || targetCell.type !== "code") return;
 
       setRunningCellIds((prev) => new Set(prev).add(cellId));
-      const orderNum = execCounter;
-      setExecCounter((n) => n + 1);
+      const orderNum = execCounterRef.current;
+      execCounterRef.current += 1;
 
       const res = await kr.executeCell({
         cellId,
         kernel: targetCell.kernel,
         code: targetCell.source,
         testAssertions: targetCell.testAssertions,
+        onNeedInput: (prompt) =>
+          new Promise<string | null>((resolve) => {
+            setPendingInputPrompt({
+              cellId,
+              prompt,
+              submit: (val) => {
+                setPendingInputPrompt(null);
+                resolve(val);
+              },
+              cancel: () => {
+                setPendingInputPrompt(null);
+                resolve(null);
+              },
+            });
+          }),
       });
+
+      setPendingInputPrompt((prev) => (prev?.cellId === cellId ? null : prev));
 
       setRunningCellIds((prev) => {
         const next = new Set(prev);
@@ -460,7 +495,27 @@ export function NotebookWorkbench({
         }
       }
     },
-    [execCounter]
+    []
+  );
+
+  const handleCreateNewNotebook = useCallback(
+    (kernel: NotebookKernel = "python") => {
+      if (
+        !readOnly &&
+        docRef.current.cells.some((c) => c.source.trim().length > 0)
+      ) {
+        void saveLocalNotebook(docRef.current);
+      }
+      const fresh = createBlankNotebook(kernel);
+      setPendingInputPrompt(null);
+      setDoc(fresh);
+      setActiveCellId(fresh.cells[0]?.id || "");
+      setMobileTab("cells");
+      setLibraryDrawerOpen(false);
+      void refreshLibrary();
+      toast.success("Notebook baru yang bersih siap digunakan.");
+    },
+    [readOnly, refreshLibrary]
   );
 
   const runAllCells = useCallback(async () => {
@@ -480,6 +535,7 @@ export function NotebookWorkbench({
   }, [dagNodes, runSingleCell]);
 
   const handleRestartAndRunAll = async () => {
+    setPendingInputPrompt(null);
     routerRef.current?.terminateKernel();
     toast.info("Kernel di-reset. Menjalankan ulang seluruh sel...");
     await runAllCells();
@@ -875,42 +931,25 @@ export function NotebookWorkbench({
         }}
       />
 
-      {/* ─── TOP SINGLE-ROW STUDIO RIBBON ─── */}
-      <div className="rounded-2xl border border-border bg-surface px-3 py-2 shadow-2xs flex flex-wrap items-center justify-between gap-2 shrink-0">
-        {/* Left: Notebook Identity & Outline Toggle */}
-        <div className="flex items-center gap-2 min-w-0 flex-1">
+      {/* ─── TOP CLEAN NOTEBOOK HEADER (COLAB-STYLE) ─── */}
+      <div className="rounded-2xl border border-border bg-surface px-3.5 py-2.5 shadow-2xs flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 shrink-0">
+        {/* Left: Library Switcher, Editable Title & Dedicated + New Notebook */}
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           {!readOnly && (
             <button
               type="button"
               onClick={() => {
                 void refreshLibrary();
+                setLibraryTab("notebooks");
                 setLibraryDrawerOpen(true);
               }}
-              className="h-9 px-2.5 rounded-xl border border-border bg-surface-secondary/50 hover:bg-surface-secondary text-text-primary inline-flex items-center gap-1.5 text-xs font-mono font-semibold cursor-pointer shrink-0"
-              title="Buka Koleksi Notebook Saya"
+              className="h-9 px-2.5 rounded-xl border border-border bg-surface-secondary/50 hover:bg-surface-secondary text-text-primary inline-flex items-center gap-1.5 text-xs font-mono font-semibold cursor-pointer shrink-0 transition-colors"
+              title="Buka Koleksi Notebook & Template Contoh"
             >
               <Layers className="w-3.5 h-3.5 text-[#C2553A]" />
-              <span className="hidden sm:inline">Notebook</span>
+              <span className="hidden md:inline">Koleksi</span>
             </button>
           )}
-
-          <button
-            type="button"
-            onClick={toggleOutline}
-            className={`hidden lg:inline-flex h-9 w-9 rounded-xl border items-center justify-center cursor-pointer transition-colors shrink-0 ${
-              outlineOpen
-                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
-                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
-            }`}
-            title={outlineOpen ? "Sembunyikan Outline & Snippet" : "Tampilkan Outline & Snippet"}
-            aria-label="Toggle Outline Panel"
-          >
-            {outlineOpen ? (
-              <PanelLeftClose className="w-4 h-4" />
-            ) : (
-              <PanelLeftOpen className="w-4 h-4" />
-            )}
-          </button>
 
           <div className="min-w-0 flex-1 flex items-center gap-2">
             {readOnly ? (
@@ -929,38 +968,28 @@ export function NotebookWorkbench({
                   }))
                 }
                 aria-label="Judul Notebook"
-                className="w-full max-w-[320px] bg-transparent text-sm sm:text-base font-bold text-text-primary border-b border-transparent focus:border-[#C2553A] focus:outline-hidden truncate py-0.5"
+                placeholder="Judul notebook..."
+                className="w-full min-w-[110px] max-w-[260px] bg-transparent text-sm sm:text-base font-bold text-text-primary border-b border-transparent hover:border-border focus:border-[#C2553A] focus:outline-hidden truncate py-0.5 transition-colors"
               />
             )}
-
-            <div
-              className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-border/80 bg-surface-secondary/50 text-[10.5px] font-mono text-text-secondary shrink-0"
-              title={kernelDetail || KERNEL_STATUS_LABELS[activeKernelState]}
-            >
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  activeKernelState === "executing" ||
-                  activeKernelState === "loading"
-                    ? "bg-amber-500 animate-pulse"
-                    : activeKernelState === "error"
-                      ? "bg-rose-500"
-                      : "bg-emerald-500"
-                }`}
-              />
-              <span className="max-w-[140px] truncate">
-                {activeKernelState === "ready"
-                  ? "Siap"
-                  : KERNEL_STATUS_LABELS[activeKernelState]}
-              </span>
-              {isCloudAuthenticated && !readOnly && (
-                <span className="text-emerald-600 dark:text-emerald-400">· Cloud</span>
-              )}
-            </div>
           </div>
+
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={() => handleCreateNewNotebook(doc.defaultKernel)}
+              className="h-9 px-3 rounded-xl border border-[#C2553A]/35 bg-[#C2553A]/8 hover:bg-[#C2553A]/15 text-[#C2553A] dark:text-[#F09A82] inline-flex items-center gap-1.5 text-xs font-mono font-semibold cursor-pointer shrink-0 transition-colors"
+              title="Buat Notebook Kosong Baru (Fokus Ngoding)"
+            >
+              <FilePlus2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">New Notebook</span>
+              <span className="sm:hidden">Baru</span>
+            </button>
+          )}
         </div>
 
-        {/* Right: Execution, Dataset Shortcut, Save & Options Menu */}
-        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+        {/* Right: Primary Execution, Quick Cell Add, Status/Runtime Chip, Save, Panel & Overflow Menu */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {readOnly && (
             <button
               type="button"
@@ -976,7 +1005,7 @@ export function NotebookWorkbench({
           <button
             type="button"
             onClick={() => void runAllCells()}
-            className="h-9 px-3 rounded-xl bg-[#C2553A] hover:bg-[#AD472E] text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+            className="h-9 px-3.5 rounded-xl bg-[#C2553A] hover:bg-[#AD472E] text-white text-xs font-mono font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
             title="Jalankan seluruh sel dari atas ke bawah"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
@@ -987,6 +1016,7 @@ export function NotebookWorkbench({
             <button
               type="button"
               onClick={() => {
+                setPendingInputPrompt(null);
                 routerRef.current?.terminateKernel();
                 setRunningCellIds(new Set());
                 toast.warning("Eksekusi kernel dihentikan (Interrupt).");
@@ -1003,8 +1033,8 @@ export function NotebookWorkbench({
               <button
                 type="button"
                 onClick={() => addCell("code", activeCell?.id)}
-                className="hidden sm:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1 cursor-pointer"
-                title="Tambah sel kode di bawah sel aktif"
+                className="hidden sm:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1 cursor-pointer transition-colors"
+                title="Tambah sel kode baru"
               >
                 <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
                 <span>Kode</span>
@@ -1012,8 +1042,8 @@ export function NotebookWorkbench({
               <button
                 type="button"
                 onClick={() => addCell("markdown", activeCell?.id)}
-                className="hidden md:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1 cursor-pointer"
-                title="Tambah sel teks / Markdown di bawah sel aktif"
+                className="hidden xl:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary items-center gap-1 cursor-pointer transition-colors"
+                title="Tambah catatan Markdown / LaTeX"
               >
                 <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
                 <span>Teks</span>
@@ -1021,72 +1051,43 @@ export function NotebookWorkbench({
             </>
           )}
 
-          <button
-            type="button"
-            onClick={() => {
-              setInspectorTab("files");
-              setMobileTab("files");
-              if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-                const willOpen = !(inspectorOpen && inspectorTab === "files");
-                setInspectorOpen(willOpen);
-                if (willOpen && isCompactDesktop()) {
-                  setOutlineOpen(false);
-                }
-              } else {
-                setInspectorOpen(true);
-                if (typeof window !== "undefined" && window.innerWidth >= 768) {
-                  setTabletDrawerOpen(true);
-                }
-              }
-            }}
-            className={`h-9 px-2.5 rounded-xl border text-xs font-mono font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors ${
-              inspectorOpen && inspectorTab === "files"
-                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
-                : "border-border bg-surface hover:bg-surface-secondary text-text-primary"
-            }`}
-            title="Kelola Dataset, Sample Data, & File Workspace"
-          >
-            <Database className="w-3.5 h-3.5 text-[#C2553A]" />
-            <span className="hidden sm:inline">Dataset</span>
-            <span className="px-1.5 py-0.5 rounded-md bg-surface-secondary text-[10px] tabular-nums">
-              {vfsFiles.length}
-            </span>
-          </button>
+          {/* Clickable Runtime Status Pill */}
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={() => setRuntimeModalOpen(true)}
+              className="hidden md:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface-secondary/40 hover:bg-surface-secondary text-[11px] font-mono text-text-secondary hover:text-text-primary items-center gap-1.5 cursor-pointer transition-colors shrink-0"
+              title={kernelDetail || `${KERNEL_STATUS_LABELS[activeKernelState]} — Klik untuk konfigurasi Runtime WASM / GPU Bridge`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  activeKernelState === "executing" ||
+                  activeKernelState === "loading" ||
+                  activeKernelState === "installing_pkg"
+                    ? "bg-amber-500 animate-pulse"
+                    : activeKernelState === "error"
+                      ? "bg-rose-500"
+                      : "bg-emerald-500"
+                }`}
+              />
+              <span className="max-w-[130px] truncate">
+                {activeKernelState === "ready" || activeKernelState === "idle"
+                  ? doc.runtimeMode === "remote_ws"
+                    ? "GPU Bridge"
+                    : "Siap"
+                  : KERNEL_STATUS_LABELS[activeKernelState]}
+              </span>
+            </button>
+          )}
 
           {!readOnly && (
             <>
               <button
                 type="button"
-                onClick={handleRestartAndRunAll}
-                className="hidden sm:inline-flex h-9 w-9 lg:w-auto lg:px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary items-center justify-center gap-1.5 cursor-pointer"
-                title="Reset kernel & jalankan seluruh sel"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden xl:inline">Restart</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRuntimeModalOpen(true)}
-                className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-                title="Pilih Browser WASM vs Local/GPU Runtime"
-              >
-                {doc.runtimeMode === "remote_ws" ? (
-                  <Laptop className="w-3.5 h-3.5 text-emerald-600" />
-                ) : (
-                  <Cpu className="w-3.5 h-3.5 text-[#C2553A]" />
-                )}
-                <span className="hidden xl:inline">
-                  {doc.runtimeMode === "remote_ws" ? "GPU Bridge" : "WASM"}
-                </span>
-              </button>
-
-              <button
-                type="button"
                 disabled={syncingCloud}
                 onClick={handleSaveCloud}
-                className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
-                title="Simpan ke Cloud & Lokal"
+                className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                title="Simpan notebook ke Cloud & Lokal"
               >
                 {isCloudAuthenticated ? (
                   <Cloud className="w-3.5 h-3.5 text-emerald-600" />
@@ -1103,20 +1104,116 @@ export function NotebookWorkbench({
                 <button
                   type="button"
                   onClick={() => setOptionsMenuOpen((p) => !p)}
-                  className="h-9 px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center gap-1 cursor-pointer"
+                  className="h-9 w-9 md:w-auto md:px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-primary inline-flex items-center justify-center gap-1 cursor-pointer transition-colors"
                   aria-expanded={optionsMenuOpen}
-                  title="Pengaturan Editor, Kanvas, Impor & Ekspor"
+                  title="Opsi Runtime, Tampilan, Outline & Ekspor"
                 >
-                  <MoreHorizontal className="w-3.5 h-3.5" />
-                  <span className="hidden md:inline">Opsi</span>
-                  <ChevronDown className="w-3 h-3 opacity-60" />
+                  <MoreHorizontal className="w-4 h-4" />
+                  <ChevronDown className="w-3 h-3 opacity-60 hidden md:inline" />
                 </button>
 
                 {optionsMenuOpen && (
                   <div className="absolute right-0 mt-1.5 w-64 rounded-2xl border border-border bg-surface shadow-xl z-50 py-1.5 text-xs font-mono overflow-hidden">
                     <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-text-muted">
-                      Tampilan & Eksekusi
+                      Runtime & Kernel
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        void handleRestartAndRunAll();
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>Restart &amp; Run All</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        setRuntimeModalOpen(true);
+                      }}
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        {doc.runtimeMode === "remote_ws" ? (
+                          <Laptop className="w-3.5 h-3.5 text-emerald-600" />
+                        ) : (
+                          <Cpu className="w-3.5 h-3.5 text-[#C2553A]" />
+                        )}
+                        <span>Pilih Runtime</span>
+                      </span>
+                      <span className="text-[10px] text-text-secondary">
+                        {doc.runtimeMode === "remote_ws" ? "GPU" : "WASM"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        setInspectorTab("files");
+                        setMobileTab("files");
+                        if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+                          setInspectorOpen(true);
+                          if (isCompactDesktop()) setOutlineOpen(false);
+                        } else if (typeof window !== "undefined" && window.innerWidth >= 768) {
+                          setTabletDrawerOpen(true);
+                        }
+                      }}
+                      className="w-full px-3 py-2 flex items-center justify-between hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Database className="w-3.5 h-3.5 text-[#C2553A]" />
+                        <span>Dataset &amp; File</span>
+                      </span>
+                      <span className="text-[10px] text-text-secondary">
+                        {vfsFiles.length}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        void refreshLibrary();
+                        setLibraryTab("templates");
+                        setLibraryDrawerOpen(true);
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-surface-secondary text-text-primary text-left cursor-pointer"
+                    >
+                      <BookOpen className="w-3.5 h-3.5 text-[#C2553A]" />
+                      <span>Jelajahi Template Contoh</span>
+                    </button>
+
+                    <div className="my-1 border-t border-border/70" />
+                    <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-text-muted">
+                      Tampilan &amp; Eksekusi
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionsMenuOpen(false);
+                        toggleOutline();
+                      }}
+                      className="hidden lg:flex w-full px-3 py-2 items-center justify-between hover:bg-surface-secondary text-left cursor-pointer"
+                    >
+                      <span className="inline-flex items-center gap-2 text-text-primary">
+                        {outlineOpen ? (
+                          <PanelLeftClose className="w-3.5 h-3.5 text-[#C2553A]" />
+                        ) : (
+                          <PanelLeftOpen className="w-3.5 h-3.5 text-[#C2553A]" />
+                        )}
+                        <span>Panel Outline &amp; Snippet</span>
+                      </span>
+                      <span className="text-[10px] text-text-secondary">
+                        {outlineOpen ? "Buka" : "Tutup"}
+                      </span>
+                    </button>
+
                     <button
                       type="button"
                       onClick={() =>
@@ -1195,10 +1292,10 @@ export function NotebookWorkbench({
                         ) : (
                           <Maximize2 className="w-3.5 h-3.5 text-[#C2553A]" />
                         )}
-                        <span>Lebar Kanvas Penuh</span>
+                        <span>Lebar Kanvas</span>
                       </span>
                       <span className="text-[10px] text-text-secondary">
-                        {canvasWide ? "Penuh" : "Nyaman"}
+                        {canvasWide ? "Penuh" : "Fokus"}
                       </span>
                     </button>
 
@@ -1265,7 +1362,7 @@ export function NotebookWorkbench({
 
                     <div className="my-1 border-t border-border/70" />
                     <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-text-muted">
-                      Berkas & Kolaborasi
+                      Berkas &amp; Kolaborasi
                     </div>
 
                     <button
@@ -1339,29 +1436,6 @@ export function NotebookWorkbench({
             </>
           )}
 
-          {/* Wide / Focus Canvas 1-Click Toggle */}
-          <button
-            type="button"
-            onClick={() => setCanvasWide((p) => !p)}
-            className={`hidden xl:inline-flex h-9 px-2.5 rounded-xl border text-xs font-mono font-semibold items-center gap-1.5 cursor-pointer transition-colors ${
-              canvasWide
-                ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
-                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
-            }`}
-            title={
-              canvasWide
-                ? "Lebar Kanvas Penuh aktif — klik untuk mode Terpusat"
-                : "Kanvas Terpusat — klik untuk Lebar Penuh"
-            }
-          >
-            {canvasWide ? (
-              <Maximize2 className="w-3.5 h-3.5" />
-            ) : (
-              <Minimize2 className="w-3.5 h-3.5" />
-            )}
-            <span>{canvasWide ? "Lebar" : "Fokus"}</span>
-          </button>
-
           {/* Tablet Slide-Over Inspector Toggle (768px-1023px) */}
           <button
             type="button"
@@ -1376,18 +1450,24 @@ export function NotebookWorkbench({
           <button
             type="button"
             onClick={toggleInspector}
-            className={`hidden lg:inline-flex h-9 w-9 rounded-xl border items-center justify-center cursor-pointer transition-colors ${
+            className={`hidden lg:inline-flex h-9 px-2.5 rounded-xl border items-center gap-1.5 text-xs font-mono font-semibold cursor-pointer transition-colors ${
               inspectorOpen
                 ? "border-[#C2553A]/35 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
-                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary"
+                : "border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary"
             }`}
-            title={inspectorOpen ? "Tutup panel kanan" : "Buka panel kanan"}
+            title={inspectorOpen ? "Tutup panel Dataset, Variabel & AI" : "Buka panel Dataset, Variabel & AI"}
             aria-label="Toggle Panel Kanan"
           >
             {inspectorOpen ? (
               <PanelRightClose className="w-4 h-4" />
             ) : (
               <PanelRightOpen className="w-4 h-4" />
+            )}
+            <span className="hidden xl:inline">Panel</span>
+            {vfsFiles.length > 0 && (
+              <span className="px-1.5 py-0.5 rounded-md bg-surface-secondary text-[10px] tabular-nums">
+                {vfsFiles.length}
+              </span>
             )}
           </button>
         </div>
@@ -1454,8 +1534,8 @@ export function NotebookWorkbench({
           }`}
         >
           <div
-            className={`mx-auto w-full space-y-2 pb-8 ${
-              canvasWide ? "max-w-none" : "max-w-[980px]"
+            className={`mx-auto w-full space-y-4 sm:space-y-5 pt-2 sm:pt-3 pb-12 px-0.5 sm:px-2 ${
+              canvasWide ? "max-w-none" : "max-w-[1040px]"
             }`}
           >
             {displayedCells.map((cell, visibleIdx) => {
@@ -1468,6 +1548,11 @@ export function NotebookWorkbench({
                     totalCells={doc.cells.length}
                     isActive={activeCell?.id === cell.id}
                     isRunning={runningCellIds.has(cell.id)}
+                    pendingInputPrompt={
+                      pendingInputPrompt?.cellId === cell.id
+                        ? pendingInputPrompt
+                        : null
+                    }
                     dagInfo={dagMap.get(cell.id)}
                     variables={variables}
                     sqlTables={sqlTables}
@@ -1528,13 +1613,13 @@ export function NotebookWorkbench({
 
                   {/* Clean Hover-Reveal Inter-Cell Insertion Divider */}
                   {!readOnly && visibleIdx < displayedCells.length - 1 && (
-                    <div className="group/div relative h-5 flex items-center justify-center">
-                      <div className="w-full h-px bg-transparent group-hover/div:bg-[#C2553A]/35 transition-colors" />
-                      <div className="absolute flex items-center gap-1.5 opacity-0 group-hover/div:opacity-100 focus-within:opacity-100 transition-opacity bg-surface px-2 py-0.5 rounded-full border border-border shadow-xs">
+                    <div className="group/div relative h-4 flex items-center justify-center">
+                      <div className="w-full h-px bg-transparent group-hover/div:bg-[#C2553A]/30 transition-colors" />
+                      <div className="absolute flex items-center gap-1.5 opacity-0 group-hover/div:opacity-100 focus-within:opacity-100 transition-opacity bg-surface px-2.5 py-0.5 rounded-full border border-border shadow-xs">
                         <button
                           type="button"
                           onClick={() => addCell("code", cell.id)}
-                          className="text-[10.5px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer px-1"
+                          className="text-[11px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer px-1"
                         >
                           <Plus className="w-3 h-3" />
                           <span>Kode</span>
@@ -1543,7 +1628,7 @@ export function NotebookWorkbench({
                         <button
                           type="button"
                           onClick={() => addCell("markdown", cell.id)}
-                          className="text-[10.5px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer px-1"
+                          className="text-[11px] font-mono text-text-secondary hover:text-[#C2553A] inline-flex items-center gap-1 cursor-pointer px-1"
                         >
                           <Plus className="w-3 h-3" />
                           <span>Teks</span>
@@ -1555,23 +1640,47 @@ export function NotebookWorkbench({
               );
             })}
 
+            {!readOnly &&
+              doc.cells.length === 1 &&
+              !doc.cells[0]?.source.trim() &&
+              doc.cells[0]?.outputs.length === 0 && (
+                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-surface-secondary/20 text-xs text-text-secondary">
+                  <span>
+                    Lembar koding bersih siap digunakan. Mendukung <code className="font-mono text-[#C2553A]">!pip install</code>, <code className="font-mono text-[#C2553A]">input()</code>, Grafik Matplotlib, Pandas, &amp; SQLite.
+                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void refreshLibrary();
+                        setLibraryTab("templates");
+                        setLibraryDrawerOpen(true);
+                      }}
+                      className="text-xs font-mono font-semibold text-[#C2553A] hover:underline cursor-pointer"
+                    >
+                      Pilih Template Contoh
+                    </button>
+                  </div>
+                </div>
+              )}
+
             {!readOnly && (
-              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
                 <button
                   type="button"
                   onClick={() => addCell("code")}
-                  className="h-9 px-3.5 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
+                  className="h-9 px-4 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
-                  <span>Sel Kode ({doc.defaultKernel})</span>
+                  <span>Tambah Sel Kode ({doc.defaultKernel})</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => addCell("markdown")}
-                  className="h-9 px-3.5 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer"
+                  className="h-9 px-4 rounded-xl border border-dashed border-border hover:border-[#C2553A] bg-surface hover:bg-surface-secondary text-xs font-mono font-semibold text-text-primary inline-flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
-                  <span>Sel Markdown / LaTeX</span>
+                  <span>Tambah Sel Teks</span>
                 </button>
               </div>
             )}
@@ -1686,7 +1795,7 @@ export function NotebookWorkbench({
         </div>
       )}
 
-      {/* Notebook Library Drawer */}
+      {/* Notebook Library & Templates Drawer */}
       {libraryDrawerOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex justify-start"
@@ -1698,81 +1807,161 @@ export function NotebookWorkbench({
           >
             <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-surface">
               <span className="text-sm font-bold text-text-primary">
-                Koleksi Notebook Saya
+                Koleksi &amp; Template Notebook
               </span>
               <button
                 type="button"
                 onClick={() => setLibraryDrawerOpen(false)}
-                className="min-h-[34px] px-2.5 rounded-lg border border-border text-xs font-mono cursor-pointer"
+                className="min-h-[34px] px-2.5 rounded-lg border border-border text-xs font-mono cursor-pointer hover:bg-surface-secondary"
               >
                 Tutup
               </button>
             </div>
 
-            <div className="p-3 border-b border-border grid grid-cols-2 gap-2">
-              {(["python", "sql", "javascript", "typescript"] as const).map((k) => (
-                <button
-                  key={k}
-                  type="button"
-                  onClick={() => {
-                    const fresh = createStarterNotebook(k);
-                    setDoc(fresh);
-                    setActiveCellId(fresh.cells[1]?.id || fresh.cells[0]?.id || "");
-                    setLibraryDrawerOpen(false);
-                  }}
-                  className="min-h-[38px] px-2.5 py-1.5 rounded-xl border border-border bg-surface hover:border-[#C2553A] text-xs font-mono font-semibold text-text-primary flex items-center justify-center gap-1 cursor-pointer"
-                >
-                  <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
-                  <span>Baru ({k.toUpperCase()})</span>
-                </button>
-              ))}
+            {/* Clean Switcher: Notebook Saya vs Template Contoh */}
+            <div className="grid grid-cols-2 gap-1 p-2 border-b border-border bg-surface-secondary/30">
+              <button
+                type="button"
+                onClick={() => setLibraryTab("notebooks")}
+                className={`h-8 rounded-lg text-xs font-mono font-semibold cursor-pointer transition-colors ${
+                  libraryTab === "notebooks"
+                    ? "bg-[#C2553A] text-white"
+                    : "text-text-secondary hover:bg-surface"
+                }`}
+              >
+                Notebook Saya ({savedLibrary.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setLibraryTab("templates")}
+                className={`h-8 rounded-lg text-xs font-mono font-semibold cursor-pointer transition-colors ${
+                  libraryTab === "templates"
+                    ? "bg-[#C2553A] text-white"
+                    : "text-text-secondary hover:bg-surface"
+                }`}
+              >
+                Template Contoh
+              </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {savedLibrary.map((item) => (
-                <div
-                  key={item.id}
-                  className={`p-3 rounded-xl border space-y-1.5 cursor-pointer transition-colors ${
-                    item.id === doc.id
-                      ? "bg-[#C2553A]/10 border-[#C2553A]/50"
-                      : "bg-surface border-border hover:bg-surface-secondary"
-                  }`}
-                  onClick={() => {
-                    setDoc(item);
-                    setActiveCellId(item.cells[0]?.id || "");
-                    setLibraryDrawerOpen(false);
-                  }}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-text-primary truncate">
-                      {item.title}
-                    </span>
-                    {item.id === doc.id && (
-                      <Check className="w-3.5 h-3.5 text-[#C2553A] shrink-0" />
+            {libraryTab === "notebooks" ? (
+              <>
+                <div className="p-3 border-b border-border space-y-2">
+                  <div className="text-[10.5px] font-mono uppercase tracking-wider text-text-muted">
+                    Buat New Notebook (Kosong &amp; Fokus Ngoding)
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["python", "sql", "javascript", "typescript"] as const).map(
+                      (k) => (
+                        <button
+                          key={k}
+                          type="button"
+                          onClick={() => handleCreateNewNotebook(k)}
+                          className="min-h-[38px] px-2.5 py-1.5 rounded-xl border border-border bg-surface hover:border-[#C2553A] text-xs font-mono font-semibold text-text-primary flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5 text-[#C2553A]" />
+                          <span>New ({k.toUpperCase()})</span>
+                        </button>
+                      )
                     )}
                   </div>
-                  <div className="flex items-center justify-between text-[10px] font-mono text-text-tertiary">
-                    <span>
-                      {item.cells.length} sel • {item.defaultKernel}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        void deleteLocalNotebook(item.id);
-                        void deleteNotebookAction(item.id);
-                        setSavedLibrary((prev) =>
-                          prev.filter((n) => n.id !== item.id)
-                        );
-                      }}
-                      className="text-rose-600 hover:underline cursor-pointer"
-                    >
-                      Hapus
-                    </button>
-                  </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+                  {savedLibrary.length === 0 ? (
+                    <div className="p-5 rounded-xl border border-dashed border-border text-center space-y-1.5 text-xs text-text-tertiary">
+                      <p className="font-semibold text-text-secondary">
+                        Belum ada notebook tersimpan
+                      </p>
+                      <p>
+                        Setiap kode yang Anda tulis otomatis tersimpan di sini secara lokal atau ke Cloud.
+                      </p>
+                    </div>
+                  ) : (
+                    savedLibrary.map((item) => (
+                      <div
+                        key={item.id}
+                        className={`p-3 rounded-xl border space-y-1.5 cursor-pointer transition-colors ${
+                          item.id === doc.id
+                            ? "bg-[#C2553A]/10 border-[#C2553A]/50"
+                            : "bg-surface border-border hover:bg-surface-secondary"
+                        }`}
+                        onClick={() => {
+                          setPendingInputPrompt(null);
+                          setDoc(item);
+                          setActiveCellId(item.cells[0]?.id || "");
+                          setLibraryDrawerOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-bold text-text-primary truncate">
+                            {item.title}
+                          </span>
+                          {item.id === doc.id && (
+                            <Check className="w-3.5 h-3.5 text-[#C2553A] shrink-0" />
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between text-[10.5px] font-mono text-text-tertiary">
+                          <span>
+                            {item.cells.length} sel • {item.defaultKernel}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void deleteLocalNotebook(item.id);
+                              void deleteNotebookAction(item.id);
+                              setSavedLibrary((prev) =>
+                                prev.filter((n) => n.id !== item.id)
+                              );
+                            }}
+                            className="text-rose-600 hover:underline cursor-pointer"
+                          >
+                            Hapus
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+                <p className="text-xs text-text-secondary px-1">
+                  Pilih template contoh jika ingin bereksperimen cepat tanpa menumpuk di notebook kosong Anda:
+                </p>
+                {NOTEBOOK_TEMPLATES.map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => {
+                      const nextDoc = createTemplateNotebook(tpl.id);
+                      setPendingInputPrompt(null);
+                      setDoc(nextDoc);
+                      setActiveCellId(
+                        nextDoc.cells.find((c) => c.type === "code")?.id ||
+                          nextDoc.cells[0]?.id ||
+                          ""
+                      );
+                      setLibraryDrawerOpen(false);
+                    }}
+                    className="w-full text-left p-3.5 rounded-xl border border-border bg-surface hover:border-[#C2553A] hover:bg-surface-secondary/50 space-y-1 cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-text-primary">
+                        {tpl.title}
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded bg-surface-secondary text-[10px] font-mono uppercase text-text-secondary">
+                        {tpl.kernel}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-text-secondary leading-relaxed">
+                      {tpl.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
           </aside>
         </div>
       )}

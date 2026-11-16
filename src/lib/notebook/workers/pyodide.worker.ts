@@ -1,9 +1,19 @@
 /// <reference lib="webworker" />
 
+import { preprocessPythonCellSource } from "../python-preprocessor";
 import type { DataFramePayload, RichCellOutput, VariableSummary } from "../types";
 
+// Next.js / Webpack worker strict-mode safety guard
+(self as unknown as Record<string, unknown>)._N_E =
+  (self as unknown as Record<string, unknown>)._N_E || {};
+
+declare function importScripts(...urls: string[]): void;
+
 const PYODIDE_VERSION = "v0.27.4";
-const PYODIDE_INDEX_URL = `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/`;
+const PYODIDE_INDEX_URLS = [
+  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/`,
+  `https://fastly.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/`,
+];
 
 interface PyodideInstance {
   runPython: (code: string) => unknown;
@@ -25,24 +35,53 @@ interface PyodideInstance {
 }
 
 const VELQORA_PREAMBLE_PY = `
-import os, sys, ast, io, json, base64, traceback, math
+import os, sys, ast, io, json, base64, traceback, math, builtins, inspect, importlib, importlib.util
+
+# Pastikan Matplotlib selalu memakai backend non-GUI AGG di Web Worker (cegah error document undefined)
+os.environ["MPLBACKEND"] = "AGG"
 
 os.makedirs("/workspace", exist_ok=True)
 if os.getcwd() != "/workspace":
     os.chdir("/workspace")
+if "/workspace" not in sys.path:
+    sys.path.insert(0, "/workspace")
 
 __velqora_outputs = []
 __velqora_matplotlib_hooked = False
+__velqora_hooking_mpl = False
+__velqora_stdin_queue = []
+
+class __VelqoraNeedInput(BaseException):
+    def __init__(self, prompt_text=""):
+        super().__init__(prompt_text)
+        self.prompt_text = prompt_text
+
+def __velqora_input(prompt=""):
+    prompt_str = "" if prompt is None else str(prompt)
+    if __velqora_stdin_queue:
+        val = str(__velqora_stdin_queue.pop(0))
+        sys.stdout.write(f"{prompt_str}{val}\\n")
+        sys.stdout.flush()
+        return val
+    raise __VelqoraNeedInput(prompt_str)
+
+builtins.input = __velqora_input
 
 def __velqora_ensure_matplotlib_hook():
-    global __velqora_matplotlib_hooked
-    if "matplotlib" not in sys.modules:
+    global __velqora_matplotlib_hooked, __velqora_hooking_mpl
+    if __velqora_matplotlib_hooked or __velqora_hooking_mpl:
         return
+    if "matplotlib" not in sys.modules and "matplotlib.pyplot" not in sys.modules:
+        return
+    __velqora_hooking_mpl = True
     try:
         import matplotlib
-        matplotlib.use("AGG", force=True)
-        import matplotlib.pyplot as plt
-        if not __velqora_matplotlib_hooked:
+        try:
+            matplotlib.use("AGG", force=True)
+        except Exception:
+            pass
+        if "matplotlib.pyplot" in sys.modules:
+            import matplotlib.pyplot as plt
             def _velqora_show(*args, **kwargs):
                 for num in list(plt.get_fignums()):
                     fig = plt.figure(num)
@@ -60,6 +99,18 @@ def __velqora_ensure_matplotlib_hook():
             __velqora_matplotlib_hooked = True
     except Exception:
         pass
+    finally:
+        __velqora_hooking_mpl = False
+
+_velqora_orig_import = builtins.__import__
+def _velqora_import(name, globals=None, locals=None, fromlist=(), level=0):
+    mod = _velqora_orig_import(name, globals, locals, fromlist, level)
+    if not __velqora_matplotlib_hooked and not __velqora_hooking_mpl:
+        if name == "matplotlib" or str(name).startswith("matplotlib.") or "matplotlib.pyplot" in sys.modules:
+            __velqora_ensure_matplotlib_hook()
+    return mod
+
+builtins.__import__ = _velqora_import
 
 def _safe_json_scalar(val):
     if val is None:
@@ -97,7 +148,6 @@ def __velqora_serialize_dataframe(df, var_name="DataFrame"):
                     summary["max"] = _safe_json_scalar(float(clean_s.max()))
                     summary["mean"] = _safe_json_scalar(float(clean_s.mean()))
                     summary["std"] = _safe_json_scalar(float(clean_s.std())) if len(clean_s) > 1 else 0.0
-                    # 8-bin mini histogram
                     vals = [float(v) for v in clean_s.iloc[:2000].tolist() if math.isfinite(float(v))]
                     if vals:
                         vmin, vmax = min(vals), max(vals)
@@ -180,32 +230,54 @@ def __velqora_emit_object(obj, var_name="result"):
             return
     __velqora_outputs.append({"kind": "text", "text": repr(obj)})
 
-def __velqora_exec_cell(code_str, globals_dict):
-    global __velqora_outputs
+async def __velqora_exec_cell(code_str, globals_dict, stdin_json="[]"):
+    global __velqora_outputs, __velqora_stdin_queue
     __velqora_outputs = []
-    tree = ast.parse(code_str, mode="exec")
-    __velqora_ensure_matplotlib_hook()
+    __velqora_stdin_queue = [str(x) for x in json.loads(stdin_json)]
 
-    last_expr = None
-    if tree.body and isinstance(tree.body[-1], ast.Expr):
-        last_expr = ast.Expression(body=tree.body.pop().value)
+    try:
+        importlib.invalidate_caches()
+        tree = ast.parse(code_str, mode="exec")
+        __velqora_ensure_matplotlib_hook()
 
-    if tree.body:
-        exec(compile(tree, "<cell>", "exec"), globals_dict, globals_dict)
+        last_expr = None
+        if tree.body and isinstance(tree.body[-1], ast.Expr):
+            last_expr = ast.Expression(body=tree.body.pop().value)
 
-    __velqora_ensure_matplotlib_hook()
+        if tree.body:
+            co = compile(tree, "<cell>", "exec", flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
+            res = eval(co, globals_dict, globals_dict)
+            if inspect.isawaitable(res):
+                await res
 
-    if last_expr is not None:
-        val = eval(compile(last_expr, "<cell>", "eval"), globals_dict, globals_dict)
-        __velqora_emit_object(val)
+        __velqora_ensure_matplotlib_hook()
 
-    # Flush any unshown matplotlib figures created during execution
-    if "matplotlib.pyplot" in sys.modules:
-        import matplotlib.pyplot as plt
-        if plt.get_fignums():
-            plt.show()
+        if last_expr is not None:
+            lco = compile(last_expr, "<cell>", "eval", flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
+            val = eval(lco, globals_dict, globals_dict)
+            if inspect.isawaitable(val):
+                val = await val
+            __velqora_emit_object(val)
 
-    return json.dumps(__velqora_outputs, default=str)
+        if "matplotlib.pyplot" in sys.modules:
+            __velqora_ensure_matplotlib_hook()
+            import matplotlib.pyplot as plt
+            if plt.get_fignums():
+                plt.show()
+
+        sys.stdout.flush()
+        sys.stderr.flush()
+        return json.dumps({"status": "ok", "outputs": __velqora_outputs}, default=str)
+    except __VelqoraNeedInput as need_in:
+        try:
+            if "matplotlib.pyplot" in sys.modules:
+                import matplotlib.pyplot as plt
+                plt.close("all")
+        except Exception:
+            pass
+        sys.stdout.flush()
+        sys.stderr.flush()
+        return json.dumps({"status": "need_input", "prompt": need_in.prompt_text})
 
 def __velqora_run_assertions(assert_code, globals_dict):
     cases = []
@@ -222,7 +294,7 @@ def __velqora_run_assertions(assert_code, globals_dict):
     return json.dumps(cases)
 
 def __velqora_snapshot_vars(globals_dict):
-    ignore = {"os", "sys", "ast", "io", "json", "base64", "traceback", "math", "display", "In", "Out", "get_ipython"}
+    ignore = {"os", "sys", "ast", "io", "json", "base64", "traceback", "math", "builtins", "inspect", "importlib", "display", "In", "Out", "get_ipython"}
     items = []
     exported_dfs = {}
     for k, v in list(globals_dict.items()):
@@ -287,41 +359,85 @@ const ALIAS_TO_PIP: Record<string, string> = {
   yaml: "pyyaml",
   sns: "seaborn",
   plt: "matplotlib",
+  np: "numpy",
+  pd: "pandas",
+  Bio: "biopython",
+  fitz: "pymupdf",
+  dotenv: "python-dotenv",
+  jwt: "pyjwt",
 };
+
+const NATIVE_HEAVY_ML = new Set(["torch", "tensorflow", "keras", "jax", "mxnet"]);
 
 let pyodide: PyodideInstance | null = null;
 let bootPromise: Promise<PyodideInstance> | null = null;
 let micropipReady = false;
 const installedPackages = new Set<string>();
+const failedAutoInstall = new Set<string>();
 
-function extractTopImports(code: string): string[] {
-  const pkgs = new Set<string>();
-  const matches = code.matchAll(
-    /^\s*(?:import|from)\s+([A-Za-z_][A-Za-z0-9_]*)/gm
-  );
-  for (const m of matches) {
-    pkgs.add(m[1]);
-  }
-  return Array.from(pkgs);
+interface StdinWaiter {
+  resolve: (res: { value: string; cancelled: boolean }) => void;
 }
+const stdinWaiters = new Map<string, StdinWaiter>();
 
 async function ensurePyodide(): Promise<PyodideInstance> {
   if (pyodide) return pyodide;
   if (bootPromise) return bootPromise;
 
   bootPromise = (async () => {
-    self.postMessage({ type: "status", state: "loading", detail: "Memuat runtime Python 3.12 WebAssembly..." });
-    const pyodideMod = await import(
-      /* webpackIgnore: true */ `${PYODIDE_INDEX_URL}pyodide.mjs`
-    );
-    const instance = (await pyodideMod.loadPyodide({
-      indexURL: PYODIDE_INDEX_URL,
-    })) as PyodideInstance;
+    self.postMessage({
+      type: "status",
+      state: "loading",
+      detail: "Memuat runtime Python 3.12 WebAssembly...",
+    });
 
-    await instance.runPythonAsync(VELQORA_PREAMBLE_PY);
-    pyodide = instance;
-    self.postMessage({ type: "status", state: "ready", detail: "Python 3.12 WASM siap" });
-    return instance;
+    let lastErr: unknown = null;
+    for (const indexUrl of PYODIDE_INDEX_URLS) {
+      // Strategi 1: ESM dynamic import
+      try {
+        const pyodideMod = await import(
+          /* webpackIgnore: true */ `${indexUrl}pyodide.mjs`
+        );
+        const instance = (await pyodideMod.loadPyodide({
+          indexURL: indexUrl,
+        })) as PyodideInstance;
+        await instance.runPythonAsync(VELQORA_PREAMBLE_PY);
+        pyodide = instance;
+        self.postMessage({
+          type: "status",
+          state: "ready",
+          detail: "Python 3.12 WASM siap",
+        });
+        return instance;
+      } catch (esmErr) {
+        lastErr = esmErr;
+      }
+
+      // Strategi 2: Classic Worker importScripts fallback
+      if (typeof importScripts === "function") {
+        try {
+          importScripts(`${indexUrl}pyodide.js`);
+          const loader = (self as unknown as { loadPyodide?: (opts: { indexURL: string }) => Promise<PyodideInstance> }).loadPyodide;
+          if (loader) {
+            const instance = await loader({ indexURL: indexUrl });
+            await instance.runPythonAsync(VELQORA_PREAMBLE_PY);
+            pyodide = instance;
+            self.postMessage({
+              type: "status",
+              state: "ready",
+              detail: "Python 3.12 WASM siap",
+            });
+            return instance;
+          }
+        } catch (classicErr) {
+          lastErr = classicErr;
+        }
+      }
+    }
+
+    throw lastErr instanceof Error
+      ? lastErr
+      : new Error(String(lastErr || "Gagal mengunduh runtime Pyodide dari CDN."));
   })().catch((err) => {
     bootPromise = null;
     self.postMessage({
@@ -335,63 +451,172 @@ async function ensurePyodide(): Promise<PyodideInstance> {
   return bootPromise;
 }
 
-async function installMissingPackages(instance: PyodideInstance, code: string) {
-  const imports = extractTopImports(code);
-  if (imports.length === 0) return;
+async function ensureMicropip(instance: PyodideInstance) {
+  if (!micropipReady) {
+    await instance.loadPackage("micropip");
+    micropipReady = true;
+  }
+  return instance.pyimport("micropip");
+}
 
-  try {
-    await instance.loadPackagesFromImports(code);
-    imports.forEach((p) => installedPackages.add(p));
-    return;
-  } catch {
-    // Some packages aren't built-in Pyodide wheels; fall back to micropip selectively
+async function installMissingPackages(
+  instance: PyodideInstance,
+  pipInstalls: string[],
+  imports: string[],
+  pythonCode: string,
+  stdoutLines: string[]
+) {
+  // 1. Proses `!pip install` / `%pip install` eksplisit terlebih dahulu
+  for (const pkgSpec of pipInstalls) {
+    const baseName = pkgSpec.split(/[<>=!~;\[]/)[0].trim();
+    if (!baseName) continue;
+    if (NATIVE_HEAVY_ML.has(baseName.toLowerCase())) {
+      stdoutLines.push(
+        `[pip] "${baseName}" memerlukan GPU/Native runtime (tidak tersedia di browser WASM; gunakan GPU Bridge di menu Runtime jika perlu).`
+      );
+      continue;
+    }
+
+    try {
+      self.postMessage({
+        type: "status",
+        state: "installing_pkg",
+        detail: `pip install ${pkgSpec}...`,
+      });
+      const micropip = await ensureMicropip(instance);
+      await micropip.install(pkgSpec);
+      installedPackages.add(baseName);
+      stdoutLines.push(`[pip] Berhasil memasang ${pkgSpec}`);
+    } catch (err: any) {
+      stdoutLines.push(
+        `[pip] Peringatan saat memasang ${pkgSpec}: ${err?.message || String(err)}`
+      );
+    }
   }
 
+  if (imports.length === 0) return;
+
+  // 2. Muat wheel built-in Pyodide (numpy, pandas, matplotlib, scikit-learn, scipy, dll.)
+  if (pythonCode.trim()) {
+    try {
+      self.postMessage({
+        type: "status",
+        state: "installing_pkg",
+        detail: "Memeriksa dependensi paket Python...",
+      });
+      await instance.loadPackagesFromImports(pythonCode);
+      for (const imp of imports) {
+        const exists = await instance.runPythonAsync(
+          `import importlib.util; importlib.util.find_spec(${JSON.stringify(imp)}) is not None`
+        );
+        if (exists) installedPackages.add(imp);
+      }
+    } catch {
+      // Paket non-Pyodide akan ditangani micropip di bawah
+    }
+  }
+
+  // 3. JANGAN return dini — cek setiap import lewat find_spec lalu install via micropip bila perlu!
   for (const rawPkg of imports) {
-    const pipName = ALIAS_TO_PIP[rawPkg] || rawPkg;
-    // Skip checking standard library heuristically by trying Python importlib check first
-    const alreadyExists = await instance.runPythonAsync(`
-import importlib.util
-importlib.util.find_spec(${JSON.stringify(rawPkg)}) is not None
-`);
+    if (failedAutoInstall.has(rawPkg)) continue;
+
+    const alreadyExists = await instance
+      .runPythonAsync(
+        `import importlib, importlib.util; importlib.invalidate_caches(); importlib.util.find_spec(${JSON.stringify(rawPkg)}) is not None`
+      )
+      .catch(() => false);
     if (alreadyExists) continue;
 
+    if (NATIVE_HEAVY_ML.has(rawPkg.toLowerCase())) {
+      failedAutoInstall.add(rawPkg);
+      continue;
+    }
+
+    const pipName = ALIAS_TO_PIP[rawPkg] || rawPkg;
     self.postMessage({
       type: "status",
       state: "installing_pkg",
-      detail: `Menginstal paket ${pipName} via micropip...`,
+      detail: `Menginstal ${pipName} otomatis...`,
     });
 
-    if (!micropipReady) {
-      await instance.loadPackage("micropip");
-      micropipReady = true;
+    try {
+      const micropip = await ensureMicropip(instance);
+      await micropip.install(pipName);
+      installedPackages.add(pipName);
+
+      if (pipName === "requests") {
+        try {
+          await micropip.install("pyodide-http");
+          await instance.runPythonAsync(
+            `import pyodide_http; pyodide_http.patch_all()`
+          );
+        } catch {
+          // Optional HTTP patch
+        }
+      }
+    } catch {
+      // Biarkan Python mengeksekusi sel (penting jika kode pakai try/except ImportError atau error native)
+      failedAutoInstall.add(rawPkg);
     }
-    const micropip = instance.pyimport("micropip");
-    await micropip.install(pipName);
-    installedPackages.add(pipName);
   }
 }
 
-self.onmessage = async (event: MessageEvent) => {
-  const msg = event.data;
-  if (!msg || typeof msg !== "object") return;
+function formatCleanPythonError(rawErr: string): {
+  ename: string;
+  evalue: string;
+  traceback: string[];
+  lineNumber?: number;
+} {
+  const allLines = rawErr.split("\n");
+  const cellStartIdx = allLines.findIndex((l) =>
+    /File "<(?:cell|unknown)>"/.test(l)
+  );
+  const slicedLines =
+    cellStartIdx > 0
+      ? ["Traceback (most recent call last):", ...allLines.slice(cellStartIdx)]
+      : allLines;
 
-  if (msg.type === "init") {
-    try {
-      await ensurePyodide();
-      self.postMessage({ type: "ready" });
-    } catch (err: any) {
-      self.postMessage({
-        type: "boot_error",
-        error: err?.message || String(err),
-      });
-    }
-    return;
-  }
+  // Filter frame internal __velqora_exec_cell jika masih terselip
+  const cleanedLines = slicedLines.filter(
+    (l, i, arr) =>
+      !l.includes("__velqora_exec_cell") &&
+      !(i > 0 && arr[i - 1]?.includes("__velqora_exec_cell"))
+  );
 
-  if (msg.type === "sync_files" && Array.isArray(msg.files)) {
-    try {
-      const instance = await ensurePyodide();
+  const tbLines = cleanedLines.length > 0 ? cleanedLines : allLines;
+  const lastLine =
+    tbLines
+      .slice()
+      .reverse()
+      .find((l) => l.trim().length > 0) || rawErr;
+
+  const userFrames = tbLines.join("\n");
+  const lineMatch = userFrames.match(
+    /File "<(?:cell|unknown|exec)>", line (\d+)/
+  );
+  const enameMatch = lastLine.match(
+    /^([A-Za-z_][A-Za-z0-9_]*(?:Error|Exception|Warning|Interrupt)):/
+  );
+
+  return {
+    ename: enameMatch ? enameMatch[1] : "PythonError",
+    evalue: lastLine,
+    traceback: tbLines,
+    lineNumber: lineMatch ? Number(lineMatch[1]) : undefined,
+  };
+}
+
+async function handleExecute(msg: any) {
+  const start = performance.now();
+  const outputs: RichCellOutput[] = [];
+  const stdoutLines: string[] = [];
+  const stderrLines: string[] = [];
+
+  try {
+    const instance = await ensurePyodide();
+
+    // Sync workspace uploaded files
+    if (Array.isArray(msg.files)) {
       instance.FS.mkdirTree("/workspace");
       for (const f of msg.files) {
         const targetPath = String(f.path).startsWith("/workspace/")
@@ -399,34 +624,60 @@ self.onmessage = async (event: MessageEvent) => {
           : `/workspace/${String(f.name)}`;
         instance.FS.writeFile(targetPath, new Uint8Array(f.bytes));
       }
-      self.postMessage({ type: "files_synced" });
-    } catch {
-      // Ignore sync errors until first boot succeeds
     }
-    return;
-  }
 
-  if (msg.type === "execute") {
-    const start = performance.now();
-    const outputs: RichCellOutput[] = [];
-    const stdoutLines: string[] = [];
-    const stderrLines: string[] = [];
+    const prep = preprocessPythonCellSource(String(msg.code || ""));
 
-    try {
-      const instance = await ensurePyodide();
-
-      // Sync latest uploaded workspace files if supplied inline
-      if (Array.isArray(msg.files)) {
-        instance.FS.mkdirTree("/workspace");
-        for (const f of msg.files) {
-          const targetPath = String(f.path).startsWith("/workspace/")
-            ? String(f.path)
-            : `/workspace/${String(f.name)}`;
-          instance.FS.writeFile(targetPath, new Uint8Array(f.bytes));
+    // Handle %%writefile cell magic
+    if (prep.writeFile) {
+      const parentDir = prep.writeFile.path.slice(
+        0,
+        prep.writeFile.path.lastIndexOf("/")
+      );
+      if (parentDir) instance.FS.mkdirTree(parentDir);
+      let finalContent = prep.writeFile.content;
+      if (prep.writeFile.append) {
+        try {
+          const prevBytes = instance.FS.readFile(prep.writeFile.path);
+          finalContent = new TextDecoder().decode(prevBytes) + finalContent;
+        } catch {
+          // New file
         }
       }
+      instance.FS.writeFile(
+        prep.writeFile.path,
+        new TextEncoder().encode(finalContent)
+      );
+      outputs.push({
+        kind: "stream",
+        name: "stdout",
+        text: prep.magicNotices.join("\n"),
+      });
+    } else if (prep.magicRender) {
+      // Handle %%html / %%markdown / %%svg
+      if (prep.magicRender.kind === "html") {
+        outputs.push({ kind: "html", html: prep.magicRender.content });
+      } else if (prep.magicRender.kind === "svg") {
+        outputs.push({
+          kind: "image",
+          mimeType: "image/svg+xml",
+          data: prep.magicRender.content,
+        });
+      } else {
+        outputs.push({ kind: "markdown", markdown: prep.magicRender.content });
+      }
+    } else {
+      await installMissingPackages(
+        instance,
+        prep.pipInstalls,
+        prep.imports,
+        prep.pythonCode,
+        stdoutLines
+      );
 
-      await installMissingPackages(instance, String(msg.code || ""));
+      for (const notice of prep.magicNotices) {
+        stdoutLines.push(notice);
+      }
 
       self.postMessage({
         type: "status",
@@ -435,44 +686,92 @@ self.onmessage = async (event: MessageEvent) => {
       });
 
       const MAX_STREAM_LINES = 800;
-      instance.setStdout({
-        batched: (text: string) => {
-          if (stdoutLines.length < MAX_STREAM_LINES) {
-            stdoutLines.push(text);
-          }
-        },
-      });
-      instance.setStderr({
-        batched: (text: string) => {
-          if (stderrLines.length < MAX_STREAM_LINES) {
-            stderrLines.push(text);
-          }
-        },
-      });
+      const stdinInputs: string[] = Array.isArray(msg.stdinInputs)
+        ? msg.stdinInputs.map(String)
+        : [];
+      let loopGuard = 0;
+      let cellOutputs: RichCellOutput[] = [];
 
-      const escapedCode = JSON.stringify(String(msg.code || ""));
-      const rawRichJson = (await instance.runPythonAsync(
-        `__velqora_exec_cell(${escapedCode}, globals())`
-      )) as string;
+      while (loopGuard < 20) {
+        loopGuard++;
+        const runStdout: string[] = [];
+        const runStderr: string[] = [];
 
-      if (stdoutLines.length > 0) {
-        outputs.push({
-          kind: "stream",
-          name: "stdout",
-          text: stdoutLines.join("\n"),
+        instance.setStdout({
+          batched: (text: string) => {
+            if (runStdout.length < MAX_STREAM_LINES) {
+              runStdout.push(text);
+            }
+          },
         });
-      }
-      if (stderrLines.length > 0) {
-        outputs.push({
-          kind: "stream",
-          name: "stderr",
-          text: stderrLines.join("\n"),
+        instance.setStderr({
+          batched: (text: string) => {
+            if (runStderr.length < MAX_STREAM_LINES) {
+              runStderr.push(text);
+            }
+          },
         });
+
+        const escapedCode = JSON.stringify(prep.pythonCode);
+        const escapedStdin = JSON.stringify(JSON.stringify(stdinInputs));
+        const rawJson = (await instance.runPythonAsync(
+          `await __velqora_exec_cell(${escapedCode}, globals(), ${escapedStdin})`
+        )) as string;
+
+        const parsed = JSON.parse(rawJson) as
+          | { status: "ok"; outputs: RichCellOutput[] }
+          | { status: "need_input"; prompt: string };
+
+        if (parsed.status === "need_input") {
+          self.postMessage({
+            type: "need_input",
+            requestId: msg.requestId,
+            cellId: msg.cellId,
+            prompt: parsed.prompt || "Masukkan nilai input:",
+          });
+
+          const reply = await new Promise<{ value: string; cancelled: boolean }>(
+            (resolve) => {
+              stdinWaiters.set(msg.requestId, { resolve });
+            }
+          );
+
+          if (reply.cancelled) {
+            throw new Error("KeyboardInterrupt: Input dibatalkan oleh pengguna.");
+          }
+
+          stdinInputs.push(reply.value);
+          continue;
+        }
+
+        stdoutLines.push(...runStdout);
+        stderrLines.push(...runStderr);
+        cellOutputs = parsed.outputs || [];
+        break;
       }
 
-      if (rawRichJson) {
-        const parsedRich = JSON.parse(rawRichJson) as RichCellOutput[];
-        outputs.push(...parsedRich);
+      if (prep.timingMode === "cell") {
+        stdoutLines.push(
+          `Wall time: ${(performance.now() - start).toFixed(1)} ms`
+        );
+      }
+
+      if (!prep.captureOutput) {
+        if (stdoutLines.length > 0) {
+          outputs.push({
+            kind: "stream",
+            name: "stdout",
+            text: stdoutLines.join("\n"),
+          });
+        }
+        if (stderrLines.length > 0) {
+          outputs.push({
+            kind: "stream",
+            name: "stderr",
+            text: stderrLines.join("\n"),
+          });
+        }
+        outputs.push(...cellOutputs);
       }
 
       // Optional Autograder test assertions
@@ -492,100 +791,147 @@ self.onmessage = async (event: MessageEvent) => {
           cases,
         });
       }
+    }
 
-      // Snapshot globals & DataFrames for Variable Inspector + SQL Cross-Kernel Bridge
-      const snapJson = (await instance.runPythonAsync(
-        `__velqora_snapshot_vars(globals())`
-      )) as string;
-      const snap = JSON.parse(snapJson) as {
-        variables: VariableSummary[];
-        dataframes: Record<string, DataFramePayload>;
-      };
+    // Snapshot globals & DataFrames for Variable Inspector + SQL Bridge
+    const snapJson = (await instance.runPythonAsync(
+      `__velqora_snapshot_vars(globals())`
+    )) as string;
+    const snap = JSON.parse(snapJson) as {
+      variables: VariableSummary[];
+      dataframes: Record<string, DataFramePayload>;
+    };
 
-      // Collect any newly written files inside /workspace
-      const writtenFiles: Array<{ name: string; path: string; bytes: Uint8Array }> = [];
-      try {
-        const names = instance.FS.readdir("/workspace");
-        for (const name of names) {
-          if (name === "." || name === "..") continue;
-          const fullPath = `/workspace/${name}`;
-          const st = instance.FS.stat(fullPath);
-          if (instance.FS.isFile(st.mode) && st.size <= 10 * 1024 * 1024) {
-            writtenFiles.push({
-              name,
-              path: fullPath,
-              bytes: instance.FS.readFile(fullPath),
-            });
-          }
+    const writtenFiles: Array<{ name: string; path: string; bytes: Uint8Array }> = [];
+    try {
+      const names = instance.FS.readdir("/workspace");
+      for (const name of names) {
+        if (name === "." || name === "..") continue;
+        const fullPath = `/workspace/${name}`;
+        const st = instance.FS.stat(fullPath);
+        if (instance.FS.isFile(st.mode) && st.size <= 10 * 1024 * 1024) {
+          writtenFiles.push({
+            name,
+            path: fullPath,
+            bytes: instance.FS.readFile(fullPath),
+          });
         }
-      } catch {
-        // Ignore VFS scan errors
       }
+    } catch {
+      // Ignore VFS scan errors
+    }
 
-      if (outputs.length === 0) {
-        outputs.push({
-          kind: "stream",
-          name: "stdout",
-          text: "(Kode Python selesai dieksekusi tanpa output.)",
-        });
-      }
-
-      self.postMessage({ type: "status", state: "ready", detail: "Python 3.12 WASM siap" });
-      self.postMessage({
-        type: "result",
-        cellId: msg.cellId,
-        requestId: msg.requestId,
-        success: true,
-        outputs,
-        executionMs: Math.round(performance.now() - start),
-        variables: snap.variables,
-        exportedDataFrames: snap.dataframes,
-        installedPackages: Array.from(installedPackages),
-        writtenFiles,
-      });
-    } catch (err: any) {
-      if (stdoutLines.length > 0) {
-        outputs.push({
-          kind: "stream",
-          name: "stdout",
-          text: stdoutLines.join("\n"),
-        });
-      }
-      if (stderrLines.length > 0) {
-        outputs.push({
-          kind: "stream",
-          name: "stderr",
-          text: stderrLines.join("\n"),
-        });
-      }
-
-      const rawErr = String(err?.message || err);
-      const tbLines = rawErr.split("\n");
-      const lastLine =
-        tbLines
-          .slice()
-          .reverse()
-          .find((l) => l.trim().length > 0) || rawErr;
-      const lineMatch = rawErr.match(/File "<(?:cell|exec|unknown)>", line (\d+)/);
-      const enameMatch = lastLine.match(/^([A-Za-z_][A-Za-z0-9_]*Error|Exception):/);
-
+    self.postMessage({
+      type: "status",
+      state: "ready",
+      detail: "Python 3.12 WASM siap",
+    });
+    self.postMessage({
+      type: "result",
+      cellId: msg.cellId,
+      requestId: msg.requestId,
+      success: true,
+      outputs,
+      executionMs: Math.round(performance.now() - start),
+      variables: snap.variables,
+      exportedDataFrames: snap.dataframes,
+      installedPackages: Array.from(installedPackages),
+      writtenFiles,
+    });
+  } catch (err: any) {
+    if (stdoutLines.length > 0) {
       outputs.push({
-        kind: "error",
-        ename: enameMatch ? enameMatch[1] : "PythonError",
-        evalue: lastLine,
-        traceback: tbLines,
-        lineNumber: lineMatch ? Number(lineMatch[1]) : undefined,
-      });
-
-      self.postMessage({ type: "status", state: "ready", detail: "Python 3.12 WASM siap" });
-      self.postMessage({
-        type: "result",
-        cellId: msg.cellId,
-        requestId: msg.requestId,
-        success: false,
-        outputs,
-        executionMs: Math.round(performance.now() - start),
+        kind: "stream",
+        name: "stdout",
+        text: stdoutLines.join("\n"),
       });
     }
+    if (stderrLines.length > 0) {
+      outputs.push({
+        kind: "stream",
+        name: "stderr",
+        text: stderrLines.join("\n"),
+      });
+    }
+
+    const rawErr = String(err?.message || err);
+    const cleaned = formatCleanPythonError(rawErr);
+
+    outputs.push({
+      kind: "error",
+      ename: cleaned.ename,
+      evalue: cleaned.evalue,
+      traceback: cleaned.traceback,
+      lineNumber: cleaned.lineNumber,
+    });
+
+    self.postMessage({
+      type: "status",
+      state: "ready",
+      detail: "Python 3.12 WASM siap",
+    });
+    self.postMessage({
+      type: "result",
+      cellId: msg.cellId,
+      requestId: msg.requestId,
+      success: false,
+      outputs,
+      executionMs: Math.round(performance.now() - start),
+    });
+  }
+}
+
+self.onmessage = (event: MessageEvent) => {
+  const msg = event.data;
+  if (!msg || typeof msg !== "object") return;
+
+  if (msg.type === "stdin_reply" && msg.requestId) {
+    const waiter = stdinWaiters.get(msg.requestId);
+    if (waiter) {
+      stdinWaiters.delete(msg.requestId);
+      waiter.resolve({
+        value: String(msg.value ?? ""),
+        cancelled: Boolean(msg.cancelled),
+      });
+    }
+    return;
+  }
+
+  if (msg.type === "init") {
+    void (async () => {
+      try {
+        await ensurePyodide();
+        self.postMessage({ type: "ready" });
+      } catch (err: any) {
+        self.postMessage({
+          type: "boot_error",
+          error: err?.message || String(err),
+        });
+      }
+    })();
+    return;
+  }
+
+  if (msg.type === "sync_files" && Array.isArray(msg.files)) {
+    void (async () => {
+      try {
+        const instance = await ensurePyodide();
+        instance.FS.mkdirTree("/workspace");
+        for (const f of msg.files) {
+          const targetPath = String(f.path).startsWith("/workspace/")
+            ? String(f.path)
+            : `/workspace/${String(f.name)}`;
+          instance.FS.writeFile(targetPath, new Uint8Array(f.bytes));
+        }
+        self.postMessage({ type: "files_synced" });
+      } catch {
+        // Ignore sync errors until first boot succeeds
+      }
+    })();
+    return;
+  }
+
+  if (msg.type === "execute") {
+    void handleExecute(msg);
   }
 };

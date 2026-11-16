@@ -31,6 +31,10 @@ interface PendingWorkerJob {
   resolve: (value: any) => void;
   reject: (err: Error) => void;
   timer: ReturnType<typeof setTimeout>;
+  limitMs: number;
+  resetTimeout: () => void;
+  pauseTimeout: () => void;
+  onNeedInput?: (prompt: string) => Promise<string | null>;
 }
 
 const SQL_SNAPSHOT_VFS_PATH = "/workspace/.velqora_session.sqlite";
@@ -121,6 +125,48 @@ export class NotebookKernelRouter {
     return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   }
 
+  private rejectPendingByPrefix(prefix: string, reason: string) {
+    this.pending.forEach((job, id) => {
+      if (id.startsWith(prefix)) {
+        clearTimeout(job.timer);
+        job.reject(new Error(reason));
+        this.pending.delete(id);
+      }
+    });
+  }
+
+  private createPendingJob(params: {
+    requestId: string;
+    limitMs: number;
+    onTimeout: () => void;
+    resolve: (msg: any) => void | Promise<void>;
+    reject: (err: Error) => void;
+    onNeedInput?: (prompt: string) => Promise<string | null>;
+  }) {
+    const startTimer = () =>
+      setTimeout(() => {
+        this.pending.delete(params.requestId);
+        params.onTimeout();
+      }, params.limitMs);
+
+    const job: PendingWorkerJob = {
+      resolve: params.resolve,
+      reject: params.reject,
+      limitMs: params.limitMs,
+      timer: startTimer(),
+      onNeedInput: params.onNeedInput,
+      pauseTimeout: () => {
+        clearTimeout(job.timer);
+      },
+      resetTimeout: () => {
+        clearTimeout(job.timer);
+        job.timer = startTimer();
+      },
+    };
+    this.pending.set(params.requestId, job);
+    return job;
+  }
+
   private spawnPyodideWorker(): Worker {
     if (this.pyodideWorker) return this.pyodideWorker;
     const worker = new Worker(
@@ -136,17 +182,65 @@ export class NotebookKernelRouter {
         return;
       }
 
+      if (msg.type === "need_input" && msg.requestId) {
+        const job = this.pending.get(msg.requestId);
+        if (!job) return;
+        job.pauseTimeout();
+
+        void (async () => {
+          let replyVal: string | null = null;
+          try {
+            if (job.onNeedInput) {
+              replyVal = await job.onNeedInput(
+                String(msg.prompt || "Masukkan nilai input:")
+              );
+            } else if (typeof window !== "undefined") {
+              replyVal = window.prompt(
+                String(msg.prompt || "Masukkan nilai input:")
+              );
+            }
+          } catch {
+            replyVal = null;
+          }
+
+          if (!this.pyodideWorker) return;
+          job.resetTimeout();
+          this.pyodideWorker.postMessage({
+            type: "stdin_reply",
+            requestId: msg.requestId,
+            value: replyVal ?? "",
+            cancelled: replyVal === null,
+          });
+        })();
+        return;
+      }
+
       if (msg.type === "result" && msg.requestId) {
         const job = this.pending.get(msg.requestId);
         if (job) {
           clearTimeout(job.timer);
           this.pending.delete(msg.requestId);
-          job.resolve(msg);
+          void job.resolve(msg);
         }
       }
     };
     worker.onerror = (err) => {
-      this.emitStatus("python", "error", err.message || "Worker crash");
+      const reason =
+        err.message || "Pyodide Worker gagal dimuat atau mengalami crash.";
+      this.emitStatus("python", "error", reason);
+      try {
+        worker.terminate();
+      } catch {
+        // Ignore terminate error
+      }
+      if (this.pyodideWorker === worker) {
+        this.pyodideWorker = null;
+      }
+      this.rejectPendingByPrefix("py_", reason);
+    };
+    worker.onmessageerror = () => {
+      this.emitStatus("python", "error", "Gagal membaca pesan dari Python Worker.");
+      this.rejectPendingByPrefix("py_", "Worker message serialization error.");
     };
     this.pyodideWorker = worker;
     return worker;
@@ -166,9 +260,37 @@ export class NotebookKernelRouter {
     );
 
     await new Promise<void>((resolve, reject) => {
+      let settled = false;
       const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        try {
+          worker.terminate();
+        } catch {
+          // Ignore
+        }
         reject(new Error("Timeout inisialisasi SQL Worker"));
       }, 15000);
+
+      worker.onerror = (err) => {
+        const reason = err.message || "SQL Worker mengalami error.";
+        this.emitStatus("sql", "error", reason);
+        try {
+          worker.terminate();
+        } catch {
+          // Ignore
+        }
+        if (this.sqlWorker === worker) {
+          this.sqlWorker = null;
+        }
+        this.rejectPendingByPrefix("sql_", reason);
+        this.rejectPendingByPrefix("mount_", reason);
+        if (!settled) {
+          settled = true;
+          clearTimeout(timer);
+          reject(new Error(reason));
+        }
+      };
 
       worker.onmessage = (event: MessageEvent) => {
         const msg = event.data;
@@ -179,13 +301,19 @@ export class NotebookKernelRouter {
           this.variablesByKernel.sql = msg.variables || [];
           this.emitStatus("sql", "ready", "SQLite siap");
           this.emitTelemetry();
-          resolve();
+          if (!settled) {
+            settled = true;
+            resolve();
+          }
           return;
         }
         if (msg.type === "boot_error") {
           clearTimeout(timer);
           this.emitStatus("sql", "error", msg.error);
-          reject(new Error(msg.error));
+          if (!settled) {
+            settled = true;
+            reject(new Error(msg.error));
+          }
           return;
         }
         if (
@@ -201,7 +329,7 @@ export class NotebookKernelRouter {
             if (msg.type === "mount_error") {
               job.reject(new Error(msg.error || "Gagal mount tabel SQL"));
             } else {
-              job.resolve(msg);
+              void job.resolve(msg);
             }
           }
         }
@@ -235,15 +363,51 @@ export class NotebookKernelRouter {
       new URL("./workers/jsts.worker.ts", import.meta.url),
       { type: "module" }
     );
-    await new Promise<void>((resolve) => {
+    await new Promise<void>((resolve, reject) => {
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        try {
+          worker.terminate();
+        } catch {
+          // Ignore
+        }
+        reject(new Error("Timeout inisialisasi JS/TS Worker"));
+      }, 10000);
+
+      worker.onerror = (err) => {
+        const reason = err.message || "JS/TS Worker mengalami error.";
+        this.emitStatus("javascript", "error", reason);
+        this.emitStatus("typescript", "error", reason);
+        try {
+          worker.terminate();
+        } catch {
+          // Ignore
+        }
+        if (this.jstsWorker === worker) {
+          this.jstsWorker = null;
+        }
+        this.rejectPendingByPrefix("js_", reason);
+        if (!settled) {
+          settled = true;
+          clearTimeout(timer);
+          reject(new Error(reason));
+        }
+      };
+
       worker.onmessage = (event: MessageEvent) => {
         const msg = event.data;
         if (!msg || typeof msg !== "object") return;
         if (msg.type === "ready") {
+          clearTimeout(timer);
           this.variablesByKernel.javascript = msg.variables || [];
           this.emitStatus("javascript", "ready", "JS/TS siap");
           this.emitStatus("typescript", "ready", "JS/TS siap");
-          resolve();
+          if (!settled) {
+            settled = true;
+            resolve();
+          }
           return;
         }
         if (msg.type === "result" && msg.requestId) {
@@ -251,7 +415,7 @@ export class NotebookKernelRouter {
           if (job) {
             clearTimeout(job.timer);
             this.pending.delete(msg.requestId);
-            job.resolve(msg);
+            void job.resolve(msg);
           }
         }
       };
@@ -275,12 +439,10 @@ export class NotebookKernelRouter {
 
     const requestId = this.nextRequestId("mount");
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(requestId);
-        reject(new Error(`Timeout mount tabel ${tableName}`));
-      }, 15000);
-
-      this.pending.set(requestId, {
+      this.createPendingJob({
+        requestId,
+        limitMs: 15000,
+        onTimeout: () => reject(new Error(`Timeout mount tabel ${tableName}`)),
         resolve: async (msg) => {
           this.sqlTables = msg.tables || [];
           this.variablesByKernel.sql = msg.variables || [];
@@ -297,7 +459,6 @@ export class NotebookKernelRouter {
           resolve();
         },
         reject,
-        timer,
       });
 
       worker.postMessage({
@@ -413,29 +574,30 @@ export class NotebookKernelRouter {
         (f) => f.path !== SQL_SNAPSHOT_VFS_PATH
       );
       const requestId = this.nextRequestId("py");
-      const limitMs = timeoutMs ?? 90_000; // Allow initial Pyodide + micropip boot safely
+      const limitMs = timeoutMs ?? 90_000;
 
       return new Promise((resolve) => {
-        const timer = setTimeout(() => {
-          this.pending.delete(requestId);
-          this.terminateKernel("python");
-          resolve({
-            cellId,
-            kernel,
-            success: false,
-            executionMs: limitMs,
-            outputs: [
-              {
-                kind: "error",
-                ename: "TimeoutError",
-                evalue: `Eksekusi melebihi batas waktu ${(limitMs / 1000).toFixed(0)} detik. Kernel Python direset.`,
-                traceback: [],
-              },
-            ],
-          });
-        }, limitMs);
-
-        this.pending.set(requestId, {
+        this.createPendingJob({
+          requestId,
+          limitMs,
+          onNeedInput: request.onNeedInput,
+          onTimeout: () => {
+            this.terminateKernel("python");
+            resolve({
+              cellId,
+              kernel,
+              success: false,
+              executionMs: limitMs,
+              outputs: [
+                {
+                  kind: "error",
+                  ename: "TimeoutError",
+                  evalue: `Eksekusi melebihi batas waktu ${(limitMs / 1000).toFixed(0)} detik. Kernel Python direset.`,
+                  traceback: [],
+                },
+              ],
+            });
+          },
           resolve: async (msg) => {
             if (Array.isArray(msg.variables)) {
               this.variablesByKernel.python = msg.variables;
@@ -449,7 +611,6 @@ export class NotebookKernelRouter {
             if (Array.isArray(msg.installedPackages)) {
               this.installedPackages = msg.installedPackages;
             }
-            // Mirror files created by Python back to VFS
             if (Array.isArray(msg.writtenFiles)) {
               for (const wf of msg.writtenFiles) {
                 if (wf.bytes instanceof Uint8Array) {
@@ -495,7 +656,6 @@ export class NotebookKernelRouter {
               ],
             });
           },
-          timer,
         });
 
         worker.postMessage({
@@ -510,45 +670,134 @@ export class NotebookKernelRouter {
     }
 
     if (kernel === "sql") {
-      const worker = await this.ensureSqlWorker();
-      this.emitStatus("sql", "executing", "Menjalankan kueri SQL...");
-      const requestId = this.nextRequestId("sql");
-      const limitMs = timeoutMs ?? 20_000;
+      try {
+        const worker = await this.ensureSqlWorker();
+        this.emitStatus("sql", "executing", "Menjalankan kueri SQL...");
+        const requestId = this.nextRequestId("sql");
+        const limitMs = timeoutMs ?? 20_000;
 
-      return new Promise((resolve) => {
-        const timer = setTimeout(() => {
-          this.pending.delete(requestId);
-          this.terminateKernel("sql");
-          resolve({
-            cellId,
-            kernel,
-            success: false,
-            executionMs: limitMs,
-            outputs: [
-              {
-                kind: "error",
-                ename: "TimeoutError",
-                evalue: "Kueri SQL melebihi batas waktu 20 detik.",
-                traceback: [],
-              },
-            ],
+        return await new Promise((resolve) => {
+          this.createPendingJob({
+            requestId,
+            limitMs,
+            onTimeout: () => {
+              this.terminateKernel("sql");
+              resolve({
+                cellId,
+                kernel,
+                success: false,
+                executionMs: limitMs,
+                outputs: [
+                  {
+                    kind: "error",
+                    ename: "TimeoutError",
+                    evalue: "Kueri SQL melebihi batas waktu 20 detik.",
+                    traceback: [],
+                  },
+                ],
+              });
+            },
+            resolve: async (msg) => {
+              this.sqlTables = msg.tables || [];
+              this.variablesByKernel.sql = msg.variables || [];
+              if (msg.dbBytes instanceof Uint8Array) {
+                await writeVfsFile(
+                  this.notebookId,
+                  SQL_SNAPSHOT_VFS_PATH,
+                  msg.dbBytes,
+                  "application/x-sqlite3",
+                  "kernel"
+                );
+              }
+              this.emitStatus("sql", "ready", "SQLite siap");
+              this.emitTelemetry();
+              resolve({
+                cellId,
+                kernel,
+                success: Boolean(msg.success),
+                outputs: msg.outputs || [],
+                executionMs: Number(msg.executionMs || 0),
+                tables: msg.tables,
+                variables: msg.variables,
+              });
+            },
+            reject: (err) => {
+              this.emitStatus("sql", "error", err.message);
+              resolve({
+                cellId,
+                kernel,
+                success: false,
+                executionMs: 0,
+                outputs: [
+                  {
+                    kind: "error",
+                    ename: "SQLWorkerError",
+                    evalue: err.message,
+                    traceback: [],
+                  },
+                ],
+              });
+            },
           });
-        }, limitMs);
 
-        this.pending.set(requestId, {
-          resolve: async (msg) => {
-            this.sqlTables = msg.tables || [];
-            this.variablesByKernel.sql = msg.variables || [];
-            if (msg.dbBytes instanceof Uint8Array) {
-              await writeVfsFile(
-                this.notebookId,
-                SQL_SNAPSHOT_VFS_PATH,
-                msg.dbBytes,
-                "application/x-sqlite3",
-                "kernel"
-              );
-            }
-            this.emitStatus("sql", "ready", "SQLite siap");
+          worker.postMessage({
+            type: "execute",
+            requestId,
+            cellId,
+            code,
+            syncedDataFrames: this.exportedDataFrames,
+          });
+        });
+      } catch (err: any) {
+        return {
+          cellId,
+          kernel,
+          success: false,
+          executionMs: 0,
+          outputs: [
+            {
+              kind: "error",
+              ename: "SQLWorkerError",
+              evalue: err?.message || "Gagal memulai SQLite Worker.",
+              traceback: [],
+            },
+          ],
+        };
+      }
+    }
+
+    // JavaScript / TypeScript Worker
+    try {
+      const worker = await this.ensureJsWorker();
+      this.emitStatus(kernel, "executing", "Menjalankan JavaScript/TS...");
+      const requestId = this.nextRequestId("js");
+      const limitMs = timeoutMs ?? 15_000;
+
+      return await new Promise((resolve) => {
+        this.createPendingJob({
+          requestId,
+          limitMs,
+          onTimeout: () => {
+            this.terminateKernel("javascript");
+            resolve({
+              cellId,
+              kernel,
+              success: false,
+              executionMs: limitMs,
+              outputs: [
+                {
+                  kind: "error",
+                  ename: "TimeoutError",
+                  evalue: "Eksekusi JavaScript/TypeScript melebihi batas waktu 15 detik.",
+                  traceback: [],
+                },
+              ],
+            });
+          },
+          resolve: (msg) => {
+            this.variablesByKernel.javascript = msg.variables || [];
+            this.emitStatus("javascript", "ready", "JS/TS siap");
+            this.emitStatus("typescript", "ready", "JS/TS siap");
             this.emitTelemetry();
             resolve({
               cellId,
@@ -556,12 +805,11 @@ export class NotebookKernelRouter {
               success: Boolean(msg.success),
               outputs: msg.outputs || [],
               executionMs: Number(msg.executionMs || 0),
-              tables: msg.tables,
               variables: msg.variables,
             });
           },
           reject: (err) => {
-            this.emitStatus("sql", "error", err.message);
+            this.emitStatus(kernel, "error", err.message);
             resolve({
               cellId,
               kernel,
@@ -570,96 +818,39 @@ export class NotebookKernelRouter {
               outputs: [
                 {
                   kind: "error",
-                  ename: "SQLWorkerError",
+                  ename: "JSWorkerError",
                   evalue: err.message,
                   traceback: [],
                 },
               ],
             });
           },
-          timer,
         });
 
-        // Cross-Kernel Bridge: automatically make exported Python DataFrames available to SQL!
         worker.postMessage({
           type: "execute",
           requestId,
           cellId,
-          code,
-          syncedDataFrames: this.exportedDataFrames,
-        });
-      });
-    }
-
-    // JavaScript / TypeScript Worker
-    const worker = await this.ensureJsWorker();
-    this.emitStatus(kernel, "executing", "Menjalankan JavaScript/TS...");
-    const requestId = this.nextRequestId("js");
-    const limitMs = timeoutMs ?? 15_000;
-
-    return new Promise((resolve) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(requestId);
-        this.terminateKernel("javascript");
-        resolve({
-          cellId,
           kernel,
-          success: false,
-          executionMs: limitMs,
-          outputs: [
-            {
-              kind: "error",
-              ename: "TimeoutError",
-              evalue: "Eksekusi JavaScript/TypeScript melebihi batas waktu 15 detik.",
-              traceback: [],
-            },
-          ],
+          code,
         });
-      }, limitMs);
-
-      this.pending.set(requestId, {
-        resolve: (msg) => {
-          this.variablesByKernel.javascript = msg.variables || [];
-          this.emitStatus("javascript", "ready", "JS/TS siap");
-          this.emitStatus("typescript", "ready", "JS/TS siap");
-          this.emitTelemetry();
-          resolve({
-            cellId,
-            kernel,
-            success: Boolean(msg.success),
-            outputs: msg.outputs || [],
-            executionMs: Number(msg.executionMs || 0),
-            variables: msg.variables,
-          });
-        },
-        reject: (err) => {
-          this.emitStatus(kernel, "error", err.message);
-          resolve({
-            cellId,
-            kernel,
-            success: false,
-            executionMs: 0,
-            outputs: [
-              {
-                kind: "error",
-                ename: "JSWorkerError",
-                evalue: err.message,
-                traceback: [],
-              },
-            ],
-          });
-        },
-        timer,
       });
-
-      worker.postMessage({
-        type: "execute",
-        requestId,
+    } catch (err: any) {
+      return {
         cellId,
         kernel,
-        code,
-      });
-    });
+        success: false,
+        executionMs: 0,
+        outputs: [
+          {
+            kind: "error",
+            ename: "JSWorkerError",
+            evalue: err?.message || "Gagal memulai JS/TS Worker.",
+            traceback: [],
+          },
+        ],
+      };
+    }
   }
 
   /**

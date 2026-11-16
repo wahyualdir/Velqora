@@ -388,6 +388,105 @@ export function convertCodeEntryToNotebook(entry: CodeCatalogEntry): NotebookDoc
   };
 }
 
+export interface NotebookTemplateMeta {
+  id: string;
+  title: string;
+  description: string;
+  kernel: NotebookKernel;
+}
+
+export const NOTEBOOK_TEMPLATES: NotebookTemplateMeta[] = [
+  {
+    id: "python-plot",
+    title: "Python Data & Grafik Matplotlib",
+    description: "Visualisasi grafik NumPy + Matplotlib siap jalankan.",
+    kernel: "python",
+  },
+  {
+    id: "python-param",
+    title: "Parameter Interaktif (#@param)",
+    description: "Contoh eksperimen gelombang sinus dengan slider interaktif.",
+    kernel: "python",
+  },
+  {
+    id: "sql-starter",
+    title: "SQLite Query Studio",
+    description: "Membuat tabel, mengisi data, dan menjalankan SELECT query.",
+    kernel: "sql",
+  },
+  {
+    id: "js-async",
+    title: "JavaScript / TS Sandbox",
+    description: "Eksperimen array, fungsi, dan objek terstruktur.",
+    kernel: "javascript",
+  },
+];
+
+/**
+ * Membuat notebook coding baru yang bersih (1 sel kode siap ketik,
+ * tanpa tumpukan teks pengantar atau slider demo) ala Google Colab.
+ */
+export function createBlankNotebook(
+  kernel: NotebookKernel = "python",
+  customTitle?: string
+): NotebookDocument {
+  const nowIso = new Date().toISOString();
+  const labelMap: Record<NotebookKernel, string> = {
+    python: "Python",
+    sql: "SQL",
+    javascript: "JavaScript",
+    typescript: "TypeScript",
+  };
+  return {
+    id: generateUuid(),
+    title: customTitle || `Notebook Baru (${labelMap[kernel]})`,
+    defaultKernel: kernel,
+    runtimeMode: "wasm",
+    reactiveMode: false,
+    editorMode: "codemirror",
+    cells: [
+      createEmptyCell({
+        type: "code",
+        kernel,
+        source: "",
+      }),
+    ],
+    createdAt: nowIso,
+    updatedAt: nowIso,
+  };
+}
+
+export function createTemplateNotebook(templateId: string): NotebookDocument {
+  if (templateId === "python-param") {
+    return createStarterNotebook("python");
+  }
+  if (templateId === "sql-starter") {
+    return createStarterNotebook("sql");
+  }
+  if (templateId === "js-async") {
+    return createStarterNotebook("javascript");
+  }
+  // python-plot default clean runnable visual template
+  const nowIso = new Date().toISOString();
+  return {
+    id: generateUuid(),
+    title: "Eksperimen Grafik Python",
+    defaultKernel: "python",
+    runtimeMode: "wasm",
+    reactiveMode: false,
+    editorMode: "codemirror",
+    cells: [
+      createEmptyCell({
+        type: "code",
+        kernel: "python",
+        source: `import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 2 * np.pi, 200)\ny = np.sin(2 * x) * np.exp(-0.15 * x)\n\nplt.figure(figsize=(7, 3.6))\nplt.plot(x, y, color="#C2553A", linewidth=2.2, label="Gelombang Teredam")\nplt.title("Visualisasi Matplotlib di Velqora Lab")\nplt.xlabel("x (radian)")\nplt.ylabel("Amplitudo")\nplt.grid(True, alpha=0.3)\nplt.legend()\nplt.show()`,
+      }),
+    ],
+    createdAt: nowIso,
+    updatedAt: nowIso,
+  };
+}
+
 export function createStarterNotebook(kernel: NotebookKernel = "python"): NotebookDocument {
   const nowIso = new Date().toISOString();
   const defaultCells: Record<NotebookKernel, NotebookCell[]> = {

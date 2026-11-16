@@ -234,6 +234,13 @@ export interface DagNodeInfo {
   staleReason?: string;
 }
 
+export interface PendingInputPrompt {
+  cellId: string;
+  prompt: string;
+  submit: (value: string) => void;
+  cancel: () => void;
+}
+
 export interface KernelExecutionRequest {
   cellId: string;
   kernel: NotebookKernel;
@@ -242,6 +249,7 @@ export interface KernelExecutionRequest {
   reactiveVariables?: Record<string, unknown>;
   syncedDataFrames?: Record<string, DataFramePayload>;
   timeoutMs?: number;
+  onNeedInput?: (prompt: string) => Promise<string | null>;
 }
 
 export interface KernelExecutionResult {
