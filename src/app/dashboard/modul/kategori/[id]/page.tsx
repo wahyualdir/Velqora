@@ -508,7 +508,7 @@ export default function DedicatedCategoryModulesPage({
   return (
     <PageContainer className="space-y-6 pb-14">
       {/* ─── 1. Breadcrumb Navigasi ─── */}
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-mono text-text-tertiary">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary">
         <Link href="/dashboard" className="hover:text-text-primary transition-colors">
           Dashboard
         </Link>
@@ -517,17 +517,17 @@ export default function DedicatedCategoryModulesPage({
           Katalog Modul AI
         </Link>
         <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-        <span className="text-text-primary font-bold truncate">
+        <span className="text-text-primary font-semibold truncate">
           {category?.name || decodeURIComponent(categoryId)}
         </span>
       </nav>
 
       {/* ─── 2. Header Kategori Ringkas ─── */}
-      <header className="p-5 sm:p-6 vt-window rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] space-y-3">
+      <header className="p-5 sm:p-6 rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] space-y-3 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div className="flex items-start gap-3.5 min-w-0">
             <div
-              className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0 border mt-0.5"
+              className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border mt-0.5"
               style={{
                 backgroundColor: `${themeColor}15`,
                 borderColor: `${themeColor}35`,
@@ -538,8 +538,8 @@ export default function DedicatedCategoryModulesPage({
             </div>
 
             <div className="space-y-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap text-xs font-mono text-text-tertiary">
-                <span className="uppercase tracking-wider font-semibold text-text-secondary">
+              <div className="flex items-center gap-2 flex-wrap text-xs font-sans text-text-tertiary">
+                <span className="font-medium text-text-secondary">
                   Kurikulum AI
                 </span>
                 <span>•</span>
@@ -548,7 +548,7 @@ export default function DedicatedCategoryModulesPage({
                 <span>{modules.length} Modul Terkait</span>
               </div>
 
-              <h1 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight font-display">
+              <h1 className="text-lg sm:text-xl font-semibold text-text-primary tracking-tight">
                 {category?.name || decodeURIComponent(categoryId)}
               </h1>
 
@@ -562,12 +562,12 @@ export default function DedicatedCategoryModulesPage({
           {/* Action buttons with view mode switcher */}
           <div className="flex items-center gap-2 shrink-0 self-start flex-wrap">
             {/* View Mode Switcher: Doc Reader vs Grid */}
-            <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border">
+            <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border/70">
               <button
                 type="button"
                 onClick={() => setViewLayout("doc")}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer text-text-secondary hover:text-text-primary hover:bg-surface/50"
-                title="Tampilan Pembaca Dokumentasi ala Scikit-Learn"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-sans font-medium transition-all cursor-pointer text-text-secondary hover:text-text-primary hover:bg-surface/50"
+                title="Tampilan Pembaca Dokumentasi"
               >
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>Dokumentasi</span>
@@ -576,7 +576,7 @@ export default function DedicatedCategoryModulesPage({
               <button
                 type="button"
                 onClick={() => setViewLayout("grid")}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer bg-brand-600 text-white shadow-2xs font-bold"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer bg-[#C2553A] text-white shadow-xs"
                 title="Tampilan Ringkasan Grid Kartu"
               >
                 <LayoutGrid className="w-3.5 h-3.5" />

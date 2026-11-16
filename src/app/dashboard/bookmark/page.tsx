@@ -144,7 +144,7 @@ export default function BookmarkPage() {
                 Ekspor (.md)
               </Button>
             )}
-            <span className="text-xs font-mono text-text-tertiary px-3 py-1.5 rounded-lg bg-surface border border-border min-h-[36px] inline-flex items-center shadow-2xs">
+            <span className="text-xs font-sans font-medium text-text-tertiary px-3 py-1.5 rounded-xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] min-h-[36px] inline-flex items-center shadow-xs">
               {bookmarks.length} Tersimpan
             </span>
           </div>
@@ -238,11 +238,11 @@ export default function BookmarkPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       {getTypeBadge(item.type)}
                       {item.category && (
-                        <span className="text-[11px] font-mono font-medium text-text-tertiary bg-surface-secondary border border-border px-2 py-0.5 rounded">
+                        <span className="text-xs font-sans font-medium text-text-tertiary bg-surface-secondary border border-border/60 px-2.5 py-0.5 rounded-full">
                           {item.category}
                         </span>
                       )}
-                      <span className="text-[11px] font-mono text-text-tertiary">
+                      <span className="text-xs font-sans text-text-tertiary">
                         {item.savedAt
                           ? new Date(item.savedAt).toLocaleDateString("id-ID", {
                               day: "numeric",

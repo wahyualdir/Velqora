@@ -109,61 +109,56 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
       {/* ─── 2. Center Content Area ─── */}
       <main className="flex-1 flex flex-col h-full overflow-y-auto">
         {/* Mobile Header Bar */}
-        <div className="lg:hidden p-3 bg-surface border-b border-border flex items-center justify-between shrink-0">
+        <div className="lg:hidden p-3 bg-surface border-b border-border flex items-center justify-between shrink-0 font-sans">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="flex items-center gap-2 text-xs font-mono text-text-primary px-2.5 py-1.5 rounded-md border border-border hover:bg-surface-secondary"
+            className="flex items-center gap-2 text-xs font-medium text-text-primary px-3 py-1.5 rounded-xl border border-border hover:bg-surface-secondary cursor-pointer"
           >
-            <Menu className="w-3.5 h-3.5 text-brand-600" />
-            <span>Jelajah Vault</span>
+            <Menu className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
+            <span>Jelajah Catatan</span>
           </button>
 
           <Link href="/dashboard/catatan/graph">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-medium rounded-xl">
               <Network className="w-3.5 h-3.5" />
               <span>Grafik Global</span>
             </Button>
           </Link>
         </div>
 
-        <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full space-y-8">
+        <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full space-y-8 font-sans">
           {/* Welcome Banner */}
-          <div className="p-6 sm:p-8 bg-surface dark:bg-[#18181B] border border-border shadow-xs space-y-4">
+          <div className="p-6 sm:p-7 rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] shadow-2xs space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 uppercase">
-                    Velqora Knowledge Vault
-                  </span>
-                  <span className="text-[10px] font-mono text-text-tertiary">
-                    Obsidian Architecture
-                  </span>
-                </div>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#F09A82]">
+                  Knowledge Vault
+                </span>
                 <h1 className="text-2xl sm:text-3xl font-bold font-display text-text-primary tracking-tight">
-                  Vault Catatan Kurikulum AI
+                  Catatan Belajar Terhubung
                 </h1>
                 <p className="text-xs sm:text-sm text-text-secondary max-w-2xl leading-relaxed">
-                  Basis pengetahuan kurikulum pembelajaran akademik dengan integrasi dokumen markdown,
-                  tautan dua arah (<code className="text-brand-600 font-mono text-xs">[[Wiki-Link]]</code>),
-                  pelacakan backlinks, dan visualisasi peta konsep interaktif.
+                  Kelola catatan markdown terstruktur lengkap dengan tautan antar-topik (
+                  <code className="text-[#C2553A] dark:text-[#F09A82] font-mono text-xs">[[Wiki-Link]]</code>
+                  ), pelacakan referensi balik, dan peta konsep interaktif.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 flex-wrap shrink-0">
                 {canEdit && (
                   <>
                     <Button
                       variant="outline"
                       onClick={() => setImportModalOpen(true)}
-                      className="gap-1.5 text-xs font-mono font-bold cursor-pointer hover:border-brand-500/50 hover:bg-brand-500/5"
+                      className="gap-1.5 text-xs font-semibold rounded-xl cursor-pointer hover:border-brand-500/50 hover:bg-brand-500/5"
                     >
-                      <Upload className="w-4 h-4 text-brand-600" />
+                      <Upload className="w-4 h-4 text-[#C2553A] dark:text-[#F09A82]" />
                       <span>Import Modul</span>
                     </Button>
                     <Button
                       onClick={() => setNewModalOpen(true)}
-                      className="gap-1.5 text-xs font-mono font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
+                      className="gap-1.5 text-xs font-semibold rounded-xl bg-[#C2553A] hover:bg-[#A34530] text-white cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Catatan Baru</span>
@@ -171,52 +166,52 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
                   </>
                 )}
                 <Link href="/dashboard/catatan/graph">
-                  <Button variant="outline" className="gap-1.5 text-xs font-mono cursor-pointer">
+                  <Button variant="outline" className="gap-1.5 text-xs font-semibold rounded-xl cursor-pointer">
                     <Network className="w-4 h-4" />
-                    <span className="hidden sm:inline">Peta Graph</span>
+                    <span className="hidden sm:inline">Peta Konsep</span>
                   </Button>
                 </Link>
               </div>
             </div>
 
             {/* Quick Stats Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border/60">
-              <div className="p-3 bg-surface-secondary/40 border border-border/80">
-                <div className="text-[11px] font-mono text-text-tertiary flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-brand-500" />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#E6E0D6]/70 dark:border-[#24201E]">
+              <div className="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917]">
+                <div className="text-xs font-medium text-text-secondary flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
                   <span>Total Catatan</span>
                 </div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-text-primary mt-1">
+                <div className="text-xl sm:text-2xl font-bold font-display text-text-primary mt-1 tabular-nums">
                   {tree.totalNotes}
                 </div>
               </div>
 
-              <div className="p-3 bg-surface-secondary/40 border border-border/80">
-                <div className="text-[11px] font-mono text-text-tertiary flex items-center gap-1.5">
-                  <Link2 className="w-3.5 h-3.5 text-brand-500 rotate-45" />
+              <div className="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917]">
+                <div className="text-xs font-medium text-text-secondary flex items-center gap-1.5">
+                  <Link2 className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82] rotate-45" />
                   <span>Koneksi Tautan</span>
                 </div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-text-primary mt-1">
+                <div className="text-xl sm:text-2xl font-bold font-display text-text-primary mt-1 tabular-nums">
                   {graphData.edges.length}
                 </div>
               </div>
 
-              <div className="p-3 bg-surface-secondary/40 border border-border/80">
-                <div className="text-[11px] font-mono text-text-tertiary flex items-center gap-1.5">
-                  <Folder className="w-3.5 h-3.5 text-brand-500" />
-                  <span>Kategori Rumpun</span>
+              <div className="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917]">
+                <div className="text-xs font-medium text-text-secondary flex items-center gap-1.5">
+                  <Folder className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
+                  <span>Kategori</span>
                 </div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-text-primary mt-1">
+                <div className="text-xl sm:text-2xl font-bold font-display text-text-primary mt-1 tabular-nums">
                   {tree.categories.length}
                 </div>
               </div>
 
-              <div className="p-3 bg-surface-secondary/40 border border-border/80">
-                <div className="text-[11px] font-mono text-text-tertiary flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-                  <span>Status Vault</span>
+              <div className="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917]">
+                <div className="text-xs font-medium text-text-secondary flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
+                  <span>Sinkronisasi</span>
                 </div>
-                <div className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-2">
+                <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-2">
                   Tersinkronisasi ✓
                 </div>
               </div>
@@ -227,54 +222,54 @@ export function CatatanVaultLanding({ tree, graphData }: CatatanVaultLandingProp
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Network className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-                <h2 className="font-mono font-bold text-xs uppercase tracking-wider text-text-primary">
+                <Network className="w-4 h-4 text-[#C2553A] dark:text-[#F09A82]" />
+                <h2 className="font-display font-bold text-sm sm:text-base text-text-primary">
                   Pratinjau Peta Hubungan Materi
                 </h2>
               </div>
               <Link
                 href="/dashboard/catatan/graph"
-                className="text-xs font-mono text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] hover:underline flex items-center gap-1"
               >
                 <span>Buka Layar Penuh</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
-            <NoteGraph data={graphData} height={280} className="rounded-xl shadow-xs" />
+            <NoteGraph data={graphData} height={280} className="rounded-2xl shadow-2xs" />
           </div>
 
           {/* Featured & Connected Notes Grid */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-                <h2 className="font-mono font-bold text-xs uppercase tracking-wider text-text-primary">
+                <Sparkles className="w-4 h-4 text-[#C2553A] dark:text-[#F09A82]" />
+                <h2 className="font-display font-bold text-sm sm:text-base text-text-primary">
                   Topik Materi Paling Sering Dirujuk
                 </h2>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {featuredNotes.map((note) => (
                 <Link
                   key={note.id}
                   href={`/dashboard/catatan/${note.slug}`}
-                  className="p-4 bg-surface dark:bg-[#18181B] border border-border hover:border-brand-500/60 transition-all group flex flex-col justify-between space-y-3 shadow-2xs"
+                  className="p-4 sm:p-5 rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] hover:border-[#C2553A]/40 transition-colors group flex flex-col justify-between space-y-3 shadow-2xs"
                 >
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-text-tertiary">
-                      <span className="uppercase">{note.categoryName || "Kurikulum"}</span>
+                    <div className="flex items-center justify-between text-xs text-text-secondary">
+                      <span className="font-medium truncate max-w-[160px]">{note.categoryName || "Kurikulum"}</span>
                       <span>{note.degree} tautan</span>
                     </div>
-                    <h3 className="font-bold text-sm text-text-primary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors line-clamp-2">
+                    <h3 className="font-bold font-display text-sm sm:text-[15px] text-text-primary group-hover:text-[#C2553A] dark:group-hover:text-[#F09A82] transition-colors line-clamp-2 leading-snug">
                       {note.title}
                     </h3>
                   </div>
 
-                  <div className="flex items-center gap-1 text-[11px] font-mono text-brand-600 dark:text-brand-400 opacity-80 group-hover:opacity-100">
+                  <div className="flex items-center gap-1 text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] opacity-85 group-hover:opacity-100">
                     <span>Pelajari Dokumen</span>
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </Link>
               ))}

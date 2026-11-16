@@ -133,7 +133,7 @@ export function Logo({
   markVariant = "primary",
   withTile = false,
   showSubtitle = true,
-  subtitle = "Portal Akademik Terpadu",
+  subtitle = "Workspace Belajar",
   hideText = false,
 }: LogoProps) {
   // Size tokens

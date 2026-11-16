@@ -307,12 +307,12 @@ function ProjectsPageContent() {
       {/* ─── TAB 1: Topik Kurikulum AI (28 Kartu Topik Persis Seperti Modul) ─── */}
       {viewTab === "categories" && (
         <section className="space-y-4">
-          <div className="flex items-center justify-between px-1">
+          <div className="flex items-center justify-between px-1 gap-3">
             <div>
-              <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono">
+              <h2 className="text-base font-semibold text-text-primary">
                 Topik Repositori Proyek Kecerdasan Buatan ({aiTopicOverview.length})
               </h2>
-              <p className="text-xs text-text-secondary font-mono">
+              <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
                 Pilih topik untuk melihat portofolio kode dan repositori proyek terapan
               </p>
             </div>
@@ -322,14 +322,14 @@ function ProjectsPageContent() {
                 setSelectedCategory("");
                 setViewTab("all-content");
               }}
-              className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+              className="text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] hover:underline cursor-pointer flex items-center gap-1 shrink-0"
             >
               <span>Eksplorasi Semua Proyek ({projects.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {aiTopicOverview.map((topic) => (
               <ProjectCategoryCard
                 key={topic.id || topic.name}
@@ -346,13 +346,13 @@ function ProjectsPageContent() {
         <div className="space-y-4">
           {/* Active Category Banner (jika dipilih dari Tab 1) */}
           {selectedCategory && (
-            <div className="p-3 rounded-lg bg-surface-secondary/70 border border-brand-500/30 flex items-center justify-between text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-surface-secondary/70 border border-[#C2553A]/30 flex items-center justify-between text-xs font-sans">
               <div className="flex items-center gap-2">
                 <span className="text-text-tertiary">Topik Aktif:</span>
-                <span className="font-bold text-brand-600 dark:text-brand-400">
+                <span className="font-semibold text-[#C2553A] dark:text-[#F09A82]">
                   {selectedCategory}
                 </span>
-                <span className="text-text-tertiary">({filteredProjects.length} Proyek)</span>
+                <span className="text-text-tertiary">({filteredProjects.length} proyek)</span>
               </div>
               <button
                 type="button"
@@ -433,15 +433,15 @@ function ProjectsPageContent() {
 
             {/* Tech Stack Quick Filter Pills */}
             {allTechStacks.length > 0 && (
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
-                <span className="font-mono text-text-tertiary text-[11px] mr-1">Teknologi:</span>
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-pan-x pb-0.5 sm:flex-wrap sm:pb-0 pt-1 text-xs">
+                <span className="font-sans text-text-tertiary text-xs mr-1 shrink-0">Teknologi:</span>
                 <button
                   type="button"
                   onClick={() => setSelectedTech("")}
-                  className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-full text-xs font-sans transition-colors cursor-pointer shrink-0 ${
                     !selectedTech
-                      ? "bg-brand-600 text-white font-bold"
-                      : "bg-surface-secondary text-text-secondary hover:text-text-primary border border-border"
+                      ? "bg-[#C2553A] text-white font-semibold"
+                      : "bg-surface-secondary text-text-secondary hover:text-text-primary border border-border/60"
                   }`}
                 >
                   Semua
@@ -453,13 +453,13 @@ function ProjectsPageContent() {
                       key={tech}
                       type="button"
                       onClick={() => setSelectedTech(active ? "" : tech)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors cursor-pointer ${
+                      className={`px-2.5 py-1 rounded-full text-xs font-sans transition-colors cursor-pointer shrink-0 ${
                         active
-                          ? "bg-brand-600 text-white font-bold"
-                          : "bg-surface-secondary text-text-secondary hover:text-text-primary border border-border"
+                          ? "bg-[#C2553A] text-white font-semibold"
+                          : "bg-surface-secondary text-text-secondary hover:text-text-primary border border-border/60"
                       }`}
                     >
-                      #{tech}
+                      {tech}
                     </button>
                   );
                 })}

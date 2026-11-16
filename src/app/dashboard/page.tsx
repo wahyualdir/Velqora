@@ -104,7 +104,7 @@ export default function DashboardPage() {
         <div
           role="tablist"
           aria-label="Mode Tampilan Dashboard Mobile"
-          className="inline-flex items-center gap-1.5 bg-[#F3EFE9] dark:bg-[#141210] p-1 rounded-xl border border-[#E4DDD4] dark:border-[#292524] text-xs font-mono select-none"
+          className="inline-flex items-center gap-1 bg-[#F3EFE9] dark:bg-[#141210] p-1 rounded-xl border border-[#E6E0D6] dark:border-[#24201E] text-xs font-sans select-none"
         >
           <button
             type="button"
@@ -114,11 +114,11 @@ export default function DashboardPage() {
             className={cn(
               "px-3.5 py-1.5 font-semibold transition-all cursor-pointer rounded-lg flex items-center gap-1.5",
               activeTab === "overview"
-                ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
-                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
+                ? "bg-[#FFFFFF] dark:bg-[#24201D] text-[#1C1917] dark:text-[#F5F5F4] shadow-2xs"
+                : "text-[#5C554E] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
             )}
           >
-            <LayoutGrid className="w-3.5 h-3.5" />
+            <LayoutGrid className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
             <span>Ikhtisar</span>
           </button>
 
@@ -130,11 +130,11 @@ export default function DashboardPage() {
             className={cn(
               "px-3.5 py-1.5 font-semibold transition-all cursor-pointer rounded-lg flex items-center gap-1.5",
               activeTab === "statistik"
-                ? "bg-[#C2553A] text-[#FFFBF8] shadow-xs border border-[#D4664A]/40"
-                : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
+                ? "bg-[#FFFFFF] dark:bg-[#24201D] text-[#1C1917] dark:text-[#F5F5F4] shadow-2xs"
+                : "text-[#5C554E] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
             )}
           >
-            <BarChart3 className="w-3.5 h-3.5" />
+            <BarChart3 className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
             <span>Statistik</span>
           </button>
         </div>

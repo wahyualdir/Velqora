@@ -10,9 +10,6 @@ import {
   RefreshCw,
   AlertCircle,
   ArrowRight,
-  CheckCircle2,
-  AlertTriangle,
-  Clock,
   Compass,
   Search as SearchIcon,
   X,
@@ -339,27 +336,6 @@ function ModulDanProjectContent() {
     });
   }, [aiScopedModules]);
 
-  // Statistik Kesiapan Konten (Dihitung Dinamis dari 24 Topik Aktif)
-  const verifiedCount = useMemo(
-    () => aiTopicOverview.filter((t) => t.statusMeta?.status === "verified").length,
-    [aiTopicOverview]
-  );
-  const inProgressCount = useMemo(
-    () =>
-      aiTopicOverview.filter(
-        (t) => t.statusMeta?.status === "in_development" || t.statusMeta?.status === "in_progress"
-      ).length,
-    [aiTopicOverview]
-  );
-  const underReviewCount = useMemo(
-    () => aiTopicOverview.filter((t) => t.statusMeta?.status === "under_review").length,
-    [aiTopicOverview]
-  );
-  const comingSoonCount = useMemo(
-    () => aiTopicOverview.filter((t) => t.statusMeta?.status === "coming_soon").length,
-    [aiTopicOverview]
-  );
-
   // Filter Topik Katalog berdasarkan Jalur Karier, Level, & Pencarian
   const filteredCatalogTopics = useMemo(() => {
     let list = [...aiTopicOverview];
@@ -492,17 +468,17 @@ function ModulDanProjectContent() {
         <section className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
             <div>
-              <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-2">
+              <h2 className="text-base font-semibold text-text-primary flex items-center gap-2">
                 <span>Katalog Kurikulum AI & Data ({aiTopicOverview.length} Topik)</span>
               </h2>
-              <p className="text-xs text-text-secondary font-mono">
-                Struktur kurikulum terpadu 24 topik berstandar universitas & industri, dikelompokkan per jalur kompetensi
+              <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
+                Kurikulum terstruktur dalam {aiTopicOverview.length} topik utama yang dikelompokkan berdasarkan jalur belajar.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 shrink-0 self-start sm:self-auto">
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start sm:self-auto">
               <Link
                 href="/dashboard/kode"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono font-medium text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface hover:bg-surface-secondary text-xs font-medium text-text-secondary hover:text-text-primary transition-colors"
               >
                 <Code2 className="w-3.5 h-3.5" />
                 <span>Katalog Kode</span>
@@ -510,7 +486,7 @@ function ModulDanProjectContent() {
               <button
                 type="button"
                 onClick={() => setViewTab("all-content")}
-                className="text-xs font-mono font-medium text-brand-600 dark:text-brand-400 hover:underline cursor-pointer flex items-center gap-1"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] hover:underline cursor-pointer"
               >
                 <span>Eksplorasi Modul ({totalModulesCount + totalProjectsCount})</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -518,50 +494,22 @@ function ModulDanProjectContent() {
             </div>
           </div>
 
-          {/* Banner Transparansi Audit Kualitas Kurikulum (Dihitung Dinamis) */}
-          <div className="p-3 sm:p-3.5 rounded-xl border border-border bg-surface/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-xs">
-            <div className="flex items-center gap-2 text-text-secondary min-w-0">
-              <span className="font-semibold text-text-primary uppercase tracking-wide text-[11px] shrink-0">
-                Audit Mutu:
-              </span>
-              <span className="truncate">Sinyal transparansi kesiapan materi 24 topik kurikulum</span>
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold">
-                <CheckCircle2 className="w-3 h-3 shrink-0" />
-                <span>{verifiedCount} Terverifikasi</span>
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30 font-semibold">
-                <Clock className="w-3 h-3 shrink-0" />
-                <span>{inProgressCount} Progres</span>
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold">
-                <AlertTriangle className="w-3 h-3 shrink-0" />
-                <span>{underReviewCount} Dalam Review</span>
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/30 font-semibold">
-                <Clock className="w-3 h-3 shrink-0" />
-                <span>{comingSoonCount} Segera Hadir</span>
-              </span>
-            </div>
-          </div>
-
-          {/* Console Filter Jalur Karier & Level */}
-          <div className="p-3 sm:p-4 rounded-xl border border-border bg-surface/80 backdrop-blur-xs space-y-3 shadow-xs">
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-              {/* Filter Jalur Karier (Pills) */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] font-mono text-text-tertiary uppercase font-bold mr-1 flex items-center gap-1">
+          {/* Filter Jalur Karier & Level */}
+          <div className="p-3.5 sm:p-4 rounded-2xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface space-y-3 shadow-xs">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+              {/* Filter Jalur Karier (Swipeable horizontal on mobile, wraps cleanly on desktop) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-pan-x pb-0.5 lg:pb-0 lg:flex-wrap">
+                <span className="text-xs font-medium text-text-tertiary mr-1 flex items-center gap-1 shrink-0">
                   <Compass className="w-3.5 h-3.5" />
                   <span>Jalur:</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => setSelectedCareerPath("all")}
-                  className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 text-xs font-medium rounded-xl border transition-all cursor-pointer shrink-0 ${
                     selectedCareerPath === "all"
-                      ? "bg-brand-600 text-white border-brand-600 font-bold shadow-xs"
-                      : "bg-surface text-text-secondary border-border hover:bg-surface-secondary"
+                      ? "bg-[#C2553A] text-white border-[#C2553A] font-semibold shadow-xs"
+                      : "bg-surface text-text-secondary border-[#E6E0D6] dark:border-[#24201E] hover:bg-surface-secondary"
                   }`}
                 >
                   Semua Jalur ({aiTopicOverview.length})
@@ -576,10 +524,10 @@ function ModulDanProjectContent() {
                       key={path}
                       type="button"
                       onClick={() => setSelectedCareerPath(path)}
-                      className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 text-xs font-medium rounded-xl border transition-all cursor-pointer shrink-0 ${
                         isActive
-                          ? "bg-brand-600 text-white border-brand-600 font-bold shadow-xs"
-                          : "bg-surface text-text-secondary border-border hover:bg-surface-secondary"
+                          ? "bg-[#C2553A] text-white border-[#C2553A] font-semibold shadow-xs"
+                          : "bg-surface text-text-secondary border-[#E6E0D6] dark:border-[#24201E] hover:bg-surface-secondary"
                       }`}
                     >
                       {path} ({countForPath})
@@ -589,12 +537,12 @@ function ModulDanProjectContent() {
               </div>
 
               {/* Controls Kanan: Level & Search */}
-              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
                 {/* Level Dropdown */}
                 <select
                   value={selectedTopicLevel}
                   onChange={(e) => setSelectedTopicLevel(e.target.value)}
-                  className="px-2.5 py-1.5 text-xs font-mono rounded-lg border border-border bg-surface text-text-primary focus:outline-hidden cursor-pointer"
+                  className="px-3 py-1.5 text-xs font-medium rounded-xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface text-text-primary focus:outline-hidden cursor-pointer"
                   aria-label="Filter level"
                 >
                   <option value="all">Semua Level</option>
@@ -605,13 +553,13 @@ function ModulDanProjectContent() {
 
                 {/* Search Input Topik */}
                 <div className="relative flex-1 sm:w-56">
-                  <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary pointer-events-none" />
+                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary pointer-events-none" />
                   <input
                     type="text"
                     value={topicSearchQuery}
                     onChange={(e) => setTopicSearchQuery(e.target.value)}
                     placeholder="Cari topik..."
-                    className="w-full pl-8 pr-7 py-1.5 text-xs font-mono rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-hidden"
+                    className="w-full pl-8 pr-7 py-1.5 text-xs rounded-xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-hidden"
                   />
                   {topicSearchQuery && (
                     <button
@@ -629,7 +577,7 @@ function ModulDanProjectContent() {
                   <button
                     type="button"
                     onClick={handleResetCatalogFilters}
-                    className="px-2 py-1 text-xs font-mono text-rose-600 dark:text-rose-400 hover:underline cursor-pointer shrink-0"
+                    className="px-2 py-1 text-xs font-medium text-rose-600 dark:text-rose-400 hover:underline cursor-pointer shrink-0"
                   >
                     Reset
                   </button>
@@ -648,28 +596,28 @@ function ModulDanProjectContent() {
               if (groupTopics.length === 0) return null;
 
               return (
-                <div key={group.id} className="space-y-3.5">
+                <div key={group.id} className="space-y-4">
                   {/* Header Grup */}
-                  <div className="flex items-center justify-between border-b border-border/80 pb-2.5">
+                  <div className="flex items-center justify-between border-b border-border/70 pb-3">
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="w-3 h-3 rounded-full"
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
                         style={{ backgroundColor: group.color }}
                       />
                       <div>
-                        <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-text-primary flex items-center gap-2">
+                        <h3 className="text-base font-semibold text-text-primary flex items-center gap-2 flex-wrap">
                           <span>{group.title}</span>
                           <span
-                            className="px-2 py-0.2 rounded-full text-[10.5px] font-mono font-semibold"
+                            className="px-2.5 py-0.5 rounded-full text-[11px] font-medium"
                             style={{
                               backgroundColor: group.badgeBg,
                               color: group.badgeText,
                             }}
                           >
-                            {groupTopics.length} Topik
+                            {groupTopics.length} topik
                           </span>
                         </h3>
-                        <p className="text-xs text-text-tertiary font-mono">
+                        <p className="text-xs text-text-secondary mt-0.5">
                           {group.subtitle}
                         </p>
                       </div>
@@ -677,7 +625,7 @@ function ModulDanProjectContent() {
                   </div>
 
                   {/* Grid Kartu Topik */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {groupTopics.map((topic) => (
                       <AiCategoryCard key={topic.id || topic.name} category={topic} />
                     ))}
@@ -688,15 +636,15 @@ function ModulDanProjectContent() {
 
             {/* Empty State jika tidak ada topik yang cocok */}
             {filteredCatalogTopics.length === 0 && (
-              <div className="p-8 text-center rounded-xl border border-dashed border-border bg-surface/40 space-y-3">
-                <p className="text-xs font-mono text-text-tertiary">
+              <div className="p-8 text-center rounded-2xl border border-dashed border-border bg-surface space-y-3">
+                <p className="text-sm text-text-secondary">
                   Tidak ditemukan topik kurikulum yang sesuai dengan kriteria filter.
                 </p>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={handleResetCatalogFilters}
-                  className="text-xs font-mono"
+                  className="text-xs"
                 >
                   Reset Filter Topik
                 </Button>
@@ -728,7 +676,7 @@ function ModulDanProjectContent() {
 
           {/* 4. Content List Area (Berkelompok per Kategori) */}
           <section className="space-y-3">
-            <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
+            <div className="flex items-center justify-between px-1 text-xs text-text-tertiary">
               <span>
                 Menampilkan {filteredModules.length} dari {aiScopedModules.length} konten AI ({groupedModulesByCategory.length} topik aktif)
               </span>

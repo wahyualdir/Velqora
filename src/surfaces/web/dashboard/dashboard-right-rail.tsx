@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  BookOpen,
+  BarChart3,
   Bot,
   Code2,
   Calendar,
@@ -14,10 +14,7 @@ import {
 import { VelqoraMark } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 import type { ScheduleItem } from "@/types";
-import {
-  getCurrentAcademicPeriod,
-  resolveActiveTopicEmblem,
-} from "./dashboard-utils";
+import { resolveActiveTopicEmblem } from "./dashboard-utils";
 
 interface DashboardRightRailProps {
   userName: string;
@@ -29,6 +26,15 @@ interface DashboardRightRailProps {
   recentTasks: any[];
   recentViews: any[];
   todaySchedules: ScheduleItem[];
+}
+
+function toTitleLabel(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\b\w/g, (ch) => ch.toUpperCase())
+    .replace(/\bAi\b/g, "AI")
+    .replace(/\bSql\b/g, "SQL")
+    .replace(/\bDsa\b/g, "DSA");
 }
 
 export function DashboardRightRail({
@@ -43,11 +49,6 @@ export function DashboardRightRail({
   todaySchedules,
 }: DashboardRightRailProps) {
   const [railTab, setRailTab] = useState<"today" | "detail">("today");
-  const [shortPeriod, setShortPeriod] = useState("Ganjil 2026/2027");
-
-  useEffect(() => {
-    setShortPeriod(getCurrentAcademicPeriod(new Date()).shortPeriod);
-  }, []);
 
   const emblem = resolveActiveTopicEmblem(
     recentModules,
@@ -66,35 +67,25 @@ export function DashboardRightRail({
 
   return (
     <aside
-      aria-label="Panel Kontekstual Belajar"
-      className="w-full xl:w-[305px] 2xl:w-[325px] shrink-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-5 items-start"
+      aria-label="Ringkasan Kontekstual"
+      className="w-full xl:w-[300px] 2xl:w-[320px] shrink-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-5 items-start font-sans"
     >
-      {/* ─── Card 1: Active Topic Spotlight Emblem ─── */}
+      {/* ─── Card 1: Clean Proportional Topik Fokus Card (No AI-slop dot grid) ─── */}
       <Link
         href={emblem.href}
-        className="group rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/40 dark:hover:border-[#D4664A]/40 p-5 flex flex-col items-center justify-center gap-4 shadow-2xs transition-all"
+        className="group rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] hover:border-[#C2553A]/35 dark:hover:border-[#D4664A]/40 p-5 flex items-center gap-4 shadow-2xs transition-colors"
       >
         <div
           className={cn(
-            "w-40 h-40 sm:w-44 sm:h-44 rounded-2xl flex items-end justify-end p-5 relative overflow-hidden shadow-md transition-transform duration-200 group-hover:scale-[1.02] border",
+            "w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border shadow-xs transition-transform duration-200 group-hover:scale-[1.03]",
             emblem.bgClass,
             emblem.borderClass
           )}
         >
-          {/* Subtle geometric architectural grid line inside emblem */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 opacity-15 pointer-events-none"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.65) 1px, transparent 0)",
-              backgroundSize: "16px 16px",
-            }}
-          />
           <span
             className={cn(
-              "font-display font-extrabold tracking-tight leading-none select-none relative z-10",
-              emblem.code.length >= 3 ? "text-5xl" : "text-6xl",
+              "font-display font-bold tracking-tight leading-none select-none",
+              emblem.code.length >= 3 ? "text-xl" : "text-2xl",
               emblem.textClass
             )}
           >
@@ -102,23 +93,26 @@ export function DashboardRightRail({
           </span>
         </div>
 
-        <div className="flex flex-col items-center text-center gap-1.5 min-w-0 w-full">
-          <span className="inline-flex items-center px-4 py-1 rounded-full border border-[#1C1917]/20 dark:border-[#F5F5F4]/20 bg-[#F3EFE9] dark:bg-[#1C1917] text-[#1C1917] dark:text-[#F5F5F4] font-mono text-[11px] font-extrabold tracking-widest uppercase">
-            {emblem.label}
+        <div className="min-w-0 flex-1 space-y-1">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F3EFE9] dark:bg-[#1C1917] text-[#C2553A] dark:text-[#F09A82] text-[11px] font-semibold">
+            {toTitleLabel(emblem.label)}
           </span>
-          <p className="text-[11.5px] font-medium text-[#6B6560] dark:text-[#A8A29E] truncate max-w-full px-2">
+          <p className="text-sm font-semibold text-[#1C1917] dark:text-[#F5F5F4] truncate font-display group-hover:text-[#C2553A] dark:group-hover:text-[#F09A82] transition-colors">
             {emblem.sublabel}
+          </p>
+          <p className="text-xs text-[#6B6560] dark:text-[#A8A29E]">
+            Topik fokus aktif →
           </p>
         </div>
       </Link>
 
-      {/* ─── Card 2 & 3 Stack (Pairs cleanly on Tablet 2-col too) ─── */}
+      {/* ─── Card 2 & 3 Stack ─── */}
       <div className="space-y-4 sm:space-y-5">
-        {/* Segmented Mini-Switcher: Hari Ini | Detail Modul */}
-        <div className="rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] p-2 shadow-2xs space-y-3">
+        {/* Card 2: Hari Ini | Detail Modul (Flat hairline rows — zero box-in-box clutter) */}
+        <div className="rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] p-3.5 shadow-2xs space-y-3">
           <div
             role="tablist"
-            aria-label="Ringkasan Kontekstual"
+            aria-label="Ringkasan Aktivitas"
             className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[#F3EFE9] dark:bg-[#1C1917]"
           >
             <button
@@ -127,7 +121,7 @@ export function DashboardRightRail({
               aria-selected={railTab === "today"}
               onClick={() => setRailTab("today")}
               className={cn(
-                "py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer",
+                "py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                 railTab === "today"
                   ? "bg-[#FFFFFF] dark:bg-[#24201D] text-[#1C1917] dark:text-[#F5F5F4] shadow-2xs"
                   : "text-[#6B6560] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
@@ -141,7 +135,7 @@ export function DashboardRightRail({
               aria-selected={railTab === "detail"}
               onClick={() => setRailTab("detail")}
               className={cn(
-                "py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer",
+                "py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                 railTab === "detail"
                   ? "bg-[#FFFFFF] dark:bg-[#24201D] text-[#1C1917] dark:text-[#F5F5F4] shadow-2xs"
                   : "text-[#6B6560] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4]"
@@ -152,88 +146,86 @@ export function DashboardRightRail({
           </div>
 
           {railTab === "today" ? (
-            <div className="px-2 pb-1.5 space-y-2.5">
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <Link
-                  href="/dashboard/jadwal"
-                  className="p-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/35 transition-colors"
-                >
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#8A8378] dark:text-[#8C857F] uppercase">
-                    <Calendar className="w-3 h-3 text-[#C2553A] dark:text-[#D4664A]" />
-                    <span>Sesi Hari Ini</span>
-                  </div>
-                  <p className="mt-1 text-lg font-extrabold text-[#1C1917] dark:text-[#F5F5F4] tabular-nums">
-                    {loading ? "…" : todaySchedules.length}
-                  </p>
-                </Link>
+            <div className="divide-y divide-[#E6E0D6]/70 dark:divide-[#24201E] text-xs">
+              <Link
+                href="/dashboard/jadwal"
+                className="flex items-center justify-between py-2.5 px-1.5 hover:bg-[#FAF8F5] dark:hover:bg-[#1C1917] rounded-lg transition-colors"
+              >
+                <span className="flex items-center gap-2 text-[#5C554E] dark:text-[#A8A29E] font-medium">
+                  <Calendar className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
+                  <span>Sesi hari ini</span>
+                </span>
+                <span className="font-semibold text-[#1C1917] dark:text-[#F5F5F4] tabular-nums">
+                  {loading ? "…" : `${todaySchedules.length} sesi`}
+                </span>
+              </Link>
 
-                <Link
-                  href="/dashboard/tugas"
-                  className="p-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] hover:border-[#C2553A]/35 transition-colors"
-                >
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#8A8378] dark:text-[#8C857F] uppercase">
-                    <CheckSquare className="w-3 h-3 text-[#C2553A] dark:text-[#D4664A]" />
-                    <span>Tugas Aktif</span>
-                  </div>
-                  <p className="mt-1 text-lg font-extrabold text-[#1C1917] dark:text-[#F5F5F4] tabular-nums">
-                    {loading ? "…" : recentTasks.length}
-                  </p>
-                </Link>
-              </div>
+              <Link
+                href="/dashboard/tugas"
+                className="flex items-center justify-between py-2.5 px-1.5 hover:bg-[#FAF8F5] dark:hover:bg-[#1C1917] rounded-lg transition-colors"
+              >
+                <span className="flex items-center gap-2 text-[#5C554E] dark:text-[#A8A29E] font-medium">
+                  <CheckSquare className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
+                  <span>Tugas aktif</span>
+                </span>
+                <span className="font-semibold text-[#1C1917] dark:text-[#F5F5F4] tabular-nums">
+                  {loading ? "…" : `${recentTasks.length} tugas`}
+                </span>
+              </Link>
 
-              <div className="flex items-center gap-2 pt-0.5">
+              <div className="pt-3 flex items-center gap-2">
                 <Link
                   href="/dashboard/playground"
-                  className="flex-1 flex items-center justify-center gap-1.5 h-8.5 rounded-xl vt-btn-chrome text-[11px] font-bold"
+                  className="flex-1 flex items-center justify-center gap-1.5 h-8.5 rounded-xl vt-btn-chrome text-xs font-semibold"
                 >
-                  <Code2 className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+                  <Code2 className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
                   <span>Lab Kode</span>
                 </Link>
                 <Link
                   href="/dashboard/ai-tutor"
-                  className="flex-1 flex items-center justify-center gap-1.5 h-8.5 rounded-xl vt-btn-chrome text-[11px] font-bold"
+                  className="flex-1 flex items-center justify-center gap-1.5 h-8.5 rounded-xl vt-btn-chrome text-xs font-semibold"
                 >
-                  <Bot className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+                  <Bot className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
                   <span>Tanya AI</span>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="px-2 pb-1.5 space-y-2.5">
+            <div className="px-1 pt-1 space-y-3">
               {primaryModule ? (
                 <>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono font-bold uppercase text-[#C2553A] dark:text-[#D4664A]">
+                    <span className="text-xs font-medium text-[#C2553A] dark:text-[#F09A82]">
                       {primaryModule.category?.name || "Kurikulum Utama"}
                     </span>
-                    <p className="text-xs font-bold text-[#1C1917] dark:text-[#F5F5F4] line-clamp-2 leading-snug">
+                    <p className="text-[13px] font-semibold text-[#1C1917] dark:text-[#F5F5F4] line-clamp-2 leading-snug">
                       {primaryModule.title}
                     </p>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-[#6B6560] dark:text-[#A8A29E]">
-                        Progres Bab
+                        Progres bab
                       </span>
-                      <span className="font-bold text-[#1C1917] dark:text-[#F5F5F4]">
+                      <span className="font-semibold text-[#1C1917] dark:text-[#F5F5F4] tabular-nums">
                         {progressPercent}%
                       </span>
                     </div>
-                    <div className="w-full h-1.5 rounded-full bg-[#F3EFE9] dark:bg-[#1C1917] overflow-hidden">
+                    <div className="w-full h-1.5 rounded-full bg-[#F3EFE9] dark:bg-[#24201E] overflow-hidden">
                       <div
                         className="h-full rounded-full bg-[#C2553A] dark:bg-[#D4664A] transition-all"
-                        style={{ width: `${Math.max(8, progressPercent)}%` }}
+                        style={{ width: `${Math.max(4, progressPercent)}%` }}
                       />
                     </div>
                   </div>
 
                   <Link
                     href={`/dashboard/modul?module=${primaryModule.id}`}
-                    className="w-full h-8.5 rounded-xl bg-[#C2553A] hover:bg-[#A34530] dark:bg-[#D4664A] dark:hover:bg-[#C2553A] text-[#FFFBF8] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                    className="w-full h-9 rounded-xl vt-btn-chrome text-xs font-semibold flex items-center justify-center gap-1.5"
                   >
                     <span>Buka Modul</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
                   </Link>
                 </>
               ) : (
@@ -245,7 +237,7 @@ export function DashboardRightRail({
                     href="/dashboard/modul/baru"
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl vt-btn-chrome text-xs font-semibold"
                   >
-                    <Layers className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+                    <Layers className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
                     <span>Buat Modul</span>
                   </Link>
                 </div>
@@ -254,44 +246,40 @@ export function DashboardRightRail({
           )}
         </div>
 
-        {/* ─── Card 3: Kartu Identitas Akademik Aktif (matching bottom-right card) ─── */}
-        <div className="rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] p-4 shadow-2xs space-y-3">
+        {/* Card 3: Clean Status Workspace Card (Zero ALL-CAPS jargon, no inner nested border) */}
+        <div className="rounded-2xl bg-[#FFFFFF] dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] p-4 shadow-2xs space-y-2.5">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#FAF3EF] dark:bg-[#D4664A]/15 border border-[#C2553A]/20 dark:border-[#D4664A]/30 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#FAF3EF] dark:bg-[#D4664A]/15 flex items-center justify-center shrink-0">
                 <VelqoraMark size={18} />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-extrabold text-[#1C1917] dark:text-[#F5F5F4] leading-tight truncate font-display">
-                  Velqora
+                <p className="text-[13px] font-bold text-[#1C1917] dark:text-[#F5F5F4] leading-tight truncate font-display">
+                  {userName?.trim() || "Velqora Workspace"}
                 </p>
-                <p className="text-[9.5px] font-mono font-bold text-[#8A8378] dark:text-[#8C857F] uppercase tracking-wider truncate">
-                  KARTU AKADEMIK AKTIF
+                <p className="text-[11px] text-[#6B6560] dark:text-[#A8A29E] truncate">
+                  Status Workspace
                 </p>
               </div>
             </div>
 
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2E6B4E]/10 text-[#2E6B4E] dark:bg-[#4ADE80]/12 dark:text-[#4ADE80] border border-[#2E6B4E]/25 dark:border-[#4ADE80]/25 text-[10px] font-extrabold font-mono uppercase shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2E6B4E]/10 text-[#2E6B4E] dark:bg-[#4ADE80]/12 dark:text-[#4ADE80] text-[11px] font-semibold shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-[#2E6B4E] dark:bg-[#4ADE80]" />
-              <span>AKTIF</span>
+              <span>Aktif</span>
             </span>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1917] border border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-[#1C1917] dark:text-[#F5F5F4] truncate">
-                {userName?.trim() || "Pembelajar Velqora"}
-              </p>
-              <p className="text-[10.5px] font-mono text-[#6B6560] dark:text-[#A8A29E] truncate">
-                {shortPeriod} • {totalModul} Modul • {totalTugas} Tugas • {totalMateri} Materi
-              </p>
-            </div>
+          <div className="pt-2.5 border-t border-[#E6E0D6]/70 dark:border-[#24201E] flex items-center justify-between gap-2 text-xs text-[#6B6560] dark:text-[#A8A29E]">
+            <span className="truncate">
+              {totalModul} modul · {totalTugas} tugas · {totalMateri} materi
+            </span>
             <Link
               href="/dashboard/statistik"
-              className="p-1.5 rounded-lg hover:bg-[#FFFFFF] dark:hover:bg-[#24201D] text-[#C2553A] dark:text-[#D4664A] transition-colors shrink-0"
-              title="Buka Statistik Belajar"
+              className="inline-flex items-center gap-1 font-semibold text-[#C2553A] dark:text-[#F09A82] hover:underline shrink-0"
+              title="Lihat Statistik Belajar"
             >
-              <BookOpen className="w-4 h-4" />
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Statistik</span>
             </Link>
           </div>
         </div>

@@ -39,10 +39,10 @@ export function MobileDashboardView({
   stats,
   loading,
 }: MobileDashboardViewProps) {
-  const [periodBadge, setPeriodBadge] = useState("TA 2026/2027 GANJIL");
+  const [shortPeriod, setShortPeriod] = useState("Ganjil 2026/2027");
 
   useEffect(() => {
-    setPeriodBadge(getCurrentAcademicPeriod(new Date()).badgeText);
+    setShortPeriod(getCurrentAcademicPeriod(new Date()).shortPeriod);
   }, []);
 
   const primaryModule = stats.recentModules?.[0] || null;
@@ -59,133 +59,122 @@ export function MobileDashboardView({
     return "Selamat malam";
   };
 
-  // Urgent task alert check for hero banner
   const nearestTask = upcomingTasks[0] || null;
   const taskDays = nearestTask?.deadline ? daysUntilDeadline(nearestTask.deadline) : null;
   const isUrgentTask = taskDays !== null && taskDays <= 2;
 
   return (
-    <div className="space-y-5 pb-8 animate-fade-in">
-      {/* ─── 1. App Greeting & Period Header ─── */}
+    <div className="space-y-5 pb-8 animate-fade-in font-sans">
+      {/* ─── 1. Calm App Greeting & Period Header ─── */}
       <div className="px-1 pt-1 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-mono text-[#5C554E] dark:text-[#A8A29E] uppercase tracking-wider font-bold">
-            {getGreeting()} • {todayLabel}
+          <p className="text-xs text-text-secondary font-medium">
+            {getGreeting()} · {todayLabel}
           </p>
-          <h1 className="text-xl font-extrabold text-text-primary tracking-tight font-display truncate">
-            {userName || "Pelajar Velqora"}
+          <h1 className="text-xl font-bold text-text-primary tracking-tight font-display truncate">
+            {userName || "Velqora Workspace"}
           </h1>
         </div>
 
         <Link
           href="/dashboard/jadwal"
-          className="px-2.5 py-1 rounded-xl bg-[#C2553A] dark:bg-[#D4664A] text-[#FFFBF8] font-mono text-[10px] font-bold uppercase tracking-wider shrink-0 shadow-2xs"
+          className="px-3 py-1 rounded-full bg-[#FAF3EF] dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82] text-[11px] font-semibold shrink-0"
         >
-          {periodBadge}
+          {shortPeriod}
         </Link>
       </div>
 
-      {/* ─── 2. Continue Learning Hero Block (PRIORITAS UTAMA) ─── */}
+      {/* ─── 2. Continue Learning Hero Card (Clean internal accent bar, zero heavy gradient) ─── */}
       {loading ? (
-        <Card padding="md" variant="subtle" className="space-y-3 border-l-4 border-l-[#C2553A]">
+        <Card padding="md" variant="subtle" className="space-y-3 rounded-2xl">
           <Skeleton className="h-4 w-28 rounded" />
           <Skeleton className="h-6 w-3/4 rounded" />
           <Skeleton className="h-2 w-full rounded-full" />
-          <Skeleton className="h-9 w-full rounded-xl" />
+          <Skeleton className="h-10 w-full rounded-xl" />
         </Card>
       ) : isUrgentTask && nearestTask ? (
-        <Card
-          padding="md"
-          className="space-y-3 border-l-4 border-l-[#C2553A] dark:border-l-[#D4664A] bg-surface"
-        >
+        <Card padding="md" className="space-y-3 rounded-2xl bg-surface">
           <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#1C1917] dark:bg-[#F5F5F4] text-[#FAF8F5] dark:text-[#141210] font-mono uppercase tracking-wider">
-              <Award className="w-3 h-3" />
-              PRIORITAS UTAMA
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FAF3EF] dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82]">
+              <Award className="w-3.5 h-3.5" />
+              <span>Prioritas Utama</span>
             </span>
-            <span className="text-[11px] text-[#C2553A] dark:text-[#D4664A] font-mono font-bold">
+            <span className="text-xs text-[#C2553A] dark:text-[#F09A82] font-semibold">
               {taskDays === 0 ? "Hari ini" : taskDays === 1 ? "Besok" : "Mendesak"}
             </span>
           </div>
 
           <div>
-            <h2 className="text-base font-extrabold text-text-primary font-display line-clamp-2">
+            <h2 className="text-base font-bold text-text-primary font-display line-clamp-2 leading-snug">
               {nearestTask.title}
             </h2>
-            <p className="text-xs text-text-secondary mt-0.5 font-medium truncate">
-              {nearestTask.subject || "Tugas Akademik"}
+            <p className="text-xs text-text-secondary mt-0.5 truncate">
+              {nearestTask.subject || "Tugas Belajar"}
             </p>
           </div>
 
           <Link href="/dashboard/tugas" className="block pt-1">
-            <Button className="w-full h-10 rounded-xl gap-2 font-bold text-xs shadow-2xs bg-[#C2553A] hover:bg-[#A34530] text-[#FFFBF8]">
+            <Button className="w-full h-11 rounded-xl gap-2 font-semibold text-[13px] shadow-xs bg-[#C2553A] hover:bg-[#A34530] text-[#FFFBF8]">
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Lanjutkan Belajar</span>
             </Button>
           </Link>
         </Card>
       ) : primaryModule ? (
-        <Card
-          padding="md"
-          className="space-y-3 border-l-4 border-l-[#C2553A] dark:border-l-[#D4664A] bg-surface"
-        >
+        <Card padding="md" className="space-y-3 rounded-2xl bg-surface">
           <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#1C1917] dark:bg-[#F5F5F4] text-[#FAF8F5] dark:text-[#141210] font-mono uppercase tracking-wider">
-              <Sparkles className="w-3 h-3" />
-              PRIORITAS UTAMA
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FAF3EF] dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82]">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Lanjutkan Belajar</span>
             </span>
-            <span className="text-[11px] text-text-secondary font-mono font-semibold truncate">
+            <span className="text-xs text-text-secondary font-medium truncate">
               {primaryModule.category?.name || "Modul"}
             </span>
           </div>
 
           <div>
-            <h2 className="text-base font-extrabold text-text-primary font-display line-clamp-1">
+            <h2 className="text-base font-bold text-text-primary font-display line-clamp-2 leading-snug">
               {primaryModule.title}
             </h2>
             {primaryModule.description && (
-              <p className="text-xs text-text-secondary line-clamp-2 mt-0.5 leading-snug font-normal">
+              <p className="text-xs text-text-secondary line-clamp-2 mt-1 leading-relaxed">
                 {primaryModule.description}
               </p>
             )}
           </div>
 
           <div className="space-y-1.5 pt-1">
-            <div className="flex items-center justify-between text-[11px] text-text-secondary font-medium">
+            <div className="flex items-center justify-between text-xs text-text-secondary font-medium">
               <span>Progres pembelajaran</span>
-              <span className="font-mono font-bold text-[#C2553A] dark:text-[#D4664A]">
-                {primaryModule.level ? `${primaryModule.level}` : "Aktif"}
+              <span className="font-semibold text-[#C2553A] dark:text-[#F09A82] tabular-nums">
+                {primaryModule.progress || 0}%
               </span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden border border-border/40">
+            <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden">
               <div
                 className="h-full bg-[#C2553A] dark:bg-[#D4664A] rounded-full"
-                style={{ width: `${Math.max(15, primaryModule.progress || 50)}%` }}
+                style={{ width: `${Math.max(4, primaryModule.progress || 0)}%` }}
               />
             </div>
           </div>
 
           <Link href={`/dashboard/modul?module=${primaryModule.id}`} className="block pt-1">
-            <Button className="w-full h-10 rounded-xl gap-2 font-bold text-xs shadow-2xs bg-[#C2553A] hover:bg-[#A34530] text-[#FFFBF8]">
+            <Button className="w-full h-11 rounded-xl gap-2 font-semibold text-[13px] shadow-xs bg-[#C2553A] hover:bg-[#A34530] text-[#FFFBF8]">
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Lanjutkan Belajar</span>
             </Button>
           </Link>
         </Card>
       ) : (
-        <Card
-          padding="md"
-          variant="subtle"
-          className="text-center space-y-2.5 border-l-4 border-l-[#C2553A]"
-        >
-          <div className="w-10 h-10 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#D4664A] flex items-center justify-center mx-auto">
+        <Card padding="md" variant="subtle" className="text-center space-y-2.5 rounded-2xl">
+          <div className="w-10 h-10 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] flex items-center justify-center mx-auto">
             <BookOpen className="w-5 h-5" />
           </div>
           <h2 className="text-sm font-bold text-text-primary font-display">
             Lanjutkan Belajar di Velqora
           </h2>
-          <p className="text-xs text-text-secondary max-w-xs mx-auto font-normal">
-            Tambahkan modul atau jadwal perkuliahan pertama Anda.
+          <p className="text-xs text-text-secondary max-w-xs mx-auto">
+            Tambahkan modul atau jadwal belajar pertama Anda.
           </p>
           <Link href="/dashboard/modul/baru" className="inline-block pt-1">
             <Button size="sm" className="text-xs rounded-xl bg-[#C2553A] text-[#FFFBF8]">
@@ -195,52 +184,52 @@ export function MobileDashboardView({
         </Card>
       )}
 
-      {/* ─── 3. Quick Academic Shortcuts (4 Icons, auto-rows-fr preserved) ─── */}
+      {/* ─── 3. Quick Shortcuts Grid (4 Icons, auto-rows-fr preserved) ─── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 auto-rows-fr">
         <Link
           href="/dashboard/playground"
-          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#D4664A] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] flex items-center justify-center shrink-0">
             <Code2 className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-xs font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             Lab Notebook
           </span>
         </Link>
 
         <Link
           href="/dashboard/kode"
-          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#D4664A] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] flex items-center justify-center shrink-0">
             <FileCode2 className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-xs font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             Katalog Kode
           </span>
         </Link>
 
         <Link
           href="/dashboard/modul"
-          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#D4664A] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] flex items-center justify-center shrink-0">
             <Layers className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-xs font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             Modul
           </span>
         </Link>
 
         <Link
           href="/dashboard/ai-tutor"
-          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 hover:bg-surface-secondary/40 active:scale-95 transition-all shadow-2xs h-full"
+          className="p-3 min-h-[76px] rounded-2xl border border-border bg-surface flex flex-col items-center justify-center text-center gap-1.5 hover:border-[#C2553A]/40 active:scale-95 transition-all shadow-2xs h-full"
         >
-          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#D4664A] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] flex items-center justify-center shrink-0">
             <Bot className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-semibold text-text-primary leading-tight truncate w-full px-0.5">
+          <span className="text-xs font-semibold text-text-primary leading-tight truncate w-full px-0.5">
             AI Tutor
           </span>
         </Link>
@@ -249,13 +238,13 @@ export function MobileDashboardView({
       {/* ─── 4. Today's Schedule Feed ─── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+          <h3 className="text-xs font-bold text-text-primary flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
             <span>Jadwal Hari Ini</span>
           </h3>
           <Link
             href="/dashboard/jadwal"
-            className="text-[11px] font-bold text-[#C2553A] dark:text-[#D4664A] flex items-center gap-0.5 hover:underline"
+            className="text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] flex items-center gap-0.5 hover:underline"
           >
             <span>Kalender</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -265,7 +254,7 @@ export function MobileDashboardView({
         {loading ? (
           <Skeleton className="h-16 w-full rounded-2xl" />
         ) : todaySchedules.length > 0 ? (
-          <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
+          <Card padding="none" className="divide-y divide-border/60 overflow-hidden rounded-2xl">
             {todaySchedules.map((sched) => {
               const live = isScheduleLiveNow(sched);
               return (
@@ -275,16 +264,16 @@ export function MobileDashboardView({
                   className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 transition-colors gap-3"
                 >
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="text-[11px] font-mono font-bold text-[#C2553A] dark:text-[#D4664A]">
+                    <p className="text-xs font-mono font-medium text-[#C2553A] dark:text-[#F09A82]">
                       {getScheduleTimeRange(sched)}
                     </p>
-                    <p className="text-xs font-bold text-text-primary truncate">
+                    <p className="text-xs font-semibold text-text-primary truncate">
                       {sched.title}
                     </p>
                   </div>
                   {live ? (
-                    <span className="px-2 py-0.5 rounded-full bg-[#C2553A] text-[#FFFBF8] text-[9.5px] font-extrabold font-mono uppercase shrink-0">
-                      BERLANGSUNG
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#C2553A]/12 text-[#C2553A] dark:text-[#F09A82] text-[11px] font-semibold shrink-0">
+                      Berlangsung
                     </span>
                   ) : (
                     <ChevronRight className="w-3.5 h-3.5 text-text-secondary shrink-0" />
@@ -294,13 +283,13 @@ export function MobileDashboardView({
             })}
           </Card>
         ) : (
-          <Card padding="sm" variant="subtle" className="flex items-center justify-between gap-2">
+          <Card padding="sm" variant="subtle" className="flex items-center justify-between gap-2 rounded-2xl">
             <span className="text-xs text-text-secondary">
               Belum ada sesi jadwal untuk hari {todayLabel}.
             </span>
             <Link
               href="/dashboard/jadwal"
-              className="text-[11px] font-bold text-[#C2553A] dark:text-[#D4664A] shrink-0"
+              className="text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] shrink-0"
             >
               Atur →
             </Link>
@@ -311,13 +300,13 @@ export function MobileDashboardView({
       {/* ─── 5. Upcoming Tasks Section ─── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider font-mono flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
+          <h3 className="text-xs font-bold text-text-primary flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
             <span>Tenggat Terdekat</span>
           </h3>
           <Link
             href="/dashboard/tugas"
-            className="text-[11px] font-bold text-[#C2553A] dark:text-[#D4664A] flex items-center gap-0.5 hover:underline"
+            className="text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] flex items-center gap-0.5 hover:underline"
           >
             <span>Semua</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -330,7 +319,7 @@ export function MobileDashboardView({
               <Card
                 key={i}
                 padding="sm"
-                className="flex items-center justify-between"
+                className="flex items-center justify-between rounded-2xl"
               >
                 <div className="space-y-1 flex-1">
                   <Skeleton className="h-4 w-32 rounded" />
@@ -341,7 +330,7 @@ export function MobileDashboardView({
             ))}
           </div>
         ) : upcomingTasks.length > 0 ? (
-          <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
+          <Card padding="none" className="divide-y divide-border/60 overflow-hidden rounded-2xl">
             {upcomingTasks.map((task) => {
               const daysLeft = task.deadline
                 ? daysUntilDeadline(task.deadline)
@@ -357,11 +346,11 @@ export function MobileDashboardView({
                   className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-3"
                 >
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="text-xs font-bold text-text-primary truncate">
+                    <p className="text-xs font-semibold text-text-primary truncate">
                       {task.title}
                     </p>
-                    <p className="text-[11px] font-medium text-text-secondary truncate">
-                      {task.subject || "Tugas Kuliah"}
+                    <p className="text-[11px] text-text-secondary truncate">
+                      {task.subject || "Tugas Belajar"}
                     </p>
                   </div>
 
@@ -369,14 +358,14 @@ export function MobileDashboardView({
                     {task.deadline && (
                       <span
                         className={cn(
-                          "px-2 py-0.5 rounded-full text-[10px] font-semibold font-mono whitespace-nowrap shrink-0",
+                          "px-2.5 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap shrink-0",
                           isOverdue
-                            ? "bg-rose-500/15 text-rose-700 border border-rose-500/30 font-bold"
+                            ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold"
                             : isDueToday
-                            ? "bg-[#C2553A]/15 text-[#C2553A] border border-[#C2553A]/30 font-bold"
+                            ? "bg-[#C2553A]/15 text-[#C2553A] dark:text-[#F09A82] font-semibold"
                             : isDueTomorrow
-                            ? "bg-amber-500/15 text-amber-800 border border-amber-500/30 font-bold"
-                            : "bg-surface-secondary text-text-secondary border border-border/60 font-medium"
+                            ? "bg-amber-500/15 text-amber-800 dark:text-amber-300 font-semibold"
+                            : "bg-surface-secondary text-text-secondary"
                         )}
                       >
                         {isOverdue
@@ -395,7 +384,7 @@ export function MobileDashboardView({
             })}
           </Card>
         ) : (
-          <Card padding="md" variant="subtle" className="text-center">
+          <Card padding="sm" variant="subtle" className="text-center rounded-2xl">
             <p className="text-xs font-medium text-text-secondary">
               Tidak ada tugas yang mendesak.
             </p>
@@ -406,12 +395,12 @@ export function MobileDashboardView({
       {/* ─── 6. Recent Activity List ─── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider font-mono">
+          <h3 className="text-xs font-bold text-text-primary">
             Aktivitas Terakhir
           </h3>
           <Link
             href="/dashboard/materi"
-            className="text-[11px] font-bold text-[#C2553A] dark:text-[#D4664A] flex items-center gap-0.5 hover:underline"
+            className="text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] flex items-center gap-0.5 hover:underline"
           >
             <span>Materi</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -419,7 +408,7 @@ export function MobileDashboardView({
         </div>
 
         {recentViews.length > 0 ? (
-          <Card padding="none" className="divide-y divide-border/60 overflow-hidden">
+          <Card padding="none" className="divide-y divide-border/60 overflow-hidden rounded-2xl">
             {recentViews.map((item) => {
               const mat = item.material || item;
               return (
@@ -429,14 +418,14 @@ export function MobileDashboardView({
                   className="flex items-center justify-between p-3.5 hover:bg-surface-secondary/50 active:bg-surface-secondary/70 transition-colors gap-3"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-8 h-8 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#D4664A] flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] flex items-center justify-center shrink-0">
                       <BookOpen className="w-4 h-4" />
                     </div>
                     <div className="min-w-0 flex-1 space-y-0.5">
-                      <p className="text-xs font-bold text-text-primary truncate">
+                      <p className="text-xs font-semibold text-text-primary truncate">
                         {mat.title || "Materi Pelajaran"}
                       </p>
-                      <p className="text-[10.5px] font-medium text-text-secondary truncate">
+                      <p className="text-[11px] text-text-secondary truncate">
                         {mat.category?.name || item.subtitle || "Materi Pembelajaran"}
                       </p>
                     </div>
@@ -447,7 +436,7 @@ export function MobileDashboardView({
             })}
           </Card>
         ) : (
-          <Card padding="md" variant="subtle" className="text-center">
+          <Card padding="sm" variant="subtle" className="text-center rounded-2xl">
             <p className="text-xs font-medium text-text-secondary">
               Belum ada aktivitas baru.
             </p>

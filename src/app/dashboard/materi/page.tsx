@@ -201,7 +201,7 @@ function MateriContent() {
 
       {/* ─── 3. Materials List Area ─── */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
+        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary">
           <span>
             Menampilkan {filteredMaterials.length} dari {materials.length} dokumen materi
           </span>

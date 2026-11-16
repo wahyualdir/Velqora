@@ -336,7 +336,7 @@ function JadwalContent() {
 
       {/* ─── 4. Schedule Content List ─── */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
+        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary">
           <span>
             Menampilkan {filteredItems.length} dari {scheduleItems.length} agenda perkuliahan
           </span>

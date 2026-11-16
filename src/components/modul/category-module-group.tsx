@@ -43,52 +43,51 @@ export function CategoryModuleGroup({
   const statusMeta = getTopicStatus(category.id || category.name);
 
   return (
-    <div className="vt-window rounded-2xl overflow-hidden bg-[#FAF8F5] dark:bg-[#100E0D] border border-[#E4DDD4] dark:border-[#292524] mb-6">
+    <div className="rounded-2xl overflow-hidden bg-surface border border-[#E6E0D6] dark:border-[#24201E] mb-6 shadow-xs">
       {/* Group Header Banner */}
-      <div className="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141210] border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between gap-3">
+      <div className="p-4 sm:p-5 bg-surface border-b border-[#E6E0D6] dark:border-[#24201E] flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
+            className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border"
             style={{
               backgroundColor: `${category.color}15`,
-              borderColor: `${category.color}35`,
+              borderColor: `${category.color}30`,
               color: category.color,
             }}
           >
             <IconComponent className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold text-sm sm:text-base text-text-primary font-display truncate">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-semibold text-sm sm:text-base text-text-primary truncate">
                 {category.name}
               </h3>
               <span
-                className="px-1.5 py-0.2 text-[10px] font-mono font-bold rounded border shrink-0"
+                className="px-2 py-0.5 text-[11px] font-medium rounded-full shrink-0"
                 style={{
-                  backgroundColor: `${category.color}10`,
-                  borderColor: `${category.color}30`,
+                  backgroundColor: `${category.color}14`,
                   color: category.color,
                 }}
               >
-                {modules.length} Konten
+                {modules.length} konten
               </span>
 
               {/* Status Badge */}
               {statusMeta.status === "verified" && (
-                <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.2 text-[10px] font-mono font-semibold rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
-                  <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 shrink-0">
+                  <CheckCircle2 className="w-3 h-3 shrink-0" />
                   <span>{statusMeta.badgeLabel}</span>
                 </span>
               )}
               {statusMeta.status === "under_review" && (
-                <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.2 text-[10px] font-mono font-semibold rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0">
-                  <AlertTriangle className="w-2.5 h-2.5 shrink-0" />
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 shrink-0">
+                  <AlertTriangle className="w-3 h-3 shrink-0" />
                   <span>{statusMeta.badgeLabel}</span>
                 </span>
               )}
               {statusMeta.status === "in_development" && (
-                <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.2 text-[10px] font-mono font-semibold rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30 shrink-0">
-                  <Clock className="w-2.5 h-2.5 shrink-0" />
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-sky-500/10 text-sky-700 dark:text-sky-400 shrink-0">
+                  <Clock className="w-3 h-3 shrink-0" />
                   <span>{statusMeta.badgeLabel}</span>
                 </span>
               )}
@@ -98,7 +97,7 @@ export function CategoryModuleGroup({
 
         <Link
           href={href}
-          className="inline-flex items-center gap-1 text-xs font-mono font-bold text-brand-600 hover:text-brand-700 dark:text-brand-400 hover:underline shrink-0"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[#C2553A] dark:text-[#F09A82] hover:underline shrink-0"
         >
           <span>Detail Topik</span>
           <ArrowRight className="w-3.5 h-3.5" />

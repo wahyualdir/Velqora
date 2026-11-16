@@ -14,11 +14,8 @@ import {
   ScanLine,
   CheckSquare,
   Calendar,
-  Sliders,
-  FolderOpen,
   Tag,
   HardDriveDownload,
-  BarChart3,
 } from "lucide-react";
 import { SettingsGearIcon } from "@/components/icons/settings-gear-icon";
 import { FolderPixelIcon } from "@/components/icons/folder-pixel-icon";
@@ -94,33 +91,33 @@ export function SubNavTabs({ category, className }: SubNavTabsProps) {
             key={tab.href}
             href={tab.href}
             aria-current={isActive ? "page" : undefined}
-            className={cn(
-              "flex items-center gap-2 px-3.5 py-2 min-h-[40px] text-xs font-semibold rounded-xl transition-all shrink-0 whitespace-nowrap active:scale-98 cursor-pointer",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40",
-              isActive
-                ? "bg-brand-600 text-white font-bold shadow-xs border border-brand-700 dark:border-brand-500"
-                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/70 border border-transparent"
-            )}
-          >
-            <Icon
               className={cn(
-                "w-4 h-4 shrink-0",
-                isActive ? "text-white" : "text-text-tertiary"
+                "flex items-center gap-2 px-3.5 py-2 min-h-[40px] text-xs font-medium rounded-xl transition-all shrink-0 whitespace-nowrap active:scale-98 cursor-pointer",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40",
+                isActive
+                  ? "bg-[#C2553A]/12 dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82] font-semibold"
+                  : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary/70"
               )}
-            />
-            <span className="font-sans text-xs">{tab.label}</span>
-            {tab.badge !== undefined && (
-              <span
+            >
+              <Icon
                 className={cn(
-                  "px-2 py-0.5 text-[10px] font-mono rounded-md font-semibold",
-                  isActive
-                    ? "bg-white/20 text-white"
-                    : "bg-surface-secondary text-text-secondary border border-border"
+                  "w-4 h-4 shrink-0",
+                  isActive ? "text-[#C2553A] dark:text-[#F09A82]" : "text-text-tertiary"
                 )}
-              >
-                {tab.badge}
-              </span>
-            )}
+              />
+              <span className="font-sans text-xs">{tab.label}</span>
+              {tab.badge !== undefined && (
+                <span
+                  className={cn(
+                    "px-2 py-0.5 text-[11px] font-sans rounded-md font-semibold",
+                    isActive
+                      ? "bg-[#C2553A]/15 text-[#C2553A] dark:text-[#F09A82]"
+                      : "bg-surface-secondary text-text-secondary"
+                  )}
+                >
+                  {tab.badge}
+                </span>
+              )}
           </Link>
         );
       })}

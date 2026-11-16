@@ -109,7 +109,7 @@ export function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerProps) {
 
           return (
             <div key={category.title} className="space-y-1.5">
-              <h3 className="px-2 text-[11px] font-semibold text-text-tertiary uppercase tracking-wider font-mono">
+              <h3 className="px-2 text-xs font-semibold text-text-tertiary tracking-wide">
                 {translatedCatTitle}
               </h3>
 
@@ -131,28 +131,28 @@ export function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerProps) {
                       className={cn(
                         "flex items-center justify-between p-2.5 rounded-xl border transition-all active:scale-[0.99]",
                         isActive
-                          ? "bg-brand-500/10 border-brand-500/30 text-brand-500 dark:text-brand-400 font-semibold"
-                          : "bg-surface hover:bg-surface-secondary border-border/80 text-text-primary"
+                          ? "bg-[#C2553A]/12 border-[#C2553A]/30 text-[#C2553A] dark:text-[#F09A82] font-semibold"
+                          : "bg-surface hover:bg-surface-secondary border-[#E6E0D6]/70 dark:border-[#24201E]/70 text-text-primary"
                       )}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div
                           className={cn(
-                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border",
+                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
                             isActive
-                              ? "bg-brand-500/20 border-brand-500/30 text-brand-400"
-                              : "bg-surface-secondary border-border text-text-secondary"
+                              ? "bg-[#C2553A]/15 text-[#C2553A] dark:text-[#F09A82]"
+                              : "bg-surface-secondary text-text-secondary"
                           )}
                         >
                           {Icon && <Icon className="w-4 h-4" />}
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-semibold leading-tight truncate">
+                            <span className="text-xs font-medium leading-tight truncate">
                               {translatedLabel}
                             </span>
                             {item.isAi && (
-                              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-brand-500/15 text-brand-400 font-bold">
+                              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-sans bg-[#C2553A]/15 text-[#C2553A] dark:text-[#F09A82] font-semibold">
                                 AI
                               </span>
                             )}

@@ -27,9 +27,9 @@ export function ScheduleNavigation({
   onSelectType,
 }: ScheduleNavigationProps) {
   return (
-    <div className="space-y-3 p-3.5 sm:p-4 rounded-xl border border-border bg-surface shadow-2xs">
+    <div className="space-y-3 p-3.5 sm:p-4 rounded-2xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface shadow-xs">
       {/* Day Selector Pills */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
         {DAYS.map((day) => {
           const isSelected = selectedDay === day;
           return (
@@ -37,10 +37,10 @@ export function ScheduleNavigation({
               key={day}
               type="button"
               onClick={() => onSelectDay(day)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-brand-600 text-white shadow-xs"
-                  : "bg-surface-secondary/70 hover:bg-surface-secondary text-text-secondary hover:text-text-primary border border-border/80"
+                  ? "bg-[#C2553A] text-white font-semibold shadow-xs"
+                  : "bg-surface-secondary/70 hover:bg-surface-secondary text-text-secondary hover:text-text-primary border border-border/60"
               }`}
             >
               {day}
@@ -50,8 +50,8 @@ export function ScheduleNavigation({
       </div>
 
       {/* Type Filter Selector */}
-      <div className="flex items-center gap-2 pt-1 border-t border-border/60">
-        <span className="text-xs font-mono text-text-tertiary uppercase">
+      <div className="flex items-center gap-2 pt-2 border-t border-border/60">
+        <span className="text-xs font-sans font-medium text-text-tertiary shrink-0">
           Tipe Agenda:
         </span>
 

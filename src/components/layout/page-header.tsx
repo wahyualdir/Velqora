@@ -28,29 +28,27 @@ export function PageHeader({
   description,
   actions,
   badge,
-  border = true,
+  border: _border = true,
   className = "",
   children,
 }: PageHeaderProps) {
-  // If compound children are provided without standard props
   const hasDirectProps = title || description || actions || eyebrow || badge;
 
   return (
     <header
       className={cn(
-        "rounded-2xl border border-border bg-surface/90 backdrop-blur-xs p-4 sm:p-6 shadow-2xs mb-5 transition-all",
+        "rounded-2xl border border-[#E6E0D6] dark:border-[#24201E] bg-[#FFFFFF] dark:bg-[#141210] p-5 sm:p-6 shadow-2xs mb-5 transition-colors",
         className
       )}
     >
       {hasDirectProps ? (
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           {/* Left Column: Context Eyebrow + Title + Subtitle */}
           <div className="space-y-1.5 min-w-0 max-w-2xl">
-            {/* Context Eyebrow & Badges */}
             {(eyebrow || badge) && (
-              <div className="flex items-center flex-wrap gap-2 text-xs">
+              <div className="flex items-center flex-wrap gap-2 text-xs font-sans">
                 {eyebrow && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FAF3EF] dark:bg-[#D4664A]/12 text-[#C2553A] dark:text-[#F09A82]">
                     {eyebrow}
                   </span>
                 )}
@@ -58,16 +56,14 @@ export function PageHeader({
               </div>
             )}
 
-            {/* Main Title H1 */}
             {title && (
-              <h1 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight font-display flex items-center gap-2 flex-wrap leading-tight">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] dark:text-[#F5F5F4] tracking-tight font-display flex items-center gap-2 flex-wrap leading-tight">
                 <span>{title}</span>
               </h1>
             )}
 
-            {/* Subtitle */}
             {description && (
-              <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl font-normal">
+              <p className="text-xs sm:text-sm text-[#5C554E] dark:text-[#A8A29E] leading-relaxed max-w-2xl font-sans font-normal">
                 {description}
               </p>
             )}

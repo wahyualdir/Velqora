@@ -50,11 +50,11 @@ export function ScheduleListItem({
         {/* Left: Time Timeline & Info */}
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
           {/* Time Slot Box */}
-          <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-surface-secondary border border-border shrink-0 min-w-[70px] text-center">
-            <span className="text-[11px] font-bold uppercase font-mono text-brand-600 dark:text-brand-400">
+          <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-secondary border border-border/70 shrink-0 min-w-[74px] text-center">
+            <span className="text-[11px] font-semibold font-sans text-[#C2553A] dark:text-[#F09A82]">
               {item.day || "Hari"}
             </span>
-            <span className="text-xs font-mono font-semibold text-text-primary">
+            <span className="text-xs font-sans tabular-nums font-semibold text-text-primary">
               {item.time || "--:--"}
             </span>
           </div>
@@ -78,21 +78,21 @@ export function ScheduleListItem({
               </Badge>
 
               {item.subject && (
-                <span className="text-[11px] font-semibold text-text-secondary">
+                <span className="text-xs font-medium text-text-secondary">
                   {item.subject}
                 </span>
               )}
             </div>
 
             <h3
-              className={`text-sm sm:text-base font-bold font-display tracking-tight leading-snug ${
+              className={`text-sm sm:text-base font-semibold tracking-tight leading-snug ${
                 isCompleted ? "line-through text-text-tertiary" : "text-text-primary"
               }`}
             >
               {item.title}
             </h3>
 
-            <div className="flex items-center gap-3 text-[11px] font-mono text-text-tertiary flex-wrap pt-0.5">
+            <div className="flex items-center gap-3 text-xs font-sans text-text-tertiary flex-wrap pt-0.5">
               {item.location && (
                 <span className="flex items-center gap-1 text-text-secondary font-sans">
                   <MapPin className="w-3 h-3 text-text-tertiary" />

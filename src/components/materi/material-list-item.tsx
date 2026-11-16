@@ -81,7 +81,7 @@ export function MaterialListItem({
               )}
 
               {material.file_size && (
-                <span className="text-[10.5px] font-mono text-text-tertiary flex items-center gap-1">
+                <span className="text-xs font-sans text-text-tertiary flex items-center gap-1 tabular-nums">
                   <Paperclip className="w-3 h-3" />
                   {formatFileSize(material.file_size)}
                 </span>
@@ -92,7 +92,7 @@ export function MaterialListItem({
               href={`/dashboard/materi/${material.id}`}
               className="block group"
             >
-              <h3 className="text-sm sm:text-base font-bold text-text-primary group-hover:text-brand-500 transition-colors leading-snug font-display tracking-tight line-clamp-1">
+              <h3 className="text-sm sm:text-base font-semibold text-text-primary group-hover:text-[#C2553A] dark:group-hover:text-[#F09A82] transition-colors leading-snug line-clamp-1">
                 {material.title}
               </h3>
             </Link>
@@ -103,7 +103,7 @@ export function MaterialListItem({
               </p>
             )}
 
-            <div className="flex items-center gap-3 text-[11px] font-mono text-text-tertiary pt-0.5">
+            <div className="flex items-center gap-3 text-xs font-sans text-text-tertiary pt-0.5">
               <span>Diperbarui {formatDate(material.updated_at || material.created_at)}</span>
             </div>
           </div>

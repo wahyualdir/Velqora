@@ -44,16 +44,8 @@ export function ModuleFilters({
     );
   }, [categories]);
   return (
-    <div className="vt-window rounded-2xl overflow-hidden mb-5">
-      {/* Editorial Header */}
-      <div className="px-4 py-2.5 bg-[#F3EFE9]/75 dark:bg-[#1C1917]/80 border-b border-[#E4DDD4] dark:border-[#292524] flex items-center justify-between text-[11px] font-mono text-[#524B42] dark:text-[#A8A29E] select-none">
-        <span className="font-semibold uppercase tracking-wider text-[#C2553A] dark:text-[#D4664A]">
-          SEARCH &amp; FILTER CONSOLE
-        </span>
-        <span className="text-[10px] text-[#8A8378] dark:text-[#8C857F]">FILTER // ACTIVE</span>
-      </div>
-
-      <div className="p-4 sm:p-5 bg-[#FFFFFF] dark:bg-[#141210] space-y-3.5">
+    <div className="rounded-2xl border border-[#E6E0D6] dark:border-[#24201E] bg-[#FFFFFF] dark:bg-[#141210] overflow-hidden mb-5 shadow-xs">
+      <div className="p-4 sm:p-5 space-y-3.5">
         {/* Top Search Input */}
         <div className="relative flex items-center rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] focus-within:border-[#C2553A] dark:focus-within:border-[#D4664A] focus-within:ring-2 focus-within:ring-[#D4664A]/20 transition-all">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8378] dark:text-[#8C857F] pointer-events-none" />
@@ -84,7 +76,7 @@ export function ModuleFilters({
             <select
               value={selectedCategory}
               onChange={(e) => onCategoryChange(e.target.value)}
-              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-sans text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Filter kategori"
             >
               <option value="">Semua Topik AI</option>
@@ -99,7 +91,7 @@ export function ModuleFilters({
             <select
               value={levelFilter}
               onChange={(e) => onLevelChange(e.target.value)}
-              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-sans text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Filter tingkat kesulitan"
             >
               <option value="">Semua Tingkat</option>
@@ -112,7 +104,7 @@ export function ModuleFilters({
             <select
               value={scope}
               onChange={(e) => onScopeChange(e.target.value as "all" | "mine")}
-              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="w-full sm:w-auto min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-sans text-[#1C1917] dark:text-[#F5F5F4] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Filter kepemilikan"
             >
               <option value="all" className="dark:bg-[#141210] dark:text-[#F5F5F4]">Semua Konten</option>
@@ -125,7 +117,7 @@ export function ModuleFilters({
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="flex-1 sm:flex-initial min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-[#524B42] dark:text-[#A8A29E] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
+              className="flex-1 sm:flex-initial min-w-0 truncate px-3 py-1.5 min-h-[40px] rounded-xl border border-[#E4DDD4] dark:border-[#292524] bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-sans text-[#524B42] dark:text-[#A8A29E] font-medium focus:outline-hidden focus:border-[#D4664A] cursor-pointer"
               aria-label="Urutkan modul"
             >
               <option value="latest" className="dark:bg-[#141210] dark:text-[#F5F5F4]">Terbaru</option>
@@ -138,7 +130,7 @@ export function ModuleFilters({
               <button
                 type="button"
                 onClick={onResetFilters}
-                className="vt-btn-chrome rounded-xl text-xs font-mono font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5 py-1.5 px-3 min-h-[40px] cursor-pointer shrink-0"
+                className="rounded-xl border border-rose-500/30 bg-rose-500/8 hover:bg-rose-500/15 text-xs font-sans font-medium text-rose-700 dark:text-rose-400 flex items-center gap-1.5 py-1.5 px-3 min-h-[40px] cursor-pointer shrink-0 transition-colors"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset</span>

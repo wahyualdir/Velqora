@@ -150,7 +150,7 @@ export default function TagPage() {
                     onClick={() => !alreadyExists && handleCreate(pt)}
                     disabled={alreadyExists}
                     aria-label={`Gunakan tag rekomendasi ${pt}`}
-                    className={`text-xs font-mono px-2.5 py-1 rounded-full border transition-all ${
+                    className={`text-xs font-sans font-medium px-3 py-1 rounded-full border transition-all ${
                       alreadyExists
                         ? "bg-surface-secondary text-text-tertiary border-border cursor-default opacity-60"
                         : "bg-brand-500/10 text-brand-400 border-brand-500/25 hover:bg-brand-500/20 active:scale-95 cursor-pointer"
@@ -204,7 +204,7 @@ export default function TagPage() {
                 >
                   <Link
                     href={`/dashboard/materi?tag=${encodeURIComponent(tag.name)}`}
-                    className="font-mono text-brand-400 hover:text-brand-300 font-semibold flex items-center gap-1"
+                    className="font-sans text-[#C2553A] dark:text-[#F09A82] hover:underline font-medium flex items-center gap-1"
                     title={`Lihat semua materi dengan tag #${tag.name}`}
                   >
                     <span>#{tag.name}</span>

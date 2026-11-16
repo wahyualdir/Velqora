@@ -116,7 +116,7 @@ export default function PengaturanPage() {
       <PageContainer>
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3">
           <Loader2 className="w-6 h-6 animate-spin text-brand-500" />
-          <p className="text-xs font-mono text-text-tertiary">Memuat pengaturan workspace...</p>
+          <p className="text-xs font-sans text-text-tertiary">Memuat pengaturan workspace...</p>
         </div>
       </PageContainer>
     );

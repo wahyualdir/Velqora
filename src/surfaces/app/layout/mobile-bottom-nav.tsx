@@ -79,17 +79,17 @@ export function MobileBottomNav({ onToggleSidebar }: MobileBottomNavProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-lg text-[10.5px] font-medium transition-all duration-150 active:scale-95 cursor-pointer",
+                  "flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl text-[11px] font-medium transition-all duration-150 active:scale-95 cursor-pointer",
                   isActive
-                    ? "text-brand-600 bg-brand-500/10 border border-brand-500/25 font-bold"
-                    : "text-text-secondary hover:text-text-primary border border-transparent font-medium"
+                    ? "text-[#C2553A] dark:text-[#F09A82] bg-[#C2553A]/10 dark:bg-[#D4664A]/15 font-semibold"
+                    : "text-text-secondary hover:text-text-primary font-medium"
                 )}
               >
                 {Icon && (
                   <Icon
                     className={cn(
                       "w-4 h-4 shrink-0 transition-transform",
-                      isActive ? "text-brand-600 scale-105" : "text-text-secondary"
+                      isActive ? "text-[#C2553A] dark:text-[#F09A82] scale-105" : "text-text-secondary"
                     )}
                   />
                 )}

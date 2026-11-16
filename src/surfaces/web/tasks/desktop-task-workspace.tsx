@@ -152,7 +152,7 @@ export function DesktopTaskWorkspace({
                       {task.subject || "—"}
                     </span>
                     {task.lecturer && (
-                      <span className="text-[10.5px] text-text-tertiary truncate block font-mono">
+                      <span className="text-xs text-text-tertiary truncate block font-sans">
                         {task.lecturer}
                       </span>
                     )}
@@ -162,14 +162,14 @@ export function DesktopTaskWorkspace({
                 {/* 3. Due Date */}
                 <DesktopTableCell>
                   {task.deadline ? (
-                    <div className="space-y-0.5 font-mono text-[11px]">
+                    <div className="space-y-0.5 font-sans tabular-nums text-xs">
                       <span className="text-text-primary block">
                         {formatDate(task.deadline)}
                       </span>
                       {daysLeft !== null && task.status !== "selesai" && (
                         <span
                           className={cn(
-                            "text-[10px] font-semibold block",
+                            "text-[11px] font-medium block",
                             daysLeft < 0
                               ? "text-rose-600"
                               : daysLeft <= 1
@@ -188,7 +188,7 @@ export function DesktopTaskWorkspace({
                       )}
                     </div>
                   ) : (
-                    <span className="text-text-tertiary text-xs font-mono">—</span>
+                    <span className="text-text-tertiary text-xs">—</span>
                   )}
                 </DesktopTableCell>
 

@@ -208,46 +208,46 @@ export function DashboardAnalyticsTab() {
       <PageSection>
         <div className="card-grid-stats">
           {/* KPI 1: Progres Belajar */}
-          <div className="p-4 rounded-xl bg-surface border border-border flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-2xs hover:border-brand-500/40 transition-all">
+          <div className="p-4 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-xs hover:border-[#C2553A]/35 transition-all">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-text-secondary">Progres Belajar</span>
-              <div className="w-8 h-8 rounded-lg bg-surface-secondary border border-border flex items-center justify-center text-text-tertiary">
+              <span className="text-xs font-medium text-text-secondary">Progres Belajar</span>
+              <div className="w-8 h-8 rounded-xl bg-surface-secondary border border-border/60 flex items-center justify-center text-text-tertiary">
                 <Clock className="w-4 h-4" />
               </div>
             </div>
             <div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold font-mono text-text-primary tracking-tight">
+                <span className="text-2xl font-bold font-sans tabular-nums text-text-primary tracking-tight">
                   {averageProgress}%
                 </span>
               </div>
-              <p className="text-[11.5px] text-text-secondary mt-0.5">
+              <p className="text-xs text-text-secondary mt-0.5">
                 {completedChapters} dari {totalChapters} bab selesai
               </p>
             </div>
             <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden">
               <div
                 style={{ width: `${Math.min(100, Math.max(0, averageProgress))}%` }}
-                className="h-full rounded-full bg-brand-500 transition-all duration-500"
+                className="h-full rounded-full bg-[#C2553A] transition-all duration-500"
               />
             </div>
           </div>
 
           {/* KPI 2: Tugas Selesai */}
-          <div className="p-4 rounded-xl bg-surface border border-border flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-2xs hover:border-emerald-500/40 transition-all">
+          <div className="p-4 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-xs hover:border-emerald-500/35 transition-all">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-text-secondary">Tugas Selesai</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
+              <span className="text-xs font-medium text-text-secondary">Tugas Selesai</span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
             <div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold font-mono text-text-primary tracking-tight">
+                <span className="text-2xl font-bold font-sans tabular-nums text-text-primary tracking-tight">
                   {completedTugas} / {totalTugas}
                 </span>
               </div>
-              <p className="text-[11.5px] text-text-secondary mt-0.5">
+              <p className="text-xs text-text-secondary mt-0.5">
                 {totalTugas === 0
                   ? "Belum ada tugas"
                   : completedTugas === totalTugas
@@ -264,20 +264,20 @@ export function DashboardAnalyticsTab() {
           </div>
 
           {/* KPI 3: Streak Belajar */}
-          <div className="p-4 rounded-xl bg-surface border border-border flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-2xs hover:border-amber-500/40 transition-all">
+          <div className="p-4 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-xs hover:border-amber-500/35 transition-all">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-text-secondary">Streak Belajar</span>
-              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 dark:text-amber-400">
+              <span className="text-xs font-medium text-text-secondary">Streak Belajar</span>
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <Flame className="w-4 h-4" />
               </div>
             </div>
             <div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold font-mono text-text-primary tracking-tight">
+                <span className="text-2xl font-bold font-sans tabular-nums text-text-primary tracking-tight">
                   {streakDays} <span className="text-xs font-normal text-text-secondary">hari</span>
                 </span>
               </div>
-              <p className="text-[11.5px] text-text-secondary mt-0.5">
+              <p className="text-xs text-text-secondary mt-0.5">
                 Konsistensi belajar mandiri
               </p>
             </div>
@@ -290,27 +290,27 @@ export function DashboardAnalyticsTab() {
           </div>
 
           {/* KPI 4: Modul Tersedia */}
-          <div className="p-4 rounded-xl bg-surface border border-border flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-2xs hover:border-brand-500/40 transition-all">
+          <div className="p-4 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] flex flex-col justify-between min-h-[120px] space-y-2.5 shadow-xs hover:border-[#C2553A]/35 transition-all">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-text-secondary">Modul Tersedia</span>
-              <div className="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400">
+              <span className="text-xs font-medium text-text-secondary">Modul Tersedia</span>
+              <div className="w-8 h-8 rounded-xl bg-[#C2553A]/10 dark:bg-[#D4664A]/15 flex items-center justify-center text-[#C2553A] dark:text-[#F09A82]">
                 <BookOpen className="w-4 h-4" />
               </div>
             </div>
             <div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold font-mono text-text-primary tracking-tight">
+                <span className="text-2xl font-bold font-sans tabular-nums text-text-primary tracking-tight">
                   {totalModul}
                 </span>
               </div>
-              <p className="text-[11.5px] text-text-secondary mt-0.5">
+              <p className="text-xs text-text-secondary mt-0.5">
                 Bahan ajar aktif
               </p>
             </div>
             <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden">
               <div
                 style={{ width: `${Math.min(100, (totalModul / 10) * 100)}%` }}
-                className="h-full rounded-full bg-brand-500 transition-all duration-500"
+                className="h-full rounded-full bg-[#C2553A] transition-all duration-500"
               />
             </div>
           </div>
@@ -321,17 +321,17 @@ export function DashboardAnalyticsTab() {
       <PageSection>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {/* Main Analytics: Jam Belajar per Hari (3 Columns) */}
-          <div className="lg:col-span-3 rounded-xl bg-surface border border-border p-4 sm:p-5 space-y-3 flex flex-col justify-between shadow-xs">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+          <div className="lg:col-span-3 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] p-4 sm:p-5 space-y-3 flex flex-col justify-between shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/70 pb-3">
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-text-primary font-display tracking-tight">
+                <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
                   Jam Belajar per Hari
                 </h3>
                 <p className="text-xs text-text-secondary mt-0.5">
                   Estimasi akumulasi waktu pembelajaran aktif
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-text-tertiary font-mono">
+              <div className="flex items-center gap-1.5 text-xs text-text-tertiary font-sans">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>
                   {period === "today"
@@ -347,7 +347,7 @@ export function DashboardAnalyticsTab() {
 
             {!hasActivity ? (
               <div className="py-10 flex flex-col items-center justify-center text-center space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-surface-secondary border border-border flex items-center justify-center text-text-tertiary">
+                <div className="w-10 h-10 rounded-xl bg-surface-secondary border border-border/70 flex items-center justify-center text-text-tertiary">
                   <BarChart2 className="w-5 h-5" />
                 </div>
                 <div className="space-y-1 max-w-xs">
@@ -360,7 +360,7 @@ export function DashboardAnalyticsTab() {
                 </div>
                 <Link
                   href="/dashboard/modul"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 transition-colors shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-white bg-[#C2553A] hover:bg-[#AD472E] transition-colors shadow-xs cursor-pointer"
                 >
                   <span>Mulai Belajar</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -382,7 +382,7 @@ export function DashboardAnalyticsTab() {
                       >
                         {/* Tooltip on Hover */}
                         <div
-                          className={`absolute -top-7 px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all duration-150 pointer-events-none whitespace-nowrap z-20 ${
+                          className={`absolute -top-7 px-2 py-0.5 rounded-md text-[11px] font-sans font-medium tabular-nums transition-all duration-150 pointer-events-none whitespace-nowrap z-20 ${
                             isHovered
                               ? "opacity-100 translate-y-0 bg-surface-secondary text-text-primary border border-border shadow-xs"
                               : "opacity-0 translate-y-1"
@@ -397,8 +397,8 @@ export function DashboardAnalyticsTab() {
                             style={{ height: `${heightPercent}%` }}
                             className={`w-full rounded-md transition-all duration-500 ease-out ${
                               isHovered
-                                ? "bg-brand-500"
-                                : "bg-brand-600/80 group-hover:bg-brand-500"
+                                ? "bg-[#C2553A]"
+                                : "bg-[#C2553A]/80 group-hover:bg-[#C2553A]"
                             }`}
                           />
                         </div>
@@ -418,16 +418,16 @@ export function DashboardAnalyticsTab() {
               </div>
             )}
 
-            <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
+            <div className="pt-3 border-t border-border/70 flex items-center justify-between text-xs">
               <span className="text-text-secondary">
                 Rata-rata:{" "}
-                <strong className="text-text-primary font-mono font-bold">
+                <strong className="text-text-primary font-sans font-semibold tabular-nums">
                   {averageDailyHours} jam/hari
                 </strong>
               </span>
               <Link
                 href="/dashboard/modul"
-                className="text-brand-400 hover:text-brand-300 font-semibold flex items-center gap-1 transition-colors group cursor-pointer"
+                className="text-[#C2553A] dark:text-[#F09A82] font-semibold flex items-center gap-1 hover:underline transition-colors group cursor-pointer"
               >
                 <span>Lihat detail modul</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -436,9 +436,9 @@ export function DashboardAnalyticsTab() {
           </div>
 
           {/* Secondary Analytics: Target Mingguan & Tips (2 Columns) */}
-          <div className="lg:col-span-2 rounded-xl bg-surface border border-border p-4 sm:p-5 space-y-4 flex flex-col justify-between shadow-xs">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-sm sm:text-base font-bold text-text-primary font-display tracking-tight">
+          <div className="lg:col-span-2 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] p-4 sm:p-5 space-y-4 flex flex-col justify-between shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/70 pb-3">
+              <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
                 Target Mingguan
               </h3>
               <Target className="w-4 h-4 text-text-tertiary" />
@@ -448,13 +448,13 @@ export function DashboardAnalyticsTab() {
               <div className="flex flex-col items-center text-center gap-1.5">
                 <div className="relative flex items-center justify-center">
                   <ProgressRing percent={averageProgress} size={50} stroke={4} color="#3b82f6" />
-                  <span className="absolute text-[10.5px] font-bold font-mono text-text-primary">
+                  <span className="absolute text-[11px] font-semibold font-sans tabular-nums text-text-primary">
                     {averageProgress}%
                   </span>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-text-primary">Modul</div>
-                  <div className="text-[10px] text-text-tertiary font-mono">{totalModul} Modul</div>
+                  <div className="text-[11px] text-text-tertiary font-sans tabular-nums">{totalModul} Modul</div>
                 </div>
               </div>
 
@@ -466,13 +466,13 @@ export function DashboardAnalyticsTab() {
                     stroke={4}
                     color="#10b981"
                   />
-                  <span className="absolute text-[10.5px] font-bold font-mono text-text-primary">
+                  <span className="absolute text-[11px] font-semibold font-sans tabular-nums text-text-primary">
                     {totalTugas > 0 ? `${taskCompletionRate}%` : "0%"}
                   </span>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-text-primary">Tugas</div>
-                  <div className="text-[10px] text-text-tertiary font-mono">
+                  <div className="text-[11px] text-text-tertiary font-sans tabular-nums">
                     {completedTugas}/{totalTugas}
                   </div>
                 </div>
@@ -486,21 +486,21 @@ export function DashboardAnalyticsTab() {
                     stroke={4}
                     color="#8b5cf6"
                   />
-                  <span className="absolute text-[10.5px] font-bold font-mono text-text-primary">
+                  <span className="absolute text-[11px] font-semibold font-sans tabular-nums text-text-primary">
                     {totalChapters > 0 ? `${Math.round((completedChapters / totalChapters) * 100)}%` : "0%"}
                   </span>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-text-primary">Bab</div>
-                  <div className="text-[10px] text-text-tertiary font-mono">
+                  <div className="text-[11px] text-text-tertiary font-sans tabular-nums">
                     {completedChapters}/{totalChapters}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-lg bg-surface-secondary border border-border p-3 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
+            <div className="rounded-xl bg-surface-secondary/70 border border-border/60 p-3 flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-[#C2553A] dark:text-[#F09A82] shrink-0 mt-0.5" />
               <div className="space-y-0.5 text-xs">
                 <span className="font-semibold text-text-primary">Tips Belajar: </span>
                 <span className="text-text-secondary leading-relaxed">{getStudyTip()}</span>
@@ -514,14 +514,14 @@ export function DashboardAnalyticsTab() {
       <PageSection>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {/* Topik Modul (2 Cols) */}
-          <div className="lg:col-span-2 rounded-xl bg-surface border border-border p-4 sm:p-5 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-sm sm:text-base font-bold text-text-primary font-display tracking-tight">
+          <div className="lg:col-span-2 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] p-4 sm:p-5 space-y-4 shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/70 pb-3">
+              <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
                 Topik Modul Dipelajari
               </h3>
               <Link
                 href="/dashboard/modul"
-                className="text-xs font-medium text-brand-400 hover:text-brand-300 transition-colors"
+                className="text-xs font-medium text-[#C2553A] dark:text-[#F09A82] hover:underline transition-colors"
               >
                 Lihat Semua
               </Link>
@@ -546,7 +546,7 @@ export function DashboardAnalyticsTab() {
                             />
                             <span className="font-medium text-text-primary">{category.name}</span>
                           </div>
-                          <span className="text-text-tertiary font-mono text-[11px]">
+                          <span className="text-text-tertiary font-sans tabular-nums text-xs">
                             {category.moduleCount} modul ({topicSharePercent}%)
                           </span>
                         </div>
@@ -570,7 +570,7 @@ export function DashboardAnalyticsTab() {
                 </p>
                 <Link
                   href="/dashboard/kategori"
-                  className="inline-flex items-center gap-1 text-xs text-brand-400 hover:text-brand-300 font-medium"
+                  className="inline-flex items-center gap-1 text-xs text-[#C2553A] dark:text-[#F09A82] hover:underline font-medium"
                 >
                   <span>Kelola Kategori Modul</span>
                   <ChevronRight className="w-3 h-3" />
@@ -580,12 +580,12 @@ export function DashboardAnalyticsTab() {
           </div>
 
           {/* Lencana Pencapaian (3 Cols) */}
-          <div className="lg:col-span-3 rounded-xl bg-surface border border-border p-4 sm:p-5 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-sm sm:text-base font-bold text-text-primary font-display tracking-tight">
+          <div className="lg:col-span-3 rounded-2xl bg-surface border border-[#E6E0D6] dark:border-[#24201E] p-4 sm:p-5 space-y-4 shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/70 pb-3">
+              <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
                 Lencana Pencapaian
               </h3>
-              <span className="text-xs text-text-tertiary font-mono">
+              <span className="text-xs text-text-tertiary font-sans tabular-nums">
                 {(stats?.achievements || []).filter((a: any) => a.unlocked).length} /{" "}
                 {(stats?.achievements || []).length || 4} Terbuka
               </span>
@@ -639,38 +639,38 @@ export function DashboardAnalyticsTab() {
                 return (
                   <div
                     key={ach.id || ach.title}
-                    className={`p-3 rounded-lg border transition-all duration-150 flex flex-col justify-between space-y-2 ${
+                    className={`p-3.5 rounded-xl border transition-all duration-150 flex flex-col justify-between space-y-2.5 ${
                       ach.unlocked
-                        ? "bg-surface-secondary/60 border-border"
-                        : "bg-surface-secondary/20 border-border/50 opacity-60"
+                        ? "bg-surface-secondary/50 border-[#E6E0D6] dark:border-[#24201E]"
+                        : "bg-surface-secondary/20 border-border/40 opacity-65"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <div
-                          className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${
+                          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                             ach.unlocked
-                              ? "bg-brand-500/10 text-brand-400 border border-brand-500/20"
-                              : "bg-surface-secondary text-text-tertiary border border-border"
+                              ? "bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
+                              : "bg-surface-secondary text-text-tertiary"
                           }`}
                         >
-                          <AchIcon className="w-3.5 h-3.5" />
+                          <AchIcon className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
                           <div className="text-xs font-semibold text-text-primary truncate">
                             {ach.title}
                           </div>
-                          <div className="text-[10.5px] text-text-secondary truncate mt-0.5">
+                          <div className="text-[11px] text-text-secondary truncate mt-0.5">
                             {ach.desc}
                           </div>
                         </div>
                       </div>
 
                       <span
-                        className={`text-[9.5px] font-mono font-semibold px-1.5 py-0.5 rounded shrink-0 border ${
+                        className={`text-[11px] font-sans font-medium px-2 py-0.5 rounded-full shrink-0 ${
                           ach.unlocked
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                            : "bg-surface-secondary text-text-tertiary border-border"
+                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                            : "bg-surface-secondary text-text-tertiary"
                         }`}
                       >
                         {ach.unlocked ? "Aktif" : "Terkunci"}
@@ -678,15 +678,15 @@ export function DashboardAnalyticsTab() {
                     </div>
 
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[10px] text-text-tertiary font-mono">
+                      <div className="flex items-center justify-between text-[11px] text-text-tertiary font-sans tabular-nums">
                         <span>Progres</span>
                         <span>{ach.progress} / {ach.max}</span>
                       </div>
-                      <div className="w-full h-1 rounded-full bg-surface border border-border/60 overflow-hidden">
+                      <div className="w-full h-1.5 rounded-full bg-surface border border-border/50 overflow-hidden">
                         <div
                           style={{ width: `${progressPercent}%` }}
                           className={`h-full rounded-full transition-all duration-500 ${
-                            ach.unlocked ? "bg-brand-500" : "bg-text-tertiary/40"
+                            ach.unlocked ? "bg-[#C2553A]" : "bg-text-tertiary/40"
                           }`}
                         />
                       </div>

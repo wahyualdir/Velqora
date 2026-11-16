@@ -320,7 +320,7 @@ export default function KategoriPage() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-sm sm:text-base font-bold text-text-primary font-display">{parent.name}</h3>
                             {!isCategoryInActiveScope(parent.name) && (
-                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20">
+                              <span className="text-xs font-sans px-2.5 py-0.5 rounded-full bg-zinc-500/10 text-zinc-500 dark:text-zinc-400">
                                 Disembunyikan dari Katalog
                               </span>
                             )}
@@ -357,7 +357,7 @@ export default function KategoriPage() {
                                   {sub.name}
                                 </span>
                                 {!isCategoryInActiveScope(sub.name, parent.name) && (
-                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20 shrink-0">
+                                  <span className="text-[11px] font-sans px-2 py-0.5 rounded-full bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 shrink-0">
                                     Non-aktif
                                   </span>
                                 )}
@@ -392,21 +392,21 @@ export default function KategoriPage() {
               {/* Standalone subcategories or non-parented categories */}
               {categories.filter((c) => c.parent_id && !topParents.some((p) => p.id === c.parent_id)).length > 0 && (
                 <Card className="p-4 sm:p-5 space-y-3">
-                  <h4 className="text-xs font-semibold text-text-tertiary uppercase">Lainnya</h4>
+                  <h4 className="text-xs font-semibold text-text-tertiary">Lainnya</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
                     {categories
                       .filter((c) => c.parent_id && !topParents.some((p) => p.id === c.parent_id))
                       .map((cat) => (
                         <div
                           key={cat.id}
-                          className="flex flex-col justify-between p-3 rounded-xl border border-border bg-surface hover:border-brand-500/40 transition-all shadow-2xs group"
+                          className="flex flex-col justify-between p-3 rounded-xl border border-border bg-surface hover:border-[#C2553A]/35 transition-all shadow-xs group"
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1.5 min-w-0">
                               <TechIcon name={cat.icon || cat.name} size={18} />
                               <span className="text-xs font-bold text-text-primary truncate">{cat.name}</span>
                               {!isCategoryInActiveScope(cat.name) && (
-                                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20 shrink-0">
+                                <span className="text-[11px] font-sans px-2 py-0.5 rounded-full bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 shrink-0">
                                   Non-aktif
                                 </span>
                               )}

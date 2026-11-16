@@ -48,7 +48,7 @@ export function MobileTaskList({
 
     if (isOverdue) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-500/15 text-rose-700 border border-rose-500/30 font-mono">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/12 text-rose-700 dark:text-rose-400">
           <AlertTriangle className="w-3 h-3" />
           Terlambat
         </span>
@@ -100,7 +100,7 @@ export function MobileTaskList({
                       <span>·</span>
                       <span
                         className={cn(
-                          "font-mono font-medium",
+                          "font-sans tabular-nums font-medium",
                           daysLeft !== null && daysLeft < 0 && task.status !== "selesai"
                             ? "text-rose-700 font-bold"
                             : daysLeft === 0
@@ -170,7 +170,7 @@ export function MobileTaskList({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-text-tertiary">Tenggat Waktu</span>
-                <span className="font-mono font-medium text-text-primary">
+                <span className="font-sans tabular-nums font-medium text-text-primary">
                   {selectedTask.deadline
                     ? formatDate(selectedTask.deadline)
                     : "—"}

@@ -235,7 +235,7 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
             {!isCollapsed && (
               <div className="flex flex-col min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-[13px] font-bold text-[#1C1917] dark:text-[#F5F5F4] truncate">
+                  <span className="text-[13px] font-semibold font-sans text-[#1C1917] dark:text-[#F5F5F4] truncate">
                     {userName}
                   </span>
                   {isOwner ? (
@@ -244,8 +244,8 @@ export function UserProfileMenu({ variant = "navbar", onCloseParent, isCollapsed
                     <Shield className="w-3.5 h-3.5 text-brand-500 shrink-0" />
                   ) : null}
                 </div>
-                <span className="text-[11px] font-medium text-[#6B6560] dark:text-[#A8A29E] truncate">
-                  {isOwner ? "Owner" : isAdmin ? "Admin" : "Mahasiswa"}
+                <span className="text-[11px] font-sans font-normal text-[#6B6560] dark:text-[#A8A29E] truncate">
+                  {isOwner ? "Owner" : isAdmin ? "Admin" : "Member"}
                 </span>
               </div>
             )}

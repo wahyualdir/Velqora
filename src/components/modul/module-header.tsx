@@ -84,13 +84,13 @@ export function ModuleHeader({
     >
       {/* Primary View Switcher: Topik Kurikulum vs Semua Modul & Proyek */}
       <div className="flex flex-wrap items-center gap-3 pt-1">
-        <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-border w-fit max-w-full overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1 p-1 bg-surface-secondary rounded-xl border border-[#E6E0D6] dark:border-[#24201E] w-fit max-w-full overflow-x-auto scrollbar-none touch-pan-x">
           <button
             type="button"
             onClick={() => onViewTabChange?.("categories")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all shrink-0 cursor-pointer ${
               viewTab === "categories"
-                ? "bg-brand-600 text-white font-bold shadow-xs"
+                ? "bg-surface text-text-primary font-semibold shadow-xs border border-border/50"
                 : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
             }`}
           >
@@ -101,9 +101,9 @@ export function ModuleHeader({
           <button
             type="button"
             onClick={() => onViewTabChange?.("all-content")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all shrink-0 cursor-pointer ${
               viewTab === "all-content"
-                ? "bg-brand-600 text-white font-bold shadow-xs"
+                ? "bg-surface text-text-primary font-semibold shadow-xs border border-border/50"
                 : "text-text-secondary hover:text-text-primary hover:bg-surface/50"
             }`}
           >
@@ -114,13 +114,13 @@ export function ModuleHeader({
 
         {/* Content Mode Sub-tabs (when viewTab is 'all-content') */}
         {viewTab === "all-content" && (
-          <div className="flex items-center gap-1 p-1 bg-surface-secondary/70 rounded-xl border border-border/80 w-fit max-w-full overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-1 p-1 bg-surface-secondary/70 rounded-xl border border-[#E6E0D6] dark:border-[#24201E] w-fit max-w-full overflow-x-auto scrollbar-none touch-pan-x">
             <button
               type="button"
               onClick={() => onModeChange("all")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg transition-all shrink-0 cursor-pointer ${
                 contentMode === "all"
-                  ? "bg-surface text-brand-600 dark:text-brand-400 font-bold border border-border shadow-2xs"
+                  ? "bg-[#C2553A]/12 dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82] font-semibold"
                   : "text-text-tertiary hover:text-text-primary"
               }`}
             >
@@ -129,9 +129,9 @@ export function ModuleHeader({
             <button
               type="button"
               onClick={() => onModeChange("module")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg transition-all shrink-0 cursor-pointer ${
                 contentMode === "module"
-                  ? "bg-surface text-brand-600 dark:text-brand-400 font-bold border border-border shadow-2xs"
+                  ? "bg-[#C2553A]/12 dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82] font-semibold"
                   : "text-text-tertiary hover:text-text-primary"
               }`}
             >
@@ -141,9 +141,9 @@ export function ModuleHeader({
             <button
               type="button"
               onClick={() => onModeChange("project")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg transition-all shrink-0 cursor-pointer ${
                 contentMode === "project"
-                  ? "bg-surface text-brand-600 dark:text-brand-400 font-bold border border-border shadow-2xs"
+                  ? "bg-[#C2553A]/12 dark:bg-[#D4664A]/15 text-[#C2553A] dark:text-[#F09A82] font-semibold"
                   : "text-text-tertiary hover:text-text-primary"
               }`}
             >

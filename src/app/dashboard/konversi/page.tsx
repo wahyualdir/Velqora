@@ -555,7 +555,7 @@ export default function FileConverterPage() {
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-xs">
             <div className="bg-surface rounded-2xl border border-border w-full max-w-lg overflow-hidden shadow-2xl space-y-4 p-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold font-mono text-text-primary uppercase">
+                <span className="text-sm font-semibold font-sans text-text-primary">
                   Kamera Scanner
                 </span>
                 <button

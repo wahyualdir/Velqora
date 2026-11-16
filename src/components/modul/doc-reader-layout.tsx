@@ -591,7 +591,7 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="hidden md:flex items-center gap-1.5 min-h-[36px] px-2.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer shrink-0"
+            className="hidden md:flex items-center gap-1.5 min-h-[36px] px-2.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-xs font-sans font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer shrink-0"
             title={sidebarOpen ? "Sembunyikan panel bab" : "Buka panel bab"}
           >
             {sidebarOpen ? (
@@ -605,7 +605,7 @@ export function DocReaderLayout({
           {/* Back to Catalog */}
           <Link
             href="/dashboard/modul"
-            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors shrink-0 flex items-center justify-center"
+            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-[36px] p-1.5 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors shrink-0 flex items-center justify-center"
             title="Kembali ke Katalog Modul"
             aria-label="Kembali ke Katalog Modul"
           >
@@ -621,11 +621,11 @@ export function DocReaderLayout({
               <BookOpen className="w-3.5 h-3.5" />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs sm:text-sm font-bold text-text-primary font-display tracking-tight truncate">
+              <span className="text-xs sm:text-sm font-semibold text-text-primary tracking-tight truncate">
                 {categoryName}
               </span>
-              <span className="text-[10px] font-mono text-text-tertiary hidden sm:inline truncate">
-                Velqora Academic Notebook Platform
+              <span className="text-[11px] font-sans text-text-tertiary hidden sm:inline truncate">
+                Dokumentasi Kurikulum
               </span>
             </div>
           </div>
@@ -661,9 +661,9 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setTheoryFocusMode((prev) => !prev)}
-            className={`hidden md:inline-flex items-center gap-1.5 min-h-[36px] px-2.5 py-1 rounded-lg border text-[11px] font-mono font-medium transition-colors cursor-pointer ${
+            className={`hidden md:inline-flex items-center gap-1.5 min-h-[36px] px-2.5 py-1 rounded-xl border text-xs font-sans font-medium transition-colors cursor-pointer ${
               theoryFocusMode
-                ? "border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-300"
+                ? "border-[#C2553A]/30 bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]"
                 : "border-border bg-surface text-text-secondary hover:bg-surface-secondary"
             }`}
             title={
@@ -678,7 +678,7 @@ export function DocReaderLayout({
 
           <Link
             href={kodeCatalogHref}
-            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-0 p-1.5 sm:px-2.5 sm:py-1 rounded-lg border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5 text-[11px] font-mono font-medium"
+            className="min-h-[40px] min-w-[40px] sm:min-h-[36px] sm:min-w-0 p-1.5 sm:px-2.5 sm:py-1 rounded-xl border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-[#C2553A] dark:hover:text-[#F09A82] transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5 text-xs font-sans font-medium"
             title="Buka Katalog Kode untuk subbab ini"
             aria-label="Buka Katalog Kode"
           >
@@ -727,9 +727,9 @@ export function DocReaderLayout({
           <button
             type="button"
             onClick={() => setOutlineOpen(!outlineOpen)}
-            className={`hidden sm:flex items-center gap-1.5 min-h-[36px] px-2.5 py-1.5 rounded-lg border text-xs font-mono transition-colors cursor-pointer ${
+            className={`hidden sm:flex items-center gap-1.5 min-h-[36px] px-2.5 py-1.5 rounded-xl border text-xs font-sans font-medium transition-colors cursor-pointer ${
               outlineOpen
-                ? "bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700"
+                ? "bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82] border-[#C2553A]/30"
                 : "border-border bg-surface text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
             }`}
             title="Buka / tutup panel daftar isi halaman"
@@ -1074,43 +1074,41 @@ export function DocReaderLayout({
                   {/* Micro-badge status verifikasi */}
                   {statusMeta.status === "verified" && (
                     <div className="flex items-center gap-2 pt-1">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-sans font-medium rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
                         <CheckCircle2 className="w-3 h-3" /> Terverifikasi
                       </span>
                     </div>
                   )}
                 </div>
 
-                {/* Status Transparansi Kualitas Kurikulum */}
+                {/* Status Pembaruan Kurikulum */}
                 {statusMeta.status === "under_review" && (
-                  <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 text-xs text-amber-800 dark:text-amber-200 flex items-start gap-3">
+                  <div className="p-3.5 rounded-2xl border border-amber-500/25 bg-amber-500/5 text-xs text-amber-800 dark:text-amber-200 flex items-start gap-3">
                     <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                        <span className="font-sans font-semibold text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300">
                           {statusMeta.badgeLabel}
                         </span>
-                        <span className="text-[11px] text-text-tertiary font-mono">Status Audit Mutu</span>
                       </div>
-                      <p className="text-text-secondary leading-relaxed text-[12px]">
-                        Kurikulum topik ini sedang dalam proses peninjauan ulang dan perombakan materi ke standar industri/universitas (pengisian kode substantif, formulasi analitis KaTeX, dan rujukan kanonikal terverifikasi). Anda tetap dapat mempelajari silabus draf saat ini.
+                      <p className="text-text-secondary leading-relaxed text-xs sm:text-sm">
+                        Materi topik ini sedang diperbarui dengan contoh kode dan formulasi terstruktur. Anda tetap dapat mempelajari draf saat ini.
                       </p>
                     </div>
                   </div>
                 )}
 
                 {statusMeta.status === "in_development" && (
-                  <div className="p-3.5 rounded-xl border border-sky-500/30 bg-sky-500/5 text-xs text-sky-800 dark:text-sky-200 flex items-start gap-3">
+                  <div className="p-3.5 rounded-2xl border border-sky-500/25 bg-sky-500/5 text-xs text-sky-800 dark:text-sky-200 flex items-start gap-3">
                     <Clock className="w-4 h-4 shrink-0 text-sky-600 dark:text-sky-400 mt-0.5" />
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-500/30">
+                        <span className="font-sans font-semibold text-xs px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300">
                           {statusMeta.badgeLabel}
                         </span>
-                        <span className="text-[11px] text-text-tertiary font-mono">Status Roadmap</span>
                       </div>
-                      <p className="text-text-secondary leading-relaxed text-[12px]">
-                        Kurikulum Deep Learning sedang dipersiapkan menjadi 18 Bab komprehensif berbasis PyTorch modern sesuai standar silabus MIT 6.S191 / Stanford CS230 (Prioritas 4).
+                      <p className="text-text-secondary leading-relaxed text-xs sm:text-sm">
+                        Silabus topik ini sedang disusun bertahap dan dapat dipelajari sebagian.
                       </p>
                     </div>
                   </div>
@@ -1150,12 +1148,12 @@ export function DocReaderLayout({
                         >
                           <div className="flex items-center gap-2.5">
                             <span
-                              className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 shadow-2xs"
+                              className="px-2.5 py-0.5 rounded-full text-xs font-sans font-semibold text-white shrink-0"
                               style={{ backgroundColor: themeColor }}
                             >
                               Unit {uIdx + 1}
                             </span>
-                            <h3 className="text-lg sm:text-xl font-bold text-text-primary font-display tracking-tight">
+                            <h3 className="text-lg sm:text-xl font-semibold text-text-primary tracking-tight">
                               {unit.title}
                             </h3>
                           </div>

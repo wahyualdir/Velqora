@@ -54,44 +54,44 @@ export function MobileModuleList({
 
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-secondary text-text-secondary uppercase border border-border/60">
+                      <span className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-full bg-surface-secondary text-text-secondary">
                         {mod.category?.name || "Modul"}
                       </span>
                       {mod.level && (
-                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-600 border border-brand-500/20">
+                        <span className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-full bg-[#C2553A]/10 text-[#C2553A] dark:text-[#F09A82]">
                           {mod.level}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="text-xs font-bold text-text-primary truncate font-display">
+                    <h3 className="text-xs sm:text-sm font-semibold text-text-primary truncate">
                       {mod.title}
                     </h3>
 
                     {mod.description && (
-                      <p className="text-[11.5px] text-text-secondary line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
                         {mod.description}
                       </p>
                     )}
 
                     {/* Progress Bar & Lesson Count */}
                     <div className="pt-2 space-y-1">
-                      <div className="flex items-center justify-between text-[11px] text-text-secondary font-mono font-medium">
+                      <div className="flex items-center justify-between text-xs text-text-secondary font-sans tabular-nums">
                         <span>
                           {totalChapters > 0
                             ? `${completedChapters} / ${totalChapters} Bab Selesai`
                             : "Kurikulum Aktif"}
                         </span>
                         {totalChapters > 0 && (
-                          <span className="font-bold text-brand-600">
+                          <span className="font-semibold text-[#C2553A] dark:text-[#F09A82]">
                             {progressPercent}%
                           </span>
                         )}
                       </div>
                       {totalChapters > 0 && (
-                        <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden border border-border/40">
+                        <div className="w-full h-1.5 rounded-full bg-surface-secondary overflow-hidden">
                           <div
-                            className="h-full bg-brand-600 rounded-full transition-all duration-300"
+                            className="h-full bg-[#C2553A] rounded-full transition-all duration-300"
                             style={{ width: `${progressPercent}%` }}
                           />
                         </div>

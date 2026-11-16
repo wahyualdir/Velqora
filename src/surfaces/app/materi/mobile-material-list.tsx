@@ -126,11 +126,11 @@ export function MobileMaterialList({
 
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-secondary text-text-secondary border border-border/60">
+                    <span className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-full bg-surface-secondary text-text-secondary">
                       {typeInfo.label}
                     </span>
                     {mat.category?.name && (
-                      <span className="text-[10px] font-mono font-medium text-text-secondary">
+                      <span className="text-[11px] font-sans text-text-secondary">
                         · {mat.category.name}
                       </span>
                     )}
@@ -196,7 +196,7 @@ export function MobileMaterialList({
               {selectedMaterial.file_size && (
                 <div className="flex items-center justify-between">
                   <span className="text-text-tertiary">Ukuran File</span>
-                  <span className="font-mono text-text-primary">
+                  <span className="font-sans tabular-nums font-medium text-text-primary">
                     {formatFileSize(selectedMaterial.file_size)}
                   </span>
                 </div>

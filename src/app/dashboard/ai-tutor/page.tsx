@@ -478,7 +478,7 @@ function AITutorContent() {
 
               {/* Typing Skeleton / Indicator */}
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 rounded-xl border border-border bg-surface-secondary text-xs text-text-secondary w-fit font-mono animate-pulse">
+                <div className="flex items-center gap-2 p-3 rounded-xl border border-[#E6E0D6] dark:border-[#24201E] bg-surface-secondary text-xs text-text-secondary w-fit font-sans animate-pulse">
                   <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                   <span>AI Tutor sedang menyusun jawaban akademik...</span>
                 </div>

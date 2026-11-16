@@ -86,7 +86,7 @@ export function TaskOverview({
               <Icon className={`w-4 h-4 shrink-0 ${m.color}`} />
               <span className="text-xs truncate">{m.label}</span>
             </div>
-            <span className="text-xs sm:text-sm font-bold font-mono text-text-primary shrink-0">
+            <span className="text-xs sm:text-sm font-semibold font-sans tabular-nums text-text-primary shrink-0">
               {m.count}
             </span>
           </button>

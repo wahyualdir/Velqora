@@ -263,7 +263,7 @@ function TugasContent() {
 
       {/* ─── 4. Tasks List Area ─── */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary font-mono">
+        <div className="flex items-center justify-between px-1 text-xs text-text-tertiary">
           <span>
             Menampilkan {filteredTasks.length} dari {tasks.length} tugas
           </span>

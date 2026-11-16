@@ -121,8 +121,8 @@ describe("FASE 44: Academic Portal Dashboard Redesign & Integration Suite", () =
         path.join(process.cwd(), "src/surfaces/web/dashboard/dashboard-focus.tsx"),
         "utf-8"
       );
-      assert.ok(focus.includes("PRIORITAS UTAMA"));
-      assert.ok(focus.includes("border-l-4"));
+      assert.ok(focus.includes("Prioritas Utama"));
+      assert.ok(focus.includes("w-1 rounded-full"), "Must use clean internal accent pill");
 
       const rail = fs.readFileSync(
         path.join(process.cwd(), "src/surfaces/web/dashboard/dashboard-right-rail.tsx"),
@@ -130,7 +130,7 @@ describe("FASE 44: Academic Portal Dashboard Redesign & Integration Suite", () =
       );
       assert.ok(rail.includes("Hari Ini"));
       assert.ok(rail.includes("Detail Modul"));
-      assert.ok(rail.includes("KARTU AKADEMIK AKTIF"));
+      assert.ok(rail.includes("Status Workspace"));
     });
   });
 });

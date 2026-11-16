@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DashboardCategoryFilter,
@@ -19,7 +19,7 @@ interface DashboardHeaderProps {
 const FILTER_TABS: Array<{ id: DashboardCategoryFilter; label: string }> = [
   { id: "semua", label: "Semua" },
   { id: "modul", label: "Modul & Kelas" },
-  { id: "tugas", label: "Tugas dan Kuis" },
+  { id: "tugas", label: "Tugas & Kuis" },
   { id: "ujian", label: "Ujian & Lab" },
   { id: "jadwal", label: "Jadwal" },
   { id: "statistik", label: "Statistik" },
@@ -39,56 +39,35 @@ export function DashboardHeader({
   }, []);
 
   return (
-    <section className="space-y-4">
-      {/* Eyebrow + Title + Soft Counter Pill */}
+    <section className="space-y-4 font-sans">
+      {/* Clean Single-Line Context + Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-        <div className="space-y-1.5 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono font-bold uppercase tracking-[0.12em] text-[#5C554E] dark:text-[#A8A29E]">
-            <span>PORTAL AKADEMIK MAHASISWA</span>
-            <span aria-hidden="true">•</span>
-            <span className="text-[#C2553A] dark:text-[#D4664A]">{semesterLabel}</span>
-            {displayName && (
-              <>
-                <span aria-hidden="true" className="hidden md:inline">•</span>
-                <span className="hidden md:inline truncate max-w-[200px]">
-                  {displayName}
-                </span>
-              </>
-            )}
-          </div>
+        <div className="space-y-1 min-w-0">
+          <p className="text-xs font-medium text-[#6B6560] dark:text-[#A8A29E] truncate">
+            {displayName ? `Halo, ${displayName} · ` : ""}
+            <span className="text-[#C2553A] dark:text-[#F09A82]">{semesterLabel}</span>
+          </p>
 
-          <h1 className="text-2xl sm:text-[28px] lg:text-[31px] font-extrabold font-display text-[#1C1917] dark:text-[#F5F5F4] tracking-tight leading-tight">
-            Ruang Pembelajaran Mahasiswa
+          <h1 className="text-2xl sm:text-[26px] font-bold font-display text-[#1C1917] dark:text-[#F5F5F4] tracking-tight leading-tight">
+            Ruang Pembelajaran
           </h1>
         </div>
 
-        {/* Counter Pill + Optional Quick Add */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <Link
-            href="/dashboard/modul"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FAF3EF] dark:bg-[#D4664A]/15 border border-[#C2553A]/20 dark:border-[#D4664A]/30 text-[#C2553A] dark:text-[#D4664A] text-xs font-bold font-mono hover:bg-[#F5E7DF] dark:hover:bg-[#D4664A]/22 transition-colors whitespace-nowrap"
-          >
-            <Layers className="w-3.5 h-3.5 shrink-0" />
-            <span>{totalModul} Modul &amp; Mata Kuliah Aktif</span>
-          </Link>
-
-          <Link
-            href="/dashboard/modul/baru"
-            className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FFFFFF] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:border-[#C2553A]/35 text-xs font-semibold transition-colors"
-            title="Tambah Modul / Mata Kuliah Baru"
-          >
-            <Plus className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#D4664A]" />
-            <span>Baru</span>
-          </Link>
-        </div>
+        <Link
+          href="/dashboard/modul"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FAF3EF] dark:bg-[#D4664A]/12 border border-[#C2553A]/15 dark:border-[#D4664A]/25 text-[#C2553A] dark:text-[#F09A82] text-xs font-semibold hover:bg-[#F5E7DF] dark:hover:bg-[#D4664A]/20 transition-colors whitespace-nowrap self-start sm:self-auto shrink-0"
+        >
+          <Layers className="w-3.5 h-3.5 shrink-0" />
+          <span>{totalModul} Modul Aktif</span>
+        </Link>
       </div>
 
-      {/* Segmented Category Filter Pill Bar matching reference portal tabs */}
+      {/* Segmented Filter Pills (Font Sans, Zero AI-Slop) */}
       <div className="overflow-x-auto scrollbar-none touch-pan-x -mx-1 px-1 pb-0.5">
         <div
           role="tablist"
           aria-label="Filter Ruang Pembelajaran"
-          className="inline-flex items-center gap-1 p-1.5 rounded-2xl bg-[#F3EFE9] dark:bg-[#141210] border border-[#E4DDD4] dark:border-[#292524] min-w-max select-none"
+          className="inline-flex items-center gap-1 p-1 rounded-2xl bg-[#F3EFE9]/90 dark:bg-[#141210] border border-[#E6E0D6] dark:border-[#24201E] min-w-max select-none"
         >
           {FILTER_TABS.map((tab) => {
             const isSelected = activeFilter === tab.id;
@@ -100,10 +79,10 @@ export function DashboardHeader({
                 aria-selected={isSelected}
                 onClick={() => onFilterChange(tab.id)}
                 className={cn(
-                  "px-3.5 sm:px-4 py-1.5 rounded-xl text-xs sm:text-[13px] font-sans transition-all cursor-pointer whitespace-nowrap",
+                  "px-3.5 sm:px-4 py-1.5 rounded-xl text-[13px] font-sans transition-all cursor-pointer whitespace-nowrap",
                   isSelected
-                    ? "bg-[#1C1917] text-[#FAF8F5] dark:bg-[#F5F5F4] dark:text-[#141210] font-bold shadow-xs"
-                    : "text-[#524B42] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] hover:bg-[#FFFFFF]/70 dark:hover:bg-[#1C1917] font-medium"
+                    ? "bg-[#FFFFFF] dark:bg-[#24201D] text-[#1C1917] dark:text-[#F5F5F4] font-semibold shadow-2xs"
+                    : "text-[#5C554E] dark:text-[#A8A29E] hover:text-[#1C1917] dark:hover:text-[#F5F5F4] font-medium"
                 )}
               >
                 {tab.label}

@@ -131,7 +131,7 @@ export function CatatanSlugClient({
     prevNote || nextNote ? (
       <nav
         aria-label="Navigasi Topik Belajar"
-        className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 border-t border-border font-mono"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 border-t border-border font-sans"
       >
         {prevNote ? (
           <Link
@@ -208,8 +208,8 @@ export function CatatanSlugClient({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-3 border-b border-border flex items-center justify-between">
-              <span className="font-mono font-bold text-xs uppercase text-text-primary">
-                Vault Explorer
+              <span className="font-sans font-semibold text-sm text-text-primary">
+                Penjelajah Catatan
               </span>
               <button
                 type="button"
@@ -253,7 +253,7 @@ export function CatatanSlugClient({
             </button>
 
             {/* Breadcrumbs */}
-            <nav className="flex items-center gap-1.5 text-xs font-mono text-text-tertiary truncate">
+            <nav className="flex items-center gap-1.5 text-xs font-sans text-text-tertiary truncate">
               <Link
                 href={backUrl}
                 className="hover:text-text-primary transition-colors flex items-center gap-1.5 shrink-0 text-brand-600 dark:text-brand-400 font-semibold"
@@ -296,7 +296,7 @@ export function CatatanSlugClient({
         </header>
 
         {/* Note Metadata Banner */}
-        <div className="px-4 py-2 bg-surface-secondary/30 border-b border-border/60 text-[11px] font-mono text-text-secondary flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div className="px-4 py-2 bg-surface-secondary/30 border-b border-border/60 text-xs font-sans text-text-secondary flex flex-wrap items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-3">
             {note.category && (
               <span
@@ -345,11 +345,11 @@ export function CatatanSlugClient({
           {/* Local Graph Widget */}
           <div className="space-y-2">
             <div className="flex items-center justify-between border-b border-border/70 pb-2">
-              <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-text-primary text-[11px] font-mono">
-                <Network className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                <span>Local Graph</span>
+              <div className="flex items-center gap-1.5 font-semibold text-text-primary text-xs font-sans">
+                <Network className="w-3.5 h-3.5 text-[#C2553A] dark:text-[#F09A82]" />
+                <span>Grafik Relasi</span>
               </div>
-              <span className="text-[10px] font-mono text-text-tertiary">r = 1</span>
+              <span className="text-xs font-sans text-text-tertiary">r = 1</span>
             </div>
 
             <NoteGraph

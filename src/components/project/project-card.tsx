@@ -3,23 +3,17 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  FolderCode,
   Github,
   Play,
-  ExternalLink,
   Pencil,
   Trash2,
   Bookmark,
   BookmarkCheck,
-  Code2,
-  Calendar,
   User,
   ArrowRight,
 } from "lucide-react";
 import { Project } from "@/types";
-import { formatDate } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 
 interface ProjectCardProps {
   project: Project;
@@ -61,23 +55,17 @@ export function ProjectCard({
       : "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20";
 
   return (
-    <div className="group relative rounded-xl border border-border/70 bg-surface hover:border-brand-500/40 hover:shadow-md transition-all flex flex-col justify-between overflow-hidden">
+    <div className="group relative rounded-2xl border border-[#E6E0D6] dark:border-[#24201E] bg-[#FFFFFF] dark:bg-[#141210] hover:border-[#C2553A]/35 dark:hover:border-[#D4664A]/40 shadow-2xs transition-colors flex flex-col justify-between overflow-hidden font-sans">
       {/* Top Header Card */}
-      <div className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col">
+      <div className="p-5 space-y-3 flex-1 flex flex-col">
         {/* Category, Level, & Bookmark */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 flex-wrap">
-            {project.category?.name ? (
-              <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-surface-secondary text-text-secondary border border-border/70">
-                {project.category.name}
-              </span>
-            ) : (
-              <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-surface-secondary text-text-secondary border border-border/70">
-                Proyek AI
-              </span>
-            )}
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#F3EFE9] dark:bg-[#1C1917] text-text-secondary">
+              {project.category?.name || "Proyek AI"}
+            </span>
 
-            <span className={`px-2 py-0.5 rounded text-[11px] font-mono font-medium border ${levelColor}`}>
+            <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${levelColor}`}>
               {levelLabel}
             </span>
           </div>
@@ -132,7 +120,7 @@ export function ProjectCard({
         <div>
           <Link
             href={`/dashboard/project/${project.id}`}
-            className="font-bold text-base text-text-primary hover:text-brand-600 dark:hover:text-brand-400 transition-colors line-clamp-2 inline-flex items-center gap-1"
+            className="font-bold font-display text-base text-text-primary hover:text-[#C2553A] dark:hover:text-[#F09A82] transition-colors line-clamp-2 inline-flex items-center gap-1 leading-snug"
           >
             <span>{project.title}</span>
             <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
@@ -140,30 +128,35 @@ export function ProjectCard({
         </div>
 
         {/* Description */}
-        <p className="text-xs sm:text-sm text-text-secondary leading-relaxed line-clamp-3 flex-1">
+        <p className="text-xs sm:text-[13px] text-text-secondary leading-relaxed line-clamp-3 flex-1">
           {project.description || "Tidak ada deskripsi rinci untuk proyek ini."}
         </p>
 
-        {/* Tech Stack Badges */}
+        {/* Tech Stack Badges (Clean Pill, capped at 4 for uncluttered look) */}
         {project.tech_stack && project.tech_stack.length > 0 && (
-          <div className="pt-2 flex items-center gap-1.5 flex-wrap">
-            {project.tech_stack.map((tech, idx) => (
+          <div className="pt-1 flex items-center gap-1.5 flex-wrap">
+            {project.tech_stack.slice(0, 4).map((tech, idx) => (
               <span
                 key={idx}
-                className="px-2 py-0.5 rounded text-[10.5px] font-mono font-medium bg-surface-secondary/80 text-text-secondary border border-border/60"
+                className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FAF8F5] dark:bg-[#1C1917] text-text-secondary"
               >
-                #{tech}
+                {tech}
               </span>
             ))}
+            {project.tech_stack.length > 4 && (
+              <span className="text-[11px] text-text-tertiary font-medium">
+                +{project.tech_stack.length - 4}
+              </span>
+            )}
           </div>
         )}
       </div>
 
-      {/* Footer Card: Author & Quick Links */}
-      <div className="px-4 py-3 bg-surface-secondary/40 border-t border-border/70 flex items-center justify-between gap-2 text-xs font-mono text-text-tertiary">
+      {/* Footer Card */}
+      <div className="px-5 py-3 bg-[#FAF8F5]/70 dark:bg-[#1C1917]/60 border-t border-[#E6E0D6]/70 dark:border-[#24201E] flex items-center justify-between gap-2 text-xs text-text-secondary">
         <div className="flex items-center gap-1.5 truncate">
-          <User className="w-3.5 h-3.5 shrink-0" />
-          <span className="truncate">{project.author_name || "Pengembang"}</span>
+          <User className="w-3.5 h-3.5 shrink-0 text-text-tertiary" />
+          <span className="truncate font-medium">{project.author_name || "Kontributor"}</span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -172,7 +165,7 @@ export function ProjectCard({
               href={project.repository_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1"
+              className="p-1.5 rounded-lg hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1"
               title="Kunjungi Repository GitHub"
             >
               <Github className="w-3.5 h-3.5" />
@@ -185,7 +178,7 @@ export function ProjectCard({
               href={project.demo_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded hover:bg-surface-secondary text-emerald-600 dark:text-emerald-400 hover:underline transition-colors flex items-center gap-1"
+              className="p-1.5 rounded-lg hover:bg-surface-secondary text-emerald-600 dark:text-emerald-400 hover:underline transition-colors flex items-center gap-1"
               title="Lihat Live Demo"
             >
               <Play className="w-3.5 h-3.5" />
@@ -195,7 +188,7 @@ export function ProjectCard({
 
           <Link
             href={`/dashboard/project/${project.id}`}
-            className="px-2.5 py-1 rounded bg-surface border border-border hover:bg-surface-secondary text-text-primary text-[11px] font-medium transition-colors"
+            className="px-3 py-1 rounded-lg bg-surface border border-border hover:bg-surface-secondary text-text-primary text-xs font-semibold transition-colors"
           >
             Detail
           </Link>
