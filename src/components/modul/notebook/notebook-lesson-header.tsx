@@ -13,6 +13,8 @@ interface NotebookLessonHeaderProps {
   estimatedMinutes?: number;
   chapterTitle?: string;
   categoryName?: string;
+  phaseTitle?: string;
+  isNew2026?: boolean;
   className?: string;
 }
 
@@ -22,49 +24,51 @@ export function NotebookLessonHeader({
   subtitle,
   description,
   flow = "conceptual",
-  estimatedMinutes = 15,
+  estimatedMinutes = 12,
   chapterTitle,
   categoryName,
+  phaseTitle,
+  isNew2026 = false,
   className = "",
 }: NotebookLessonHeaderProps) {
   const getFlowMeta = (f: LessonFlow) => {
     switch (f) {
       case "mathematical":
         return {
-          label: "Mathematical Derivation",
-          icon: <Calculator className="w-3.5 h-3.5 text-indigo-500" />,
-          colorClass: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60",
+          label: "Derivasi Matematis",
+          icon: <Calculator className="w-3.5 h-3.5 text-[#D4664A]" />,
+          colorClass: "bg-[#C2553A]/10 text-[#C2553A] dark:text-[#E5C194] border-[#D4664A]/30",
         };
       case "computational":
         return {
-          label: "Computational Implementation",
-          icon: <Cpu className="w-3.5 h-3.5 text-emerald-500" />,
-          colorClass: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60",
+          label: "Implementasi & Komputasi",
+          icon: <Cpu className="w-3.5 h-3.5 text-[#34D399]" />,
+          colorClass: "bg-[#34D399]/10 text-emerald-700 dark:text-[#34D399] border-[#34D399]/28",
         };
       case "algorithmic":
         return {
-          label: "Algorithmic Analysis",
-          icon: <Layers className="w-3.5 h-3.5 text-sky-500" />,
-          colorClass: "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60",
+          label: "Analisis Algoritmik",
+          icon: <Layers className="w-3.5 h-3.5 text-[#D4664A]" />,
+          colorClass: "bg-[#D4664A]/10 text-[#C2553A] dark:text-[#D4664A] border-[#D4664A]/28",
         };
       case "project":
         return {
-          label: "End-to-End Project Case",
-          icon: <FolderKanban className="w-3.5 h-3.5 text-amber-500" />,
-          colorClass: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60",
+          label: "System Design & Kasus Industri",
+          icon: <FolderKanban className="w-3.5 h-3.5 text-[#E5B567]" />,
+          colorClass: "bg-[#E5B567]/10 text-amber-700 dark:text-[#E5B567] border-[#E5B567]/28",
         };
       case "mixed":
         return {
-          label: "Theory & Practice",
-          icon: <Sparkles className="w-3.5 h-3.5 text-purple-500" />,
-          colorClass: "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/60",
+          label: "Teori & Praktikum Produksi",
+          icon: <Sparkles className="w-3.5 h-3.5 text-[#D4664A]" />,
+          colorClass: "bg-[#D4664A]/10 text-[#C2553A] dark:text-[#E5C194] border-[#D4664A]/28",
         };
       case "conceptual":
       default:
         return {
-          label: "Conceptual Framework",
-          icon: <BookOpen className="w-3.5 h-3.5 text-blue-500" />,
-          colorClass: "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60",
+          label: "Kerangka Konseptual",
+          icon: <BookOpen className="w-3.5 h-3.5 text-[#D4664A]" />,
+          colorClass: "bg-surface-secondary text-text-secondary border-border",
         };
     }
   };
@@ -72,49 +76,70 @@ export function NotebookLessonHeader({
   const flowMeta = getFlowMeta(flow);
 
   return (
-    <header className={`space-y-3 pb-5 border-b border-border/70 ${className}`}>
-      {/* Category & Chapter Context */}
-      {(categoryName || chapterTitle) && (
-        <div className="flex items-center gap-2 text-xs font-mono text-text-tertiary">
-          {categoryName && <span>{categoryName}</span>}
-          {categoryName && chapterTitle && <span>/</span>}
-          {chapterTitle && <span className="text-text-secondary truncate">{chapterTitle}</span>}
+    <header className={`space-y-3.5 pb-6 border-b border-border ${className}`}>
+      {/* Phase & Chapter Context */}
+      {(phaseTitle || categoryName || chapterTitle) && (
+        <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-text-tertiary">
+          {phaseTitle ? (
+            <span className="px-2 py-0.5 rounded-md bg-[#C2553A]/10 text-[#C2553A] dark:text-[#E5C194] border border-[#D4664A]/25 font-semibold">
+              {phaseTitle}
+            </span>
+          ) : (
+            categoryName && <span>{categoryName}</span>
+          )}
+          {chapterTitle && (
+            <>
+              <span className="opacity-40">/</span>
+              <span className="text-text-secondary truncate max-w-[360px] sm:max-w-none">{chapterTitle}</span>
+            </>
+          )}
         </div>
       )}
 
-      {/* Main Title */}
-      <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight font-display leading-snug">
-          {number && <span className="text-text-tertiary font-mono mr-2.5 font-bold">{number}</span>}
+      {/* Main Editorial Title */}
+      <div className="space-y-1.5">
+        <h1 className="text-2xl sm:text-3xl md:text-[32px] font-bold text-text-primary tracking-tight font-display leading-[1.18]">
+          {number && (
+            <span className="text-[#C2553A] dark:text-[#D4664A] font-mono mr-2.5 font-semibold">
+              {number}
+            </span>
+          )}
           {title}
         </h1>
-        {subtitle && (
-          <p className="text-sm sm:text-base font-medium text-text-secondary">
+        {subtitle && subtitle !== chapterTitle && (
+          <p className="text-sm font-medium text-text-secondary">
             {subtitle}
           </p>
         )}
       </div>
 
-      {/* Description / Summary Lead */}
+      {/* Lead Description */}
       {description && (
-        <p className="text-sm leading-relaxed text-text-secondary max-w-3xl">
+        <p className="text-[15px] leading-relaxed text-text-secondary max-w-3xl">
           {description}
         </p>
       )}
 
-      {/* Badges: Flow, Estimated Reading Time */}
-      <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs">
+      {/* Metadata Badges */}
+      <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-mono font-medium ${flowMeta.colorClass}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono font-medium ${flowMeta.colorClass}`}
         >
           {flowMeta.icon}
           <span>{flowMeta.label}</span>
         </span>
 
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-border bg-surface text-text-tertiary text-[11px] font-mono">
-          <Clock className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-surface-secondary/70 text-text-secondary text-[11px] font-mono tabular-nums">
+          <Clock className="w-3 h-3 text-text-tertiary" />
           <span>~{estimatedMinutes} menit baca</span>
         </span>
+
+        {isNew2026 && (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[#E5C194]/35 bg-[#E5C194]/12 text-amber-800 dark:text-[#E5C194] text-[11px] font-mono font-semibold">
+            <Sparkles className="w-3 h-3" />
+            <span>Standar 2026</span>
+          </span>
+        )}
       </div>
     </header>
   );

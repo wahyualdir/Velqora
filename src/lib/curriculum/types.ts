@@ -54,6 +54,12 @@ export interface DocSectionItem {
   executionGroups?: NotebookExecutionGroup[];
   exercises?: ExerciseItem[];
   level?: number;
+  phaseId?: string;
+  phaseTitle?: string;
+  isNew2026?: boolean;
+  interactiveLabId?: string;
+  tldrSummary?: string;
+  estimatedMinutes?: number;
 }
 
 // ============================================================================
@@ -153,6 +159,7 @@ export interface AcademicCodeExample {
   actualOutput?: string;
   isVerifiedOutput?: boolean;
   runtimeMs?: number;
+  runtimeBadge?: "pyodide-ready" | "production-env";
 }
 
 // ============================================================================
@@ -611,6 +618,10 @@ export interface AcademicSubchapter {
   commonPitfalls?: string[];
   caseStudy?: string;
   contentStatus?: "legacy-synthetic" | "substantive-verified" | "migrated" | "imported-unverified";
+  isNew2026?: boolean;
+  interactiveLabId?: string;
+  tldrSummary?: string;
+  estimatedMinutes?: number;
 }
 
 export interface AcademicChapter {
@@ -619,6 +630,9 @@ export interface AcademicChapter {
   title: string;
   orderIndex: number;
   description: string;
+  phaseId?: string;
+  phaseTitle?: string;
+  isNew2026?: boolean;
   learningObjectives?: string[];
   competencies?: string[];
   prerequisites?: string[];
@@ -702,6 +716,12 @@ export function curriculumToDocSectionItems(curriculum: AcademicCurriculum): Doc
         sourceRefIds: sub.sourceRefIds,
         reviewStatus: sub.reviewStatus,
         exercises: structuredExercises,
+        isNew2026: sub.isNew2026 ?? chapter.isNew2026,
+        interactiveLabId: sub.interactiveLabId,
+        tldrSummary: sub.tldrSummary,
+        estimatedMinutes: sub.estimatedMinutes,
+        phaseId: chapter.phaseId,
+        phaseTitle: chapter.phaseTitle,
         codeSnippets: allSnippets.map((c) => ({
           id: c.id,
           language: c.language,
@@ -735,6 +755,9 @@ export function curriculumToDocSectionItems(curriculum: AcademicCurriculum): Doc
       title: chapter.title,
       orderIndex: chapter.orderIndex,
       description: chapter.description,
+      phaseId: chapter.phaseId,
+      phaseTitle: chapter.phaseTitle,
+      isNew2026: chapter.isNew2026,
       content_markdown: subsections[0]?.content_markdown || null,
       subsections,
       codeSnippets: [],

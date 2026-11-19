@@ -149,8 +149,8 @@ export function getTopicStatus(slugOrName: string = ""): TopicStatusMeta {
     return {
       status: "verified",
       badgeLabel: "Terverifikasi",
-      badgeDescription: "Kurikulum akademik terverifikasi penuh bebas data sintetis (32 Bab SOTA).",
-      shortDescription: "Kurikulum standar akademik terverifikasi bebas data sintetis berbasis Hastie (ESL), Bishop (PRML), Mitchell, dan scikit-learn SOTA.",
+      badgeDescription: "Kurikulum Machine Learning v5.0 Complete (36 Bab • 8 Phase • 145 Subbab • 8 Interactive ML Labs • 435 blok kode Python terverifikasi stdout nyata).",
+      shortDescription: "Standar Principal ML Engineer 20+ Tahun Edisi 2026 (36 Bab): Elkan, Double Descent, GBDT, TabPFN v2, Cleanlab, Conformal UQ, Causal/Uplift, Safe Serving & 8 Interactive Labs.",
       isVerified: true,
       priorityOrder: 3,
     };

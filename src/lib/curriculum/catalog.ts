@@ -308,7 +308,7 @@ export const CATALOG_TOPICS: readonly CatalogTopic[] = [
     color: "#8B5CF6",
     status: "verified",
     badgeLabel: "Terverifikasi",
-    shortDescription: "32 Bab lengkap SOTA: model linier, pohon keputusan ensemble (XGBoost, LightGBM), dan bab lanjutan AutoML & NAS.",
+    shortDescription: "Kurikulum ML v5.0 Edisi Industri 2026 (36 Bab • 8 Phase): Problem Framing & Elkan, Double Descent, GBDT SOTA, TabPFN v2, EBM, Cleanlab, Conformal UQ, Causal/Uplift, Safe Serving, 4 Staff Blueprints & 8 Interactive ML Labs.",
     legacyId: "machine-learning",
     curriculumLookup: "machine-learning",
     absorbedTopics: ["AutoML & Neural Architecture Search"],

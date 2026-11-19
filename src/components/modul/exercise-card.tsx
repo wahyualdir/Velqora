@@ -76,11 +76,11 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
   };
 
   return (
-    <div className="rounded-xl border border-border/80 bg-surface dark:bg-[#141519] shadow-2xs overflow-hidden transition-all duration-200">
+    <div className="rounded-2xl border border-border bg-surface shadow-[inset_0_1px_0_rgba(255,248,240,0.04)] overflow-hidden transition-all duration-200">
       {/* 1. Header with Level Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-5 py-3 border-b border-border/80 bg-surface-secondary/40 dark:bg-white/[0.02]">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-5 py-3 border-b border-border bg-surface-secondary/60">
         <div className="flex items-center gap-2">
-          <span className="p-1 rounded-md bg-brand-500/10 text-brand-600 dark:text-brand-400">
+          <span className="p-1.5 rounded-lg bg-[#C2553A]/12 text-[#C2553A] dark:text-[#D4664A]">
             <Target className="w-3.5 h-3.5" />
           </span>
           <span className="text-xs sm:text-sm font-bold text-text-primary font-display">
@@ -104,19 +104,19 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
         {/* 3. Starter Code Block (if available) */}
         {exercise.starterCode && (
           <div className="space-y-1.5 pt-1">
-            <div className="flex items-center justify-between text-[11px] font-mono text-text-tertiary">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-text-tertiary">
               <span className="flex items-center gap-1.5 font-semibold uppercase tracking-wider">
-                <FileCode className="w-3.5 h-3.5 text-blue-500" />
+                <FileCode className="w-3.5 h-3.5 text-[#D4664A]" />
                 <span>Kode Starter / Kerangka Solusi:</span>
               </span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => handleCopyStarter(exercise.starterCode!)}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10.5px] border border-border bg-surface hover:bg-surface-secondary text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
                   title="Salin kode starter"
                 >
-                  {copiedCode ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                  {copiedCode ? <Check className="w-3 h-3 text-[#34D399]" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedCode ? "Disalin" : "Salin"}</span>
                 </button>
                 <Link
@@ -131,7 +131,7 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
                         )}`
                       : ""
                   }`}
-                  className="flex items-center gap-1 min-h-[32px] px-2.5 py-0.5 rounded text-[10px] font-semibold bg-brand-600 hover:bg-brand-700 text-white transition-colors"
+                  className="flex items-center gap-1 min-h-[30px] px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-[#C2553A] hover:bg-[#B34B32] text-[#FFFBF8] border border-[#D4664A]/40 transition-colors"
                   title="Jalankan & Uji langsung di Lab Notebook"
                 >
                   <Play className="w-2.5 h-2.5 fill-current" />
@@ -140,7 +140,7 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
               </div>
             </div>
 
-            <div className="rounded-lg overflow-hidden border border-border/80 bg-[#0d1117] text-[#e6edf3] p-3 font-mono text-xs overflow-x-auto whitespace-pre">
+            <div className="rounded-xl overflow-hidden border border-[#292524] bg-[#141210] text-[#F5F5F4] p-3.5 font-mono text-xs overflow-x-auto whitespace-pre">
               <code>{exercise.starterCode}</code>
             </div>
           </div>
@@ -148,23 +148,23 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
 
         {/* 4. Test Case Preview (if available) */}
         {exercise.testCase && (
-          <div className="p-3 rounded-lg border border-border/70 bg-surface-secondary/20 dark:bg-white/[0.01] space-y-1.5 text-xs">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-text-tertiary font-bold flex items-center gap-1.5">
-              <Terminal className="w-3 h-3 text-emerald-500" />
+          <div className="p-3.5 rounded-xl border border-border bg-surface-secondary/50 space-y-2 text-xs">
+            <span className="text-[10.5px] font-mono uppercase tracking-wider text-text-tertiary font-bold flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-[#34D399]" />
               <span>Verifikasi Test Case & Ekspektasi Output:</span>
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
-              <div className="p-2 rounded bg-surface border border-border/60">
+              <div className="p-2.5 rounded-lg bg-surface border border-border">
                 <span className="text-text-tertiary block text-[10px]">Input:</span>
-                <span className="text-text-primary truncate block">
+                <span className="text-text-primary break-words block mt-0.5">
                   {typeof exercise.testCase.input === "object"
                     ? JSON.stringify(exercise.testCase.input)
                     : String(exercise.testCase.input)}
                 </span>
               </div>
-              <div className="p-2 rounded bg-surface border border-border/60">
+              <div className="p-2.5 rounded-lg bg-surface border border-border">
                 <span className="text-text-tertiary block text-[10px]">Expected Output:</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold truncate block">
+                <span className="text-emerald-700 dark:text-[#34D399] font-semibold break-words block mt-0.5">
                   {typeof exercise.testCase.expectedOutput === "object"
                     ? JSON.stringify(exercise.testCase.expectedOutput)
                     : String(exercise.testCase.expectedOutput)}
@@ -172,7 +172,7 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
               </div>
             </div>
             {exercise.testCase.description && (
-              <span className="text-[10px] text-text-tertiary block italic">
+              <span className="text-[11px] text-text-secondary block">
                 {exercise.testCase.description}
               </span>
             )}
@@ -181,20 +181,20 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
 
         {/* 5. Progressive Hint Toggle */}
         {exercise.hint && (
-          <div className="border border-border/80 rounded-lg overflow-hidden bg-surface dark:bg-[#101114]">
+          <div className="border border-border rounded-xl overflow-hidden bg-surface-secondary/40">
             <button
               type="button"
               onClick={() => setShowHint(!showHint)}
-              className="w-full flex items-center justify-between px-3.5 py-2 text-left hover:bg-surface-secondary/40 transition-colors cursor-pointer text-xs font-medium text-text-secondary"
+              className="w-full flex items-center justify-between px-3.5 py-2.5 text-left hover:bg-surface-secondary transition-colors cursor-pointer text-xs font-medium text-text-secondary"
             >
               <span className="flex items-center gap-2">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                <Lightbulb className="w-3.5 h-3.5 text-[#E5B567]" />
                 <span className="font-semibold text-text-primary">Petunjuk Penyelesaian (Hint)</span>
               </span>
               {showHint ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
             {showHint && (
-              <div className="px-3.5 py-2.5 border-t border-border/80 bg-surface-secondary/20 text-xs text-text-secondary prose dark:prose-invert max-w-none">
+              <div className="px-3.5 py-3 border-t border-border bg-surface text-xs text-text-secondary prose dark:prose-invert max-w-none">
                 <NoteRenderer content={exercise.hint} />
               </div>
             )}
@@ -204,26 +204,26 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
 
       {/* 6. Solution Reveal Toggle */}
       {exercise.solution && (
-        <div className="border-t border-border bg-surface-secondary/30 dark:bg-white/[0.01]">
+        <div className="border-t border-border bg-surface-secondary/35">
           <div className="p-3 sm:p-4">
             <button
               type="button"
               onClick={() => setShowSolution(!showSolution)}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-surface hover:bg-surface-secondary border border-border text-xs font-semibold text-text-primary shadow-2xs transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-surface hover:bg-surface-secondary border border-border text-xs font-semibold text-text-primary transition-all cursor-pointer"
             >
-              <Key className="w-3.5 h-3.5 text-brand-500" />
+              <Key className="w-3.5 h-3.5 text-[#D4664A]" />
               <span>{showSolution ? "Sembunyikan Pembahasan & Kunci Solusi" : "Buka Pembahasan & Kunci Solusi"}</span>
               {showSolution ? <ChevronUp className="w-3.5 h-3.5 ml-0.5" /> : <ChevronDown className="w-3.5 h-3.5 ml-0.5" />}
             </button>
           </div>
 
           {showSolution && (
-            <div className="px-4 sm:px-5 pb-5 pt-1 space-y-2.5 border-t border-border/80">
+            <div className="px-4 sm:px-5 pb-5 pt-2 space-y-2.5 border-t border-border">
               <span className="text-[11px] font-mono uppercase tracking-wider text-text-tertiary block font-semibold flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-emerald-500" />
+                <Award className="w-3.5 h-3.5 text-[#34D399]" />
                 <span>Solusi Referensi Terverifikasi:</span>
               </span>
-              <div className="p-3 rounded-lg bg-surface dark:bg-[#0f1013] border border-border text-xs sm:text-sm text-text-secondary leading-relaxed prose dark:prose-invert max-w-none">
+              <div className="p-3.5 rounded-xl bg-surface border border-border text-xs sm:text-sm text-text-secondary leading-relaxed prose dark:prose-invert max-w-none">
                 <NoteRenderer content={exercise.solution} />
               </div>
             </div>

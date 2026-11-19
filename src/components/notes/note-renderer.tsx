@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -12,16 +13,29 @@ import {
   Lightbulb,
   Bookmark,
   AlertCircle,
-  CheckCircle2,
   ChevronDown,
+  Compass,
 } from "lucide-react";
 import { CodeBlock } from "@/components/ui/code-block";
 import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
 import { TabbedCodeBlock, type CodeTabItem } from "@/components/ui/tabbed-code-block";
 import { SideBySideDiff } from "@/components/ui/side-by-side-diff";
 import type { PlotType } from "@/components/ui/code-plot-visualizer";
+import { isInteractiveLabId, type InteractiveLabId } from "@/components/ui/ml-labs/types";
 import { slugify } from "@/lib/utils";
 import type { NoteLinkItem } from "@/actions/study/notes";
+
+const InteractiveMLLab = dynamic(
+  () => import("@/components/ui/ml-labs/interactive-ml-lab").then((m) => m.InteractiveMLLab),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="my-6 p-6 rounded-2xl border border-border bg-surface-secondary/50 text-xs font-mono text-text-tertiary">
+        Memuat Interactive ML Sandbox...
+      </div>
+    ),
+  }
+);
 
 interface NoteRendererProps {
   content: string;
@@ -265,6 +279,7 @@ interface CodeBlockMatch {
   label: string;
   code: string;
   plotType?: PlotType;
+  runtimeBadge?: "pyodide-ready" | "production-env";
 }
 
 function extractCodeBlocksFromText(text: string): CodeBlockMatch[] {
@@ -281,10 +296,24 @@ function extractCodeBlocksFromText(text: string): CodeBlockMatch[] {
     const restHeader = match[5] || "";
     const code = match[6].trim();
 
-    let label = bracketLabel || titleAttr;
-    if (!label) {
+    let rawLabel = bracketLabel || titleAttr;
+    if (!rawLabel) {
       const headerLabelMatch = restHeader.match(/\[([^\]]+)\]/);
-      label = headerLabelMatch ? headerLabelMatch[1] : `Implementasi ${idx++}`;
+      rawLabel = headerLabelMatch ? headerLabelMatch[1] : `Implementasi ${idx++}`;
+    }
+
+    // Parse optional runtime badge suffix: [NumPy Scratch | pyodide] or [Production | env]
+    let label = rawLabel;
+    let runtimeBadge: "pyodide-ready" | "production-env" | undefined = undefined;
+    if (rawLabel.includes("|")) {
+      const [cleanName, rawTag] = rawLabel.split("|").map((s) => s.trim());
+      label = cleanName || rawLabel;
+      const tagLower = (rawTag || "").toLowerCase();
+      if (tagLower.includes("pyodide") || tagLower.includes("browser")) {
+        runtimeBadge = "pyodide-ready";
+      } else if (tagLower.includes("prod") || tagLower.includes("env")) {
+        runtimeBadge = "production-env";
+      }
     }
 
     let plotType: PlotType | undefined = undefined;
@@ -297,6 +326,7 @@ function extractCodeBlocksFromText(text: string): CodeBlockMatch[] {
       label,
       code,
       plotType,
+      runtimeBadge,
     });
   }
   return blocks;
@@ -315,7 +345,9 @@ type ContentSegment =
       goodExplanation?: string;
       language?: string;
     }
-  | { type: "math-proof"; summary: string; content: string };
+  | { type: "math-proof"; summary: string; content: string }
+  | { type: "tldr"; title: string; content: string }
+  | { type: "interactive-lab"; labId: InteractiveLabId; customTitle?: string };
 
 function parseContentSegments(rawContent: string): ContentSegment[] {
   if (!rawContent) return [];
@@ -324,7 +356,10 @@ function parseContentSegments(rawContent: string): ContentSegment[] {
   // 1. :::code-tabs ... ::: or :::tabs ... :::
   // 2. :::bug-diff ... ::: or :::before-after ... ::: or :::diff ... :::
   // 3. <details ...> ... </details> or :::math-proof ... :::
-  const masterRegex = /(:::(?:code-tabs|tabs)[\s\S]*?:::|:::(?:bug-diff|before-after|diff)[\s\S]*?:::|<details[\s\S]*?<\/details>|:::math-proof[\s\S]*?:::)/g;
+  // 4. :::tldr ... :::
+  // 5. :::interactive-lab [lab-id] (single-line or block)
+  const masterRegex =
+    /(:::(?:code-tabs|tabs)[\s\S]*?:::|:::(?:bug-diff|before-after|diff)[\s\S]*?:::|<details[\s\S]*?<\/details>|:::math-proof[\s\S]*?:::|:::tldr[\s\S]*?:::|:::interactive-lab\s+\[[^\]]+\](?:\s*[^\n]*)?)/g;
 
   const segments: ContentSegment[] = [];
   let lastIndex = 0;
@@ -354,6 +389,7 @@ function parseContentSegments(rawContent: string): ContentSegment[] {
             language: b.lang,
             filename: `${b.label.toLowerCase().replace(/[^\w.-]/g, "_")}.${b.lang === "python" ? "py" : b.lang}`,
             plotType: b.plotType,
+            runtimeBadge: b.runtimeBadge,
           })),
         });
       } else {
@@ -375,9 +411,9 @@ function parseContentSegments(rawContent: string): ContentSegment[] {
         segments.push({
           type: "bug-diff",
           badCode: blocks[0].code,
-          badTitle: blocks[0].label || "PERINGATAN: KODE KELIRU / DATA LEAKAGE",
+          badTitle: blocks[0].label || "ANTI-PATTERN: KODE KELIRU / DATA LEAKAGE",
           goodCode: blocks[1].code,
-          goodTitle: blocks[1].label || "STANDAR INDUSTRI / PRODUCTION-SAFE PIPELINE",
+          goodTitle: blocks[1].label || "PRODUCTION-SAFE PIPELINE (STANDAR INDUSTRI)",
           language: blocks[0].lang || "python",
         });
       } else {
@@ -390,14 +426,13 @@ function parseContentSegments(rawContent: string): ContentSegment[] {
         const summaryMatch = matchedBlock.match(/<summary[^>]*>([\s\S]*?)<\/summary>/i);
         const rawSummary = summaryMatch ? summaryMatch[1].replace(/<[^>]+>/g, "").trim() : "";
         const cleanSummary = rawSummary || "Klik untuk Membuka Penurunan Matematis Lengkap (Step-by-Step)";
-        
+
         let inner = matchedBlock
           .replace(/<details[^>]*>/i, "")
           .replace(/<\/details>\s*$/i, "");
         if (summaryMatch) {
           inner = inner.replace(summaryMatch[0], "");
         }
-        // Remove wrapping div if present
         inner = inner.replace(/^\s*<div[^>]*>/i, "").replace(/<\/div>\s*$/i, "").trim();
 
         segments.push({
@@ -406,7 +441,6 @@ function parseContentSegments(rawContent: string): ContentSegment[] {
           content: inner,
         });
       } else {
-        // :::math-proof [Summary]
         const headerMatch = matchedBlock.match(/^:::math-proof(?:\s+\[([^\]]+)\])?/);
         const summary = headerMatch?.[1] || "Klik untuk Membuka Penurunan Matematis Lengkap (Step-by-Step)";
         const inner = matchedBlock.replace(/^:::math-proof[^\n]*\n/, "").replace(/\n:::\s*$/, "").trim();
@@ -414,6 +448,30 @@ function parseContentSegments(rawContent: string): ContentSegment[] {
           type: "math-proof",
           summary,
           content: inner,
+        });
+      }
+    }
+    // Case 4: Executive Mental Model / TL;DR Card
+    else if (matchedBlock.startsWith(":::tldr")) {
+      const headerMatch = matchedBlock.match(/^:::tldr(?:\s+\[([^\]]+)\])?/);
+      const title = headerMatch?.[1] || "Mental Model — Principal ML Engineer";
+      const inner = matchedBlock.replace(/^:::tldr[^\n]*\n/, "").replace(/\n:::\s*$/, "").trim();
+      segments.push({
+        type: "tldr",
+        title,
+        content: inner,
+      });
+    }
+    // Case 5: Interactive ML Concept Sandbox
+    else if (matchedBlock.startsWith(":::interactive-lab")) {
+      const labMatch = matchedBlock.match(/^:::interactive-lab\s+\[([^\]]+)\](?:\s+(.*))?/);
+      const rawId = labMatch?.[1]?.trim() || "";
+      const customTitle = labMatch?.[2]?.trim() || undefined;
+      if (isInteractiveLabId(rawId)) {
+        segments.push({
+          type: "interactive-lab",
+          labId: rawId,
+          customTitle,
         });
       }
     }
@@ -725,22 +783,50 @@ export function NoteRenderer({
           );
         }
 
+        if (seg.type === "tldr") {
+          return (
+            <section
+              key={`tldr-${idx}`}
+              aria-label={seg.title}
+              className="my-5 rounded-2xl border border-[#D4664A]/30 bg-surface-secondary/75 dark:bg-[#1C1917] border-l-[3px] border-l-[#D4664A] p-4 sm:p-5 shadow-[inset_0_1px_0_rgba(255,248,240,0.04)] not-prose"
+            >
+              <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider font-bold text-[#C2553A] dark:text-[#E5C194] mb-2">
+                <Compass className="w-3.5 h-3.5 text-[#D4664A] shrink-0" />
+                <span>{seg.title}</span>
+              </div>
+              <div className="text-[14.5px] sm:text-[15px] leading-[1.75] text-text-primary [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+                {renderMarkdownCore(seg.content, `tldr-inner-${idx}`)}
+              </div>
+            </section>
+          );
+        }
+
+        if (seg.type === "interactive-lab") {
+          return (
+            <InteractiveMLLab
+              key={`lab-${idx}`}
+              labId={seg.labId}
+              customTitle={seg.customTitle}
+            />
+          );
+        }
+
         if (seg.type === "math-proof") {
           return (
             <details
               key={`proof-${idx}`}
-              className="my-4 rounded-xl border border-border bg-surface-secondary/40 dark:bg-surface-secondary/20 p-3.5 sm:p-4 group transition-all math-proof-accordion not-prose"
+              className="my-4 rounded-xl border border-border bg-surface-secondary/50 dark:bg-[#1C1917]/75 p-3.5 sm:p-4 group transition-all math-proof-accordion not-prose"
             >
-              <summary className="font-semibold text-xs sm:text-sm text-brand-600 dark:text-brand-400 cursor-pointer flex items-center justify-between select-none">
-                <span className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+              <summary className="font-semibold text-xs sm:text-sm text-[#C2553A] dark:text-[#E5C194] cursor-pointer flex items-center justify-between select-none gap-2">
+                <span className="flex items-center gap-2 min-w-0">
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono uppercase font-bold bg-[#C2553A]/12 text-[#C2553A] dark:text-[#D4664A] border border-[#D4664A]/28 shrink-0">
                     Bukti Matematis
                   </span>
-                  <span>{seg.summary}</span>
+                  <span className="truncate">{seg.summary}</span>
                 </span>
-                <ChevronDown className="w-4 h-4 text-text-tertiary group-open:rotate-180 transition-transform duration-200" />
+                <ChevronDown className="w-4 h-4 text-text-tertiary group-open:rotate-180 transition-transform duration-200 shrink-0" />
               </summary>
-              <div className="pt-3.5 mt-2 border-t border-border/60 text-xs sm:text-sm leading-relaxed text-text-secondary select-text">
+              <div className="pt-3.5 mt-2.5 border-t border-border text-xs sm:text-sm leading-relaxed text-text-secondary select-text">
                 {renderMarkdownCore(seg.content, `proof-inner-${idx}`)}
               </div>
             </details>
