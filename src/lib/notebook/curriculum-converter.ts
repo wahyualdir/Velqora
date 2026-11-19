@@ -6,6 +6,7 @@ import type {
   NotebookUnit,
 } from "@/lib/curriculum/types";
 import type { NotebookCell, NotebookDocument, NotebookKernel } from "./types";
+import { sanitizeExpectedOutput } from "./output-sanitizer";
 
 function generateUuid(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -353,8 +354,9 @@ export function convertCodeEntryToNotebook(entry: CodeCatalogEntry): NotebookDoc
     `# ${entry.title}`,
     entry.explanation || `Referensi kode dari modul **${entry.topicName}** — *${entry.subchapterTitle}*.`,
   ];
-  if (entry.expectedOutput) {
-    mdLines.push(`**Keluaran Referensi:**\n\`\`\`\n${entry.expectedOutput.slice(0, 800)}\n\`\`\``);
+  const cleanExpectedOutput = sanitizeExpectedOutput(entry.expectedOutput);
+  if (cleanExpectedOutput) {
+    mdLines.push(`**Keluaran Referensi:**\n\`\`\`\n${cleanExpectedOutput.slice(0, 800)}\n\`\`\``);
   }
 
   const cells: NotebookCell[] = [

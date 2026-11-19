@@ -4,7 +4,8 @@ import React, { useState, useMemo } from "react";
 import { Copy, Check, Terminal, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { CodePlotVisualizer, type PlotType } from "./code-plot-visualizer";
+import type { PlotType } from "./code-plot-visualizer";
+import { CodePlotVisualizer } from "./code-plot-visualizer";
 
 export interface CodeBlockProps {
   code: string;
@@ -101,112 +102,6 @@ function renderHighlightedLine(line: string, lineIndex: number): React.ReactNode
   );
 }
 
-function detectPlotFromCode(code: string, title?: string, language?: string): PlotType | null {
-  const combined = `${title || ""} ${code}`;
-
-  // 1. Explicit annotation match
-  const plotMatch = combined.match(/(?:@plot:|plot=|\[PLOT\]:|\[VISUAL_OUTPUT\]:)\s*["']?([\w-]+)["']?/i);
-  if (plotMatch) {
-    const matched = plotMatch[1].toLowerCase();
-    if (matched.includes("decision") || matched.includes("hyperplane") || matched.includes("boundary") || matched.includes("svm")) {
-      return "decision-boundary";
-    }
-    if (matched.includes("loss") || matched.includes("decay") || matched.includes("convergence") || matched.includes("kurva") || matched.includes("epoch")) {
-      return "loss-curve";
-    }
-    if (matched.includes("confusion") || matched.includes("matrix") || matched.includes("konfusi") || matched.includes("eval")) {
-      return "confusion-matrix";
-    }
-    if (matched.includes("voronoi") || matched.includes("cluster") || matched.includes("klaster") || matched.includes("kmeans")) {
-      return "voronoi";
-    }
-  }
-
-  // 2. Intelligent semantic detection for Python code
-  const isPython = !language || language === "python" || /(?:import |def |np\.|plt\.|sklearn)/i.test(code);
-  if (!isPython) return null;
-
-  const lower = combined.toLowerCase();
-
-  // A. Confusion Matrix / Evaluation
-  if (
-    lower.includes("confusion_matrix") ||
-    lower.includes("classification_report") ||
-    lower.includes("f1_score") ||
-    lower.includes("precision_score") ||
-    lower.includes("recall_score") ||
-    lower.includes("matriks konfusi") ||
-    lower.includes("confusionmatrixdisplay")
-  ) {
-    return "confusion-matrix";
-  }
-
-  // B. Clustering / Voronoi Space
-  if (
-    lower.includes("kmeans") ||
-    lower.includes("dbscan") ||
-    lower.includes("agglomerativeclustering") ||
-    lower.includes("cluster_centers_") ||
-    lower.includes("silhouette_score") ||
-    lower.includes("voronoi") ||
-    lower.includes("n_clusters") ||
-    lower.includes("inertia_") ||
-    lower.includes("klasterisasi")
-  ) {
-    return "voronoi";
-  }
-
-  // C. Loss Convergence / Optimization / Epoch Training / Regression
-  if (
-    lower.includes("train_loss") ||
-    lower.includes("val_loss") ||
-    lower.includes("loss_history") ||
-    lower.includes("cost_history") ||
-    lower.includes("learning_rate") ||
-    lower.includes("gradient_descent") ||
-    lower.includes("double_descent") ||
-    lower.includes("grokking") ||
-    lower.includes("sgdregressor") ||
-    lower.includes("linearregression") ||
-    lower.includes("mean_squared_error") ||
-    lower.includes("adam") ||
-    lower.includes("epochs")
-  ) {
-    return "loss-curve";
-  }
-
-  // D. Decision Boundary / Classifiers / Hyperplane
-  if (
-    lower.includes("svc(") ||
-    lower.includes("linearsvc") ||
-    lower.includes("logisticregression") ||
-    lower.includes("decisiontreeclassifier") ||
-    lower.includes("randomforestclassifier") ||
-    lower.includes("gradientboostingclassifier") ||
-    lower.includes("xgbclassifier") ||
-    lower.includes("decision_function") ||
-    lower.includes("predict_proba") ||
-    lower.includes("hyperplane") ||
-    lower.includes("support_vectors_") ||
-    lower.includes("boundary")
-  ) {
-    return "decision-boundary";
-  }
-
-  // E. Generic fallback for model fitting code
-  if (lower.includes(".fit(") || lower.includes("fit_transform(")) {
-    if (lower.includes("regress") || lower.includes("loss") || lower.includes("mse")) {
-      return "loss-curve";
-    }
-    if (lower.includes("cluster") || lower.includes("centroid")) {
-      return "voronoi";
-    }
-    return "decision-boundary";
-  }
-
-  return null;
-}
-
 export function CodeBlock({
   code,
   language = "python",
@@ -222,8 +117,8 @@ export function CodeBlock({
   const [activeTab, setActiveTab] = useState<"code" | "plot">("code");
 
   const resolvedPlot = useMemo(() => {
-    return plotType || detectPlotFromCode(code, title, language);
-  }, [plotType, code, title, language]);
+    return plotType || null;
+  }, [plotType]);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();

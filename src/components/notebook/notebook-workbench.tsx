@@ -409,26 +409,34 @@ export function NotebookWorkbench({
 
   const updateCell = useCallback(
     (cellId: string, patch: Partial<NotebookCell>) => {
-      setDoc((prev) => {
-        const next: NotebookDocument = {
-          ...prev,
-          updatedAt: new Date().toISOString(),
-          cells: prev.cells.map((c) =>
-            c.id === cellId ? { ...c, ...patch } : c
-          ),
-        };
-        docRef.current = next;
-        return next;
-      });
+      const prev = docRef.current;
+      const next: NotebookDocument = {
+        ...prev,
+        updatedAt: new Date().toISOString(),
+        cells: prev.cells.map((c) =>
+          c.id === cellId ? { ...c, ...patch } : c
+        ),
+      };
+      docRef.current = next;
+      setDoc(next);
     },
     []
   );
 
   const runSingleCell = useCallback(
-    async (cellId: string, cascadeReactive = true) => {
+    async (cellId: string, cascadeReactive = true, sourceOverride?: string) => {
       const kr = routerRef.current;
       const targetCell = docRef.current.cells.find((c) => c.id === cellId);
       if (!kr || !targetCell || targetCell.type !== "code") return;
+
+      const codeToRun =
+        sourceOverride !== undefined ? sourceOverride : targetCell.source;
+      if (sourceOverride !== undefined && sourceOverride !== targetCell.source) {
+        updateCell(cellId, {
+          source: sourceOverride,
+          lastModifiedAt: Date.now(),
+        });
+      }
 
       setRunningCellIds((prev) => new Set(prev).add(cellId));
       const orderNum = execCounterRef.current;
@@ -437,7 +445,7 @@ export function NotebookWorkbench({
       const res = await kr.executeCell({
         cellId,
         kernel: targetCell.kernel,
-        code: targetCell.source,
+        code: codeToRun,
         testAssertions: targetCell.testAssertions,
         onNeedInput: (prompt) =>
           new Promise<string | null>((resolve) => {
@@ -465,10 +473,11 @@ export function NotebookWorkbench({
       });
 
       const finishedAt = Date.now();
-      setDoc((prev) => ({
-        ...prev,
+      const prevDoc = docRef.current;
+      const nextDoc: NotebookDocument = {
+        ...prevDoc,
         updatedAt: new Date().toISOString(),
-        cells: prev.cells.map((c) =>
+        cells: prevDoc.cells.map((c) =>
           c.id === cellId
             ? {
                 ...c,
@@ -480,7 +489,9 @@ export function NotebookWorkbench({
               }
             : c
         ),
-      }));
+      };
+      docRef.current = nextDoc;
+      setDoc(nextDoc);
 
       void listVfsFiles(docRef.current.id).then(setVfsFiles);
 
@@ -495,7 +506,7 @@ export function NotebookWorkbench({
         }
       }
     },
-    []
+    [updateCell]
   );
 
   const handleCreateNewNotebook = useCallback(
@@ -699,7 +710,8 @@ export function NotebookWorkbench({
   };
 
   const handleClearAllOutputs = () => {
-    setDoc((prev) => ({
+    const prev = docRef.current;
+    const next: NotebookDocument = {
       ...prev,
       updatedAt: new Date().toISOString(),
       cells: prev.cells.map((c) => ({
@@ -709,7 +721,9 @@ export function NotebookWorkbench({
         executionOrder: null,
         timingMs: null,
       })),
-    }));
+    };
+    docRef.current = next;
+    setDoc(next);
     toast.info("Semua output sel dibersihkan.");
   };
 
@@ -720,11 +734,14 @@ export function NotebookWorkbench({
 
   const handleToggleCollapseAllCells = () => {
     const nextCollapsed = !allCellsCollapsed;
-    setDoc((prev) => ({
+    const prev = docRef.current;
+    const next: NotebookDocument = {
       ...prev,
       updatedAt: new Date().toISOString(),
       cells: prev.cells.map((c) => ({ ...c, collapsed: nextCollapsed })),
-    }));
+    };
+    docRef.current = next;
+    setDoc(next);
     toast.info(nextCollapsed ? "Semua sel dilipat." : "Semua sel dibuka.");
   };
 
@@ -1051,33 +1068,50 @@ export function NotebookWorkbench({
             </>
           )}
 
-          {/* Clickable Runtime Status Pill */}
+          {/* Clickable Runtime Status Pill + 1-Click Reset Kernel */}
           {!readOnly && (
-            <button
-              type="button"
-              onClick={() => setRuntimeModalOpen(true)}
-              className="hidden md:inline-flex h-9 px-2.5 rounded-xl border border-border bg-surface-secondary/40 hover:bg-surface-secondary text-[11px] font-mono text-text-secondary hover:text-text-primary items-center gap-1.5 cursor-pointer transition-colors shrink-0"
-              title={kernelDetail || `${KERNEL_STATUS_LABELS[activeKernelState]} — Klik untuk konfigurasi Runtime WASM / GPU Bridge`}
-            >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  activeKernelState === "executing" ||
-                  activeKernelState === "loading" ||
-                  activeKernelState === "installing_pkg"
-                    ? "bg-amber-500 animate-pulse"
-                    : activeKernelState === "error"
-                      ? "bg-rose-500"
-                      : "bg-emerald-500"
-                }`}
-              />
-              <span className="max-w-[130px] truncate">
-                {activeKernelState === "ready" || activeKernelState === "idle"
-                  ? doc.runtimeMode === "remote_ws"
-                    ? "GPU Bridge"
-                    : "Siap"
-                  : KERNEL_STATUS_LABELS[activeKernelState]}
-              </span>
-            </button>
+            <div className="hidden md:inline-flex items-center rounded-xl border border-border bg-surface-secondary/40 overflow-hidden shrink-0">
+              <button
+                type="button"
+                onClick={() => setRuntimeModalOpen(true)}
+                className="h-9 px-2.5 hover:bg-surface-secondary text-[11px] font-mono text-text-secondary hover:text-text-primary inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                title={kernelDetail || `${KERNEL_STATUS_LABELS[activeKernelState]} — Klik untuk konfigurasi Runtime WASM / GPU Bridge`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    activeKernelState === "executing" ||
+                    activeKernelState === "loading" ||
+                    activeKernelState === "installing_pkg"
+                      ? "bg-amber-500 animate-pulse"
+                      : activeKernelState === "error"
+                        ? "bg-rose-500"
+                        : "bg-emerald-500"
+                  }`}
+                />
+                <span className="max-w-[130px] truncate">
+                  {activeKernelState === "ready" || activeKernelState === "idle"
+                    ? doc.runtimeMode === "remote_ws"
+                      ? "GPU Bridge"
+                      : "Siap"
+                    : KERNEL_STATUS_LABELS[activeKernelState]}
+                </span>
+              </button>
+              <div className="h-4 w-px bg-border/80" />
+              <button
+                type="button"
+                onClick={() => {
+                  setPendingInputPrompt(null);
+                  routerRef.current?.terminateKernel();
+                  setRunningCellIds(new Set());
+                  toast.info("Memori kernel direset ke keadaan bersih.");
+                }}
+                className="h-9 w-8 hover:bg-surface-secondary text-text-tertiary hover:text-[#C2553A] inline-flex items-center justify-center cursor-pointer transition-colors"
+                title="Reset Memori Kernel (Hapus variabel & mulai sesi bersih)"
+                aria-label="Reset Memori Kernel"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+            </div>
           )}
 
           {!readOnly && (
@@ -1567,9 +1601,9 @@ export function NotebookWorkbench({
                       .join("\n\n")}
                     onActivate={() => setActiveCellId(cell.id)}
                     onUpdateCell={(patch) => updateCell(cell.id, patch)}
-                    onRunCell={() => void runSingleCell(cell.id)}
-                    onRunAndAdvance={() => {
-                      void runSingleCell(cell.id);
+                    onRunCell={(live) => void runSingleCell(cell.id, true, live)}
+                    onRunAndAdvance={(live) => {
+                      void runSingleCell(cell.id, true, live);
                       const next = doc.cells[realIndex + 1];
                       if (next) setActiveCellId(next.id);
                       else addCell("code", cell.id);

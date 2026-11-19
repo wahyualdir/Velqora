@@ -31,6 +31,7 @@ import {
   type CodeCatalogSourceType,
 } from "@/lib/curriculum/code-catalog";
 import { findCatalogTopic } from "@/lib/curriculum/catalog";
+import { sanitizeExpectedOutput } from "@/lib/notebook/output-sanitizer";
 import { cn } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 12;
@@ -57,7 +58,9 @@ const SOURCE_LABELS: Record<CodeCatalogSourceType, string> = {
 
 function CodeCatalogEntryCard({ entry }: { entry: CodeCatalogEntry }) {
   const [showOutput, setShowOutput] = useState(false);
-  const outputText = entry.actualOutput || entry.expectedOutput;
+  const outputText =
+    sanitizeExpectedOutput(entry.actualOutput) ||
+    sanitizeExpectedOutput(entry.expectedOutput);
   const isVerified =
     Boolean(entry.isVerifiedOutput) || entry.verificationStatus === "verified_runnable";
 

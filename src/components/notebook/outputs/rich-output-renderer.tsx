@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, FileText, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { NoteRenderer } from "@/components/notes/note-renderer";
 import type { RichCellOutput } from "@/lib/notebook/types";
 import { DataFrameExplorer } from "./dataframe-explorer";
@@ -74,10 +74,10 @@ export function RichOutputRenderer({
           return (
             <pre
               key={idx}
-              className={`px-3 py-2.5 rounded-xl border text-xs font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap break-words max-h-[340px] ${
+              className={`font-mono text-[13px] leading-relaxed overflow-x-auto whitespace-pre-wrap break-words max-h-[420px] ${
                 isStderr
-                  ? "border-amber-500/30 bg-amber-500/8 text-amber-800 dark:text-amber-200"
-                  : "border-border/80 bg-[#FAF8F5] dark:bg-[#0F0E0D] text-text-primary"
+                  ? "border-l-2 border-amber-500 pl-3 py-1 bg-amber-500/5 text-amber-800 dark:text-amber-200 rounded-r-lg"
+                  : "text-text-primary"
               }`}
             >
               {out.text}
@@ -87,18 +87,12 @@ export function RichOutputRenderer({
 
         if (out.kind === "text") {
           return (
-            <div
+            <pre
               key={idx}
-              className="px-3 py-2.5 rounded-xl border border-border/80 bg-[#FAF8F5] dark:bg-[#0F0E0D] text-xs font-mono text-text-primary overflow-x-auto"
+              className="font-mono text-[13px] leading-relaxed text-text-primary whitespace-pre-wrap break-words overflow-x-auto max-h-[420px]"
             >
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-text-tertiary mb-1">
-                <FileText className="w-3 h-3" />
-                <span>Nilai Ekspresi</span>
-              </div>
-              <pre className="whitespace-pre-wrap break-words leading-relaxed">
-                {out.text}
-              </pre>
-            </div>
+              {out.text}
+            </pre>
           );
         }
 

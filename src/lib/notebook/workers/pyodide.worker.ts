@@ -51,6 +51,56 @@ __velqora_matplotlib_hooked = False
 __velqora_hooking_mpl = False
 __velqora_stdin_queue = []
 
+class _VelqoraStream(io.TextIOBase):
+    def __init__(self, stream_name, sink, max_chars=80000):
+        self.stream_name = stream_name
+        self.sink = sink
+        self.max_chars = max_chars
+        self.chars = 0
+
+    def write(self, s):
+        if not s:
+            return 0
+        text = str(s)
+        if self.chars >= self.max_chars:
+            return len(text)
+        remaining = self.max_chars - self.chars
+        chunk = text[:remaining]
+        self.chars += len(chunk)
+        if (
+            self.sink
+            and self.sink[-1].get("kind") == "stream"
+            and self.sink[-1].get("name") == self.stream_name
+        ):
+            self.sink[-1]["text"] += chunk
+        else:
+            self.sink.append({
+                "kind": "stream",
+                "name": self.stream_name,
+                "text": chunk,
+            })
+        return len(text)
+
+    def flush(self):
+        pass
+
+    def isatty(self):
+        return False
+
+def _normalize_outputs(items):
+    normalized = []
+    for item in items:
+        if item.get("kind") == "stream":
+            txt = str(item.get("text", ""))
+            if txt.endswith("\\n"):
+                txt = txt[:-1]
+            if not txt:
+                continue
+            normalized.append({**item, "text": txt})
+        else:
+            normalized.append(item)
+    return normalized
+
 class __VelqoraNeedInput(BaseException):
     def __init__(self, prompt_text=""):
         super().__init__(prompt_text)
@@ -235,6 +285,11 @@ async def __velqora_exec_cell(code_str, globals_dict, stdin_json="[]"):
     __velqora_outputs = []
     __velqora_stdin_queue = [str(x) for x in json.loads(stdin_json)]
 
+    _orig_stdout = sys.stdout
+    _orig_stderr = sys.stderr
+    sys.stdout = _VelqoraStream("stdout", __velqora_outputs)
+    sys.stderr = _VelqoraStream("stderr", __velqora_outputs)
+
     try:
         importlib.invalidate_caches()
         tree = ast.parse(code_str, mode="exec")
@@ -265,9 +320,10 @@ async def __velqora_exec_cell(code_str, globals_dict, stdin_json="[]"):
             if plt.get_fignums():
                 plt.show()
 
-        sys.stdout.flush()
-        sys.stderr.flush()
-        return json.dumps({"status": "ok", "outputs": __velqora_outputs}, default=str)
+        return json.dumps({
+            "status": "ok",
+            "outputs": _normalize_outputs(__velqora_outputs),
+        }, default=str)
     except __VelqoraNeedInput as need_in:
         try:
             if "matplotlib.pyplot" in sys.modules:
@@ -275,9 +331,19 @@ async def __velqora_exec_cell(code_str, globals_dict, stdin_json="[]"):
                 plt.close("all")
         except Exception:
             pass
-        sys.stdout.flush()
-        sys.stderr.flush()
         return json.dumps({"status": "need_input", "prompt": need_in.prompt_text})
+    except BaseException as exc:
+        if isinstance(exc, KeyboardInterrupt):
+            raise
+        tb_text = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+        return json.dumps({
+            "status": "error",
+            "outputs": _normalize_outputs(__velqora_outputs),
+            "traceback": tb_text,
+        }, default=str)
+    finally:
+        sys.stdout = _orig_stdout
+        sys.stderr = _orig_stderr
 
 def __velqora_run_assertions(assert_code, globals_dict):
     cases = []
@@ -464,14 +530,14 @@ async function installMissingPackages(
   pipInstalls: string[],
   imports: string[],
   pythonCode: string,
-  stdoutLines: string[]
+  warningLines: string[]
 ) {
   // 1. Proses `!pip install` / `%pip install` eksplisit terlebih dahulu
   for (const pkgSpec of pipInstalls) {
     const baseName = pkgSpec.split(/[<>=!~;\[]/)[0].trim();
     if (!baseName) continue;
     if (NATIVE_HEAVY_ML.has(baseName.toLowerCase())) {
-      stdoutLines.push(
+      warningLines.push(
         `[pip] "${baseName}" memerlukan GPU/Native runtime (tidak tersedia di browser WASM; gunakan GPU Bridge di menu Runtime jika perlu).`
       );
       continue;
@@ -486,10 +552,9 @@ async function installMissingPackages(
       const micropip = await ensureMicropip(instance);
       await micropip.install(pkgSpec);
       installedPackages.add(baseName);
-      stdoutLines.push(`[pip] Berhasil memasang ${pkgSpec}`);
     } catch (err: any) {
-      stdoutLines.push(
-        `[pip] Peringatan saat memasang ${pkgSpec}: ${err?.message || String(err)}`
+      warningLines.push(
+        `[pip] Gagal memasang ${pkgSpec}: ${err?.message || String(err)}`
       );
     }
   }
@@ -672,7 +737,7 @@ async function handleExecute(msg: any) {
         prep.pipInstalls,
         prep.imports,
         prep.pythonCode,
-        stdoutLines
+        stderrLines
       );
 
       for (const notice of prep.magicNotices) {
@@ -685,33 +750,15 @@ async function handleExecute(msg: any) {
         detail: "Menjalankan kode Python...",
       });
 
-      const MAX_STREAM_LINES = 800;
       const stdinInputs: string[] = Array.isArray(msg.stdinInputs)
         ? msg.stdinInputs.map(String)
         : [];
       let loopGuard = 0;
       let cellOutputs: RichCellOutput[] = [];
+      let cellRuntimeError: string | null = null;
 
       while (loopGuard < 20) {
         loopGuard++;
-        const runStdout: string[] = [];
-        const runStderr: string[] = [];
-
-        instance.setStdout({
-          batched: (text: string) => {
-            if (runStdout.length < MAX_STREAM_LINES) {
-              runStdout.push(text);
-            }
-          },
-        });
-        instance.setStderr({
-          batched: (text: string) => {
-            if (runStderr.length < MAX_STREAM_LINES) {
-              runStderr.push(text);
-            }
-          },
-        });
-
         const escapedCode = JSON.stringify(prep.pythonCode);
         const escapedStdin = JSON.stringify(JSON.stringify(stdinInputs));
         const rawJson = (await instance.runPythonAsync(
@@ -720,7 +767,8 @@ async function handleExecute(msg: any) {
 
         const parsed = JSON.parse(rawJson) as
           | { status: "ok"; outputs: RichCellOutput[] }
-          | { status: "need_input"; prompt: string };
+          | { status: "need_input"; prompt: string }
+          | { status: "error"; outputs: RichCellOutput[]; traceback: string };
 
         if (parsed.status === "need_input") {
           self.postMessage({
@@ -744,8 +792,12 @@ async function handleExecute(msg: any) {
           continue;
         }
 
-        stdoutLines.push(...runStdout);
-        stderrLines.push(...runStderr);
+        if (parsed.status === "error") {
+          cellOutputs = parsed.outputs || [];
+          cellRuntimeError = parsed.traceback || "PythonError";
+          break;
+        }
+
         cellOutputs = parsed.outputs || [];
         break;
       }
@@ -757,13 +809,6 @@ async function handleExecute(msg: any) {
       }
 
       if (!prep.captureOutput) {
-        if (stdoutLines.length > 0) {
-          outputs.push({
-            kind: "stream",
-            name: "stdout",
-            text: stdoutLines.join("\n"),
-          });
-        }
         if (stderrLines.length > 0) {
           outputs.push({
             kind: "stream",
@@ -771,7 +816,40 @@ async function handleExecute(msg: any) {
             text: stderrLines.join("\n"),
           });
         }
+        // Pertahankan urutan kronologis murni dari _VelqoraStream + display() + plt.show() + last_expr
         outputs.push(...cellOutputs);
+        if (stdoutLines.length > 0) {
+          outputs.push({
+            kind: "stream",
+            name: "stdout",
+            text: stdoutLines.join("\n"),
+          });
+        }
+      }
+
+      if (cellRuntimeError) {
+        const cleaned = formatCleanPythonError(cellRuntimeError);
+        outputs.push({
+          kind: "error",
+          ename: cleaned.ename,
+          evalue: cleaned.evalue,
+          traceback: cleaned.traceback,
+          lineNumber: cleaned.lineNumber,
+        });
+        self.postMessage({
+          type: "status",
+          state: "ready",
+          detail: "Python 3.12 WASM siap",
+        });
+        self.postMessage({
+          type: "result",
+          cellId: msg.cellId,
+          requestId: msg.requestId,
+          success: false,
+          outputs,
+          executionMs: Math.round(performance.now() - start),
+        });
+        return;
       }
 
       // Optional Autograder test assertions

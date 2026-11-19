@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
@@ -23,6 +24,7 @@ import {
   createStarterNotebook,
 } from "../curriculum-converter";
 import { transformJsTsCellCode } from "../jsts-preprocessor";
+import { sanitizeExpectedOutput } from "../output-sanitizer";
 import { preprocessPythonCellSource } from "../python-preprocessor";
 import {
   buildDatasetSnippets,
@@ -346,4 +348,96 @@ test("JS/TS notebook preprocessor runs const/let/functions/redeclarations across
   const r3 = await new AsyncFunction("__scope", c3.body)(scope);
   assert.equal(r3, 99);
   assert.equal(scope.x, 99);
+
+  // Cell 4: ASI multiline JS without semicolons & chained method continuation
+  const c4 = transformJsTsCellCode(
+    "const a = 5\nconst b = [1, 2, 3]\n  .map(n => n * a)\nb",
+    false,
+    Object.keys(scope)
+  );
+  const r4 = await new AsyncFunction("__scope", c4.body)(scope);
+  assert.deepEqual(r4, [5, 10, 15]);
+});
+
+test("Placeholder expectedOutput strings are filtered from catalog cards and converted notebooks", () => {
+  assert.equal(
+    sanitizeExpectedOutput("Status eksekusi: Komputasi berhasil dan output metrik valid."),
+    ""
+  );
+  assert.equal(
+    sanitizeExpectedOutput("# Output verifikasi komputasi stabil first-principles"),
+    ""
+  );
+  assert.equal(sanitizeExpectedOutput("0.98"), "0.98");
+
+  const nb = convertCodeEntryToNotebook({
+    id: "code-placeholder-test",
+    rawId: "code-placeholder-test",
+    topicId: "sql-dasar",
+    topicName: "SQL Dasar",
+    topicColor: "#0284C7",
+    topicGroup: "data",
+    curriculumId: "ai-agent",
+    curriculumTitle: "AI Agent",
+    chapterId: "ch-1",
+    chapterNumber: 1,
+    chapterTitle: "Dasar",
+    subchapterId: "sub-1",
+    subchapterSlug: "dasar",
+    subchapterTitle: "Dasar",
+    title: "Demo",
+    language: "python",
+    filename: "demo.py",
+    code: "print(2 + 2)",
+    expectedOutput: "Status eksekusi: Komputasi berhasil dan output metrik valid.",
+    explanation: "Penjelasan demo.",
+    level: "pemula",
+    sourceType: "implementation",
+    theoryHref: "/dashboard/modul",
+    playgroundHref: "/dashboard/playground",
+  });
+  assert.equal(nb.cells[0].source.includes("Status eksekusi:"), false);
+});
+
+test("Python worker preamble emits stream, display, and last expression in exact chronological order", (t) => {
+  const pyBin = spawnSync("python", ["--version"], { encoding: "utf8" });
+  if (pyBin.status !== 0) {
+    t.skip("Python CLI tidak tersedia di environment ini");
+    return;
+  }
+
+  const workerSrc = fs.readFileSync(
+    path.join(process.cwd(), "src/lib/notebook/workers/pyodide.worker.ts"),
+    "utf8"
+  );
+  const m = workerSrc.match(/const VELQORA_PREAMBLE_PY = `([\s\S]*?)`;/);
+  assert.ok(m, "VELQORA_PREAMBLE_PY harus ditemukan");
+  const preamble = m[1]
+    .replace(/\\\\/g, "\\")
+    .replace('os.makedirs("/workspace", exist_ok=True)', "")
+    .replace('if os.getcwd() != "/workspace":', "if False:");
+
+  const driver = [
+    "import sys, asyncio, json",
+    "code = sys.stdin.read()",
+    "ns = {}",
+    "exec(code, ns)",
+    "cell = \"print('A')\\nx = 5\\ndisplay(99)\\nprint('B')\\nx * 10\"",
+    "res = asyncio.run(ns['__velqora_exec_cell'](cell, ns))",
+    "print(res)",
+  ].join("\n");
+
+  const run = spawnSync("python", ["-c", driver], {
+    input: preamble,
+    encoding: "utf8",
+  });
+  assert.equal(run.status, 0, run.stderr);
+  const parsed = JSON.parse(run.stdout.trim());
+  assert.equal(parsed.status, "ok");
+  assert.deepEqual(parsed.outputs, [
+    { kind: "stream", name: "stdout", text: "A" },
+    { kind: "text", text: "99" },
+    { kind: "stream", name: "stdout", text: "B" },
+    { kind: "text", text: "50" },
+  ]);
 });

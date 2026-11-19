@@ -23,8 +23,9 @@ interface CellCodeEditorProps {
   wordWrap?: boolean;
   fontSize?: number;
   placeholderText?: string;
-  onRunCell?: () => void;
-  onRunAndAdvance?: () => void;
+  onRunCell?: (liveCode?: string) => void;
+  onRunAndAdvance?: (liveCode?: string) => void;
+  liveCodeGetterRef?: React.MutableRefObject<(() => string) | null>;
   onFocusInsertHandler?: (
     insertFn: ((snippet: string, cursorBackOffset?: number) => void) | null
   ) => void;
@@ -149,6 +150,7 @@ export function CellCodeEditor({
   placeholderText,
   onRunCell,
   onRunAndAdvance,
+  liveCodeGetterRef,
   onFocusInsertHandler,
 }: CellCodeEditorProps) {
   const { resolvedTheme } = useTheme();
@@ -165,12 +167,14 @@ export function CellCodeEditor({
   const wrapCompRef = useRef(new Compartment());
   const placeholderCompRef = useRef(new Compartment());
 
+  const valueRef = useRef(value);
   const onChangeRef = useRef(onChange);
   const onRunCellRef = useRef(onRunCell);
   const onRunAdvanceRef = useRef(onRunAndAdvance);
   const onFocusInsertRef = useRef(onFocusInsertHandler);
   const variablesRef = useRef(variables);
 
+  valueRef.current = value;
   onChangeRef.current = onChange;
   onRunCellRef.current = onRunCell;
   onRunAdvanceRef.current = onRunAndAdvance;
@@ -225,15 +229,19 @@ export function CellCodeEditor({
     const customKeymap = keymap.of([
       {
         key: "Shift-Enter",
-        run: () => {
-          onRunAdvanceRef.current?.();
+        run: (targetView) => {
+          const live = targetView.state.doc.toString();
+          onChangeRef.current(live);
+          onRunAdvanceRef.current?.(live);
           return true;
         },
       },
       {
         key: "Mod-Enter",
-        run: () => {
-          onRunCellRef.current?.();
+        run: (targetView) => {
+          const live = targetView.state.doc.toString();
+          onChangeRef.current(live);
+          onRunCellRef.current?.(live);
           return true;
         },
       },
@@ -281,8 +289,15 @@ export function CellCodeEditor({
       parent: containerRef.current,
     });
     viewRef.current = view;
+    if (liveCodeGetterRef) {
+      liveCodeGetterRef.current = () =>
+        viewRef.current ? viewRef.current.state.doc.toString() : valueRef.current;
+    }
 
     return () => {
+      if (liveCodeGetterRef) {
+        liveCodeGetterRef.current = null;
+      }
       view.destroy();
       viewRef.current = null;
     };
@@ -338,6 +353,10 @@ export function CellCodeEditor({
   }, [wordWrap, editorMode]);
 
   if (editorMode === "lite") {
+    if (liveCodeGetterRef) {
+      liveCodeGetterRef.current = () =>
+        textareaRef.current ? textareaRef.current.value : valueRef.current;
+    }
     return (
       <textarea
         ref={textareaRef}
@@ -364,10 +383,10 @@ export function CellCodeEditor({
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
             e.preventDefault();
-            onRunAndAdvance?.();
+            onRunAndAdvance?.(e.currentTarget.value);
           } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
-            onRunCell?.();
+            onRunCell?.(e.currentTarget.value);
           } else if (e.key === "Tab") {
             e.preventDefault();
             const el = e.currentTarget;

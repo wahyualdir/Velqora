@@ -312,6 +312,47 @@ export function transformJsTsCellCode(
           text: stmtSoFar,
         });
         lastTopStmtStart = transformed.length;
+      } else if (
+        /^(?:if|try|else)\b/.test(stmtSoFar) &&
+        !/^(?:;|else\b|catch\b|finally\b)/.test(restTrimmed)
+      ) {
+        topStatements.push({
+          start: lastTopStmtStart,
+          end: transformed.length,
+          text: stmtSoFar,
+        });
+        lastTopStmtStart = transformed.length;
+      }
+    } else if (depth === 0 && ch === "\n") {
+      const rawChunk = transformed.slice(lastTopStmtStart, transformed.length);
+      const trimmedRaw = rawChunk.trim();
+      const noCommentEnd = rawChunk
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/\/\/[^\n]*/g, "")
+        .trim();
+      const isLineEnded =
+        noCommentEnd.length > 0 &&
+        !/(?:=|\+|-|\*|\/|%|\*\*|&&|\|\||\?\?|,|\.|\?|:|=>|\(|\[|\{|\b(?:return|throw|await|typeof|void|delete|new|case|yield))$/.test(
+          noCommentEnd
+        );
+
+      if (isLineEnded) {
+        const restAfterNewline = baseCode
+          .slice(i + 1)
+          .replace(/^(?:\s|\/\/[^\n]*|\/\*[\s\S]*?\*\/)+/, "");
+        const nextContinues =
+          restAfterNewline.length === 0 ||
+          /^(?:;|\.|\[|\(|&&|\|\||\?\?|\?|:|\+|-|\*|\/|%|\b(?:else|catch|finally|instanceof|in)\b)/.test(
+            restAfterNewline
+          );
+        if (!nextContinues && trimmedRaw) {
+          topStatements.push({
+            start: lastTopStmtStart,
+            end: transformed.length,
+            text: trimmedRaw,
+          });
+          lastTopStmtStart = transformed.length;
+        }
       }
     }
 
